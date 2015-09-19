@@ -5,6 +5,9 @@
  */
 package sketchwars;
 
+import sketchwars.graphics.Graphics;
+import sketchwars.graphics.map.TestMapClass;
+
 /**
  * The SketchWars main class
  * @author Najash Najimudeen <najash.najm@gmail.com>
@@ -15,7 +18,13 @@ public class SketchWars {
     
     private void init() {
        graphics = new Graphics();
+       graphics.init();
+       
        openGL = new OpenGL(this, graphics);
+       openGL.init();
+               
+       TestMapClass test = new TestMapClass();
+       graphics.AddDrwableObject(test);
     }
     
     private void start() {

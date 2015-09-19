@@ -1,5 +1,6 @@
 package sketchwars;
 
+import sketchwars.graphics.Graphics;
 import java.nio.ByteBuffer;
 import org.lwjgl.Sys;
 import static org.lwjgl.glfw.Callbacks.errorCallbackPrint;
@@ -44,8 +45,8 @@ import static org.lwjgl.system.MemoryUtil.NULL;
  * @author Najash Najimudeen <najash.najm@gmail.com>
  */
 public class OpenGL {
-    private static final int WIDTH = 800;
-    private static final int HEIGHT = 600;
+    public static final int WIDTH = 800;
+    public static final int HEIGHT = 600;
     
     private static final double MILLION = 1000000;//used in calculating frame length
     
@@ -69,7 +70,6 @@ public class OpenGL {
         System.out.println("LWJGL " + Sys.getVersion() + "!");
  
         try {
-            init();
             loop(); //the main loop
             
             // Release window and window callbacks
@@ -91,7 +91,7 @@ public class OpenGL {
        return System.nanoTime();
    }
  
-    private void init() {
+    public void init() {
         lastTime = getTime();
         // Setup an error callback. The default implementation
         // will print the error message in System.err.
@@ -104,7 +104,7 @@ public class OpenGL {
         // Configure our window
         glfwDefaultWindowHints(); // optional, the current window hints are already the default
         glfwWindowHint(GLFW_VISIBLE, GL_FALSE); // the window will stay hidden after creation
-        glfwWindowHint(GLFW_RESIZABLE, GL_TRUE); // the window will be resizable
+        glfwWindowHint(GLFW_RESIZABLE, GL_FALSE); // the window will be resizable
   
         // Create the window
         window = glfwCreateWindow(WIDTH, HEIGHT, "Sketch Wars!", NULL, NULL);
@@ -151,6 +151,13 @@ public class OpenGL {
  
         // Set the clear color
         glClearColor(0.0f, 0.0f, 1.0f, 0.0f);
+        
+        GL11.glMatrixMode(GL11.GL_PROJECTION);
+        GL11.glPushMatrix();
+        GL11.glLoadIdentity();
+        GL11.glOrtho(0.0, WIDTH, 0.0, HEIGHT, -1.0, 1.0);
+        GL11.glMatrixMode(GL11.GL_MODELVIEW);
+        GL11.glPushMatrix();
         
         // Run the rendering loop until the user has attempted to close
         // the window or has pressed the ESCAPE key.
