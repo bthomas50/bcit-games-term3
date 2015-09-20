@@ -1,6 +1,5 @@
 package sketchwars;
 
-import sketchwars.graphics.Graphics;
 import java.nio.ByteBuffer;
 import org.lwjgl.Sys;
 import static org.lwjgl.glfw.Callbacks.errorCallbackPrint;
@@ -12,6 +11,7 @@ import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GLContext;
 import static org.lwjgl.system.MemoryUtil.NULL;
+import sketchwars.scenes.SceneManager;
 
 /**
  *
@@ -29,14 +29,14 @@ public class OpenGL {
  
     // The window handle
     private long window;
-    private final Graphics graphics;
+    private final SceneManager sceneManager;
     private final SketchWars sketchWars;
     
     private double lastTime;
         
-    public OpenGL(SketchWars sWars, Graphics g) {
+    public OpenGL(SketchWars sWars, SceneManager sceneManager) {
         this.sketchWars = sWars;
-        this.graphics = g;
+        this.sceneManager = sceneManager;
     }
     
     public void run() {
@@ -148,7 +148,7 @@ public class OpenGL {
         while ( glfwWindowShouldClose(window) == GL11.GL_FALSE ) {
             GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT); // clear the framebuffer
  
-            graphics.Render(); //call the main graphics renderer
+            sceneManager.render();//call the main graphics renderer
             
             double time = getTime(); //calculate frame length in milliseconds
             double elapsed = (time - lastTime)/MILLION;
