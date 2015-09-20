@@ -11,6 +11,9 @@ import java.util.HashMap;
  */
 public class QuadTree
 {
+    public static final int NUM_CHILDREN = 4;
+    private static final int DEFAULT_MAX_OBJ = 10;
+    private static final int DEFAULT_MIN_SZ = 32;
 	private class QuadTreeControl
 	{
 		private QuadTree rootNode;
@@ -18,11 +21,6 @@ public class QuadTree
 		private int minSz;
 		private HashMap<BoundingBox, QuadTree> boxLocations;
 
-		private QuadTreeControl(QuadTree rootNode)
-		{
-			//10 objects per node before split, min size 32
-			this(rootNode, 10, 32);
-		}
 		private QuadTreeControl(QuadTree rootNode, int maxObj, int minSz)
 		{
 			this.rootNode = rootNode;
@@ -38,83 +36,57 @@ public class QuadTree
     private QuadTree parent;
 	private QuadTreeControl control;
     
+    //constructor using the default settings
 	public QuadTree(BoundingBox bounds)
 	{
-        this.objects = new ArrayList<>(control.maxObj);
-        this.bounds = bounds;
-        this.children = new QuadTree[4];
-		this.control = new QuadTreeControl(this);
+        this(bounds, DEFAULT_MAX_OBJ, DEFAULT_MIN_SZ);
 	}
-	
+    //constructor using user-defined settings
     public QuadTree(BoundingBox bounds, int maxObjects, int minSize)
     {
+        this.control = new QuadTreeControl(this, maxObjects, minSize);
         this.objects = new ArrayList<>(control.maxObj);
         this.bounds = bounds;
-        this.children = new QuadTree[4];
-		this.control = new QuadTreeControl(this, maxObjects, minSize);
+        this.children = new QuadTree[NUM_CHILDREN];
     }
     //constructor for creating a child tree
 	private QuadTree(BoundingBox bounds, QuadTree parent)
     {
         this.objects = new ArrayList<>(control.maxObj);
         this.bounds = bounds;
-        this.children = new QuadTree[4];
+        this.children = new QuadTree[NUM_CHILDREN];
         this.parent = parent;
 		this.control = parent.control;
     }
 	
     public int count()
     {
-        if(children[0] != null)
+        if(hasSplit())
         {
             return objects.size() + children[0].count() + children[1].count() + children[2].count() + children[3].count();
         }
         return objects.size();
     }
     
-    private void merge()
-    {
-        if(children[0] == null)
-        {
-            return;
-        }
-        children[0].merge();
-        children[1].merge();
-        children[2].merge();
-        children[3].merge();
-        objects.addAll(children[0].objects);
-        objects.addAll(children[1].objects);
-        objects.addAll(children[2].objects);
-        objects.addAll(children[3].objects);
-        for(BoundingBox bb : objects)
-        {
-            control.boxLocations.put(bb, this);
-        }
-        children[0] = null;
-        children[1] = null;
-        children[2] = null;
-        children[3] = null;
-    }
-    
     public void prune()
     {
-        if(count() <= 3)
+        if(count() <= control.maxObj / 3.0)
         {
             merge();
         }
-        else if(children[0] != null)
+        else if(hasSplit())
         {
-            children[0].prune();
-            children[1].prune();
-            children[2].prune();
-            children[3].prune();
+            for(int i = 0; i < NUM_CHILDREN; i++)
+            {
+                children[i].prune();
+            }
         }
     }
     
     public void clear()
     {
-        objects.clear();
-        for(int i = 0; i < children.length; i++)
+        removeAllObjects();
+        for(int i = 0; i < NUM_CHILDREN; i++)
         {
             if(children[i] != null)
             {
@@ -123,49 +95,14 @@ public class QuadTree
             }
         }
     }
-    
-    private void split()
+    private void removeAllObjects()
     {
-        int xMid = bounds.getLeft() + (bounds.getRight() - bounds.getLeft()) / 2;
-        int yMid = bounds.getTop() + (bounds.getBottom() - bounds.getTop()) / 2;
-        
-        children[0] = new QuadTree(new BoundingBox(bounds.getTop(), xMid,             yMid,               bounds.getRight()),
-                                   this);
-        children[1] = new QuadTree(new BoundingBox(bounds.getTop(), bounds.getLeft(), yMid,               xMid - 1),
-                                   this);
-        children[2] = new QuadTree(new BoundingBox(yMid + 1,        bounds.getLeft(), bounds.getBottom(), xMid - 1),
-                                   this);
-        children[3] = new QuadTree(new BoundingBox(yMid + 1,        xMid,             bounds.getBottom(), bounds.getRight()),
-                                   this);
-        //insert all objects that will fit into children into children.
-        int i = 0;
-        while(i < objects.size())
+        for(BoundingBox bb : objects)
         {
-            int index = getIndex(objects.get(i));
-            if (index != -1) 
-            {
-                children[index].insert(objects.remove(i));
-            }
-            else
-            {
-                i++;
-            }
+            control.boxLocations.remove(bb);
         }
+        objects.clear();
     }
-    
-    private int getIndex(BoundingBox box)
-    {
-        int index = -1;
-        for(int i = 0; i < children.length; i++)
-        {
-            if(children[i].bounds.contains(box))
-            {
-                return i;
-            }
-        }
-        return index;
-    }
-    
     public boolean insert(BoundingBox box)
     {
         if(!bounds.contains(box))
@@ -224,23 +161,6 @@ public class QuadTree
         return tryInsert(newBox);
     }
     
-    private boolean tryInsert(BoundingBox box)
-    {
-        if(bounds.contains(box))
-        {
-            insert(box);
-            return true;
-        }
-        if(parent != null)
-        {
-            return parent.tryInsert(box);
-        }
-        else
-        {
-            return false;
-        }
-    }
-    
     public ArrayList<BoundingBox> retrieve(BoundingBox box)
     {
         ArrayList<BoundingBox> ret = new ArrayList<>();
@@ -284,6 +204,84 @@ public class QuadTree
         return list;
     }
     
+    private void split()
+    {
+        int xMid = bounds.getLeft() + (bounds.getRight() - bounds.getLeft()) / 2;
+        int yMid = bounds.getTop() + (bounds.getBottom() - bounds.getTop()) / 2;
+        
+        children[0] = new QuadTree(new BoundingBox(bounds.getTop(), xMid,             yMid,               bounds.getRight()),
+                                   this);
+        children[1] = new QuadTree(new BoundingBox(bounds.getTop(), bounds.getLeft(), yMid,               xMid - 1),
+                                   this);
+        children[2] = new QuadTree(new BoundingBox(yMid + 1,        bounds.getLeft(), bounds.getBottom(), xMid - 1),
+                                   this);
+        children[3] = new QuadTree(new BoundingBox(yMid + 1,        xMid,             bounds.getBottom(), bounds.getRight()),
+                                   this);
+        //insert all objects that will fit into children into children.
+        int i = 0;
+        while(i < objects.size())
+        {
+            int index = getIndex(objects.get(i));
+            if (index != -1) 
+            {
+                children[index].insert(objects.remove(i));
+            }
+            else
+            {
+                i++;
+            }
+        }
+    }
+
+    private void merge()
+    {
+        if(!hasSplit())
+        {
+            return;
+        }
+        for(int i = 0; i < NUM_CHILDREN; i++)
+        {
+            children[i].merge();
+            objects.addAll(children[i].objects);
+            children[i] = null;
+        }
+        for(BoundingBox bb : objects)
+        {
+            control.boxLocations.put(bb, this);
+        }
+    }
+
+    private boolean tryInsert(BoundingBox box)
+    {
+        if(bounds.contains(box))
+        {
+            insert(box);
+            return true;
+        }
+        if(parent != null)
+        {
+            return parent.tryInsert(box);
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    private int getIndex(BoundingBox box)
+    {
+        int index = -1;
+        for(int i = 0; i < NUM_CHILDREN; i++)
+        {
+            if(children[i].bounds.contains(box))
+            {
+                return i;
+            }
+        }
+        return index;
+    }
+    
+
 	private boolean shouldSplit()
 	{
 		return isFull() && 
