@@ -4,6 +4,6 @@ package sketchwars.graphics;
  *
  * @author Najash Najimudeen <najash.najm@gmail.com>
  */
-public interface Drawable {
+public interface GraphicsObject {
     void render();
 }

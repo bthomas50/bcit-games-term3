@@ -6,7 +6,6 @@
 package sketchwars;
 
 import sketchwars.graphics.Graphics;
-import sketchwars.graphics.map.TestMapClass;
 
 /**
  * The SketchWars main class
@@ -15,6 +14,7 @@ import sketchwars.graphics.map.TestMapClass;
 public class SketchWars {
     private OpenGL openGL;
     private Graphics graphics;
+    private World world;
     
     private void init() {
        graphics = new Graphics();
@@ -23,8 +23,8 @@ public class SketchWars {
        openGL = new OpenGL(this, graphics);
        openGL.init();
                
-       TestMapClass test = new TestMapClass();
-       graphics.AddDrwableObject(test);
+       world = new World(graphics);
+       world.init();
     }
     
     private void start() {
@@ -32,7 +32,7 @@ public class SketchWars {
     }
     
     public void update(double elapsed) {
-        
+        world.update(elapsed);
     }
     
     public static void main(String[] args) {
@@ -41,5 +41,7 @@ public class SketchWars {
         sketchWars.start();
     }
 
-    
+    public void dispose() {
+        world.dispose();
+    }
 }

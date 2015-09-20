@@ -3,27 +3,30 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package sketchwars.graphics.map;
+package sketchwars.map;
 
-import org.lwjgl.opengl.GL13;
-import sketchwars.graphics.Drawable;
+import sketchwars.graphics.GraphicsObject;
 import sketchwars.graphics.Texture;
 
 /**
  *
  * @author Najash Najimudeen <najash.najm@gmail.com>
  */
-public class TestMapClass implements Drawable {
+public abstract class AbstractMap implements GraphicsObject {
     Texture texture;
     
-    public  TestMapClass() {
-       texture = new Texture();
-       texture.loadTexture("content/map/test.png", GL13.GL_TEXTURE0);
-    }
+    public abstract void init();
     
     @Override
     public void render() {
-        texture.draw(0, 0, 250, 250);
+        if (texture != null) {
+            texture.drawNormalized(0, -0.5, 0.90, 0.5);
+        }
     }
     
+    public void dispose() {
+        if (texture != null) {
+            texture.dispose();
+        }
+    }
 }

@@ -7,18 +7,18 @@ import java.util.ArrayList;
  * @author Najash Najimudeen <najash.najm@gmail.com>
  */
 public class Graphics {
-    private ArrayList<Drawable> drawableObjs;
+    private ArrayList<GraphicsObject> drawableObjs;
     
     public void init() {
         drawableObjs = new ArrayList<>();
     }
     
-    public void AddDrwableObject(Drawable obj) {
+    public void AddDrwableObject(GraphicsObject obj) {
         drawableObjs.add(obj);
     }
     
     public void Render() {
-        for (Drawable obj : drawableObjs) {
+        for (GraphicsObject obj : drawableObjs) {
             obj.render();
         }
     }

@@ -9,15 +9,12 @@ import java.nio.ByteBuffer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.lwjgl.opengl.GL11;
-import static org.lwjgl.opengl.GL11.GL_PROJECTION;
-import static org.lwjgl.opengl.GL11.glLoadIdentity;
-import static org.lwjgl.opengl.GL11.glMatrixMode;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL30;
 import sketchwars.OpenGL;
 
 /**
- *
+ * Texture class is capable of loading and rendering images
  * @author Najash Najimudeen <najash.najm@gmail.com>
  */
 public class Texture {
@@ -30,7 +27,7 @@ public class Texture {
         tHeight = 0;
     }
     
-    public int getTexureWidth() {
+    public int getTextureWidth() {
         return tWidth;
     }
     
@@ -60,7 +57,7 @@ public class Texture {
             GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 1);
 
             // Upload the texture data and generate mip maps (for scaling)
-            GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGB, tWidth, tHeight, 0, 
+            GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, tWidth, tHeight, 0, 
             GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buf);
             GL30.glGenerateMipmap(GL11.GL_TEXTURE_2D);
 
@@ -135,7 +132,7 @@ public class Texture {
      * @param widthP 'draw width' percentage of screen width (0 to 1)
      * @param heightP 'draw height' percentage of screen height (0 to 1)
      */
-    public void drawNormalized(float xP, float yP, float widthP, float heightP) {
+    public void drawNormalized(double xP, double yP, double widthP, double heightP) {
         int width = (int)(OpenGL.WIDTH * widthP);
         int height = (int)(OpenGL.HEIGHT * heightP);
 
@@ -150,13 +147,27 @@ public class Texture {
              newY, newY - height, newY - height, newY);
     }
     
+    /**
+     * Draw the texture centered - coordinates (0, 0) is the middle of the screen
+     * @param xP X-axis coordinates (-1 to 1)
+     * @param yP Y-axis coordinates (1 to -1)
+     * @param width 'draw width' in pixels
+     * @param height 'draw height' in pixels
+     */
+    public void drawNormalizedPosition(double xP, double yP, int width, int height) {
+        int x = (int)((OpenGL.WIDTH/2) * xP);
+        int y = (int)((OpenGL.HEIGHT/2) * yP);
+        
+        //convert the position to make sure (0, 0) is the center
+        int newX = x + OpenGL.WIDTH/2 - width/2;
+        int newY = y + OpenGL.HEIGHT/2 + height/2;
+        
+        draw(newX, newX, newX + width, newX + width,
+             newY, newY - height, newY - height, newY);
+    }
+    
     private void draw(int x1, int x2, int x3, int x4,
-                      int y1, int y2, int y3, int y4) {
-        glLoadIdentity();
-        GL11.glDisable(GL11.GL_LIGHTING);
-
-        GL11.glColor3f(1,1,1);
-        GL11.glEnable(GL11.GL_TEXTURE_2D);
+                      int y1, int y2, int y3, int y4) {        
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureID);
 
         // Draw a textured quad
