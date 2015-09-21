@@ -67,4 +67,10 @@ public class SceneManager <T> {
             throw new SceneMangerException("Given scene key does not exist.");             
         }
     }
+    
+    public void update(double delta) {
+        if (currentScene != null) {
+            currentScene.update(delta);
+        }
+    }
 }

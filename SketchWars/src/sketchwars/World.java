@@ -62,7 +62,11 @@ public class World {
         }
     }
     
-    public void update(double elapsed) {
+    /**
+     * 
+     * @param delta frame length in millisecond
+     */
+    public void update(double delta) {
         
     }
     

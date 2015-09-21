@@ -54,8 +54,12 @@ public class SketchWars {
         openGL.run();
     }
     
-    public void update(double elapsed) {
-        world.update(elapsed);
+    /**
+     * 
+     * @param delta frame length in millisecond
+     */
+    public void update(double delta) {
+        world.update(delta);
     }
     
     public static void main(String[] args) {

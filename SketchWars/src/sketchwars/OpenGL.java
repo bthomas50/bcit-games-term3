@@ -151,8 +151,9 @@ public class OpenGL {
             sceneManager.render();//call the main graphics renderer
             
             double time = getTime(); //calculate frame length in milliseconds
-            double elapsed = (time - lastTime)/MILLION;
-            sketchWars.update(elapsed); //call the main game update
+            double delta = (time - lastTime)/MILLION;
+            sketchWars.update(delta); //call the main game update
+            sceneManager.update(delta);
             
             lastTime = time;
             

@@ -21,7 +21,6 @@ public abstract class AbstractScene {
     
     public abstract void init();
     
-    
     public void AddDrwableObject(GraphicsObject obj) {
         drawableObjs.add(obj);
     }
@@ -32,4 +31,5 @@ public abstract class AbstractScene {
         }
     }
     
+    public abstract void update(double delta);
 }
