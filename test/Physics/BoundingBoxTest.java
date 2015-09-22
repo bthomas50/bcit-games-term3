@@ -76,4 +76,29 @@ public class BoundingBoxTest
         assertEquals(intersection.getBottom(), 2);
         assertEquals(intersection.getRight(), 2);
     }
+
+    @Test
+    public void testGetWidth()
+    {
+        assertEquals(new BoundingBox(0, 0, 99, 3).getWidth(), 4);
+    }
+
+    @Test
+    public void testGetHeight()
+    {
+        assertEquals(new BoundingBox(0, 0, 4, 88).getHeight(), 5);
+    }
+
+    @Test
+    public void testEquals()
+    {
+
+        assertTrue(new BoundingBox(0, 0, 2, 2).equals(new BoundingBox(0, 0, 2, 2)));
+    }
+
+    @Test 
+    public void testNotEquals()
+    {
+        assertFalse(new BoundingBox(0, 0, 2, 2).equals(new BoundingBox(0, 0, 1, 2)));
+    }
 }

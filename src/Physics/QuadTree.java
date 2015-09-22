@@ -2,6 +2,7 @@ package Physics;
 
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.HashMap;
 
 
@@ -44,24 +45,28 @@ public class QuadTree
     //constructor using user-defined settings
     public QuadTree(BoundingBox bounds, int maxObjects, int minSize)
     {
+        this.bounds = bounds;
         this.control = new QuadTreeControl(this, maxObjects, minSize);
         this.objects = new ArrayList<>(control.maxObj);
-        this.bounds = bounds;
         this.children = new QuadTree[NUM_CHILDREN];
     }
     //constructor for creating a child tree
 	private QuadTree(BoundingBox bounds, QuadTree parent)
     {
-        this.objects = new ArrayList<>(control.maxObj);
         this.bounds = bounds;
-        this.children = new QuadTree[NUM_CHILDREN];
+        this.control = parent.control;
         this.parent = parent;
-		this.control = parent.control;
+        this.objects = new ArrayList<>(control.maxObj);
+        this.children = new QuadTree[NUM_CHILDREN];
     }
 	
     public int count()
     {
-        if(hasSplit())
+        if(this == control.rootNode)
+        {
+            return control.boxLocations.size();
+        }
+        else if(hasSplit())
         {
             return objects.size() + children[0].count() + children[1].count() + children[2].count() + children[3].count();
         }
@@ -130,38 +135,37 @@ public class QuadTree
         return true;
     }
     
-    public boolean tryRemove(BoundingBox box)
-    {
-        if(control.boxLocations.containsKey(box))
-		{
-			remove(box);
-			return true;
-		}
-		else
-		{
-			return false;
-		}
-    }
-    
 	public void remove(BoundingBox box)
 	{
+        if(!contains(box))
+        {
+            return;
+        }
 		QuadTree someTree = control.boxLocations.get(box);
 		control.boxLocations.remove(box);
 		someTree.objects.remove(box);
 	}
 	
+    public boolean contains(BoundingBox box)
+    {
+        return control.boxLocations.containsKey(box);
+    }
+
     public boolean replace(BoundingBox oldBox, BoundingBox newBox)
     {
         //try to remove old box.
-        if(!tryRemove(oldBox))
+        if(!contains(oldBox))
         {
             return false;
         }
-        //insert new box.
-        return tryInsert(newBox);
+        else
+        {
+            remove(oldBox);
+            return insertUpwards(newBox);
+        }
     }
     
-    public ArrayList<BoundingBox> retrieve(BoundingBox box)
+    public List<BoundingBox> retrieve(BoundingBox box)
     {
         ArrayList<BoundingBox> ret = new ArrayList<>();
         if(hasSplit())
@@ -251,7 +255,7 @@ public class QuadTree
         }
     }
 
-    private boolean tryInsert(BoundingBox box)
+    private boolean insertUpwards(BoundingBox box)
     {
         if(bounds.contains(box))
         {
@@ -260,7 +264,7 @@ public class QuadTree
         }
         if(parent != null)
         {
-            return parent.tryInsert(box);
+            return parent.insertUpwards(box);
         }
         else
         {

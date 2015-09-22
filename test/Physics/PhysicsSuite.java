@@ -6,7 +6,8 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses({
   BoundingBoxTest.class,
   VectorsTest.class,
-  QuadTreeTest.class
+  QuadTreeTest.class,
+  BitMaskTest.class
 })
 
 public class PhysicsSuite {

@@ -75,4 +75,27 @@ public class BoundingBox
     {
         return right;
     }
+
+    public int getWidth()
+    {
+        return 1 + right - left;
+    }
+
+    public int getHeight()
+    {
+        return 1 + bottom - top;
+    }
+
+    public boolean equals(final BoundingBox other)
+    {
+        return top == other.top &&
+               left == other.left &&
+               bottom == other.bottom &&
+               right == other.right;
+    }
+
+    public String toString()
+    {
+        return "(" + top + ", " + left + ", " + bottom + ", " + right + ")"; 
+    }
 }
