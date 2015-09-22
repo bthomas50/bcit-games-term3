@@ -6,6 +6,7 @@
 package sketchwars;
 
 import sketchwars.exceptions.SceneMangerException;
+import sketchwars.graphics.Texture;
 import sketchwars.scenes.GameScene;
 import sketchwars.scenes.SceneManager;
 
@@ -70,5 +71,6 @@ public class SketchWars {
 
     public void dispose() {
         world.dispose();
+        Texture.disposeAllTextures(); //not sure where to delete all the textures from the texure bank
     }
 }

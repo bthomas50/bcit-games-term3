@@ -5,7 +5,6 @@
  */
 package sketchwars.character.weapon;
 
-import org.lwjgl.opengl.GL13;
 import sketchwars.graphics.Texture;
 
 /**
@@ -16,6 +15,6 @@ public class TestWeapon extends AbstractWeapon {
     @Override
     public void init() {
         texture = new Texture();
-        texture.loadTexture("content/char/weapons/test.png", GL13.GL_TEXTURE0);
+        texture.loadTexture("content/char/weapons/test.png");
     }
 }

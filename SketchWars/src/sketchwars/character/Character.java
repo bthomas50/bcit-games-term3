@@ -5,7 +5,6 @@
  */
 package sketchwars.character;
 
-import org.lwjgl.opengl.GL13;
 import sketchwars.character.weapon.AbstractWeapon;
 import sketchwars.graphics.GraphicsObject;
 import sketchwars.graphics.Texture;
@@ -24,7 +23,7 @@ public class Character implements GraphicsObject {
     
     public void init() {
         texture = new Texture();
-        texture.loadTexture("content/char/char.png", GL13.GL_TEXTURE0);
+        texture.loadTexture("content/char/char.png");
     }
     
     public void setWeapon(AbstractWeapon weapon) {

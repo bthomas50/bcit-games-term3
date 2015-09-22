@@ -5,8 +5,6 @@
  */
 package sketchwars.map;
 
-import org.lwjgl.opengl.GL13;
-import sketchwars.graphics.GraphicsObject;
 import sketchwars.graphics.Texture;
 
 /**
@@ -21,6 +19,6 @@ public class TestMap extends AbstractMap {
     @Override
     public void init() {
         texture = new Texture();
-        texture.loadTexture("content/map/test.png", GL13.GL_TEXTURE0);
+        texture.loadTexture("content/map/test.png");
     }
 }

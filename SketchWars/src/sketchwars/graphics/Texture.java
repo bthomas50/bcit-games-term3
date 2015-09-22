@@ -6,6 +6,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
+import java.util.HashMap;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.lwjgl.opengl.GL11;
@@ -18,7 +20,10 @@ import sketchwars.OpenGL;
  * @author Najash Najimudeen <najash.najm@gmail.com>
  */
 public class Texture {
+    private static final HashMap<String, ImageBuffer> textureList = new HashMap<>();
+        
     private int textureID;
+    private String path;
     private int tWidth;
     private int tHeight;
         
@@ -42,35 +47,66 @@ public class Texture {
     /**
      * Load a texture into vram (PNG files for now)
      * @param pngFile texture path (PNG files for now)
-     * @param textureUnit choose a openGL texture bank (ex:- GL13.GL_TEXTURE0)
      * @return returns the texture ID (negative value indicates error loading texture)
      */
-    public int loadTexture(final String pngFile, int textureUnit) {        
+    public ImageBuffer loadTexture(final String pngFile) {     
+        ImageBuffer imageBuffer;
+        
+        if (textureList.containsKey(pngFile)) {
+            imageBuffer = textureList.get(pngFile);
+            System.out.println("Texture '" + pngFile + "' already exists, using existing reference.");
+        } else {
+            imageBuffer = loadTextureFromFile(pngFile);
+        
+            if (imageBuffer == null) {
+                reset();
+                System.err.println("Error loading texture.");
+            } else {
+                textureList.put(pngFile, imageBuffer);
+                
+                path = pngFile;
+                textureID = imageBuffer.textureID;
+                tWidth = imageBuffer.textureWidth;
+                tHeight = imageBuffer.textureHeight;
+            }
+        }
+        
+        return imageBuffer;
+    }
+    
+    private void reset() {
+        path = null;
+        textureID = -1;
+        tWidth = 0;
+        tHeight = 0;
+    }
+    
+    private static ImageBuffer loadTextureFromFile(final String pngFile) {
         try {
-            ByteBuffer buf = loadPNGFile(pngFile);
+            ImageBuffer imageBuffer = loadPNGFile(pngFile);
             // Create a new texture object in memory and bind it
-            textureID = GL11.glGenTextures();
-            GL13.glActiveTexture(textureUnit);
-            GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureID);
+            imageBuffer.textureID = GL11.glGenTextures();
+            GL13.glActiveTexture(GL13.GL_TEXTURE0);
+            GL11.glBindTexture(GL11.GL_TEXTURE_2D, imageBuffer.textureID);
 
             // All RGB bytes are aligned to each other and each component is 1 byte
             GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 1);
 
             // Upload the texture data and generate mip maps (for scaling)
-            GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, tWidth, tHeight, 0, 
-            GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buf);
+            GL11.glTexImage2D(GL11.GL_TEXTURE_2D,
+                    0, GL11.GL_RGBA, imageBuffer.textureWidth, imageBuffer.textureHeight, 0, 
+            GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, imageBuffer.buf);
             GL30.glGenerateMipmap(GL11.GL_TEXTURE_2D);
-
-            return textureID;
+            
+            return imageBuffer;
         } catch (IOException ex) {
             Logger.getLogger(Texture.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        textureID = -1;
-        return -1;
-    }
+        return null;
+    }        
     
-    private ByteBuffer loadPNGFile(final String file) throws IOException {
+    private static ImageBuffer loadPNGFile(final String file) throws IOException {
         ByteBuffer buf;
         InputStream in;
                 
@@ -79,8 +115,8 @@ public class Texture {
         PNGDecoder decoder = new PNGDecoder(in);
 
         // Get the width and height of the texture
-        tWidth = decoder.getWidth();
-        tHeight = decoder.getHeight();
+        int textureWidth = decoder.getWidth();
+        int textureHeight = decoder.getHeight();
 
         // Decode the PNG file in a ByteBuffer
         buf = ByteBuffer.allocateDirect(
@@ -90,7 +126,7 @@ public class Texture {
 
         in.close();
         
-        return buf;
+        return new ImageBuffer(buf, textureWidth, textureHeight);
     }
     
     /**
@@ -202,7 +238,18 @@ public class Texture {
     
     public void dispose() {
         if (textureID != -1) {
-            GL11.glDeleteTextures(textureID);
+            reset();
         }
+    }
+    
+    /**
+     * Delete all allocated textures
+     */
+    public static void disposeAllTextures() {
+        for (ImageBuffer image : textureList.values()) {
+            GL11.glDeleteTextures(image.textureID);
+        }
+        
+        
     }
 }

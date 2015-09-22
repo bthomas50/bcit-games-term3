@@ -5,7 +5,6 @@
  */
 package sketchwars.character.projectiles;
 
-import org.lwjgl.opengl.GL13;
 import sketchwars.graphics.Texture;
 
 /**
@@ -17,7 +16,7 @@ public class TestBullet extends AbstractProjectile {
     @Override
     public void init() {
         texture = new Texture();
-        texture.loadTexture("content/char/projectiles/testB.png", GL13.GL_TEXTURE0);
+        texture.loadTexture("content/char/projectiles/testB.png");
     }
     
 }
