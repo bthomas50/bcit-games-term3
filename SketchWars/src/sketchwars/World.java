@@ -37,7 +37,6 @@ public class World {
     }
     
     public void init() {        
-
         map = new TestMap();
         map.init();
 
@@ -53,7 +52,7 @@ public class World {
         projectileTest.setPosition(0.3, 0.3);
 
         try {
-            GameScene gameScene = (GameScene) sceneManager.getScene(Scenes.GAME.ordinal());
+            GameScene gameScene = (GameScene) sceneManager.getScene(Scenes.GAME);
             
             gameScene.AddDrwableObject(map);
             gameScene.AddDrwableObject(character);
@@ -63,7 +62,11 @@ public class World {
         }
     }
     
-    public void update(double elapsed) {
+    /**
+     * 
+     * @param delta frame length in millisecond
+     */
+    public void update(double delta) {
         
     }
     

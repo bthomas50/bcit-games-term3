@@ -16,5 +16,9 @@ public class GameScene extends AbstractScene {
     public void init() {
         
     }
-    
+
+    @Override
+    public void update(double delta) {
+        
+    }
 }

@@ -22,7 +22,7 @@ public class SketchWars {
     private OpenGL openGL;
     private World world;
     
-    private SceneManager sceneManager;
+    private SceneManager<Scenes> sceneManager;
     private GameScene gameScene;
     
     private void init() {
@@ -43,8 +43,8 @@ public class SketchWars {
         gameScene.init();
        
         try {   
-            sceneManager.addScene(SketchWars.Scenes.GAME.ordinal(), gameScene);
-            sceneManager.setCurrentScene(SketchWars.Scenes.GAME.ordinal());
+            sceneManager.addScene(SketchWars.Scenes.GAME, gameScene);
+            sceneManager.setCurrentScene(SketchWars.Scenes.GAME);
         } catch (SceneMangerException ex) {
             System.err.println(ex.getMessage());
         }
@@ -54,8 +54,12 @@ public class SketchWars {
         openGL.run();
     }
     
-    public void update(double elapsed) {
-        world.update(elapsed);
+    /**
+     * 
+     * @param delta frame length in millisecond
+     */
+    public void update(double delta) {
+        world.update(delta);
     }
     
     public static void main(String[] args) {

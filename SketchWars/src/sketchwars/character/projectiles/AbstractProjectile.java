@@ -28,7 +28,7 @@ public abstract class AbstractProjectile implements GraphicsObject {
     @Override
     public void render() {
         if (texture != null) {
-            texture.drawNormalizedPosition(posX, posX, texture.getTextureWidth(), texture.getTextureHeight());
+            texture.drawNormalized(posX, posY, 1);
         }
     }
     
