@@ -1,4 +1,5 @@
-package Physics;
+package sketchwars.physics;
+
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 

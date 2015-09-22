@@ -1,4 +1,4 @@
-package Physics;
+package sketchwars.physics;
 
 public class BitMask
 {

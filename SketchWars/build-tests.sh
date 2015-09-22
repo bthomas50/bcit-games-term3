@@ -7,5 +7,5 @@ echo "java compiler version: "
 javac -version
 echo "now compiling tests..."
 mkdir -p $BUILD_DIR
-javac -d $BUILD_DIR -sourcepath $SOURCE_DIR -cp "build/:lib/*" $(find $SOURCE_DIR/* | grep .java)
+javac -d $BUILD_DIR -cp "build/:lib/*" $(find $SOURCE_DIR/* | grep .java)
 echo "done!"
