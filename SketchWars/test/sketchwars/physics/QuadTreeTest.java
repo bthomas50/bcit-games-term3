@@ -8,16 +8,50 @@ import java.util.List;
 
 public class QuadTreeTest
 {
+    private class TestCollider extends BasicPhysicsObject implements Collider
+    {
+        private BoundingBox bounds;
+
+        public TestCollider(BoundingBox bounds)
+        {
+            this.bounds = bounds;
+        }
+        public TestCollider(int top, int left, int bottom, int right)
+        {
+            bounds = new BoundingBox(top, left, bottom, right);
+        }
+        @Override
+        public BoundingBox getBounds()
+        {
+            return bounds;
+        }
+
+        @Override
+        public void notify(Collider other)
+        {
+            throw new UnsupportedOperationException("this is a test object!");
+        }
+        @Override
+        public void addCollisionListener(CollisionListener list)
+        {
+            throw new UnsupportedOperationException("this is a test object!");
+        }
+        @Override
+        public void removeCollisionListener(CollisionListener list)
+        {
+            throw new UnsupportedOperationException("this is a test object!");
+        }
+    }
     QuadTree qt;
-    BoundingBox boxInBounds;
-    BoundingBox boxOutOfBounds;
+    Collider boxInBounds;
+    Collider boxOutOfBounds;
 
     @Before
     public void initQuadTree()
     {
         qt = new QuadTree(new BoundingBox(0, 0, 10, 10), 5, 2);
-        boxInBounds = new BoundingBox(0,0,5,5);
-        boxOutOfBounds = new BoundingBox(0,0,15,15);
+        boxInBounds = new TestCollider(0,0,5,5);
+        boxOutOfBounds = new TestCollider(0,0,15,15);
     }
 
     @Test
@@ -59,7 +93,7 @@ public class QuadTreeTest
     public void testReplace()
     {
         qt.insert(boxInBounds);
-        BoundingBox otherBoxInBounds = new BoundingBox(2,2,4,4);
+        TestCollider otherBoxInBounds = new TestCollider(2,2,4,4);
         qt.replace(boxInBounds, otherBoxInBounds);
         assertTrue(qt.contains(otherBoxInBounds));
         assertFalse(qt.contains(boxInBounds));
@@ -77,7 +111,7 @@ public class QuadTreeTest
     {
         for(int i = 0; i < 15; i++)
         {
-            qt.insert(new BoundingBox(0,0,1 + (i/5),1 + (i/5)));
+            qt.insert(new TestCollider(0,0,1 + (i/5),1 + (i/5)));
         }
         assertEquals(15, qt.count());
     }
@@ -86,7 +120,7 @@ public class QuadTreeTest
     {
         for(int i = 0; i < 15; i++)
         {
-            qt.insert(new BoundingBox(0,0,1 + (i/5),1 + (i/5)));
+            qt.insert(new TestCollider(0,0,1 + (i/5),1 + (i/5)));
         }
         qt.clear();
         assertEquals(qt.count(), 0);
@@ -94,17 +128,17 @@ public class QuadTreeTest
     @Test
     public void testPrune()
     {
-        BoundingBox[] allBoxes = new BoundingBox[15];
-        //insert a bunch of boxes
+        TestCollider[] allColliders = new TestCollider[15];
+        //insert a bunch of Colliders
         for(int i = 0; i < 15; i++)
         {
-            allBoxes[i] = new BoundingBox(0,0,1 + (i/5),1 + (i/5));
-            qt.insert(allBoxes[i]);
+            allColliders[i] = new TestCollider(0,0,1 + (i/5),1 + (i/5));
+            qt.insert(allColliders[i]);
         }
         //remove some of them
         for(int i = 0; i < 10; i++)
         {
-            qt.remove(allBoxes[i]);
+            qt.remove(allColliders[i]);
         }
         qt.prune();
         assertEquals(qt.count(), 5);
@@ -112,24 +146,24 @@ public class QuadTreeTest
     @Test
     public void testRetrieve()
     {
-        BoundingBox[] queryBoxes = new BoundingBox[10];
+        TestCollider[] queryColliders = new TestCollider[10];
         for(int i = 0; i < 10; i++)
         {
-            queryBoxes[i] = new BoundingBox(0,0,1 + (i/5), 1 + (i/5));
-            qt.insert(queryBoxes[i]);
+            queryColliders[i] = new TestCollider(0,0,1 + (i/5), 1 + (i/5));
+            qt.insert(queryColliders[i]);
         }
-        //insert some extra boxes that won't fall in the same subtree.
-        BoundingBox[] otherBoxes = new BoundingBox[10];
+        //insert some extra Colliders that won't fall in the same subtree.
+        TestCollider[] otherColliders = new TestCollider[10];
         for(int i = 0; i < 10; i++)
         {
-            otherBoxes[i] = new BoundingBox(8,8,8+(i/5),8+(i/5));
-            qt.insert(otherBoxes[i]);
+            otherColliders[i] = new TestCollider(8,8,8+(i/5),8+(i/5));
+            qt.insert(otherColliders[i]);
         }
-        List<BoundingBox> results = qt.retrieve(new BoundingBox(0,0,2,2));
+        List<Collider> results = qt.retrieve(new BoundingBox(0,0,2,2));
         for(int i = 0; i < 10; i++)
         {
-            assertTrue(results.contains(queryBoxes[i]));
-            assertFalse(results.contains(otherBoxes[i]));
+            assertTrue(results.contains(queryColliders[i]));
+            assertFalse(results.contains(otherColliders[i]));
         }
     }
 }

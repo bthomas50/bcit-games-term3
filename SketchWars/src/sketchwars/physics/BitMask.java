@@ -21,56 +21,144 @@ public class BitMask
     {
         if(data == null)
         {
-            throw new IllegalArgumentException("data cannot be null");
+            this.data = new long[1][];
         }
-        this.data = data.clone();
-        for(int i = 0; i < data.length; i++)
+        else 
         {
-            if(data[i] != null)
+            this.data = data.clone();
+        }
+        for(int i = 0; i < this.data.length; i++)
+        {
+            if(this.data[i] != null)
             {
-                this.data[i] = data[i].clone();
+                this.data[i] = this.data[i].clone();
             }
         }
         ensureRectangular();
-        bounds = new BoundingBox(0, 0, data.length - 1, data[0].length * BITS_PER_LONG - 1);
+        bounds = new BoundingBox(0, 0, this.data.length - 1, this.data[0].length * BITS_PER_LONG - 1);
         vOffset = Vectors.create(0,0);
     }
 
-    private void ensureRectangular()
+    public int getWidth()
     {
-        int maxWidth = getMaxWidth();
-        padToWidth(maxWidth);
+        return bounds.getWidth();
     }
 
-    private int getMaxWidth()
+    public int getHeight()
     {
-        int maxWidth = 0;
-        for(int i = 0; i < data.length; i++)
+        return bounds.getHeight();
+    }
+
+    public int getArea()
+    {
+        return getWidth() * getHeight();
+    }
+
+    //returns a vector
+    public long getCenterOfMass()
+    {
+        double xCOM = 0.0;
+        double yCOM = 0.0;
+        int numPoints = 0;
+        for(int i = bounds.getTop(); i <= bounds.getBottom(); i++)
         {
-            if(data[i] != null)
+            for(int j = bounds.getLeft(); j <= bounds.getRight(); j++)
             {
-                maxWidth = Math.max(maxWidth, data[i].length);
+                final int jLongIdx = j / BITS_PER_LONG;
+                final int jBitIdx = j % BITS_PER_LONG;
+                if((data[i][jLongIdx] & LONG_MASKS[jBitIdx]) != 0l)
+                {
+                    yCOM += i;
+                    xCOM += j;
+                    numPoints++;
+                }
             }
         }
-        return maxWidth;
+        xCOM /= numPoints;
+        yCOM /= numPoints;
+        return Vectors.create(xCOM, yCOM);
     }
 
-    private void padToWidth(int width)
+    public BoundingBox getBounds()
     {
-        for(int i = 0; i < data.length; i++)
+        return bounds;
+    }
+
+    public boolean isEmpty()
+    {
+        return getArea() == 0;
+    }
+
+    public BitMask and(BitMask other)
+    {
+        long vTranslation = Vectors.subtract(vOffset, other.vOffset);
+        int xTranslation = Vectors.ixComp(vTranslation);
+        int yTranslation = Vectors.iyComp(vTranslation);
+        BoundingBox translatedBounds = new BoundingBox(bounds.getTop() + yTranslation, 
+                                                       bounds.getLeft() + xTranslation, 
+                                                       bounds.getBottom() + yTranslation, 
+                                                       bounds.getRight() + xTranslation);
+        BoundingBox intersection = translatedBounds.intersection(other.bounds);
+        if(intersection == null)
         {
-            if(data[i] == null)
+            return null;
+        }
+        long[][] resultData = new long[intersection.getHeight()][];
+        for(int i = intersection.getTop(); i <= intersection.getBottom(); i++)
+        {
+            final int localI = i - yTranslation;
+            resultData[i] = new long[(int)Math.ceil((double)intersection.getWidth() / (double)BITS_PER_LONG)];
+            for(int j = intersection.getLeft(); j + BITS_PER_LONG <= intersection.getRight() + 1; j += BITS_PER_LONG)
             {
-                data[i] = new long[width];
+                final int localJ = j - xTranslation;
+                final int jLongIdx = j / BITS_PER_LONG;
+                resultData[i][jLongIdx] = getSubmaskElement(localI, localJ) & other.data[i][jLongIdx];
             }
-            else if(data[i].length < width)
+        }
+        return new BitMask(resultData);
+    }
+
+    //get 64 bits from row row, starting from bit start.
+    protected long getSubmaskElement(int row, int start)
+    {
+        final int startIdx = start / BITS_PER_LONG;
+        final long bitIdx = start % BITS_PER_LONG;
+        if(bitIdx <= -BITS_PER_LONG)
+        {
+            return 0l;
+        }
+        else if(bitIdx < 0)
+        {
+            return data[row][0] >>> (-bitIdx);
+        }
+        else if(bitIdx == 0)
+        {
+            if(isInBounds(startIdx))
+                return data[row][startIdx];
+            else
+                return 0l;
+        }
+        else
+        {
+            long ret = 0l;
+            if(isInBounds(startIdx))
             {
-                long[] newRow = new long[width];
-                System.arraycopy(data[i], 0, newRow, 0, data[i].length);
+                long retLeft = data[row][startIdx] << bitIdx;
+                ret |= retLeft;
             }
+            if(isInBounds(startIdx+1))
+            {
+                long retRight = data[row][startIdx + 1] >>> ((long)BITS_PER_LONG - bitIdx);
+                ret |= retRight;
+            }
+            return ret;
         }
     }
 
+    private boolean isInBounds(int j)
+    {
+        return j >= 0 && j < data[0].length;
+    }
     //minimize the bounds of the mask by removing empty rows and columns on the edges.
     public void trim()
     {
@@ -186,48 +274,38 @@ public class BitMask
         return -1;
     }
 
-    public int getWidth()
+    private void ensureRectangular()
     {
-        return bounds.getWidth();
+        int maxWidth = getMaxWidth();
+        padToWidth(maxWidth);
     }
 
-    public int getHeight()
+    private int getMaxWidth()
     {
-        return bounds.getHeight();
-    }
-
-    public int getArea()
-    {
-        return getWidth() * getHeight();
-    }
-
-    //returns a vector
-    public long getCenterOfMass()
-    {
-        double xCOM = 0.0;
-        double yCOM = 0.0;
-        int numPoints = 0;
-        for(int i = bounds.getTop(); i <= bounds.getBottom(); i++)
+        int maxWidth = 0;
+        for(int i = 0; i < data.length; i++)
         {
-            for(int j = bounds.getLeft(); j <= bounds.getRight(); j++)
+            if(data[i] != null)
             {
-                final int jOuterIdx = j / BITS_PER_LONG;
-                final int jBitIdx = j % BITS_PER_LONG;
-                if((data[i][jOuterIdx] & LONG_MASKS[jBitIdx]) != 0l)
-                {
-                    yCOM += i;
-                    xCOM += j;
-                    numPoints++;
-                }
+                maxWidth = Math.max(maxWidth, data[i].length);
             }
         }
-        xCOM /= numPoints;
-        yCOM /= numPoints;
-        return Vectors.create(xCOM, yCOM);
+        return maxWidth;
     }
 
-    public BoundingBox getBounds()
+    private void padToWidth(int width)
     {
-        return bounds;
+        for(int i = 0; i < data.length; i++)
+        {
+            if(data[i] == null)
+            {
+                data[i] = new long[width];
+            }
+            else if(data[i].length < width)
+            {
+                long[] newRow = new long[width];
+                System.arraycopy(data[i], 0, newRow, 0, data[i].length);
+            }
+        }
     }
 }
