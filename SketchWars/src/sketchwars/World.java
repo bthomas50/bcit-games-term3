@@ -7,6 +7,10 @@ package sketchwars;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import static org.lwjgl.glfw.GLFW.*;
+import org.lwjgl.glfw.GLFWKeyCallback;
+
 import sketchwars.SketchWars.Scenes;
 import sketchwars.character.Character;
 import sketchwars.character.projectiles.AbstractProjectile;
@@ -18,6 +22,7 @@ import sketchwars.map.AbstractMap;
 import sketchwars.map.TestMap;
 import sketchwars.scenes.GameScene;
 import sketchwars.scenes.SceneManager;
+import sketchwars.input.KeyboardHandler;
 
 /**
  *
@@ -66,8 +71,34 @@ public class World {
      * 
      * @param delta frame length in millisecond
      */
-    public void update(double delta) {
+     public void update(double delta) {
+         
+         /* Dont know where to put this code. Possibly character though
+            we may need a distinction between client and peer characters */
+        if(KeyboardHandler.isKeyDown(GLFW_KEY_W)){
+            System.out.println("W is pressed");
+        } else if(KeyboardHandler.isKeyDown(GLFW_KEY_S)){
+            System.out.println("S is pressed");
+        }
         
+        if(KeyboardHandler.isKeyDown(GLFW_KEY_A)){
+            System.out.println("A is pressed");
+        } else if(KeyboardHandler.isKeyDown(GLFW_KEY_D)){
+            System.out.println("D is pressed");
+        }
+        
+        if(KeyboardHandler.isKeyDown(GLFW_KEY_SPACE))
+            System.out.println("W is pressed");
+        
+        if(KeyboardHandler.isKeyDown(GLFW_KEY_SPACE)){
+            System.out.println("Space is pressed");
+        }
+        
+        if(KeyboardHandler.isKeyDown(GLFW_KEY_UP)){
+            //increment angle
+        } else if(KeyboardHandler.isKeyDown(GLFW_KEY_DOWN)){
+            //decrement angle
+        }
     }
     
     public void dispose() {
