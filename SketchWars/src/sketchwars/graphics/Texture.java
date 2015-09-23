@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.lwjgl.opengl.GL11;
@@ -21,7 +20,8 @@ import sketchwars.OpenGL;
  */
 public class Texture {
     private static final HashMap<String, ImageBuffer> textureList = new HashMap<>();
-        
+    private static final HashMap<Integer, Integer> textureReference = new HashMap<>();
+    
     private int textureID;
     private String path;
     private int tWidth;
@@ -54,6 +54,10 @@ public class Texture {
         
         if (textureList.containsKey(pngFile)) {
             imageBuffer = textureList.get(pngFile);
+            
+            path = pngFile;
+            loadImageBuffer(imageBuffer);
+            
             System.out.println("Texture '" + pngFile + "' already exists, using existing reference.");
         } else {
             imageBuffer = loadTextureFromFile(pngFile);
@@ -65,16 +69,54 @@ public class Texture {
                 textureList.put(pngFile, imageBuffer);
                 
                 path = pngFile;
-                textureID = imageBuffer.textureID;
-                tWidth = imageBuffer.textureWidth;
-                tHeight = imageBuffer.textureHeight;
+                loadImageBuffer(imageBuffer);
             }
         }
         
         return imageBuffer;
     }
     
+    private void loadImageBuffer(ImageBuffer imageBuffer) {
+        incrementReference(imageBuffer.textureID);
+        
+        textureID = imageBuffer.textureID;
+        tWidth = imageBuffer.textureWidth;
+        tHeight = imageBuffer.textureHeight;
+    }
+    
+    private static void incrementReference(int textureID) {
+        int previous = 0;
+
+        if (textureReference.containsKey(textureID)) {
+            previous = textureReference.get(textureID);
+        }
+
+        textureReference.put(textureID, previous + 1);
+    }
+    
+    private static void decrementReference(int textureID) {
+        int previous = 0;
+
+        if (textureReference.containsKey(textureID)) {
+            previous = textureReference.get(textureID);
+        }
+
+        if (previous > 0) {
+            textureReference.put(textureID, previous - 1);
+        }
+    }
+    
+    public int getTotalReferences() {
+        if (textureID == -1 || textureReference.size() == 0) {
+            return 0;
+        }
+        
+        return textureReference.get(textureID);
+    }
+    
     private void reset() {
+        decrementReference(textureID);
+        
         path = null;
         textureID = -1;
         tWidth = 0;
@@ -238,6 +280,7 @@ public class Texture {
     
     public void dispose() {
         if (textureID != -1) {
+            decrementReference(textureID);
             reset();
         }
     }
@@ -250,6 +293,6 @@ public class Texture {
             GL11.glDeleteTextures(image.textureID);
         }
         
-        
+        textureReference.clear();
     }
 }

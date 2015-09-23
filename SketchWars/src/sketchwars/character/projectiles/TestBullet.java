@@ -17,6 +17,8 @@ public class TestBullet extends AbstractProjectile {
     public void init() {
         texture = new Texture();
         texture.loadTexture("content/char/projectiles/testB.png");
+        
+        System.out.println(texture.getTotalReferences()  + "");
     }
     
 }
