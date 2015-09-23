@@ -93,12 +93,12 @@ public class BoundingBoxTest
     public void testEquals()
     {
 
-        assertTrue(new BoundingBox(0, 0, 2, 2).equals(new BoundingBox(0, 0, 2, 2)));
+        assertEquals(new BoundingBox(0, 0, 2, 2), new BoundingBox(0, 0, 2, 2));
     }
 
     @Test 
     public void testNotEquals()
     {
-        assertFalse(new BoundingBox(0, 0, 2, 2).equals(new BoundingBox(0, 0, 1, 2)));
+        assertNotEquals(new BoundingBox(0, 0, 2, 2), new BoundingBox(0, 0, 1, 2));
     }
 }

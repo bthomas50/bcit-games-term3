@@ -39,7 +39,7 @@ public class Physics
     {
         allColliders.add(coll);
         allPhysicsObjects.add(coll);
-        //add to qt.
+        collidersTree.insert(coll);
     }
 
     public void addPhysicsObject(PhysicsObject obj)

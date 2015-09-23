@@ -101,7 +101,7 @@ public class BitMask
         BoundingBox intersection = translatedBounds.intersection(other.bounds);
         if(intersection == null)
         {
-            return null;
+            return new BitMask(null);
         }
         long[][] resultData = new long[intersection.getHeight()][];
         for(int i = intersection.getTop(); i <= intersection.getBottom(); i++)
