@@ -5,7 +5,7 @@
  */
 package sketchwars;
 
-import sketchwars.exceptions.SceneMangerException;
+import sketchwars.exceptions.SceneManagerException;
 import sketchwars.graphics.Texture;
 import sketchwars.scenes.GameScene;
 import sketchwars.scenes.SceneManager;
@@ -46,7 +46,7 @@ public class SketchWars {
         try {   
             sceneManager.addScene(SketchWars.Scenes.GAME, gameScene);
             sceneManager.setCurrentScene(SketchWars.Scenes.GAME);
-        } catch (SceneMangerException ex) {
+        } catch (SceneManagerException ex) {
             System.err.println(ex.getMessage());
         }
     }

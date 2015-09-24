@@ -17,7 +17,7 @@ import sketchwars.character.projectiles.AbstractProjectile;
 import sketchwars.character.projectiles.TestBullet;
 import sketchwars.character.weapon.AbstractWeapon;
 import sketchwars.character.weapon.TestWeapon;
-import sketchwars.exceptions.SceneMangerException;
+import sketchwars.exceptions.SceneManagerException;
 import sketchwars.map.AbstractMap;
 import sketchwars.map.TestMap;
 import sketchwars.scenes.GameScene;
@@ -62,7 +62,7 @@ public class World {
             gameScene.AddDrwableObject(map);
             gameScene.AddDrwableObject(character);
             gameScene.AddDrwableObject(projectileTest);
-        } catch (SceneMangerException ex) {
+        } catch (SceneManagerException ex) {
             System.err.println(ex.getMessage());
         }
     }
@@ -102,8 +102,6 @@ public class World {
     }
     
     public void dispose() {
-        weaponTest.dispose();
-        character.dispose();
-        projectileTest.dispose();
+        
     }
 }

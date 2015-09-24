@@ -1,5 +1,7 @@
 package sketchwars.graphics;
 
+import static org.lwjgl.opengl.GL11.*;
+import com.sun.javafx.geom.Matrix3f;
 import de.matthiasmann.twl.utils.PNGDecoder;
 import de.matthiasmann.twl.utils.PNGDecoder.Format;
 import java.io.FileInputStream;
@@ -9,7 +11,6 @@ import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL30;
 import sketchwars.OpenGL;
@@ -100,7 +101,7 @@ public class Texture {
         if (textureReference.containsKey(textureID)) {
             previous = textureReference.get(textureID);
         }
-
+        
         if (previous > 0) {
             textureReference.put(textureID, previous - 1);
         }
@@ -114,31 +115,33 @@ public class Texture {
         return textureReference.get(textureID);
     }
     
+     public static int getTotalReferences(int textureID) {
+         return textureReference.get(textureID);
+     }
+    
     private void reset() {
-        decrementReference(textureID);
-        
         path = null;
         textureID = -1;
         tWidth = 0;
         tHeight = 0;
     }
-    
+
     private static ImageBuffer loadTextureFromFile(final String pngFile) {
         try {
             ImageBuffer imageBuffer = loadPNGFile(pngFile);
             // Create a new texture object in memory and bind it
-            imageBuffer.textureID = GL11.glGenTextures();
+            imageBuffer.textureID = glGenTextures();
             GL13.glActiveTexture(GL13.GL_TEXTURE0);
-            GL11.glBindTexture(GL11.GL_TEXTURE_2D, imageBuffer.textureID);
+            glBindTexture(GL_TEXTURE_2D, imageBuffer.textureID);
 
             // All RGB bytes are aligned to each other and each component is 1 byte
-            GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 1);
+            glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
             // Upload the texture data and generate mip maps (for scaling)
-            GL11.glTexImage2D(GL11.GL_TEXTURE_2D,
-                    0, GL11.GL_RGBA, imageBuffer.textureWidth, imageBuffer.textureHeight, 0, 
-            GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, imageBuffer.buf);
-            GL30.glGenerateMipmap(GL11.GL_TEXTURE_2D);
+            glTexImage2D(GL_TEXTURE_2D,
+                    0, GL_RGBA, imageBuffer.textureWidth, imageBuffer.textureHeight, 0, 
+            GL_RGBA, GL_UNSIGNED_BYTE, imageBuffer.buf);
+            GL30.glGenerateMipmap(GL_TEXTURE_2D);
             
             return imageBuffer;
         } catch (IOException ex) {
@@ -265,24 +268,40 @@ public class Texture {
              newY, newY - height, newY - height, newY);
     }
     
+   /* public void draw(Matrix3f matrix) {
+        glPushMatrix();
+        
+        
+        glTranslatef(matrix.m02, matrix.m12, 0);
+        glScaled(matrix.m00, matrix.m11, 0);
+        
+        drawTextureCentered(0, 0, 10, 10);
+        glPopMatrix();
+    }*/
+    
     private void draw(int x1, int x2, int x3, int x4,
                       int y1, int y2, int y3, int y4) {        
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureID);
+        glBindTexture(GL_TEXTURE_2D, textureID);
 
         // Draw a textured quad
-        GL11.glBegin(GL11.GL_QUADS);
-        GL11.glTexCoord2f(0, 0); GL11.glVertex3f(x1, y1, 0);
-        GL11.glTexCoord2f(0, 1); GL11.glVertex3f(x2, y2, 0);
-        GL11.glTexCoord2f(1, 1); GL11.glVertex3f(x3, y3, 0);
-        GL11.glTexCoord2f(1, 0); GL11.glVertex3f(x4, y4, 0);
-        GL11.glEnd();
+        glBegin(GL_QUADS);
+        glTexCoord2f(0, 0); glVertex3f(x1, y1, 0);
+        glTexCoord2f(0, 1); glVertex3f(x2, y2, 0);
+        glTexCoord2f(1, 1); glVertex3f(x3, y3, 0);
+        glTexCoord2f(1, 0); glVertex3f(x4, y4, 0);
+        glEnd();
     }
     
     public void dispose() {
-        if (textureID != -1) {
+        if (textureID != -1 && getTotalReferences() > 0) {
             decrementReference(textureID);
-            reset();
+            
+            if (getTotalReferences() == 0) {
+                glDeleteTextures(textureID);
+            }
         }
+        
+        reset();
     }
     
     /**
@@ -290,9 +309,20 @@ public class Texture {
      */
     public static void disposeAllTextures() {
         for (ImageBuffer image : textureList.values()) {
-            GL11.glDeleteTextures(image.textureID);
+            glDeleteTextures(image.textureID);
         }
         
         textureReference.clear();
+        textureList.clear();
+    }
+    
+    
+    @Override
+    protected void finalize() throws Throwable {
+        super.finalize();
+        
+        if (textureID != -1) {
+            dispose();
+        }
     }
 }

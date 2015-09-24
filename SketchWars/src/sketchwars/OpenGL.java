@@ -44,12 +44,22 @@ public class OpenGL {
  
         try {
             loop(); //the main loop
-            
+        } finally {
+            dispose();
+        }
+    }
+    
+    public void dispose() {
+        try {
             // Release window and window callbacks
             glfwDestroyWindow(window);
             keyCallback.release();
-            sketchWars.dispose();
-        } finally {
+            
+            if (sketchWars != null) {
+                sketchWars.dispose();
+            }
+            
+        } finally { 
             // Terminate GLFW and release the GLFWerrorfun
             glfwTerminate();
             errorCallback.release();
@@ -148,12 +158,17 @@ public class OpenGL {
         while ( glfwWindowShouldClose(window) == GL11.GL_FALSE ) {
             GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT); // clear the framebuffer
  
-            sceneManager.render();//call the main graphics renderer
-            
             double time = getTime(); //calculate frame length in milliseconds
             double delta = (time - lastTime)/MILLION;
-            sketchWars.update(delta); //call the main game update
-            sceneManager.update(delta);
+            
+            if (sceneManager != null) {
+                sceneManager.render();//call the main graphics renderer
+                sceneManager.update(delta);
+            }
+            
+            if (sketchWars != null) {
+                sketchWars.update(delta); //call the main game update
+            }
             
             lastTime = time;
             
