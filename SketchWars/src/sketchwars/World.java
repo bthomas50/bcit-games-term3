@@ -29,7 +29,7 @@ import sketchwars.input.KeyboardHandler;
  * @author Najash Najimudeen <najash.najm@gmail.com>
  */
 public class World {
-    private final SceneManager sceneManager;
+    private final SceneManager<Scenes> sceneManager;
         
     private AbstractMap map;
     private Character character;
@@ -37,7 +37,7 @@ public class World {
     AbstractWeapon weaponTest;
     AbstractProjectile projectileTest;
             
-    public World(SceneManager sceneManager) {
+    public World(SceneManager<Scenes> sceneManager) {
         this.sceneManager = sceneManager;
     }
     

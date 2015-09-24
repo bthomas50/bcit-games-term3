@@ -37,7 +37,7 @@ public class SketchWars {
     }
     
     private void initScenes() {
-        sceneManager = new SceneManager();
+        sceneManager = new SceneManager<>();
         sceneManager.init();
        
         gameScene = new GameScene();
