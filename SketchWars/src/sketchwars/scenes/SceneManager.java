@@ -6,7 +6,7 @@
 package sketchwars.scenes;
 
 import java.util.HashMap;
-import sketchwars.exceptions.SceneMangerException;
+import sketchwars.exceptions.SceneManagerException;
 
 /**
  * Manage scenes like game scene and menu scenes
@@ -26,27 +26,27 @@ public class SceneManager <T> {
         
     }
     
-    public void addScene(T key, AbstractScene scene) throws SceneMangerException {
+    public void addScene(T key, AbstractScene scene) throws SceneManagerException {
         if (scenes.containsKey(key)) {
-            throw new SceneMangerException("A scene with the same key already exists.");            
+            throw new SceneManagerException("A scene with the same key already exists.");            
         } else {
             scenes.put(key, scene);
         }
     }
     
-    public void removeScene(T key) throws SceneMangerException {
+    public void removeScene(T key) throws SceneManagerException {
         if (scenes.containsKey(key)) {
             scenes.remove(key);        
         } else {
-            throw new SceneMangerException("Given scene key does not exist.");             
+            throw new SceneManagerException("Given scene key does not exist.");             
         }
     }
     
-    public void setCurrentScene(T key) throws SceneMangerException  {
+    public void setCurrentScene(T key) throws SceneManagerException  {
         if (scenes.containsKey(key)) {
             currentScene = scenes.get(key);
         } else {
-            throw new SceneMangerException("Given scene key does not exist.");
+            throw new SceneManagerException("Given scene key does not exist.");
         }
     }
     
@@ -60,11 +60,11 @@ public class SceneManager <T> {
         }
     }
 
-    public AbstractScene getScene(T key) throws SceneMangerException {
+    public AbstractScene getScene(T key) throws SceneManagerException {
         if (scenes.containsKey(key)) {
             return scenes.get(key);        
         } else {
-            throw new SceneMangerException("Given scene key does not exist.");             
+            throw new SceneManagerException("Given scene key does not exist.");             
         }
     }
     

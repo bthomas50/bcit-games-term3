@@ -9,9 +9,9 @@ package sketchwars.exceptions;
  *
  * @author Najash Najimudeen <najash.najm@gmail.com>
  */
-public class SceneMangerException extends Exception {
+public class SceneManagerException extends Exception {
 
-    public SceneMangerException(final String msg) {
-        super("Scene Manger Exception: " + msg);
+    public SceneManagerException(final String msg) {
+        super("Scene Manager Exception: " + msg);
     }
 }

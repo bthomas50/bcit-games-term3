@@ -5,6 +5,7 @@
  */
 package sketchwars.character.projectiles;
 
+import com.sun.javafx.geom.Matrix3f;
 import sketchwars.graphics.GraphicsObject;
 import sketchwars.graphics.Texture;
 
@@ -29,6 +30,8 @@ public abstract class AbstractProjectile implements GraphicsObject {
     public void render() {
         if (texture != null) {
             texture.drawNormalized(posX, posY, 1);
+           /* Matrix3f matrix = new Matrix3f(2, 0, (float)posX, 0, 1, (float)posY, 0, 0, 1);
+            texture.draw(matrix);*/
         }
     }
     
