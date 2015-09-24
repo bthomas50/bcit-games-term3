@@ -12,14 +12,16 @@ public class BitMask
             LONG_MASKS[BITS_PER_LONG - 1 - i] = 1l << (long)i;
         }
     }
-
+	//pixel data in local space
     private long[][] data;
-    private long vOffset;
+	//in local coordinate space (disregards the offset vector)
     private BoundingBox bounds;
+	//translation from local space to world space
+    private long vOffset;
 
-    BitMask(final long[][] data)
-    {
-        if(data == null)
+	BitMask(final long[][] data, long vPosition)
+	{
+		if(data == null)
         {
             this.data = new long[1][];
         }
@@ -35,8 +37,13 @@ public class BitMask
             }
         }
         ensureRectangular();
-        bounds = new BoundingBox(0, 0, this.data.length - 1, this.data[0].length * BITS_PER_LONG - 1);
-        vOffset = Vectors.create(0,0);
+		updateBounds();
+        vOffset = vPosition;
+	}
+	
+    BitMask(final long[][] data)
+    {
+        this(data, Vectors.create(0,0));
     }
 
     public int getWidth()
@@ -53,7 +60,22 @@ public class BitMask
     {
         return getWidth() * getHeight();
     }
-
+	
+	public long getPosition()
+	{
+		return vOffset;
+	}
+	
+	public void setPosition(long vPos)
+	{
+		vOffset = vPos;
+	}
+	
+	private void updateBounds()
+	{
+        bounds = new BoundingBox(0, 0, this.data.length - 1, this.data[0].length * BITS_PER_LONG - 1);
+	}
+	
     //returns a vector
     public long getCenterOfMass()
     {
@@ -76,12 +98,16 @@ public class BitMask
         }
         xCOM /= numPoints;
         yCOM /= numPoints;
-        return Vectors.create(xCOM, yCOM);
+        return Vectors.add(Vectors.create(xCOM, yCOM), vOffset);
     }
 
     public BoundingBox getBounds()
     {
-        return bounds;
+		if(bounds == null)
+		{
+			return null;	
+		}
+        return bounds.getTranslatedBox(vOffset);
     }
 
     public boolean isEmpty()
@@ -91,31 +117,30 @@ public class BitMask
 
     public BitMask and(BitMask other)
     {
-        long vTranslation = Vectors.subtract(vOffset, other.vOffset);
-        int xTranslation = Vectors.ixComp(vTranslation);
-        int yTranslation = Vectors.iyComp(vTranslation);
-        BoundingBox translatedBounds = new BoundingBox(bounds.getTop() + yTranslation, 
-                                                       bounds.getLeft() + xTranslation, 
-                                                       bounds.getBottom() + yTranslation, 
-                                                       bounds.getRight() + xTranslation);
-        BoundingBox intersection = translatedBounds.intersection(other.bounds);
+        BoundingBox intersection = getBounds().intersection(other.getBounds());
         if(intersection == null)
         {
             return new BitMask(null);
         }
-        long[][] resultData = new long[intersection.getHeight()][];
-        for(int i = intersection.getTop(); i <= intersection.getBottom(); i++)
+		long vResultOffset = intersection.getTopLeftVector();
+		long thisToResult = Vectors.subtract(vResultOffset, vOffset);
+		long otherToResult = Vectors.subtract(vResultOffset, other.vOffset);
+		//shift intersection s.t. topLeft = (0,0)
+		intersection = intersection.getTranslatedBox(Vectors.reverse(vResultOffset));
+        long[][] resultData = new long[intersection.getHeight()][(int)Math.ceil((double)intersection.getWidth() / (double)BITS_PER_LONG)];
+		for(int resultI = intersection.getTop(); resultI <= intersection.getBottom(); resultI++)
         {
-            final int localI = i - yTranslation;
-            resultData[i] = new long[(int)Math.ceil((double)intersection.getWidth() / (double)BITS_PER_LONG)];
-            for(int j = intersection.getLeft(); j + BITS_PER_LONG <= intersection.getRight() + 1; j += BITS_PER_LONG)
+            final int localI = resultI + Vectors.iyComp(thisToResult);
+			final int otherI = resultI + Vectors.iyComp(otherToResult);
+            for(int resultJ = intersection.getLeft(); resultJ <= intersection.getRight(); resultJ += BITS_PER_LONG)
             {
-                final int localJ = j - xTranslation;
-                final int jLongIdx = j / BITS_PER_LONG;
-                resultData[i][jLongIdx] = getSubmaskElement(localI, localJ) & other.data[i][jLongIdx];
+                final int localJ = resultJ + Vectors.ixComp(thisToResult);
+				final int otherJ = resultJ + Vectors.ixComp(otherToResult);
+				final int resultJLongIdx = resultJ / BITS_PER_LONG;
+                resultData[resultI][resultJLongIdx] = getSubmaskElement(localI, localJ) & other.getSubmaskElement(otherI, otherJ);
             }
         }
-        return new BitMask(resultData);
+        return new BitMask(resultData, vResultOffset);
     }
 
     //get 64 bits from row row, starting from bit start.

@@ -62,7 +62,13 @@ public class BitMaskTest
         BitMask empty = new BitMask(null);
         assertTrue(empty.isEmpty());
     }
-
+	
+	@Test
+	public void testGetBounds()
+	{
+		rectMask.setPosition(Vectors.create(2, 3));
+		assertEquals(new BoundingBox(3, 2, 4, 129), rectMask.getBounds());
+	}
     @Test
     public void testGetArea()
     {
@@ -97,6 +103,15 @@ public class BitMaskTest
         assertEquals(63.5, Vectors.xComp(vCOM), Vectors.EPSILON);
         assertEquals(0.5, Vectors.yComp(vCOM), Vectors.EPSILON);
     }
+	
+	@Test
+	public void testGetCOMWithOffset()
+	{
+		rectMask.setPosition(Vectors.create(1, 10));
+		long vCOM = rectMask.getCenterOfMass();
+        assertEquals(64.5, Vectors.xComp(vCOM), Vectors.EPSILON);
+        assertEquals(10.5, Vectors.yComp(vCOM), Vectors.EPSILON);
+	}
 
     @Test
     public void testGetCOMAfterTrim()
@@ -136,8 +151,45 @@ public class BitMaskTest
     {
         BitMask result = rectMask.and(wideMask);
         result.trim();
-        assertTrue(result.getBounds().equals(new BoundingBox(0, 16, 1, 47)));
+        assertEquals(new BoundingBox(0, 16, 1, 47), result.getBounds());
     }
+	
+	@Test
+	public void testANDWithSameOffset()
+	{
+		rectMask.setPosition(Vectors.create(-1, 20));
+		BitMask result = rectMask.and(rectMask);
+		result.trim();
+		assertEquals(new BoundingBox(20, -1, 21, 126), result.getBounds());
+	}
+	
+	@Test
+	public void testANDWithDifferentOffsets()
+	{
+		rectMask.setPosition(Vectors.create(20, 0));
+		wideMask.setPosition(Vectors.create(12, -1));
+		BitMask result = rectMask.and(wideMask);
+		result.trim();
+		long vExpectedPos = Vectors.create(20, 0);
+		long vActualPos = result.getPosition();
+		assertEquals(Vectors.ixComp(vExpectedPos), Vectors.ixComp(vActualPos));
+		assertEquals(Vectors.iyComp(vExpectedPos), Vectors.iyComp(vActualPos));
+		assertEquals(new BoundingBox(0, 32, 0, 55), result.getBounds());
+	}
+	
+	@Test
+	public void testANDWorksBothWays()
+	{
+		rectMask.setPosition(Vectors.create(20, 0));
+		wideMask.setPosition(Vectors.create(12, -1));
+		BitMask result = wideMask.and(rectMask);
+		result.trim();
+		long vExpectedPos = Vectors.create(20, 0);
+		long vActualPos = result.getPosition();
+		assertEquals(Vectors.ixComp(vExpectedPos), Vectors.ixComp(vActualPos));
+		assertEquals(Vectors.iyComp(vExpectedPos), Vectors.iyComp(vActualPos));
+		assertEquals(new BoundingBox(0, 32, 0, 55), result.getBounds());
+	}
 
     @Test
     public void testGetSubmaskElementEasy()

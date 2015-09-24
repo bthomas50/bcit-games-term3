@@ -16,6 +16,7 @@ public class PixelCollider extends BasicPhysicsObject implements Collider
         bitMask = bm;
         listeners = new ArrayList<CollisionListener>();
         bm.trim();
+		this.vPosition = bm.getPosition();
     }
 
     public BitMask getPixels()
@@ -23,6 +24,13 @@ public class PixelCollider extends BasicPhysicsObject implements Collider
         return bitMask;
     }
 
+	@Override
+	public void setPosition(long vPos)
+	{
+		super.setPosition(vPos);
+		bitMask.setPosition(vPos);
+	}
+	
     @Override
     public void notify(Collider other)
     {

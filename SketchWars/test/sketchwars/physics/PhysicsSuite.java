@@ -9,8 +9,10 @@ import org.junit.runners.Suite;
   VectorsTest.class,
   QuadTreeTest.class,
   BitMaskTest.class,
+  BasicPhysicsObjectTest.class,
   PixelColliderTest.class,
-  CollisionsTest.class
+  CollisionsTest.class,
+  PhysicsTest.class
 })
 
 public class PhysicsSuite {

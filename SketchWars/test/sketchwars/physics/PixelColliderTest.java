@@ -63,4 +63,12 @@ public class PixelColliderTest
         coll1.notify(coll2);
         assertEquals(1, list.collisions.size());
     }
+	
+	@Test
+	public void testSetPositionUpdatesBitMask()
+	{
+		long vPosition = Vectors.create(10, -10);
+		coll1.setPosition(vPosition);
+		assertEquals(vPosition, coll1.getPixels().getPosition());
+	}
 }

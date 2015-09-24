@@ -63,4 +63,13 @@ public class CollisionsTest
         Collisions.handle(irregCollider, wideCollider);
         assertEquals(0, list.collisions.size());
     }
+	
+	@Test
+	public void testDifferentPositions()
+	{
+		rectCollider.setPosition(Vectors.create(10, 0));
+		wideCollider.setPosition(Vectors.create(-2, -1));
+		Collisions.handle(rectCollider, wideCollider);
+		assertEquals(2, list.collisions.size());
+	}
 }

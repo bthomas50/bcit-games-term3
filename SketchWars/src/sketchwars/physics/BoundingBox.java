@@ -56,6 +56,16 @@ public class BoundingBox
         }
     }
 
+	public long getTopLeftVector()
+	{
+		return Vectors.create(left, top);
+	}
+	
+	public long getBottomRightVector()
+	{
+		return Vectors.create(right, bottom);
+	}
+	
     public int getTop()
     {
         return top;
@@ -85,6 +95,11 @@ public class BoundingBox
     {
         return 1 + bottom - top;
     }
+	
+	public BoundingBox getTranslatedBox(long vTranslation)
+	{
+		return new BoundingBox(Vectors.add(vTranslation, getTopLeftVector()), Vectors.add(vTranslation, getBottomRightVector()));
+	}
 
     @Override
     public boolean equals(Object obj)

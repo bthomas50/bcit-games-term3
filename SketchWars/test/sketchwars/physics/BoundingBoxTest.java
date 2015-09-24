@@ -89,6 +89,24 @@ public class BoundingBoxTest
         assertEquals(new BoundingBox(0, 0, 4, 88).getHeight(), 5);
     }
 
+	@Test
+	public void testGetTopLeft()
+	{
+		assertEquals(Vectors.create(3, 4), new BoundingBox(4, 3, 5, 500).getTopLeftVector());
+	}
+	
+	@Test
+	public void testGetBottomRight()
+	{
+		assertEquals(Vectors.create(3, 4), new BoundingBox(0, 0, 4, 3).getBottomRightVector());
+	}
+	
+	@Test
+	public void testGetTranslatedBox()
+	{
+		assertEquals(new BoundingBox(-2, 0, 4, 4), new BoundingBox(0, -2, 6, 2).getTranslatedBox(Vectors.create(2, -2)));
+	}
+	
     @Test
     public void testEquals()
     {
