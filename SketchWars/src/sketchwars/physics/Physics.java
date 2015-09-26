@@ -6,7 +6,7 @@ import java.util.HashSet;
 
 public class Physics
 {
-    public static final long V_GRAVITY  = Vectors.create(0, 9.8);
+    public static final long V_GRAVITY  = Vectors.create(0, -98);
 	public static final double MAX_SPEED = 1000.0f;
 	private List<PhysicsObject> allPhysicsObjects;
     private List<Collider> allColliders;
@@ -72,7 +72,10 @@ public class Physics
 	
 	private void applyGravity(PhysicsObject obj, double elapsedMillis)
 	{
-		obj.accelerate(V_GRAVITY, elapsedMillis);
+        if(obj.getMass() != 0.0)
+        {
+            obj.accelerate(V_GRAVITY, elapsedMillis);
+        }
 	}
 	
 	private void applyVelocity(PhysicsObject obj, double elapsedMillis)

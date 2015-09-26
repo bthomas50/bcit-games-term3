@@ -1,43 +1,35 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package sketchwars.character.projectiles;
 
-//import com.sun.javafx.geom.Matrix3f;
 import sketchwars.graphics.GraphicsObject;
 import sketchwars.graphics.Texture;
-
+import sketchwars.physics.*;
 import sketchwars.GameObject;
 /**
  *
  * @author Najash Najimudeen <najash.najm@gmail.com>
  */
 public abstract class AbstractProjectile implements GraphicsObject, GameObject{
-    private double posX;
-    private double posY;
-    
+
+    Collider coll;
     Texture texture;
         
     public abstract void init();
     
-    public void setPosition(double x, double y) {
-        this.posX = x;
-        this.posY = y;
-    }
     
     @Override
     public void update(double elapsedMillis) {
 
     }
 
+    public void setCollider(Collider coll) {
+        this.coll = coll;
+    }
+
     @Override
     public void render() {
         if (texture != null) {
-            texture.drawNormalized(posX, posY, 1);
-           /* Matrix3f matrix = new Matrix3f(2, 0, (float)posX, 0, 1, (float)posY, 0, 0, 1);
-            texture.draw(matrix);*/
+            BoundingBox bounds = coll.getBounds();
+            texture.drawNormalized((double)bounds.getLeft() / 1024.0, (double) bounds.getTop() / 1024.0, (double) bounds.getWidth() / 2048.0, (double) bounds.getHeight() / 2048.0);
         }
     }
     

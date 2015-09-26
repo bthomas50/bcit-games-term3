@@ -1,6 +1,6 @@
 package sketchwars;
 
-import sketchwars.physics.Physics;
+import sketchwars.physics.*;
 import sketchwars.scenes.*;
 import sketchwars.character.Character;
 import sketchwars.character.projectiles.*;
@@ -48,14 +48,26 @@ public class WorldFactory
     {
         AbstractMap map = new TestMap();
         map.init();
+        PixelCollider mapCollider = new PixelCollider(BitMaskFactory.createRectangle(1800, 800));
+        mapCollider.setPosition(Vectors.create(0, -624));
+
+        map.setCollider(mapCollider);
+
+        physics.addCollider(mapCollider);
         scene.AddDrwableObject(map);
         world.setMap(map);
     }
+
     private void createCharacter(AbstractWeapon wep)
     {
         Character character = new Character();
         character.init();
         character.setWeapon(wep);
+        PixelCollider charCollider = new PixelCollider(BitMaskFactory.createRectangle(new BoundingBox(-50, -100, 50, 100)));
+        charCollider.setMass(10);
+        character.setCollider(charCollider);
+
+        physics.addCollider(charCollider);
         scene.AddDrwableObject(character);
         world.addCharacter(character);
     }
@@ -69,7 +81,14 @@ public class WorldFactory
     {        
         AbstractProjectile projectile = new TestBullet();
         projectile.init();
-        projectile.setPosition(0.3, 0.3);
+
+        PixelCollider projCollider = new PixelCollider(BitMaskFactory.createCircle(32.0));
+        projCollider.setPosition(Vectors.create(300, 300));
+        projCollider.setMass(1);
+
+        projectile.setCollider(projCollider);
+
+        physics.addCollider(projCollider);
         scene.AddDrwableObject(projectile);
         world.addGameObject(projectile);
     }
