@@ -9,7 +9,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
-import jdk.nashorn.internal.objects.annotations.Constructor;
 import junit.extensions.TestSetup;
 import org.junit.After;
 import static org.junit.Assert.*;
