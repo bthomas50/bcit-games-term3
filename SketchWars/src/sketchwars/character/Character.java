@@ -8,12 +8,12 @@ package sketchwars.character;
 import sketchwars.character.weapon.AbstractWeapon;
 import sketchwars.graphics.GraphicsObject;
 import sketchwars.graphics.Texture;
-
+import sketchwars.GameObject;
 /**
  *
  * @author Najash Najimudeen <najash.najm@gmail.com>
  */
-public class Character implements GraphicsObject {
+public class Character implements GraphicsObject, GameObject {
     Texture texture;
     AbstractWeapon weapon;
 
@@ -30,6 +30,11 @@ public class Character implements GraphicsObject {
         this.weapon = weapon;
     }
     
+    @Override
+    public void update(double elapsedMillis) {
+
+    }
+
     @Override
     public void render() {
         texture.drawNormalized(0, 0, 0.1, 0.1);

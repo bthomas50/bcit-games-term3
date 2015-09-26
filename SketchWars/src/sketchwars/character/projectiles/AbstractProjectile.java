@@ -5,15 +5,16 @@
  */
 package sketchwars.character.projectiles;
 
-import com.sun.javafx.geom.Matrix3f;
+//import com.sun.javafx.geom.Matrix3f;
 import sketchwars.graphics.GraphicsObject;
 import sketchwars.graphics.Texture;
 
+import sketchwars.GameObject;
 /**
  *
  * @author Najash Najimudeen <najash.najm@gmail.com>
  */
-public abstract class AbstractProjectile implements GraphicsObject {
+public abstract class AbstractProjectile implements GraphicsObject, GameObject{
     private double posX;
     private double posY;
     
@@ -26,6 +27,11 @@ public abstract class AbstractProjectile implements GraphicsObject {
         this.posY = y;
     }
     
+    @Override
+    public void update(double elapsedMillis) {
+
+    }
+
     @Override
     public void render() {
         if (texture != null) {

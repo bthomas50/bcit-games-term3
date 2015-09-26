@@ -8,15 +8,22 @@ package sketchwars.map;
 import sketchwars.graphics.GraphicsObject;
 import sketchwars.graphics.Texture;
 
+import sketchwars.GameObject;
+
 /**
  *
  * @author Najash Najimudeen <najash.najm@gmail.com>
  */
-public abstract class AbstractMap implements GraphicsObject {
+public abstract class AbstractMap implements GraphicsObject, GameObject {
     Texture texture;
     
     public abstract void init();
     
+    @Override
+    public void update(double elapsedMillis) {
+
+    }
+
     @Override
     public void render() {
         if (texture != null) {

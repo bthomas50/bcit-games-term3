@@ -12,7 +12,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GLContext;
 import static org.lwjgl.system.MemoryUtil.NULL;
 import sketchwars.scenes.SceneManager;
-
+import sketchwars.input.KeyboardHandler;
 /**
  *
  * @author Najash Najimudeen <najash.najm@gmail.com>
@@ -25,7 +25,7 @@ public class OpenGL {
     
     // We need to strongly reference callback instances.
     private GLFWErrorCallback errorCallback;
-    private GLFWKeyCallback   keyCallback;
+    private KeyboardHandler   keyboardHandler;
  
     // The window handle
     private long window;
@@ -37,6 +37,7 @@ public class OpenGL {
     public OpenGL(SketchWars sWars, SceneManager sceneManager) {
         this.sketchWars = sWars;
         this.sceneManager = sceneManager;
+        this.keyboardHandler = new KeyboardHandler();
     }
     
     public void run() {
@@ -53,7 +54,7 @@ public class OpenGL {
         try {
             // Release window and window callbacks
             glfwDestroyWindow(window);
-            keyCallback.release();
+            keyboardHandler.release();
             
             if (sketchWars != null) {
                 sketchWars.dispose();
@@ -96,13 +97,7 @@ public class OpenGL {
             throw new RuntimeException("Failed to create the GLFW window");
  
         // Setup a key callback. It will be called every time a key is pressed, repeated or released.
-        glfwSetKeyCallback(window, keyCallback = new GLFWKeyCallback() {
-            @Override
-            public void invoke(long window, int key, int scancode, int action, int mods) {
-                if ( key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE )
-                    glfwSetWindowShouldClose(window, GL11.GL_TRUE); // We will detect this in our rendering loop
-            }
-        });
+        glfwSetKeyCallback(window, keyboardHandler);
  
         // Get the resolution of the primary monitor
         ByteBuffer vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
