@@ -56,6 +56,16 @@ public class BoundingBox
         }
     }
 
+	public long getTopLeftVector()
+	{
+		return Vectors.create(left, top);
+	}
+	
+	public long getBottomRightVector()
+	{
+		return Vectors.create(right, bottom);
+	}
+	
     public int getTop()
     {
         return top;
@@ -85,13 +95,39 @@ public class BoundingBox
     {
         return 1 + bottom - top;
     }
+	
+	public BoundingBox getTranslatedBox(long vTranslation)
+	{
+		return new BoundingBox(Vectors.add(vTranslation, getTopLeftVector()), Vectors.add(vTranslation, getBottomRightVector()));
+	}
 
-    public boolean equals(final BoundingBox other)
+    @Override
+    public boolean equals(Object obj)
     {
+        if(!(obj instanceof BoundingBox))
+        {
+            return false;
+        }
+        if(obj == null)
+        {
+            return false;
+        }
+        BoundingBox other = (BoundingBox) obj;
         return top == other.top &&
                left == other.left &&
                bottom == other.bottom &&
                right == other.right;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        int hash = 17;
+        hash = hash * 31 + top;
+        hash = hash * 31 + left;
+        hash = hash * 31 + bottom;
+        hash = hash * 31 + right;
+        return hash;
     }
 
     public String toString()

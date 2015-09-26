@@ -8,7 +8,12 @@ import org.junit.runners.Suite;
   BoundingBoxTest.class,
   VectorsTest.class,
   QuadTreeTest.class,
-  BitMaskTest.class
+  BitMaskTest.class,
+  BitMaskFactoryTest.class,
+  BasicPhysicsObjectTest.class,
+  PixelColliderTest.class,
+  CollisionsTest.class,
+  PhysicsTest.class
 })
 
 public class PhysicsSuite {

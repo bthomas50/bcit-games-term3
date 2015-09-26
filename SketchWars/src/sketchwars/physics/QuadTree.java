@@ -20,18 +20,18 @@ public class QuadTree
 		private QuadTree rootNode;
 		private int maxObj;
 		private int minSz;
-		private HashMap<BoundingBox, QuadTree> boxLocations;
+		private HashMap<Collider, QuadTree> colliderLocations;
 
 		private QuadTreeControl(QuadTree rootNode, int maxObj, int minSz)
 		{
 			this.rootNode = rootNode;
 			this.maxObj = maxObj;
 			this.minSz = minSz;
-			this.boxLocations = new HashMap<>();
+			this.colliderLocations = new HashMap<>();
 		}
 	}
 	
-    private ArrayList<BoundingBox> objects;
+    private ArrayList<Collider> objects;
     private BoundingBox bounds;
     private QuadTree children[];
     private QuadTree parent;
@@ -64,7 +64,7 @@ public class QuadTree
     {
         if(this == control.rootNode)
         {
-            return control.boxLocations.size();
+            return control.colliderLocations.size();
         }
         else if(hasSplit())
         {
@@ -102,31 +102,31 @@ public class QuadTree
     }
     private void removeAllObjects()
     {
-        for(BoundingBox bb : objects)
+        for(Collider coll : objects)
         {
-            control.boxLocations.remove(bb);
+            control.colliderLocations.remove(coll);
         }
         objects.clear();
     }
-    public boolean insert(BoundingBox box)
+    public boolean insert(Collider coll)
     {
-        if(!bounds.contains(box))
+        if(!bounds.contains(coll.getBounds()))
         {
             return false;
         }
         if(hasSplit())
         {
             //insert into a child, if possible.
-            int index = getIndex(box);
+            int index = getIndex(coll.getBounds());
             if(index != -1)
             {
-                children[index].insert(box);
+                children[index].insert(coll);
                 return true;
             }
         }
         //can't insert into child. Put into itself.
-        objects.add(box);
-		control.boxLocations.put(box, this);
+        objects.add(coll);
+		control.colliderLocations.put(coll, this);
         //split if too many objects and size is not too small and we haven't split already.
         if(shouldSplit())
         {
@@ -135,39 +135,39 @@ public class QuadTree
         return true;
     }
     
-	public void remove(BoundingBox box)
+	public void remove(Collider coll)
 	{
-        if(!contains(box))
+        if(!contains(coll))
         {
             return;
         }
-		QuadTree someTree = control.boxLocations.get(box);
-		control.boxLocations.remove(box);
-		someTree.objects.remove(box);
+		QuadTree someTree = control.colliderLocations.get(coll);
+		control.colliderLocations.remove(coll);
+		someTree.objects.remove(coll);
 	}
 	
-    public boolean contains(BoundingBox box)
+    public boolean contains(Collider coll)
     {
-        return control.boxLocations.containsKey(box);
+        return control.colliderLocations.containsKey(coll);
     }
 
-    public boolean replace(BoundingBox oldBox, BoundingBox newBox)
+    public boolean replace(Collider oldColl, Collider newColl)
     {
         //try to remove old box.
-        if(!contains(oldBox))
+        if(!contains(oldColl))
         {
             return false;
         }
         else
         {
-            remove(oldBox);
-            return insertUpwards(newBox);
+            remove(oldColl);
+            return insertUpwards(newColl);
         }
     }
     
-    public List<BoundingBox> retrieve(BoundingBox box)
+    public List<Collider> retrieve(BoundingBox box)
     {
-        ArrayList<BoundingBox> ret = new ArrayList<>();
+        ArrayList<Collider> ret = new ArrayList<>();
         if(hasSplit())
         {
             int index = getIndex(box);
@@ -187,7 +187,7 @@ public class QuadTree
         return ret;
     }
     
-    private ArrayList<BoundingBox> retrieve(ArrayList<BoundingBox> list, BoundingBox box)
+    private ArrayList<Collider> retrieve(ArrayList<Collider> list, BoundingBox box)
     {
         if(hasSplit())
         {
@@ -225,7 +225,7 @@ public class QuadTree
         int i = 0;
         while(i < objects.size())
         {
-            int index = getIndex(objects.get(i));
+            int index = getIndex(objects.get(i).getBounds());
             if (index != -1) 
             {
                 children[index].insert(objects.remove(i));
@@ -249,22 +249,22 @@ public class QuadTree
             objects.addAll(children[i].objects);
             children[i] = null;
         }
-        for(BoundingBox bb : objects)
+        for(Collider bb : objects)
         {
-            control.boxLocations.put(bb, this);
+            control.colliderLocations.put(bb, this);
         }
     }
 
-    private boolean insertUpwards(BoundingBox box)
+    private boolean insertUpwards(Collider coll)
     {
-        if(bounds.contains(box))
+        if(bounds.contains(coll.getBounds()))
         {
-            insert(box);
+            insert(coll);
             return true;
         }
         if(parent != null)
         {
-            return parent.insertUpwards(box);
+            return parent.insertUpwards(coll);
         }
         else
         {
