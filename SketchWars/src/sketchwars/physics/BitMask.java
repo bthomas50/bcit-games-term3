@@ -2,7 +2,7 @@ package sketchwars.physics;
 
 public class BitMask
 {
-    private static final int BITS_PER_LONG = 64;
+    public static final int BITS_PER_LONG = 64;
     private static final long[] LONG_MASKS = new long[BITS_PER_LONG];
 
     static
@@ -127,7 +127,7 @@ public class BitMask
 		long otherToResult = Vectors.subtract(vResultOffset, other.vOffset);
 		//shift intersection s.t. topLeft = (0,0)
 		intersection = intersection.getTranslatedBox(Vectors.reverse(vResultOffset));
-        long[][] resultData = new long[intersection.getHeight()][(int)Math.ceil((double)intersection.getWidth() / (double)BITS_PER_LONG)];
+        long[][] resultData = new long[intersection.getHeight()][getNumberOfLongs(intersection.getWidth())];
 		for(int resultI = intersection.getTop(); resultI <= intersection.getBottom(); resultI++)
         {
             final int localI = resultI + Vectors.iyComp(thisToResult);
@@ -142,7 +142,6 @@ public class BitMask
         }
         return new BitMask(resultData, vResultOffset);
     }
-
     //get 64 bits from row row, starting from bit start.
     protected long getSubmaskElement(int row, int start)
     {
@@ -199,7 +198,10 @@ public class BitMask
         int right = findLastNonemptyColumn(data);
         bounds = new BoundingBox(top, left, bottom, right);
     }
-
+    public static int getNumberOfLongs(int numberOfBits)
+    {
+        return (int) Math.ceil((double)numberOfBits / (double)BITS_PER_LONG);
+    }
 
     private int findFirstNonemptyRow(long[][] bits)
     {

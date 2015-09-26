@@ -9,6 +9,7 @@ import org.junit.runners.Suite;
   VectorsTest.class,
   QuadTreeTest.class,
   BitMaskTest.class,
+  BitMaskFactoryTest.class,
   BasicPhysicsObjectTest.class,
   PixelColliderTest.class,
   CollisionsTest.class,
