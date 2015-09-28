@@ -101,6 +101,12 @@ public class BoundingBoxTest
 		assertEquals(Vectors.create(3, 4), new BoundingBox(0, 0, 4, 3).getBottomRightVector());
 	}
 	
+    @Test
+    public void testGetCenter()
+    {
+        assertEquals(Vectors.create(0, 0), new BoundingBox(-1, -1, 1, 1).getCenterVector());
+    }
+
 	@Test
 	public void testGetTranslatedBox()
 	{

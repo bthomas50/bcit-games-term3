@@ -29,7 +29,8 @@ public abstract class AbstractProjectile implements GraphicsObject, GameObject{
     public void render() {
         if (texture != null) {
             BoundingBox bounds = coll.getBounds();
-            texture.drawNormalized((double)bounds.getLeft() / 1024.0, (double) bounds.getTop() / 1024.0, (double) bounds.getWidth() / 2048.0, (double) bounds.getHeight() / 2048.0);
+            long vCenter = bounds.getCenterVector();
+            texture.drawNormalized(Vectors.xComp(vCenter) / 1024.0 , Vectors.yComp(vCenter) / 1024.0, (double) bounds.getWidth() / 2048.0, (double) bounds.getHeight() / 2048.0);
         }
     }
     

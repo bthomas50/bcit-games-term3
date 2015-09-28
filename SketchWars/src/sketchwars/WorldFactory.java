@@ -49,7 +49,7 @@ public class WorldFactory
         AbstractMap map = new TestMap();
         map.init();
         PixelCollider mapCollider = new PixelCollider(BitMaskFactory.createRectangle(1800, 800));
-        mapCollider.setPosition(Vectors.create(0, -624));
+        mapCollider.setPosition(Vectors.create(-900, -1024));
 
         map.setCollider(mapCollider);
 

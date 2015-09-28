@@ -107,12 +107,13 @@ public class PhysicsTest
 	}
 	
 	@Test
-	public void testUpdateAppliesGravity()
+	public void testUpdateAppliesGravityToNonStaticObjects()
 	{
+        rectCollider.setMass(1.0f);
 		physics.addPhysicsObject(rectCollider);
 		physics.update(1000);
 		assertEquals(0.0, Vectors.xComp(rectCollider.getVelocity()), Vectors.EPSILON);
-		assertEquals(9.8, Vectors.yComp(rectCollider.getVelocity()), Vectors.EPSILON);
+		assertEquals(-98.0, Vectors.yComp(rectCollider.getVelocity()), Vectors.EPSILON);
 	}
 	
 	@Test
@@ -123,10 +124,7 @@ public class PhysicsTest
 		physics.update(1000);
 		//because of initial velocity
 		assertEquals(3.0, Vectors.xComp(rectCollider.getPosition()), Vectors.EPSILON);
-		//gravity updates acceleration before applying velocity.
-		assertEquals(9.8, Vectors.yComp(rectCollider.getPosition()), Vectors.EPSILON);
 		assertEquals(3.0, Vectors.xComp(rectCollider.getVelocity()), Vectors.EPSILON);
-		assertEquals(9.8, Vectors.yComp(rectCollider.getVelocity()), Vectors.EPSILON);
 	}
 	@Test
 	public void testUpdateClipsVelocity()
