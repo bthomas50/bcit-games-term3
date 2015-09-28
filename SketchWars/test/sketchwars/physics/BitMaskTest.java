@@ -227,5 +227,22 @@ public class BitMaskTest
         long result = wideMask.getSubmaskElement(1, -4);
         assertEquals(0x000000FFFFFF0000l, result);
     }
-
+    @Test
+    public void testGetProjectedLengthHorizontal()
+    {
+        double result = rectMask.getProjectedLength(Vectors.create(-2, 0));
+        assertEquals(128.0, result, Vectors.EPSILON);
+    }
+    @Test
+    public void testGetProjectedLengthVertical()
+    {
+        double result = rectMask.getProjectedLength(Vectors.create(0, -33));
+        assertEquals(2.0, result, Vectors.EPSILON);
+    }
+    @Test
+    public void testGetProjectedLengthDiagonal()
+    {
+        double result = wideMask.getProjectedLength(Vectors.create(1, 1));
+        assertEquals(22.79, result, Vectors.EPSILON);
+    }
 }

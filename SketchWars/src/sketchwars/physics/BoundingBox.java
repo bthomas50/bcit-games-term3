@@ -66,6 +66,11 @@ public class BoundingBox
 		return Vectors.create(right, bottom);
 	}
 	
+    public long getCenterVector()
+    {
+        return Vectors.scalarMultiply(0.5, Vectors.add(getBottomRightVector(), getTopLeftVector()));
+    }
+
     public int getTop()
     {
         return top;

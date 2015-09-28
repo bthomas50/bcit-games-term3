@@ -101,6 +101,38 @@ public class BitMask
         return Vectors.add(Vectors.create(xCOM, yCOM), vOffset);
     }
 
+    public double getProjectedLength(long vec)
+    {
+        vec = Vectors.normalize(vec);
+        double minProjection = Double.MAX_VALUE;
+        double maxProjection = -Double.MAX_VALUE;
+        //loop over all rows, even though it should be possible to return early.
+        for(int i = bounds.getTop(); i <= bounds.getBottom(); i++)
+        {
+            int left = findFirstInRow(data[i]);
+            int right = findLastInRow(data[i]);
+            double projLeft = Vectors.dot(Vectors.create(left, i), vec);
+            double projRight = Vectors.dot(Vectors.create(right, i), vec);
+            if(projLeft < minProjection)
+            {
+                minProjection = projLeft;
+            }
+            if(projLeft > maxProjection)
+            {
+                maxProjection = projLeft;
+            }
+            if(projRight > maxProjection)
+            {
+                maxProjection = projRight;
+            }
+            if(projRight < minProjection)
+            {
+                minProjection = projRight;
+            }
+        }
+        return 1 + maxProjection - minProjection;
+    }
+
     public BoundingBox getBounds()
     {
 		if(bounds == null)
