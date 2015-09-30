@@ -21,33 +21,15 @@ public class OpenGL {
     public static final int WIDTH = 800;
     public static final int HEIGHT = 600;
     
-    private static final double MILLION = 1000000;//used in calculating frame length
-    
     // We need to strongly reference callback instances.
     private GLFWErrorCallback errorCallback;
     private KeyboardHandler   keyboardHandler;
  
     // The window handle
     private long window;
-    private final SceneManager sceneManager;
-    private final SketchWars sketchWars;
     
-    private double lastTime;
-        
-    public OpenGL(SketchWars sWars, SceneManager sceneManager) {
-        this.sketchWars = sWars;
-        this.sceneManager = sceneManager;
+    public OpenGL() {
         this.keyboardHandler = new KeyboardHandler();
-    }
-    
-    public void run() {
-        System.out.println("LWJGL " + Sys.getVersion() + "!");
- 
-        try {
-            loop(); //the main loop
-        } finally {
-            dispose();
-        }
     }
     
     public void dispose() {
@@ -56,9 +38,6 @@ public class OpenGL {
             glfwDestroyWindow(window);
             keyboardHandler.release();
             
-            if (sketchWars != null) {
-                sketchWars.dispose();
-            }
             
         } finally { 
             // Terminate GLFW and release the GLFWerrorfun
@@ -67,17 +46,7 @@ public class OpenGL {
         }
     }
     
-    /**
-    * Get the accurate system time
-    * 
-    * @return The system time in milliseconds
-    */
-   public long getTime() {
-       return System.nanoTime();
-   }
- 
     public void init() {
-        lastTime = getTime();
         // Setup an error callback. The default implementation
         // will print the error message in System.err.
         glfwSetErrorCallback(errorCallback = errorCallbackPrint(System.err));
@@ -119,6 +88,17 @@ public class OpenGL {
         GLContext.createFromCurrent();
         
         initCamera();
+        
+        // This line is critical for LWJGL's interoperation with GLFW's
+        // OpenGL context, or any context that is managed externally.
+        // LWJGL detects the context that is current in the current thread,
+        // creates the ContextCapabilities instance and makes the OpenGL
+        // bindings available for use.
+        GL.createCapabilities(true); // valid for latest build
+        //GLContext.createFromCurrent(); // use this line instead with the 3.0.0a build
+ 
+        // Set the clear color
+        GL11.glClearColor(0.0f, 0.5f, 0.8f, 0.0f);
     }
 
     private void initCamera() {
@@ -136,43 +116,20 @@ public class OpenGL {
         GL11.glDisable(GL11.GL_LIGHTING);
         GL11.glEnable(GL11.GL_TEXTURE_2D);
     }
-    private void loop() {
-        // This line is critical for LWJGL's interoperation with GLFW's
-        // OpenGL context, or any context that is managed externally.
-        // LWJGL detects the context that is current in the current thread,
-        // creates the ContextCapabilities instance and makes the OpenGL
-        // bindings available for use.
-        GL.createCapabilities(true); // valid for latest build
-        //GLContext.createFromCurrent(); // use this line instead with the 3.0.0a build
- 
-        // Set the clear color
-        GL11.glClearColor(0.0f, 0.5f, 0.8f, 0.0f);
-        
-        // Run the rendering loop until the user has attempted to close
-        // the window or has pressed the ESCAPE key.
-        while ( glfwWindowShouldClose(window) == GL11.GL_FALSE ) {
-            GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT); // clear the framebuffer
- 
-            double time = getTime(); //calculate frame length in milliseconds
-            double delta = (time - lastTime)/MILLION;
-            
-            if (sceneManager != null) {
-                sceneManager.render();//call the main graphics renderer
-                sceneManager.update(delta);
-            }
-            
-            if (sketchWars != null) {
-                sketchWars.update(delta); //call the main game update
-            }
-            
-            lastTime = time;
-            
-            glfwSwapBuffers(window); // swap the color buffers 
-            // Poll for window events. The key callback above will only be
-            // invoked during this call.
-            glfwPollEvents();
-        }
-    }
-
     
+    public boolean windowsIsClosing() {
+        return  glfwWindowShouldClose(window) != GL11.GL_FALSE;
+    }
+    
+    public void beginUpdate() {
+        GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT); // clear the framebuffer
+    }
+    
+    public void endUpdate() {
+        
+        glfwSwapBuffers(window); // swap the color buffers 
+        // Poll for window events. The key callback above will only be
+        // invoked during this call.
+        glfwPollEvents();
+    }
 }

@@ -9,8 +9,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
-import junit.extensions.TestSetup;
-import org.junit.After;
 import static org.junit.Assert.*;
 import org.junit.*;
 import sketchwars.OpenGL;
@@ -23,7 +21,7 @@ public class TextureTest {
     private static final String testImage = "content/test/test.png";
     private static final int TEST_WIDTH = 64;
     private static final int TEST_HEIGHT = 64;
-    private static final OpenGL opengl = new OpenGL(null, null);
+    private static final OpenGL opengl = new OpenGL();
             
     @BeforeClass
     public static void setupTest() throws IOException {

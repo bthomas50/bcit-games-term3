@@ -25,6 +25,8 @@ public class Character implements GraphicsObject, GameObject {
     public void init() {
         texture = new Texture();
         texture.loadTexture("content/char/char.png");
+        
+        
     }
     
     public void setCollider(Collider coll) {

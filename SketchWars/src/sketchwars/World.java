@@ -64,9 +64,6 @@ public class World {
             System.out.println("D is pressed");
         }
         
-        if(KeyboardHandler.isKeyDown(GLFW_KEY_SPACE))
-            System.out.println("W is pressed");
-        
         if(KeyboardHandler.isKeyDown(GLFW_KEY_SPACE)){
             System.out.println("Space is pressed");
         }
