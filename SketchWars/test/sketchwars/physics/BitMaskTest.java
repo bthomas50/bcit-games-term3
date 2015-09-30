@@ -245,4 +245,53 @@ public class BitMaskTest
         double result = wideMask.getProjectedLength(Vectors.create(1, 1));
         assertEquals(22.79, result, Vectors.EPSILON);
     }
+    @Test
+    public void testIsBitSetTrue()
+    {
+        assertEquals(true, rectMask.isBitSet(1, 63));
+        assertEquals(true, rectMask.isBitSet(0, 30));
+        assertEquals(true, rectMask.isBitSet(0, 31));
+        assertEquals(true, rectMask.isBitSet(0, 32));
+        assertEquals(true, rectMask.isBitSet(1, 31));
+    }
+    @Test
+    public void testIsBitSetFalse()
+    {
+        assertEquals(false, wideMask.isBitSet(0, 0));
+    }
+    @Test
+    public void testIsBitSetOOB()
+    {
+        assertEquals(false, rectMask.isBitSet(-1, -1));
+    }
+
+    @Test
+    public void testGetNormalTop()
+    {
+        long vNormal = rectMask.getNormal(0, 32);
+        assertEquals(-4, Vectors.iyComp(vNormal));
+        assertEquals(0,  Vectors.ixComp(vNormal));
+    }
+    @Test
+    public void testGetNormalBottom()
+    {
+        long vNormal = rectMask.getNormal(1, 32);
+        assertEquals(4, Vectors.iyComp(vNormal));
+        assertEquals(0,  Vectors.ixComp(vNormal));
+    }
+    @Test
+    public void testGetNormalCorner()
+    {
+        long vNormal = rectMask.getNormal(0, 0);
+        assertEquals(-3, Vectors.iyComp(vNormal));
+        assertEquals(-3,  Vectors.ixComp(vNormal));
+    }
+
+    @Test
+    public void testGetAverageNormal()
+    {
+        long vAvgNormal = rectMask.getAverageNormal(irregMask);
+        assertEquals(-(4.0 * 63.0 + 3.0) / 64.0, Vectors.yComp(vAvgNormal), Vectors.EPSILON);
+        assertEquals(-3.0 / 64.0, Vectors.xComp(vAvgNormal), Vectors.EPSILON);
+    }
 }

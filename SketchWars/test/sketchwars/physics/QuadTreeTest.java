@@ -27,6 +27,26 @@ public class QuadTreeTest
         }
 
         @Override
+        public boolean isStatic()
+        {
+            return false;
+        }
+        @Override 
+        public long getCenterOfMass()
+        {
+            throw new UnsupportedOperationException("this is a test object!");
+        }
+        @Override 
+        public void setElasticity(float ela)
+        {
+            throw new UnsupportedOperationException("this is a test object!");
+        }
+        @Override
+        public float getElasticity()
+        {
+            throw new UnsupportedOperationException("this is a test object!");
+        }
+        @Override
         public void notify(Collider other)
         {
             throw new UnsupportedOperationException("this is a test object!");

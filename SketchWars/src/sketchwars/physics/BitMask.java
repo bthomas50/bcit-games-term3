@@ -101,6 +101,63 @@ public class BitMask
         return Vectors.add(Vectors.create(xCOM, yCOM), vOffset);
     }
 
+    public long getAverageNormal(BitMask subMask)
+    {
+        long vAccumulator = 0l;
+        int count = 0;
+        for(int i = subMask.getBounds().getTop(); i <= subMask.getBounds().getBottom(); i++)
+        {
+            for(int j = subMask.getBounds().getLeft(); j <= subMask.getBounds().getRight(); j++)
+            {
+                if(subMask.isBitSet(i - Vectors.iyComp(subMask.vOffset), j - Vectors.ixComp(subMask.vOffset)))
+                {
+                    long vNormal = getNormal(i, j);
+                    if(vNormal != 0l)
+                    {
+                        vAccumulator = Vectors.add(vAccumulator, vNormal);
+                        count++;
+                    }
+                }
+            }
+        }
+        return Vectors.scalarMultiply(1.0 / (double)count, vAccumulator);
+    }
+
+    protected long getNormal(int row, int bit)
+    {
+        int xOrg = bit - Vectors.ixComp(vOffset);
+        int yOrg = row - Vectors.iyComp(vOffset);
+        int normX = 0;
+        int normY = 0;
+        for(int i = yOrg - 1; i <= yOrg + 1; i++)
+        {
+            for(int j = xOrg - 1; j <= xOrg + 1; j++)
+            {
+                if(!isBitSet(i, j))
+                    continue;
+                if(i != yOrg)
+                {
+                    int addedY = i - yOrg;
+                    if(j == xOrg)
+                    {
+                        addedY *= 2;
+                    }
+                    normY += addedY;
+                }
+                if(j != xOrg)
+                {
+                    int addedX = j - xOrg;
+                    if(i == yOrg)
+                    {
+                        addedX *= 2;
+                    }
+                    normX += addedX;
+                }
+            }
+        }
+        return Vectors.create(-normX, -normY);
+    }
+
     public double getProjectedLength(long vec)
     {
         vec = Vectors.normalize(vec);
@@ -172,8 +229,25 @@ public class BitMask
                 resultData[resultI][resultJLongIdx] = getSubmaskElement(localI, localJ) & other.getSubmaskElement(otherI, otherJ);
             }
         }
-        return new BitMask(resultData, vResultOffset);
+        BitMask ret = new BitMask(resultData, vResultOffset);
+        ret.trim();
+        return ret;
     }
+
+    protected boolean isBitSet(int row, int bitIdx)
+    {
+        if(!isRowInBounds(row))
+            return false;
+        final int longIdx = bitIdx / BITS_PER_LONG;
+        if(!isColInBounds(longIdx))
+            return false;
+        final int offset = bitIdx % BITS_PER_LONG;
+        if(offset < 0)
+            return false;
+        else 
+            return (data[row][longIdx] & LONG_MASKS[offset]) != 0l;
+    }
+
     //get 64 bits from row row, starting from bit start.
     protected long getSubmaskElement(int row, int start)
     {
@@ -189,7 +263,7 @@ public class BitMask
         }
         else if(bitIdx == 0)
         {
-            if(isInBounds(startIdx))
+            if(isColInBounds(startIdx))
                 return data[row][startIdx];
             else
                 return 0l;
@@ -197,12 +271,12 @@ public class BitMask
         else
         {
             long ret = 0l;
-            if(isInBounds(startIdx))
+            if(isColInBounds(startIdx))
             {
                 long retLeft = data[row][startIdx] << bitIdx;
                 ret |= retLeft;
             }
-            if(isInBounds(startIdx+1))
+            if(isColInBounds(startIdx+1))
             {
                 long retRight = data[row][startIdx + 1] >>> ((long)BITS_PER_LONG - bitIdx);
                 ret |= retRight;
@@ -211,7 +285,12 @@ public class BitMask
         }
     }
 
-    private boolean isInBounds(int j)
+    private boolean isRowInBounds(int i)
+    {
+        return i >= 0 && i < data.length;
+    }
+
+    private boolean isColInBounds(int j)
     {
         return j >= 0 && j < data[0].length;
     }
@@ -221,8 +300,9 @@ public class BitMask
         int top = findFirstNonemptyRow(data);
         if(top == -1)
         {
-            data = null;
-            bounds = null;
+            this.data = new long[1][];
+            ensureRectangular();
+            updateBounds();
             return;
         }
         int bottom = findLastNonemptyRow(data);

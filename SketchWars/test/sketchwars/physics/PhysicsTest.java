@@ -80,6 +80,8 @@ public class PhysicsTest
 	@Test
 	public void testUpdateDoesCollisionDetection()
 	{
+        rectCollider.setMass(1);
+        wideCollider.setMass(1);
 		physics.addCollider(rectCollider);
 		physics.addCollider(wideCollider);
 		physics.update(0);//time not considered yet.

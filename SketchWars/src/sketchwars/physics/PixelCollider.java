@@ -10,6 +10,7 @@ public class PixelCollider extends BasicPhysicsObject implements Collider
 {
     private BitMask bitMask;
     private List<CollisionListener> listeners;
+    private float elasticity;
 
     public PixelCollider(BitMask bm)
     {
@@ -44,6 +45,29 @@ public class PixelCollider extends BasicPhysicsObject implements Collider
     public BoundingBox getBounds()
     {
         return bitMask.getBounds();
+    }
+
+    @Override
+    public long getCenterOfMass()
+    {
+        return bitMask.getCenterOfMass();
+    }
+
+    @Override
+    public float getElasticity()
+    {
+        return this.elasticity;
+    }
+    @Override
+    public void setElasticity(float ela)
+    {
+        this.elasticity = ela;
+    }
+
+    @Override
+    public boolean isStatic()
+    {
+        return mass == 0.0;
     }
 
     @Override

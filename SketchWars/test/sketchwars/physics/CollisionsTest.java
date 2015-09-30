@@ -43,8 +43,11 @@ public class CollisionsTest
         irregMask = new BitMask(irregularData);
         wideMask = new BitMask(dataWithExtraZeros);
         rectCollider = new PixelCollider(rectMask);
+        rectCollider.setMass(1);
         irregCollider = new PixelCollider(irregMask);
+        irregCollider.setMass(1);
         wideCollider = new PixelCollider(wideMask);
+        wideCollider.setMass(1);
         rectCollider.addCollisionListener(list);
         irregCollider.addCollisionListener(list);
         wideCollider.addCollisionListener(list);

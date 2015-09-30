@@ -50,7 +50,7 @@ public class WorldFactory
         map.init();
         PixelCollider mapCollider = new PixelCollider(BitMaskFactory.createRectangle(1800, 800));
         mapCollider.setPosition(Vectors.create(-900, -1024));
-
+        mapCollider.setElasticity(1.0f);
         map.setCollider(mapCollider);
 
         physics.addCollider(mapCollider);
@@ -63,8 +63,9 @@ public class WorldFactory
         Character character = new Character();
         character.init();
         character.setWeapon(wep);
-        PixelCollider charCollider = new PixelCollider(BitMaskFactory.createRectangle(new BoundingBox(-50, -100, 50, 100)));
+        PixelCollider charCollider = new PixelCollider(BitMaskFactory.createRectangle(new BoundingBox(-50, 0, 50, 100)));
         charCollider.setMass(10);
+        charCollider.setElasticity(1.0f);
         character.setCollider(charCollider);
 
         physics.addCollider(charCollider);
@@ -83,8 +84,9 @@ public class WorldFactory
         projectile.init();
 
         PixelCollider projCollider = new PixelCollider(BitMaskFactory.createCircle(32.0));
-        projCollider.setPosition(Vectors.create(300, 300));
+        projCollider.setPosition(Vectors.create(100, 300));
         projCollider.setMass(1);
+        projCollider.setElasticity(1.0f);
 
         projectile.setCollider(projCollider);
 
