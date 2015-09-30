@@ -77,7 +77,7 @@ public class SketchWars {
                 openGL.endUpdate();
             }
         } finally {
-            dispose();
+            openGL.dispose();
         }
     }
     
