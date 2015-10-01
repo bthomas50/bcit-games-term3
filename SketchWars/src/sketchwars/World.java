@@ -6,7 +6,7 @@ import org.lwjgl.glfw.GLFWKeyCallback;
 import sketchwars.character.Character;
 import sketchwars.map.AbstractMap;
 import sketchwars.input.KeyboardHandler;
-
+import sketchwars.sound.SoundPlayer;
 import java.util.ArrayList;
 
 /**
@@ -18,10 +18,11 @@ public class World {
     private AbstractMap map;
     private ArrayList<Character> characters;
     private ArrayList<GameObject> allObjects;
-            
+    private SoundPlayer sound;
     public World() {
         characters = new ArrayList<>();
         allObjects = new ArrayList<>();
+        SoundPlayer.loadSound();
     }
     
     public void setMap(AbstractMap map) {
@@ -50,12 +51,25 @@ public class World {
     }
 
     private void handleInput() {
-        /* Dont know where to put this code. Possibly character though
-            we may need a distinction between client and peer characters */
+
         if(KeyboardHandler.isKeyDown(GLFW_KEY_W)){
             System.out.println("W is pressed");
+            try{
+                SoundPlayer.playMusic(0, true, 0);
+            }
+            catch (Exception e)
+            {
+                System.err.println("Problem playing sound");
+            }
         } else if(KeyboardHandler.isKeyDown(GLFW_KEY_S)){
             System.out.println("S is pressed");
+            try{
+                SoundPlayer.playSFX(1, true, 0);
+            }
+            catch (Exception e)
+            {
+                System.err.println("Problem playing sound");
+            }
         }
         
         if(KeyboardHandler.isKeyDown(GLFW_KEY_A)){

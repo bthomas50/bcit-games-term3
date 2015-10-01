@@ -8,7 +8,6 @@ import sketchwars.character.weapon.*;
 import sketchwars.map.*;
 import sketchwars.exceptions.SceneManagerException;
 
-
 public class WorldFactory
 {
     private World world;
