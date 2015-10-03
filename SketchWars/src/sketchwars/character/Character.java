@@ -59,7 +59,7 @@ public class Character implements GraphicsObject, GameObject {
         updateCharacterInfo();
         
         if (weapon != null) {
-            weapon.setPosition(posX, posY);
+            weapon.setPosition(posX + 0.01, posY - 0.01);
             weapon.update(delta);
         }
     }
@@ -131,5 +131,38 @@ public class Character implements GraphicsObject, GameObject {
     
     public boolean isDead() {
         return isDead;
+    }
+    
+    public double getPosX() {
+        return posX;
+    }
+
+    public double getPosY() {
+        return posY;
+    }
+
+    public void setPosition(double posX, double posY) {
+        this.posX = posX;
+        this.posY = posY;
+    }
+
+    public double getWidth() {
+        return width;
+    }
+
+    public double getHeight() {
+        return height;
+    }
+
+    public AbstractWeapon getWeapon() {
+        return weapon;
+    }
+
+    public Texture getTexture() {
+        return texture;
+    }
+
+    public void setTexture(Texture texture) {
+        this.texture = texture;
     }
 }

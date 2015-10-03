@@ -7,17 +7,21 @@ import sketchwars.map.AbstractMap;
 import sketchwars.input.KeyboardHandler;
 import sketchwars.sound.SoundPlayer;
 import java.util.ArrayList;
+import sketchwars.character.weapon.AbstractWeapon;
+import sketchwars.physics.Vectors;
 
 /**
  * @author Najash Najimudeen <najash.najm@gmail.com>
  * @author Brian Thomas <bthomas50@my,bcit.ca>
  */
 public class World {
-        
+    private int currentCharacter = 1; //temporary selection
+    
     private AbstractMap map;
     private ArrayList<Character> characters;
     private ArrayList<GameObject> allObjects;
     private SoundPlayer sound;
+    
     public World() {
         characters = new ArrayList<>();
         allObjects = new ArrayList<>();
@@ -79,6 +83,10 @@ public class World {
         
         if(KeyboardHandler.isKeyDown(GLFW_KEY_SPACE)){
             System.out.println("Space is pressed");
+            
+            AbstractWeapon weapon = characters.get(currentCharacter).getWeapon();
+            long direction = Vectors.create(1, 0);
+            weapon.fire(1, direction);
         }
         
         if(KeyboardHandler.isKeyDown(GLFW_KEY_UP)){

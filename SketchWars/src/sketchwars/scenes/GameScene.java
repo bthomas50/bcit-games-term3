@@ -12,10 +12,6 @@ package sketchwars.scenes;
  */
 public class GameScene extends AbstractScene {
 
-    @Override
-    public void init() {
-        
-    }
 
     @Override
     public void update(double delta) {

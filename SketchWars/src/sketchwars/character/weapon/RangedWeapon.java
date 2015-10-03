@@ -22,8 +22,8 @@ public class RangedWeapon extends AbstractWeapon {
         super(texture, scale);
     }
     
-    
-    public void fire(float power, Vectors direction) {
+    @Override
+    public void fire(float power, long direction) {
         
     }
     

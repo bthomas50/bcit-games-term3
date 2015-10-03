@@ -12,8 +12,6 @@ import sketchwars.graphics.Texture;
  * @author Najash Najimudeen <najash.najm@gmail.com>
  */
 public class MeleeWeapon extends AbstractWeapon {
-    private int direction;
-    
     public MeleeWeapon(Texture texture) {
         super(texture, 1);
     }
@@ -29,16 +27,8 @@ public class MeleeWeapon extends AbstractWeapon {
         }
     }
 
-    /**
-     * Set melee weapon render direction
-     * @param direction Negative value is left, positive value is right 
-     */
-    public void setDirection(int direction) {
-        this.direction = direction;
-    }
-    
-    public void fire() {
+    @Override
+    public void fire(float power, long direction) {
         
     }
-
 }

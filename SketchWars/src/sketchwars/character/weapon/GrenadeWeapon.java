@@ -21,8 +21,9 @@ public class GrenadeWeapon extends AbstractWeapon {
     public GrenadeWeapon(Texture texture, double scale) {
         super(texture, scale);
     }
-    
-    public void fire(float power, Vectors direction) {
+
+    @Override
+    public void fire(float power, long direction) {
         
     }
 }

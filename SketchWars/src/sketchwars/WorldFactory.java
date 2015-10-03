@@ -39,7 +39,6 @@ public class WorldFactory
     private void createGameScene() throws SceneManagerException
     {
         scene = new GameScene();
-        scene.init();
         sceneManager.addScene(SketchWars.Scenes.GAME, scene);
         sceneManager.setCurrentScene(SketchWars.Scenes.GAME);
     }
@@ -65,7 +64,7 @@ public class WorldFactory
         Character character = new Character(texture);
         
         character.setWeapon(wep);
-        PixelCollider charCollider = new PixelCollider(BitMaskFactory.createRectangle(new BoundingBox(-50, 0, 50, 100)));
+        PixelCollider charCollider = new PixelCollider(BitMaskFactory.createRectangle(new BoundingBox(-100, 0, 50, 100)));
         charCollider.setMass(10);
         charCollider.setElasticity(1.0f);
         character.setCollider(charCollider);
@@ -78,7 +77,7 @@ public class WorldFactory
     {
         Texture texture = new Texture();
         texture.loadTexture("content/char/weapons/meleeBoxing.png");
-        AbstractWeapon weapon = new RangedWeapon(texture);
+        AbstractWeapon weapon = new RangedWeapon(texture, 0.3);
         return weapon;
     }
     private void createProjectile()

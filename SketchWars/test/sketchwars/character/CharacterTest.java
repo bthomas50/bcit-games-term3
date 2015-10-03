@@ -7,6 +7,7 @@ package sketchwars.character;
 
 import static org.junit.Assert.*;
 import org.junit.Test;
+import sketchwars.graphics.Texture;
 
 /**
  *
@@ -15,13 +16,14 @@ import org.junit.Test;
 public class CharacterTest {
     @Test
     public void testCreation() {
-        Character character1 = new Character(null);
+        Texture t = new Texture();
+        Character character1 = new Character(t);
         assertEquals(Character.DEFAULT_MAX_HEALTH, character1.getHealth());
         assertEquals(Character.DEFAULT_MAX_HEALTH, character1.getMaxHealth());
         
         int maxHealth = 200;
         int startHealth = 100;
-        Character character2 = new Character(null, maxHealth, startHealth);
+        Character character2 = new Character(t, maxHealth, startHealth);
         
         assertEquals(startHealth, character2.getHealth());
         assertEquals(maxHealth, character2.getMaxHealth());
@@ -30,7 +32,8 @@ public class CharacterTest {
     
     @Test
     public void testDamageTaking() {
-        Character character1 = new Character(null, 200, 100);
+        Texture t = new Texture();
+        Character character1 = new Character(t, 200, 100);
         
         character1.takeDamage(50);
         assertEquals(50, character1.getHealth());
@@ -42,9 +45,10 @@ public class CharacterTest {
     
     @Test
     public void testHealing() {
+        Texture t = new Texture();
         int maxHealth = 300;
         int startHealth = 100;
-        Character character1 = new Character(null, maxHealth, startHealth);
+        Character character1 = new Character(t, maxHealth, startHealth);
          
         character1.heal(50);
         assertEquals(startHealth + 50, character1.getHealth());

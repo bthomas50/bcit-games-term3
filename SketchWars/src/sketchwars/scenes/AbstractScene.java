@@ -19,8 +19,6 @@ public abstract class AbstractScene {
         drawableObjs = new ArrayList<>();
     }
     
-    public abstract void init();
-    
     public void AddDrwableObject(GraphicsObject obj) {
         drawableObjs.add(obj);
     }

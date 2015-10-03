@@ -8,6 +8,7 @@ package sketchwars.character.weapon;
 import sketchwars.GameObject;
 import sketchwars.graphics.GraphicsObject;
 import sketchwars.graphics.Texture;
+import sketchwars.physics.Vectors;
 
 /**
  *
@@ -70,4 +71,6 @@ public abstract class AbstractWeapon implements GameObject, GraphicsObject {
     public void setScale(double scale) {
         this.scale = scale;
     }
+    
+    public abstract void fire(float power, long direction);
 }
