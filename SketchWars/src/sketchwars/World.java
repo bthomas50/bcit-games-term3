@@ -1,7 +1,6 @@
 package sketchwars;
 
 import static org.lwjgl.glfw.GLFW.*;
-import org.lwjgl.glfw.GLFWKeyCallback;
 
 import sketchwars.character.Character;
 import sketchwars.map.AbstractMap;
@@ -39,14 +38,14 @@ public class World {
         allObjects.add(obj);
     }
 
-    public void update(double elapsedMillis) {
+    public void update(double deltaMillis) {
         handleInput();
-        updateObjects(elapsedMillis);
+        updateObjects(deltaMillis);
     }
     
-    private void updateObjects(double elapsedMillis) {
+    private void updateObjects(double deltaMillis) {
         for(GameObject obj : allObjects) {
-            obj.update(elapsedMillis);
+            obj.update(deltaMillis);
         }
     }
 

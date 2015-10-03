@@ -18,7 +18,7 @@ import sketchwars.OpenGL;
  * @author A00807688
  */
 public class TextureTest {
-    private static final String testImage = "content/test/test.png";
+    private static final String testImage = "content/test.png";
     private static final int TEST_WIDTH = 64;
     private static final int TEST_HEIGHT = 64;
     private static final OpenGL opengl = new OpenGL();
@@ -35,13 +35,13 @@ public class TextureTest {
     @Test
     public void testTextureCreation() {
         Texture texture = new Texture();
-        ImageBuffer result = texture.loadTexture(testImage);
+        texture.loadTexture(testImage);
         
-        int textureID = result.textureID;
+        int textureID = texture.getTextureID();
         
         assertNotEquals(-1, textureID);
-        assertEquals(TEST_WIDTH, texture.getTextureWidth());
-        assertEquals(TEST_HEIGHT, texture.getTextureHeight());
+        assertEquals(TEST_WIDTH, (int)texture.getTextureWidth());
+        assertEquals(TEST_HEIGHT, (int)texture.getTextureHeight());
         
         assertEquals(1, texture.getTotalReferences());
         assertEquals(1, Texture.getTotalReferences(textureID));

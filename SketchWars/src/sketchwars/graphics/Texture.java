@@ -1,16 +1,16 @@
 package sketchwars.graphics;
 
+import java.awt.image.BufferedImage;
+import org.lwjgl.BufferUtils;
+import java.io.File;
 import static org.lwjgl.opengl.GL11.*;
-//import com.sun.javafx.geom.Matrix3f;
-import de.matthiasmann.twl.utils.PNGDecoder;
-import de.matthiasmann.twl.utils.PNGDecoder.Format;
-import java.io.FileInputStream;
+
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.imageio.ImageIO;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL30;
 import sketchwars.OpenGL;
@@ -20,24 +20,24 @@ import sketchwars.OpenGL;
  * @author Najash Najimudeen <najash.najm@gmail.com>
  */
 public class Texture {
-    private static final HashMap<String, ImageBuffer> textureList = new HashMap<>();
+    private static final HashMap<String, Texture> textureList = new HashMap<>();
     private static final HashMap<Integer, Integer> textureReference = new HashMap<>();
-    
+
     private int textureID;
     private String path;
-    private int tWidth;
-    private int tHeight;
-        
+    private float tWidth;
+    private float tHeight;
+    
     public Texture() {
         tWidth = 0;
         tHeight = 0;
     }
     
-    public int getTextureWidth() {
+    public float getTextureWidth() {
         return tWidth;
     }
     
-    public int getTextureHeight() {
+    public float getTextureHeight() {
         return tHeight;
     }
     
@@ -46,43 +46,42 @@ public class Texture {
     }
     
     /**
-     * Load a texture into vram (PNG files for now)
-     * @param pngFile texture path (PNG files for now)
+     * Load a texture into vram
+     * @param file texture path
      * @return returns the texture ID (negative value indicates error loading texture)
      */
-    public ImageBuffer loadTexture(final String pngFile) {     
-        ImageBuffer imageBuffer;
+    public Texture loadTexture(final String file) {     
+        Texture texture;
         
-        if (textureList.containsKey(pngFile)) {
-            imageBuffer = textureList.get(pngFile);
+        if (textureList.containsKey(file)) {
+            texture = textureList.get(file);
             
-            path = pngFile;
-            loadImageBuffer(imageBuffer);
+            path = file;
+            loadTextureInfo(texture);
             
-            System.out.println("Texture '" + pngFile + "' already exists, using existing reference.");
+            System.out.println("Texture '" + file + "' already exists, using existing reference.");
         } else {
-            imageBuffer = loadTextureFromFile(pngFile);
-        
-            if (imageBuffer == null) {
+            texture = loadTextureFromFile(file);
+       
+            if (texture == null) {
                 reset();
                 System.err.println("Error loading texture.");
             } else {
-                textureList.put(pngFile, imageBuffer);
-                
-                path = pngFile;
-                loadImageBuffer(imageBuffer);
+                loadTextureInfo(texture);
+                textureList.put(file, this);
+                path = file;
             }
         }
         
-        return imageBuffer;
+        return this;
     }
     
-    private void loadImageBuffer(ImageBuffer imageBuffer) {
-        incrementReference(imageBuffer.textureID);
+    private void loadTextureInfo(Texture newTexture) {
+        incrementReference(newTexture.getTextureID());
         
-        textureID = imageBuffer.textureID;
-        tWidth = imageBuffer.textureWidth;
-        tHeight = imageBuffer.textureHeight;
+        this.textureID = newTexture.getTextureID();
+        this.tWidth = newTexture.tWidth;
+        this.tHeight = newTexture.tHeight;
     }
     
     private static void incrementReference(int textureID) {
@@ -108,7 +107,7 @@ public class Texture {
     }
     
     public int getTotalReferences() {
-        if (textureID == -1 || textureReference.size() == 0) {
+        if (textureID == -1 || textureReference.isEmpty()) {
             return 0;
         }
         
@@ -126,24 +125,36 @@ public class Texture {
         tHeight = 0;
     }
 
-    private static ImageBuffer loadTextureFromFile(final String pngFile) {
+    private static Texture loadTextureFromFile(final String file) {
         try {
-            ImageBuffer imageBuffer = loadPNGFile(pngFile);
-            // Create a new texture object in memory and bind it
-            imageBuffer.textureID = glGenTextures();
-            GL13.glActiveTexture(GL13.GL_TEXTURE0);
-            glBindTexture(GL_TEXTURE_2D, imageBuffer.textureID);
+            File imageFile = new File(file);
+            BufferedImage image = ImageIO.read(imageFile);
 
-            // All RGB bytes are aligned to each other and each component is 1 byte
-            glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+            if (image != null) {
+                Texture texture = new Texture();
+                 
+                int width = image.getWidth();
+                int height = image.getHeight();
+                texture.tWidth = width;
+                texture.tHeight = height;
+                
+                ByteBuffer buffer = convertToByteBuffer(image);
+                
+                // Create a new texture object in memory and bind it
+                texture.textureID = glGenTextures();
+                GL13.glActiveTexture(GL13.GL_TEXTURE0);
+                glBindTexture(GL_TEXTURE_2D, texture.textureID);
 
-            // Upload the texture data and generate mip maps (for scaling)
-            glTexImage2D(GL_TEXTURE_2D,
-                    0, GL_RGBA, imageBuffer.textureWidth, imageBuffer.textureHeight, 0, 
-            GL_RGBA, GL_UNSIGNED_BYTE, imageBuffer.buf);
-            GL30.glGenerateMipmap(GL_TEXTURE_2D);
-            
-            return imageBuffer;
+                // All RGB bytes are aligned to each other and each component is 1 byte
+                glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+                // Upload the texture data and generate mip maps (for scaling)
+                glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, 
+                    GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+                GL30.glGenerateMipmap(GL_TEXTURE_2D);
+                
+                return texture;
+            }
         } catch (IOException ex) {
             Logger.getLogger(Texture.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -151,28 +162,27 @@ public class Texture {
         return null;
     }        
     
-    private static ImageBuffer loadPNGFile(final String file) throws IOException {
-        ByteBuffer buf;
-        InputStream in;
-                
-        in = new FileInputStream(file);
-        // Link the PNG decoder to this stream
-        PNGDecoder decoder = new PNGDecoder(in);
+    
+    private static ByteBuffer convertToByteBuffer(BufferedImage image) {
+        int[] pixels = new int[image.getWidth() * image.getHeight()];
+        image.getRGB(0, 0, image.getWidth(), image.getHeight(), pixels, 0, image.getWidth());
 
-        // Get the width and height of the texture
-        int textureWidth = decoder.getWidth();
-        int textureHeight = decoder.getHeight();
+        ByteBuffer buffer = BufferUtils.createByteBuffer(image.getWidth() * image.getHeight() * 4); //4 for RGBA, 3 for RGB
 
-        // Decode the PNG file in a ByteBuffer
-        buf = ByteBuffer.allocateDirect(
-                4 * decoder.getWidth() * decoder.getHeight());
-        decoder.decode(buf, decoder.getWidth() * 4, Format.RGBA);
-        buf.flip();
+        for(int y = 0; y < image.getHeight(); y++){
+            for(int x = 0; x < image.getWidth(); x++){
+                int pixel = pixels[y * image.getWidth() + x];
+                buffer.put((byte) ((pixel >> 16) & 0xFF));     // Red component
+                buffer.put((byte) ((pixel >> 8) & 0xFF));      // Green component
+                buffer.put((byte) (pixel & 0xFF));             // Blue component
+                buffer.put((byte) ((pixel >> 24) & 0xFF));    // Alpha component. Only for RGBA
+            }
+        }
 
-        in.close();
-        
-        return new ImageBuffer(buf, textureWidth, textureHeight);
+        buffer.flip();
+        return buffer;
     }
+    
     
     /**
      * Draw the texture - coordinates (0, 0) is the middle of the screen
@@ -308,8 +318,8 @@ public class Texture {
      * Delete all allocated textures
      */
     public static void disposeAllTextures() {
-        for (ImageBuffer image : textureList.values()) {
-            glDeleteTextures(image.textureID);
+        for (Texture texture : textureList.values()) {
+            glDeleteTextures(texture.textureID);
         }
         
         textureReference.clear();

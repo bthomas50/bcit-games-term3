@@ -10,5 +10,9 @@ package sketchwars;
  * @author Najash Najimudeen <najash.najm@gmail.com>
  */
 public interface GameObject {
-    void update(double elapsed);
+    /**
+     * Game object update that provides the frame length in milliseconds
+     * @param delta frame length in milliseconds
+     */
+    void update(double delta);
 }

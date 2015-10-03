@@ -7,6 +7,7 @@ import sketchwars.character.projectiles.*;
 import sketchwars.character.weapon.*;
 import sketchwars.map.*;
 import sketchwars.exceptions.SceneManagerException;
+import sketchwars.graphics.Texture;
 
 public class WorldFactory
 {
@@ -59,8 +60,10 @@ public class WorldFactory
 
     private void createCharacter(AbstractWeapon wep)
     {
-        Character character = new Character();
-        character.init();
+        Texture texture = new Texture();
+        texture.loadTexture("content/char/char1.png");
+        Character character = new Character(texture);
+        
         character.setWeapon(wep);
         PixelCollider charCollider = new PixelCollider(BitMaskFactory.createRectangle(new BoundingBox(-50, 0, 50, 100)));
         charCollider.setMass(10);
@@ -73,8 +76,9 @@ public class WorldFactory
     }
     private AbstractWeapon createWeapon()
     {
-        AbstractWeapon weapon = new TestWeapon();
-        weapon.init();
+        Texture texture = new Texture();
+        texture.loadTexture("content/char/weapons/meleeBoxing.png");
+        AbstractWeapon weapon = new RangedWeapon(texture);
         return weapon;
     }
     private void createProjectile()
