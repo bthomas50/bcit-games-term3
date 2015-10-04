@@ -1,10 +1,13 @@
 package sketchwars;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.lwjgl.Sys;
 import sketchwars.exceptions.SceneManagerException;
 import sketchwars.graphics.Texture;
 import sketchwars.physics.Physics;
 import sketchwars.physics.BoundingBox;
+import sketchwars.scenes.AbstractScene;
 import sketchwars.scenes.GameScene;
 import sketchwars.scenes.SceneManager;
 
@@ -26,7 +29,6 @@ public class SketchWars {
     private Physics physics;
     
     private SceneManager<Scenes> sceneManager;
-    private GameScene gameScene;
     private double lastTime;
     
     public static void main(String[] args) {
@@ -36,22 +38,26 @@ public class SketchWars {
     }
 
     private void init() {
-        initScenes();
-       
+        sceneManager = new SceneManager<>();
+        
         openGL = new OpenGL();
         openGL.init();
 
-        world = new World();
+        GameScene gameScene = new GameScene();
+        try {
+            sceneManager.addScene(Scenes.GAME, gameScene);
+            sceneManager.setCurrentScene(Scenes.GAME);
+        } catch (SceneManagerException ex) {
+            Logger.getLogger(SketchWars.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
         physics = new Physics(new BoundingBox(-1024, -1024, 1024, 1024));
+        world = new World(physics, gameScene);
 
         WorldFactory fact = new WorldFactory(world, physics, sceneManager);
         fact.startGame();
     }
     
-    private void initScenes() {
-        sceneManager = new SceneManager<>();
-        sceneManager.init();
-    }
     
     public void start() {
         lastTime = System.nanoTime();

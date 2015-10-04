@@ -21,10 +21,6 @@ public class SceneManager <T> {
         scenes = new HashMap<>();
         currentScene = null;
     }
-
-    public void init() {
-        
-    }
     
     public void addScene(T key, AbstractScene scene) throws SceneManagerException {
         if (scenes.containsKey(key)) {

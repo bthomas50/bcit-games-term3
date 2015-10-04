@@ -6,8 +6,11 @@
 package sketchwars.character.weapon;
 
 import sketchwars.GameObject;
+import sketchwars.character.projectiles.AbstractProjectile;
 import sketchwars.graphics.GraphicsObject;
 import sketchwars.graphics.Texture;
+import sketchwars.physics.BitMaskFactory;
+import sketchwars.physics.PixelCollider;
 import sketchwars.physics.Vectors;
 
 /**
@@ -15,14 +18,32 @@ import sketchwars.physics.Vectors;
  * @author Najash Najimudeen <najash.najm@gmail.com>
  */
 public abstract class AbstractWeapon implements GameObject, GraphicsObject {
+    private float rateOfFire; //per second
+    private double lastTimeFired;
+    private double elapsed;
+            
     protected double posX;
     protected double posY;
     protected double scale;
     protected Texture texture;
-
+    
     public AbstractWeapon(Texture texture, double scale) {
         this.texture = texture;
         this.scale = scale;
+        
+        rateOfFire = 1;
+        elapsed = Integer.MAX_VALUE;
+    }
+    
+    protected PixelCollider createProjectilePixelCollider() {
+        if (texture != null) {
+            int width = (int)(texture.getTextureWidth() * scale);
+            int height = (int)(texture.getTextureHeight() * scale);
+        
+            return new PixelCollider(BitMaskFactory.createRectangle(width, height));
+        }
+        
+        return null;
     }
     
     @Override
@@ -34,7 +55,7 @@ public abstract class AbstractWeapon implements GameObject, GraphicsObject {
     
     @Override
     public void update(double elapsed) {
-        
+        this.elapsed += elapsed;
     }
 
     public void dispose() {
@@ -71,6 +92,47 @@ public abstract class AbstractWeapon implements GameObject, GraphicsObject {
     public void setScale(double scale) {
         this.scale = scale;
     }
-    
-    public abstract void fire(float power, long direction);
+
+    public AbstractProjectile fire(float power, long direction) {
+        double timeFired = elapsed;
+        double timeSinceLastFired = timeFired - lastTimeFired;
+        float rateOfFireInMilli = 1000/rateOfFire;
+                            
+        if (timeSinceLastFired > rateOfFireInMilli) {
+            PixelCollider collider = createProjectilePixelCollider();
+            AbstractProjectile projectile = getProjectile();
+            
+            long normalDir = Vectors.normalize(direction);
+            long velocity = Vectors.scalarMultiply(power, normalDir);
+            projectile.setVelocity(velocity);
+                 
+            collider.setMass(projectile.getMass());
+            collider.setElasticity(projectile.getElasticity());
+            collider.setVelocity(projectile.getVelocity());
+            collider.setPosition(Vectors.create(posX * 1024.0, posY * 1024.0));
+            
+            projectile.setCollider(collider);
+            projectile.setPower(power);
+            projectile.setDirection(direction);
+            lastTimeFired = timeFired;
+            return projectile;
+        }
+        
+        
+        return null;
+    }
+
+    public float getRateOfFire() {
+        return rateOfFire;
+    }
+
+    /**
+     * per second
+     * @param rateOfFire 
+     */
+    public void setRateOfFire(float rateOfFire) {
+        this.rateOfFire = rateOfFire;
+    }
+
+    protected abstract AbstractProjectile getProjectile();
 }

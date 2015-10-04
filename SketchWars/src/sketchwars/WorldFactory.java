@@ -38,9 +38,7 @@ public class WorldFactory
 
     private void createGameScene() throws SceneManagerException
     {
-        scene = new GameScene();
-        sceneManager.addScene(SketchWars.Scenes.GAME, scene);
-        sceneManager.setCurrentScene(SketchWars.Scenes.GAME);
+        scene = (GameScene) sceneManager.getScene(SketchWars.Scenes.GAME);
     }
 
     private void createMap()
@@ -76,25 +74,39 @@ public class WorldFactory
     private AbstractWeapon createWeapon()
     {
         Texture texture = new Texture();
-        texture.loadTexture("content/char/weapons/meleeBoxing.png");
-        AbstractWeapon weapon = new RangedWeapon(texture, 0.3);
+        texture.loadTexture("content/char/weapons/grenade.png");
+        AbstractWeapon weapon = new GrenadeWeapon(texture, 0.1);
         return weapon;
     }
     private void createProjectile()
     {        
-        AbstractProjectile projectile = new TestBullet();
-        projectile.init();
-
+        Texture bulletTexture = new Texture();
+        bulletTexture.loadTexture("content/char/weapons/grenade.png");
+        AbstractProjectile projectile = new GrenadeProjectile(bulletTexture);
+        
         PixelCollider projCollider = new PixelCollider(BitMaskFactory.createCircle(32.0));
         projCollider.setPosition(Vectors.create(100, 300));
-        projCollider.setMass(1);
-        projCollider.setElasticity(1.0f);
-
+        projCollider.setMass(projectile.getMass());
+        projCollider.setElasticity(projectile.getElasticity());
+        
         projectile.setCollider(projCollider);
-
+        
         physics.addCollider(projCollider);
         scene.AddDrwableObject(projectile);
         world.addGameObject(projectile);
+        
+        AbstractProjectile projectile2 = new GrenadeProjectile(bulletTexture);
+        
+        PixelCollider projCollider2 = new PixelCollider(BitMaskFactory.createCircle(32.0));
+        projCollider2.setPosition(Vectors.create(0, 300));
+        projCollider2.setMass(projectile2.getMass());
+        projCollider2.setElasticity(projectile2.getElasticity());
+
+        projectile2.setCollider(projCollider2);
+
+        physics.addCollider(projCollider2);
+        scene.AddDrwableObject(projectile2);
+        world.addGameObject(projectile2);
     }
 
 

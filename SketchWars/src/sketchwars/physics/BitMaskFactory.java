@@ -33,7 +33,7 @@ public class BitMaskFactory
         }
         return new BitMask(data);
     }
-
+    
     public static BitMask createRectangle(int width, int height)
     {
         return createRectangle(new BoundingBox(0, 0, height - 1, width - 1));

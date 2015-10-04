@@ -5,6 +5,8 @@
  */
 package sketchwars.character.weapon;
 
+import sketchwars.character.projectiles.AbstractProjectile;
+import sketchwars.character.projectiles.MeleeProjectile;
 import sketchwars.graphics.Texture;
 
 /**
@@ -14,6 +16,8 @@ import sketchwars.graphics.Texture;
 public class MeleeWeapon extends AbstractWeapon {
     public MeleeWeapon(Texture texture) {
         super(texture, 1);
+        
+        setRateOfFire(0.5f);
     }
     
     public MeleeWeapon(Texture texture, double scale) {
@@ -28,7 +32,7 @@ public class MeleeWeapon extends AbstractWeapon {
     }
 
     @Override
-    public void fire(float power, long direction) {
-        
+    protected AbstractProjectile getProjectile() {
+        return new MeleeProjectile(null);
     }
 }
