@@ -19,6 +19,8 @@ public class TestMap extends AbstractMap {
     @Override
     public void init() {
         texture = new Texture();
-        texture.loadTexture("content/map/test.png");
+        texture.loadTexture("content/map/map.png");
+        background = new Texture();
+        background.loadTexture("content/map/background.png");
     }
 }

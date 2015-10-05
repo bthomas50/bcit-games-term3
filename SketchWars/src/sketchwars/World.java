@@ -74,7 +74,7 @@ public class World {
             }
             catch (Exception e)
             {
-                System.err.println("Problem playing sound");
+                System.err.println("Problem playing sound: " + e);
             }
         } else if(KeyboardHandler.isKeyDown(GLFW_KEY_S)){
             System.out.println("S is pressed");
@@ -83,7 +83,7 @@ public class World {
             }
             catch (Exception e)
             {
-                System.err.println("Problem playing sound");
+                System.err.println("Problem playing sound: " + e);
             }
         }
         

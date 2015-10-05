@@ -12,6 +12,11 @@ public class BitMaskFactory
     private BitMaskFactory()
     {}
 
+    // public static BitMask createFromImageAlpha(BufferedImage im)
+    // {
+    //     return new BitMask(null);
+    // }
+
     public static BitMask createCircle(double radius)
     {
         double r2 = radius * radius;
