@@ -2,6 +2,8 @@ package sketchwars.physics;
 
 import static sketchwars.physics.BitMask.*;
 import static sketchwars.physics.Vectors.*;
+
+import java.awt.image.BufferedImage;
 /**
  * Static factory methods for creating BitMasks
  * @author brian <bthomas50@my.bcit.ca>
@@ -13,10 +15,12 @@ public class BitMaskFactory
     private BitMaskFactory()
     {}
 
-    // public static BitMask createFromImageAlpha(BufferedImage im)
-    // {
-    //     return new BitMask(null);
-    // }
+    public static BitMask createFromImageAlpha(BufferedImage im, BoundingBox bounds)
+    {
+        BitMask ret = new BitMask(bounds);
+
+        return ret;
+    }
 
 	public static BitMask createLine(final long vPt1, final long vPt2)
 	{

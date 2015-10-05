@@ -53,32 +53,49 @@ public class Texture {
      * @param file texture path
      * @return returns the texture ID (negative value indicates error loading texture)
      */
-    public Texture loadTexture(final String file) {     
-        Texture texture;
-        
+    public Texture loadTexture(final String file) {
         if (textureList.containsKey(file)) {
-            texture = textureList.get(file);
-            
-            path = file;
-            loadTextureInfo(texture);
-            
-            System.out.println("Texture '" + file + "' already exists, using existing reference.");
+            setToExistingTexture(file);
         } else {
-            texture = loadTextureFromFile(file);
-       
-            if (texture == null) {
-                reset();
-                System.err.println("Error loading texture.");
-            } else {
-                loadTextureInfo(texture);
-                textureList.put(file, this);
-                path = file;
-            }
+            Texture texture = loadTextureFromFile(file);
+            setToTexture(texture, file);
         }
         
         return this;
     }
+
+    public BufferedImage loadTextureAndReturnImageData(final String file) throws IOException {
+        if (textureList.containsKey(file)) {
+            setToExistingTexture(file);
+            //I don't see a way to avoid this extra read currently.
+            return loadImageFile(file);
+        } else {
+            BufferedImage image = loadImageFile(file);
+            Texture texture = loadTextureFromImage(image);
+            setToTexture(texture, file);
+            return image;
+        }
+    }
     
+    private void setToExistingTexture(final String file) {
+        Texture texture = textureList.get(file);
+        path = file;
+        loadTextureInfo(texture);
+        
+        System.out.println("Texture '" + file + "' already exists, using existing reference.");
+    }
+
+    private void setToTexture(final Texture texture, final String file) {
+        if (texture == null) {
+            reset();
+            System.err.println("Error loading texture from: " + file);
+        } else {
+            loadTextureInfo(texture);
+            textureList.put(file, this);
+            path = file;
+        }
+    }
+
     private void loadTextureInfo(Texture newTexture) {
         incrementReference(newTexture.getTextureID());
         
@@ -128,43 +145,50 @@ public class Texture {
         tHeight = 0;
     }
 
+    private static BufferedImage loadImageFile(final String file) throws IOException {
+        File imageFile = new File(file);
+        return ImageIO.read(imageFile);
+    }
+
+    private static Texture loadTextureFromImage(final BufferedImage image) {
+        if (image != null) {
+            Texture texture = new Texture();
+             
+            int width = image.getWidth();
+            int height = image.getHeight();
+            texture.tWidth = width;
+            texture.tHeight = height;
+            
+            ByteBuffer buffer = convertToByteBuffer(image);
+            
+            // Create a new texture object in memory and bind it
+            texture.textureID = glGenTextures();
+            GL13.glActiveTexture(GL13.GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, texture.textureID);
+
+            // All RGB bytes are aligned to each other and each component is 1 byte
+            glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+            // Upload the texture data and generate mip maps (for scaling)
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, 
+                GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+            GL30.glGenerateMipmap(GL_TEXTURE_2D);
+            
+            return texture;
+        }
+        return null;
+    }
+
     private static Texture loadTextureFromFile(final String file) {
         try {
-            File imageFile = new File(file);
-            BufferedImage image = ImageIO.read(imageFile);
-
-            if (image != null) {
-                Texture texture = new Texture();
-                 
-                int width = image.getWidth();
-                int height = image.getHeight();
-                texture.tWidth = width;
-                texture.tHeight = height;
-                
-                ByteBuffer buffer = convertToByteBuffer(image);
-                
-                // Create a new texture object in memory and bind it
-                texture.textureID = glGenTextures();
-                GL13.glActiveTexture(GL13.GL_TEXTURE0);
-                glBindTexture(GL_TEXTURE_2D, texture.textureID);
-
-                // All RGB bytes are aligned to each other and each component is 1 byte
-                glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-
-                // Upload the texture data and generate mip maps (for scaling)
-                glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, 
-                    GL_RGBA, GL_UNSIGNED_BYTE, buffer);
-                GL30.glGenerateMipmap(GL_TEXTURE_2D);
-                
-                return texture;
-            }
+            BufferedImage im = loadImageFile(file);
+            return loadTextureFromImage(im);
         } catch (IOException ex) {
             Logger.getLogger(Texture.class.getName()).log(Level.SEVERE, null, ex);
         }
         
         return null;
-    }        
-    
+    }    
     
     private static ByteBuffer convertToByteBuffer(BufferedImage image) {
         int[] pixels = new int[image.getWidth() * image.getHeight()];
