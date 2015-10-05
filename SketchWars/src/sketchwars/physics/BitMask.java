@@ -49,7 +49,7 @@ public class BitMask
 	
 	BitMask(final BoundingBox bounds)
 	{
-		this(new long[bounds.getWidth()][getNumberOfLongs(bounds.getHeight())], bounds.getTopLeftVector());
+		this(new long[bounds.getHeight()][getNumberOfLongs(bounds.getWidth())], bounds.getTopLeftVector());
 	}
 
     public int getWidth()
@@ -81,11 +81,15 @@ public class BitMask
 	{
 		final int dataI = i - Vectors.iyComp(vOffset);
 		final int dataJ = j - Vectors.ixComp(vOffset);
-		if(isRowInBounds(dataI) && isColInBounds(dataJ))
+		System.out.println(dataI + ", " + dataJ);
+		if(isRowInBounds(dataI))
 		{
             final int jLongIdx = dataJ / BITS_PER_LONG;
-            final int jBitIdx = dataJ % BITS_PER_LONG;
-			data[dataI][jLongIdx] |= LONG_MASKS[jBitIdx];
+			if(isColInBounds(jLongIdx))
+			{
+				final int jBitIdx = dataJ % BITS_PER_LONG;
+				data[dataI][jLongIdx] |= LONG_MASKS[jBitIdx];
+			}
 		}
 	}
 	
@@ -307,7 +311,7 @@ public class BitMask
     {
         return i >= 0 && i < data.length;
     }
-
+	
     private boolean isColInBounds(int j)
     {
         return j >= 0 && j < data[0].length;

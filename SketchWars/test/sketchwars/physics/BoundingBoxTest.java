@@ -24,7 +24,7 @@ public class BoundingBoxTest
         assertEquals(bb.getBottom(), 3);
         assertEquals(bb.getRight(),  4);
     }
-
+	
     @Test
     public void testContainsTrue()
     {

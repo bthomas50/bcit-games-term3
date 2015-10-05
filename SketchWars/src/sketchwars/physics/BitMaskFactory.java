@@ -13,17 +13,19 @@ public class BitMaskFactory
     private BitMaskFactory()
     {}
 
-	public static BitMask createLine(long vPt1, long vPt2)
+	public static BitMask createLine(final long vPt1, final long vPt2)
 	{
 		long vDirection = subtract(vPt2, vPt1);
 		double numSamples = Math.ceil(length(vDirection));
 		long vNormalizedDirection = normalize(vDirection);
 		BitMask ret = new BitMask(new BoundingBox(vPt1, vPt2));
+		System.out.println(ret.getBounds());
 		for(double extent = 0; extent <= numSamples; extent += 1.0)
 		{
 			long vPtInLine = add(vPt1, scalarMultiply(vNormalizedDirection, extent));
 			int i = iyComp(vPtInLine);
 			int j = ixComp(vPtInLine);
+			System.out.println(i + ", " + j);
 			ret.setBit(i, j);
 		}
 		return ret;
