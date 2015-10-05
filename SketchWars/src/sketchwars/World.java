@@ -16,10 +16,12 @@ import sketchwars.physics.PixelCollider;
 import sketchwars.physics.Vectors;
 import sketchwars.scenes.GameScene;
 import sketchwars.scenes.SceneManager;
+import sketchwars.character.Team;
 
 /**
  * @author Najash Najimudeen <najash.najm@gmail.com>
  * @author Brian Thomas <bthomas50@my,bcit.ca>
+ * @author David Ly <ly_nekros@hotmail.com>
  */
 public class World {
     private int currentCharacter = 0; //temporary selection
@@ -27,6 +29,7 @@ public class World {
     private AbstractMap map;
     private ArrayList<Character> characters;
     private ArrayList<GameObject> allObjects;
+    private ArrayList<Team> teams;
     private SoundPlayer sound;
     private Physics physics;
     private GameScene gamescene;
@@ -36,6 +39,7 @@ public class World {
         this.gamescene = scenes;
         
         characters = new ArrayList<>();
+        teams = new ArrayList<>();
         allObjects = new ArrayList<>();
         SoundPlayer.loadSound();
     }
@@ -49,6 +53,11 @@ public class World {
         characters.add(character);
         allObjects.add(character);
     }
+    
+    public void addTeam (Team team)
+    {
+        teams.add(team);
+    }
 
     public void addGameObject(GameObject obj) {
         allObjects.add(obj);
@@ -56,6 +65,8 @@ public class World {
 
     public void update(double deltaMillis) {
         handleInput();
+        handleCharacterDrowning();
+        checkTeamStatus();
         updateObjects(deltaMillis);
     }
     
@@ -124,5 +135,28 @@ public class World {
             gamescene.AddDrwableObject(projectile);
             addGameObject(projectile);
         }
+    }
+    
+    private void handleCharacterDrowning(){
+        for(Character character: characters)
+        {
+            if(character.getPosY() < -5)
+            {
+                character.setHealth(0);
+            }
+        }
+    }
+    
+    private void checkTeamStatus()
+    {
+        int counter = 0;
+        
+        for(Team team: teams)
+        {
+            if(!team.isDead())
+                counter++;
+        }
+        
+        System.out.println("There is " + counter + " teams alive");
     }
 }

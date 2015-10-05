@@ -17,7 +17,15 @@ import sketchwars.physics.Vectors;
  *
  * @author Najash Najimudeen <najash.najm@gmail.com>
  */
+
 public abstract class AbstractWeapon implements GameObject, GraphicsObject {
+    
+    public enum WeaponEnum{
+        MELEE_WEAPON,
+        RANGED_WEAPON,
+        BASIC_GRENADE
+    }
+
     private float rateOfFire; //per second
     private double lastTimeFired;
     private double elapsed;

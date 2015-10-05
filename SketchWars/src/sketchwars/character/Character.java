@@ -62,6 +62,10 @@ public class Character implements GraphicsObject, GameObject {
             weapon.setPosition(posX + 0.01, posY - 0.01);
             weapon.update(delta);
         }
+        
+        if(health <= 0)
+            isDead = true;
+        
     }
 
     private void updateCharacterInfo() {
