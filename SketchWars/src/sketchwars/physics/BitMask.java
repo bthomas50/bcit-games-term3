@@ -19,16 +19,17 @@ public class BitMask
 	//translation from local space to world space
     private long vOffset;
 
+	BitMask()
+	{
+        this.data = new long[1][];
+        ensureRectangular();
+		updateBounds();
+        vOffset = Vectors.create(0, 0);
+	}
+	
 	BitMask(final long[][] data, long vPosition)
 	{
-		if(data == null)
-        {
-            this.data = new long[1][];
-        }
-        else 
-        {
-            this.data = data.clone();
-        }
+        this.data = data.clone();
         for(int i = 0; i < this.data.length; i++)
         {
             if(this.data[i] != null)
@@ -45,6 +46,11 @@ public class BitMask
     {
         this(data, Vectors.create(0,0));
     }
+	
+	BitMask(final BoundingBox bounds)
+	{
+		this(new long[bounds.getWidth()][getNumberOfLongs(bounds.getHeight())], bounds.getTopLeftVector());
+	}
 
     public int getWidth()
     {
@@ -69,6 +75,18 @@ public class BitMask
 	public void setPosition(long vPos)
 	{
 		vOffset = vPos;
+	}
+	
+	void setBit(int i, int j)
+	{
+		final int dataI = i - Vectors.iyComp(vOffset);
+		final int dataJ = j - Vectors.ixComp(vOffset);
+		if(isRowInBounds(dataI) && isColInBounds(dataJ))
+		{
+            final int jLongIdx = dataJ / BITS_PER_LONG;
+            final int jBitIdx = dataJ % BITS_PER_LONG;
+			data[dataI][jLongIdx] |= LONG_MASKS[jBitIdx];
+		}
 	}
 	
 	private void updateBounds()
@@ -209,7 +227,7 @@ public class BitMask
         BoundingBox intersection = getBounds().intersection(other.getBounds());
         if(intersection == null)
         {
-            return new BitMask(null);
+            return new BitMask();
         }
 		long vResultOffset = intersection.getTopLeftVector();
 		long thisToResult = Vectors.subtract(vResultOffset, vOffset);

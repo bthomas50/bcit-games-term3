@@ -1,6 +1,7 @@
 package sketchwars.physics;
 
 import static sketchwars.physics.BitMask.*;
+import static sketchwars.physics.Vectors.*;
 /**
  * Static factory methods for creating BitMasks
  * @author brian <bthomas50@my.bcit.ca>
@@ -12,6 +13,27 @@ public class BitMaskFactory
     private BitMaskFactory()
     {}
 
+	public static BitMask createLine(long vPt1, long vPt2)
+	{
+		long vDirection = subtract(vPt2, vPt1);
+		double numSamples = Math.ceil(length(vDirection));
+		long vNormalizedDirection = normalize(vDirection);
+		BitMask ret = new BitMask(new BoundingBox(vPt1, vPt2));
+		for(double extent = 0; extent <= numSamples; extent += 1.0)
+		{
+			long vPtInLine = add(vPt1, scalarMultiply(vNormalizedDirection, extent));
+			int i = iyComp(vPtInLine);
+			int j = ixComp(vPtInLine);
+			ret.setBit(i, j);
+		}
+		return ret;
+	}
+	
+	public static BitMask createLine(long vOrigin, long vDirection, double length)
+	{
+		return createLine(vOrigin, add(vOrigin, scaleToLength(vDirection, length)));
+	}
+	
     public static BitMask createCircle(double radius)
     {
         double r2 = radius * radius;
