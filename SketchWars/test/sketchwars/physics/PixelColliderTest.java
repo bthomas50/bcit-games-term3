@@ -15,15 +15,15 @@ public class PixelColliderTest
     @Before
     public void setup()
     {
-        coll1 = new PixelCollider(new BitMask(null));
-        coll2 = new PixelCollider(new BitMask(null));
+        coll1 = new PixelCollider(new BitMask());
+        coll2 = new PixelCollider(new BitMask());
         list = new TestListener();
     }
 
     @Test
     public void testCreate()
     {
-        assertEquals(null, coll1.getBounds());
+        assertEquals(new BoundingBox(0, 0, 0, -1), coll1.getBounds());
         assertEquals(Vectors.create(0,0), coll1.getPosition());
         assertEquals(Vectors.create(0,0), coll1.getVelocity());
     }

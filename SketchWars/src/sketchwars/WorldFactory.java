@@ -1,5 +1,6 @@
 package sketchwars;
 
+import java.util.ArrayList;
 import sketchwars.physics.*;
 import sketchwars.scenes.*;
 import sketchwars.character.Character;
@@ -8,6 +9,7 @@ import sketchwars.character.weapon.*;
 import sketchwars.map.*;
 import sketchwars.exceptions.SceneManagerException;
 import sketchwars.graphics.Texture;
+import sketchwars.character.Team;
 
 public class WorldFactory
 {
@@ -29,7 +31,8 @@ public class WorldFactory
             createGameScene();
             createMap();
             AbstractWeapon wep = createWeapon();
-            createCharacter(wep);
+            createCharacter(wep, new BoundingBox(-100, 0, 50, 100));
+            createCharacter(wep, new BoundingBox(-100, -150, 50, -50));
             createProjectile();
         } catch (SceneManagerException ex) {
             System.err.println(ex.getMessage());
@@ -55,7 +58,7 @@ public class WorldFactory
         world.setMap(map);
     }
 
-    private void createCharacter(AbstractWeapon wep)
+    /*private void createCharacter(AbstractWeapon wep)
     {
         Texture texture = new Texture();
         texture.loadTexture("content/char/char1.png");
@@ -70,7 +73,31 @@ public class WorldFactory
         physics.addCollider(charCollider);
         scene.AddDrwableObject(character);
         world.addCharacter(character);
+    }*/
+    
+    private void createCharacter(AbstractWeapon wep, BoundingBox box)
+    {
+        Texture texture = new Texture();
+        texture.loadTexture("content/char/char1.png");
+        Character character = new Character(texture);
+        ArrayList<Character> charList = new ArrayList<>();
+        Team team;
+        
+        character.setWeapon(wep);
+        PixelCollider charCollider = new PixelCollider(BitMaskFactory.createRectangle(box));
+        charCollider.setMass(10);
+        charCollider.setElasticity(1.0f);
+        character.setCollider(charCollider);
+        charList.add(character);
+        team = new Team(charList);
+        
+        physics.addCollider(charCollider);
+        scene.AddDrwableObject(character);
+        world.addTeam(team);
+        world.addCharacter(character);
+        
     }
+    
     private AbstractWeapon createWeapon()
     {
         Texture texture = new Texture();

@@ -1,17 +1,14 @@
 package sketchwars;
 
 import java.nio.ByteBuffer;
-import org.lwjgl.Sys;
 import static org.lwjgl.glfw.Callbacks.errorCallbackPrint;
 import static org.lwjgl.glfw.GLFW.*;
 import org.lwjgl.glfw.GLFWErrorCallback;
-import org.lwjgl.glfw.GLFWKeyCallback;
 import org.lwjgl.glfw.GLFWvidmode;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GLContext;
 import static org.lwjgl.system.MemoryUtil.NULL;
-import sketchwars.scenes.SceneManager;
 import sketchwars.input.KeyboardHandler;
 /**
  *

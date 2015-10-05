@@ -5,6 +5,7 @@
  */
 package sketchwars.character;
 
+import org.joml.Matrix3d;
 import sketchwars.physics.*;
 import sketchwars.character.weapon.AbstractWeapon;
 import sketchwars.graphics.*;
@@ -27,7 +28,7 @@ public class Character implements GraphicsObject, GameObject {
     private int maxHealth;
     private int health;
     private boolean isDead;
-
+    
     public Character(Texture texture) {
         coll = new PixelCollider(BitMaskFactory.createRectangle(1, 1));
         
@@ -62,6 +63,10 @@ public class Character implements GraphicsObject, GameObject {
             weapon.setPosition(posX + 0.01, posY - 0.01);
             weapon.update(delta);
         }
+        
+        if(health <= 0)
+            isDead = true;
+        
     }
 
     private void updateCharacterInfo() {

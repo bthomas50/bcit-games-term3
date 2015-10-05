@@ -71,4 +71,24 @@ public class BitMaskFactoryTest
         assertEquals(0xFFFFF80000000000l, bm.getSubmaskElement(6, 0));
         assertEquals(0x07FF000000000000l, bm.getSubmaskElement(19, 0));
     }
+	
+	@Test
+	public void testCreateLineFromPoints()
+	{
+		BitMask bm = BitMaskFactory.createLine(Vectors.create(-1, -1), Vectors.create(-1, 1));
+		bm.trim();
+		assertEquals(new BoundingBox(-1, -1, 1, -1), bm.getBounds());
+		assertEquals(0x8000000000000000l, bm.getSubmaskElement(0, 0));
+		assertEquals(0x8000000000000000l, bm.getSubmaskElement(1, 0));
+		assertEquals(0x8000000000000000l, bm.getSubmaskElement(2, 0));
+	}
+	
+	@Test
+	public void testCreateLineFromPointsHorz()
+	{
+		BitMask bm = BitMaskFactory.createLine(Vectors.create(-5, 1), Vectors.create(-1, 1));
+		bm.trim();
+		assertEquals(new BoundingBox(1, -5, 1, -1), bm.getBounds());
+		assertEquals(0xF800000000000000l, bm.getSubmaskElement(0, 0));
+	}
 }

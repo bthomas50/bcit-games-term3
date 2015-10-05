@@ -59,7 +59,7 @@ public class BitMaskTest
     @Test
     public void testCreateEmpty()
     {
-        BitMask empty = new BitMask(null);
+        BitMask empty = new BitMask();
         assertTrue(empty.isEmpty());
     }
 	
@@ -294,4 +294,25 @@ public class BitMaskTest
         assertEquals(-(4.0 * 63.0 + 3.0) / 64.0, Vectors.yComp(vAvgNormal), Vectors.EPSILON);
         assertEquals(-3.0 / 64.0, Vectors.xComp(vAvgNormal), Vectors.EPSILON);
     }
+	
+	@Test
+	public void testSetBitAlreadySet()
+	{
+		rectMask.setBit(0, 0);
+		assertTrue(rectMask.isBitSet(0, 0));
+	}
+	
+	@Test
+	public void testSetBit()
+	{
+		wideMask.setBit(0, 0);
+		assertTrue(wideMask.isBitSet(0, 0));
+	}
+	
+	@Test
+	public void testSetBitOOB()
+	{
+		wideMask.setBit(-1, -1);
+		assertFalse(wideMask.isBitSet(-1, -1));
+	}
 }

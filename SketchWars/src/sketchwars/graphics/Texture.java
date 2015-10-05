@@ -11,6 +11,9 @@ import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
+import org.joml.Matrix3d;
+import org.joml.Vector2d;
+import org.joml.Vector3d;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL30;
 import sketchwars.OpenGL;
@@ -278,16 +281,34 @@ public class Texture {
              newY, newY - height, newY - height, newY);
     }
     
-   /* public void draw(Matrix3f matrix) {
+    /**
+     * draw the texture using a transformation matrix 
+     * @param matrix transformation matrix 
+     */
+    public void draw(Matrix3d matrix) {   
         glPushMatrix();
         
+        //translate so (0, 0) is center of window
+        int xCenterOffet = (int)(OpenGL.WIDTH/2);
+        int yCenterOffet = (int)(OpenGL.HEIGHT/2);
+        glTranslated(xCenterOffet, yCenterOffet, 0);
         
-        glTranslatef(matrix.m02, matrix.m12, 0);
-        glScaled(matrix.m00, matrix.m11, 0);
+        //quad
+        Vector3d point1 = new Vector3d(-0.5, 0.5, 1);
+        Vector3d point2 = new Vector3d(0.5, 0.5, 1);
+        Vector3d point3 = new Vector3d(0.5, -0.5, 1);
+        Vector3d point4 = new Vector3d(-0.5, -0.5, 1);
         
-        drawTextureCentered(0, 0, 10, 10);
+        //tranform quad using the matrix
+        point1.mul(matrix);
+        point2.mul(matrix);
+        point3.mul(matrix);
+        point4.mul(matrix);
+        
+        draw((int)point1.x, (int)point2.x, (int)point3.x, (int)point4.x, 
+             (int)point1.y, (int)point2.y, (int)point3.y, (int)point4.y);
         glPopMatrix();
-    }*/
+    }
     
     private void draw(int x1, int x2, int x3, int x4,
                       int y1, int y2, int y3, int y4) {        
