@@ -1,12 +1,7 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package sketchwars.character.weapon;
 
 import sketchwars.GameObject;
-import sketchwars.character.projectiles.AbstractProjectile;
+import sketchwars.character.projectiles.*;
 import sketchwars.graphics.GraphicsObject;
 import sketchwars.graphics.Texture;
 import sketchwars.physics.BitMaskFactory;
@@ -37,26 +32,19 @@ public abstract class AbstractWeapon implements GameObject, GraphicsObject {
     protected Texture texture;
     
     protected int ammo;
+    protected ProjectileFactory projectileFactory;
 
-    public AbstractWeapon(Texture texture, double scale) {
+    public AbstractWeapon(Texture texture, double scale, ProjectileFactory projectileFactory) {
         this.texture = texture;
         this.scale = scale;
+        this.projectileFactory = projectileFactory;
         
         rateOfFire = 1;
         ammo = INFINITE_AMMO;
         elapsed = Integer.MAX_VALUE;
     }
     
-    protected PixelCollider createProjectilePixelCollider() {
-        if (texture != null) {
-            int width = (int)(texture.getTextureWidth() * scale);
-            int height = (int)(texture.getTextureHeight() * scale);
-        
-            return new PixelCollider(BitMaskFactory.createRectangle(width, height));
-        }
-        
-        return null;
-    }
+    
     
     @Override
     public void render() {
@@ -105,34 +93,31 @@ public abstract class AbstractWeapon implements GameObject, GraphicsObject {
         this.scale = scale;
     }
 
-    public AbstractProjectile fire(float power, long direction) {
+    public void tryToFire(float power, long direction) {
         double timeFired = elapsed;
         double timeSinceLastFired = timeFired - lastTimeFired;
         float rateOfFireInMilli = 1000/rateOfFire;
                             
         if (timeSinceLastFired > rateOfFireInMilli) {
-            PixelCollider collider = createProjectilePixelCollider();
-            AbstractProjectile projectile = getProjectile();
-            
-            long normalDir = Vectors.normalize(direction);
-            long velocity = Vectors.scalarMultiply(power, normalDir);
-            projectile.setVelocity(velocity);
-                 
-            collider.setMass(projectile.getMass());
-            collider.setElasticity(projectile.getElasticity());
-            collider.setVelocity(projectile.getVelocity());
-            collider.setPosition(Vectors.create(posX * 1024.0, posY * 1024.0));
-            
-            projectile.setCollider(collider);
-            projectile.setPower(power);
-            projectile.setDirection(direction);
+            fire(power, direction);
             lastTimeFired = timeFired;
-            return projectile;
         }
-        
-        
-        return null;
     }
+
+    private void fire(float power, long direction) {
+        long normalDir = Vectors.normalize(direction);
+        long vVelocity = Vectors.scalarMultiply(getProjectileSpeed(power), normalDir);
+        long vPosition = Vectors.create(posX * 1024.0, posY * 1024.0);
+
+        BasicProjectile projectile = createProjectile(vPosition, vVelocity);
+
+        projectile.setPower(power);
+        projectile.setDirection(direction);
+    }
+
+    protected abstract BasicProjectile createProjectile(long vPosition, long vVelocity);
+
+    protected abstract double getProjectileSpeed(float power);
 
     public float getRateOfFire() {
         return rateOfFire;
@@ -145,8 +130,6 @@ public abstract class AbstractWeapon implements GameObject, GraphicsObject {
     public void setRateOfFire(float rateOfFire) {
         this.rateOfFire = rateOfFire;
     }
-
-    protected abstract AbstractProjectile getProjectile();
 
     public int getAmmo()
     {

@@ -7,9 +7,9 @@ import sketchwars.exceptions.SceneManagerException;
 import sketchwars.graphics.Texture;
 import sketchwars.physics.Physics;
 import sketchwars.physics.BoundingBox;
-import sketchwars.scenes.AbstractScene;
-import sketchwars.scenes.GameScene;
-import sketchwars.scenes.SceneManager;
+import sketchwars.scenes.*;
+import sketchwars.sound.SoundPlayer;
+
 
 
 /**
@@ -43,6 +43,8 @@ public class SketchWars {
         openGL = new OpenGL();
         openGL.init();
 
+        SoundPlayer.loadSound();
+
         GameScene gameScene = new GameScene();
         try {
             sceneManager.addScene(Scenes.GAME, gameScene);
@@ -52,7 +54,7 @@ public class SketchWars {
         }
         
         physics = new Physics(new BoundingBox(-1024, -1024, 1024, 1024));
-        world = new World(physics, gameScene);
+        world = new World();
 
         WorldFactory fact = new WorldFactory(world, physics, sceneManager);
         fact.startGame();
@@ -68,7 +70,7 @@ public class SketchWars {
             while (!openGL.windowsIsClosing()) {
                 openGL.beginUpdate();
                 double time = System.nanoTime(); //calculate frame length in milliseconds
-                double delta = (time - lastTime)/MILLION;
+                double delta = (time - lastTime) / MILLION;
 
                 if (sceneManager != null) {
                     sceneManager.render();//call the main graphics renderer

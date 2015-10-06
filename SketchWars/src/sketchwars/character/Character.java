@@ -24,13 +24,11 @@ public class Character implements GraphicsObject, GameObject {
     private int health;
     private boolean isDead;
     
+    private boolean hasFired;
+    private double angle;
+
     public Character(Texture texture) {
-        coll = new PixelCollider(BitMaskFactory.createRectangle(1, 1));
-        
-        this.texture = texture;
-        this.maxHealth = DEFAULT_MAX_HEALTH;
-        this.health = DEFAULT_MAX_HEALTH;
-        this.isDead = false;
+        this(texture, DEFAULT_MAX_HEALTH, DEFAULT_MAX_HEALTH);
     }
     
     public Character(Texture texture, int maxHealth, int health) {
@@ -40,6 +38,8 @@ public class Character implements GraphicsObject, GameObject {
         this.maxHealth = maxHealth;
         this.health = health;
         this.isDead = false;
+        this.hasFired = false;
+        this.angle = 0.0;
     }
     
     public void setCollider(Collider coll) {
@@ -164,5 +164,24 @@ public class Character implements GraphicsObject, GameObject {
 
     public void setTexture(Texture texture) {
         this.texture = texture;
+    }
+
+    public boolean hasFiredThisTurn() {
+        return hasFired;
+    }
+
+    public void fireCurrentWeapon(double power) {
+        if(weapon != null) {
+            weapon.tryToFire((float)power, Vectors.createRTheta(1.0f, angle));
+            hasFired = true;
+        }
+    }
+
+    public void aimUp(double elapsedMillis) {
+        angle += Math.PI * elapsedMillis / 1000.0;
+    }
+
+    public void aimDown(double elapsedMillis) {
+        angle -= Math.PI * elapsedMillis / 1000.0;
     }
 }

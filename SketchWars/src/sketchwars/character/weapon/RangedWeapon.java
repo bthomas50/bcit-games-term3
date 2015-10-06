@@ -1,12 +1,6 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package sketchwars.character.weapon;
 
-import sketchwars.character.projectiles.AbstractProjectile;
-import sketchwars.character.projectiles.RangedProjectile;
+import sketchwars.character.projectiles.*;
 import sketchwars.graphics.Texture;
 
 /**
@@ -14,29 +8,28 @@ import sketchwars.graphics.Texture;
  * @author Najash Najimudeen <najash.najm@gmail.com>
  */
 public class RangedWeapon extends AbstractWeapon {
-    private Texture bulletTexture;
 
-    public RangedWeapon(Texture texture) {
-        super(texture, 1);        
-        init();
+    public RangedWeapon(Texture texture, ProjectileFactory projectileFactory) {
+        this(texture, 1, projectileFactory);
     }
     
-    public RangedWeapon(Texture texture, double scale) {
-        super(texture, scale);       
+    public RangedWeapon(Texture texture, double scale, ProjectileFactory projectileFactory) {
+        super(texture, scale, projectileFactory);       
         init();
     }
 
     private void init() {
         setRateOfFire(2);
-        
-        bulletTexture = new Texture();
-        bulletTexture.loadTexture("content/char/weapons/bullet1.png");
     }
     
     @Override
-    protected AbstractProjectile getProjectile() {
-        RangedProjectile projectile = new RangedProjectile(bulletTexture);
-        
-        return projectile;
+    public BasicProjectile createProjectile(long vPosition, long vVelocity) {
+        return  projectileFactory.createRanged(vPosition, vVelocity, scale);
     }
+
+    @Override
+    protected double getProjectileSpeed(float power) {
+        return power * 1000.0f;
+    }
+
 }

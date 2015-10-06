@@ -1,13 +1,13 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package sketchwars.character;
+
 import sketchwars.GameObject;
 import sketchwars.character.Character;
 import sketchwars.character.weapon.AbstractWeapon;
+import sketchwars.input.KeyboardHandler;
+
 import java.util.*;
+import static org.lwjgl.glfw.GLFW.*;
+
 /**
  *
  * @author David Ly <ly_nekros@hotmail.com>
@@ -40,6 +40,31 @@ public class Team
             total += characters.get(i).getHealth();
         
         return total;
+    }
+
+    public void handleInput(double elapsedMillis)
+    {
+        if(KeyboardHandler.isKeyDown(GLFW_KEY_W)){
+            //?
+        } else if(KeyboardHandler.isKeyDown(GLFW_KEY_S)){
+            //?
+        }
+        
+        if(KeyboardHandler.isKeyDown(GLFW_KEY_A)){
+            //active.moveLeft();
+        } else if(KeyboardHandler.isKeyDown(GLFW_KEY_D)){
+            //active.moveRight();
+        }
+        
+        if(KeyboardHandler.isKeyDown(GLFW_KEY_SPACE)){
+            active.fireCurrentWeapon(1.0);
+        }
+        
+        if(KeyboardHandler.isKeyDown(GLFW_KEY_UP)){
+            active.aimUp(elapsedMillis);
+        } else if(KeyboardHandler.isKeyDown(GLFW_KEY_DOWN)){
+            active.aimDown(elapsedMillis);
+        }
     }
 
     public boolean isDead()

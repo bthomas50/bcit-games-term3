@@ -1,12 +1,6 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package sketchwars.character.weapon;
 
-import sketchwars.character.projectiles.AbstractProjectile;
-import sketchwars.character.projectiles.MeleeProjectile;
+import sketchwars.character.projectiles.*;
 import sketchwars.graphics.Texture;
 
 /**
@@ -14,14 +8,13 @@ import sketchwars.graphics.Texture;
  * @author Najash Najimudeen <najash.najm@gmail.com>
  */
 public class MeleeWeapon extends AbstractWeapon {
-    public MeleeWeapon(Texture texture) {
-        super(texture, 1);
-        
-        setRateOfFire(0.5f);
+    public MeleeWeapon(Texture texture, ProjectileFactory projectileFactory) {
+        this(texture, 1, projectileFactory);
     }
     
-    public MeleeWeapon(Texture texture, double scale) {
-        super(texture, scale);
+    public MeleeWeapon(Texture texture, double scale, ProjectileFactory projectileFactory) {
+        super(texture, scale, projectileFactory);
+        setRateOfFire(0.5f);
     }
     
     @Override
@@ -32,7 +25,13 @@ public class MeleeWeapon extends AbstractWeapon {
     }
 
     @Override
-    protected AbstractProjectile getProjectile() {
-        return new MeleeProjectile(null);
+    public BasicProjectile createProjectile(long vPosition, long vVelocity) {
+        return projectileFactory.createMelee(vPosition, vVelocity, scale);
     }
+
+    @Override
+    protected double getProjectileSpeed(float power) {
+        return 10.0f;
+    }
+
 }

@@ -1,41 +1,27 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package sketchwars.character.weapon;
 
-import sketchwars.character.projectiles.AbstractProjectile;
-import sketchwars.character.projectiles.GrenadeProjectile;
+import sketchwars.character.projectiles.*;
 import sketchwars.graphics.Texture;
-import sketchwars.physics.BitMaskFactory;
-import sketchwars.physics.PixelCollider;
 
 /**
  *
  * @author Najash Najimudeen <najash.najm@gmail.com>
  */
 public class GrenadeWeapon extends AbstractWeapon {   
-    private double explosionRadius;    
-    private Texture grenadeTexture;
+    private double explosionRadius;
     
-    public GrenadeWeapon(Texture texture) {
-        super(texture, 1);
-        init();
+    public GrenadeWeapon(Texture texture, ProjectileFactory projectileFactory) {
+        this(texture, 1, projectileFactory);
     }
     
-    public GrenadeWeapon(Texture texture, double scale) {
-        super(texture, scale);
+    public GrenadeWeapon(Texture texture, double scale, ProjectileFactory projectileFactory) {
+        super(texture, scale, projectileFactory);
         init();
     }
     
     private void init() {
         explosionRadius = 1;
-        
         setRateOfFire(0.5f);
-        
-        grenadeTexture = new Texture();
-        grenadeTexture.loadTexture("content/char/weapons/grenade.png");
     }
 
     public double getExplosionRadius() {
@@ -47,12 +33,13 @@ public class GrenadeWeapon extends AbstractWeapon {
     }
 
     @Override
-    protected PixelCollider createProjectilePixelCollider() {
-        return new PixelCollider(BitMaskFactory.createCircle(32));
+    protected BasicProjectile createProjectile(long vPosition, long vVelocity) {
+        return projectileFactory.createGrenade(vPosition, vVelocity, scale);
     }
 
     @Override
-    protected AbstractProjectile getProjectile() {
-        return new GrenadeProjectile(grenadeTexture);
+    protected double getProjectileSpeed(float power) {
+        return power * 100.0f;
     }
+
 }

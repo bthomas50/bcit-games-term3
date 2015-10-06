@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package sketchwars.scenes;
 
 import java.util.ArrayList;
@@ -19,7 +14,7 @@ public abstract class AbstractScene {
         drawableObjs = new ArrayList<>();
     }
     
-    public void AddDrwableObject(GraphicsObject obj) {
+    public void addDrawableObject(GraphicsObject obj) {
         drawableObjs.add(obj);
     }
         

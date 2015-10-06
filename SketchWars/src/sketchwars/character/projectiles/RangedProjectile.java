@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package sketchwars.character.projectiles;
 
 import sketchwars.graphics.Texture;
@@ -11,14 +6,10 @@ import sketchwars.graphics.Texture;
  *
  * @author Najash Najimudeen <najash.najm@gmail.com>
  */
-public class RangedProjectile extends AbstractProjectile {
+public class RangedProjectile extends BasicProjectile {
 
     public RangedProjectile(Texture texture) {
         super(texture);
-        
-        setMass(2);
-        setElasticity(0.01f);
     }
-
     
 }

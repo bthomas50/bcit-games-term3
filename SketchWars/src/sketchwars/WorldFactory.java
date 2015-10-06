@@ -39,7 +39,6 @@ public class WorldFactory
             createGameScene();
             createMap();
             createTeams();
-            createProjectiles();
         } catch (SceneManagerException ex) {
             System.err.println(ex.getMessage());
         }
@@ -73,7 +72,7 @@ public class WorldFactory
         mapCollider.setElasticity(1.0f);
 
         physics.addCollider(mapCollider);
-        scene.AddDrwableObject(map);
+        scene.addDrawableObject(map);
         world.setMap(map);
     }
 
@@ -90,12 +89,13 @@ public class WorldFactory
     private Team createTeam(Random rng)
     {
         ArrayList<Character> characters = new ArrayList<>(CHARS_PER_TEAM);
-        HashMap<AbstractWeapon.WeaponEnum, AbstractWeapon> weapons = WeaponFactory.createDefaultWeaponSet();
+        HashMap<AbstractWeapon.WeaponEnum, AbstractWeapon> weapons = WeaponFactory.createDefaultWeaponSet(new ProjectileFactory(world, physics, scene));
         for(int c = 0; c < CHARS_PER_TEAM; c++)
         {
             //random between -900, 900
             double r = (rng.nextDouble() - 0.5) * 1800.0;
             Character character = createCharacter(Vectors.create(r, 800.0));
+            character.setWeapon(weapons.get(AbstractWeapon.WeaponEnum.MELEE_WEAPON));
             characters.add(character);
         }
         return new Team(characters, weapons);
@@ -114,41 +114,9 @@ public class WorldFactory
         character.setCollider(charCollider);
         
         physics.addCollider(charCollider);
-        scene.AddDrwableObject(character);
+        scene.addDrawableObject(character);
         world.addCharacter(character);
         return character;
     }
-    
-    private void createProjectiles()
-    {        
-        Texture bulletTexture = new Texture();
-        bulletTexture.loadTexture("content/char/weapons/grenade.png");
-        AbstractProjectile projectile = new GrenadeProjectile(bulletTexture);
-        
-        PixelCollider projCollider = new PixelCollider(BitMaskFactory.createCircle(32.0));
-        projCollider.setPosition(Vectors.create(100, 300));
-        projCollider.setMass(projectile.getMass());
-        projCollider.setElasticity(projectile.getElasticity());
-        
-        projectile.setCollider(projCollider);
-        
-        physics.addCollider(projCollider);
-        scene.AddDrwableObject(projectile);
-        world.addGameObject(projectile);
-        
-        AbstractProjectile projectile2 = new GrenadeProjectile(bulletTexture);
-        
-        PixelCollider projCollider2 = new PixelCollider(BitMaskFactory.createCircle(32.0));
-        projCollider2.setPosition(Vectors.create(0, 300));
-        projCollider2.setMass(projectile2.getMass());
-        projCollider2.setElasticity(projectile2.getElasticity());
-
-        projectile2.setCollider(projCollider2);
-
-        physics.addCollider(projCollider2);
-        scene.AddDrwableObject(projectile2);
-        world.addGameObject(projectile2);
-    }
-
 
 }
