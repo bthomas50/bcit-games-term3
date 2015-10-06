@@ -12,55 +12,67 @@ import java.util.*;
  *
  * @author David Ly <ly_nekros@hotmail.com>
  */
-public class Team {
-    private ArrayList<Character> characterList;
-    private HashMap<AbstractWeapon.WeaponEnum, Integer> weaponList;
+public class Team 
+{
+    private ArrayList<Character> characters;
+    private HashMap<AbstractWeapon.WeaponEnum, AbstractWeapon> weapons;
+    private Character active;
     
-    public Team()
+    public Team(ArrayList<Character> characters, HashMap<AbstractWeapon.WeaponEnum, AbstractWeapon> weapons)
     {
-        characterList = new ArrayList();
-        weaponList = new HashMap(10);
+        this.characters = characters;
+        this.weapons = weapons;
+        if(this.characters.size() > 0)
+        {
+            active = this.characters.get(0);
+        }
     }
-    
-    public Team(ArrayList characters)
-    {
-        characterList = characters;
-        weaponList = new HashMap(10);
-        init_weaponList();
-    }
-    public Team(ArrayList characters, HashMap weapons)
-    {
-        characterList = characters;
-        weaponList = weapons;    
-    }
-    private void init_weaponList ()
-    {
-        weaponList.put(AbstractWeapon.WeaponEnum.MELEE_WEAPON, 99);
-        weaponList.put(AbstractWeapon.WeaponEnum.RANGED_WEAPON, 99);
-        weaponList.put(AbstractWeapon.WeaponEnum.BASIC_GRENADE, 99);
-    }
+
     public void changeAmmo(AbstractWeapon.WeaponEnum weaponType, int num)
     {
-        weaponList.put(weaponType, weaponList.get(weaponType) + num);
+        weapons.get(weaponType).setAmmo(num);
     }
     
-    public int getCurrentHealth()
+    public int getTotalHealth()
     {
         int total = 0;
-        for (int i = 0; i < characterList.size(); i++)
-            total += characterList.get(i).getHealth();
+        for (int i = 0; i < size(); i++)
+            total += characters.get(i).getHealth();
         
         return total;
     }
-    
+
     public boolean isDead()
     {
-        for(Character character : characterList)
+        for(Character character : characters)
         {
+            System.out.println(character.isDead());
             if(!character.isDead())
                 return false;
         }
         return true;
     }
     
+    public int size()
+    {
+        return characters.size();
+    }
+
+    public Character getActiveCharacter()
+    {
+        return active;
+    }
+
+    public void incrementActiveCharacter()
+    {
+        int idx = characters.indexOf(active);
+        if(idx != size() - 1)
+        {
+            active = characters.get(0);
+        }
+        else
+        {
+            active = characters.get(idx + 1);
+        }
+    }
 }

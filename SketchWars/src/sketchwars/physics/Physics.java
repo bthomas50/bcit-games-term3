@@ -59,6 +59,7 @@ public class Physics
     public void update(double elapsedMillis)
     {
         updateKinematics(elapsedMillis);
+        updateBounds();
 		handleCollisions();
     }
 	
@@ -120,6 +121,21 @@ public class Physics
             }
         }
 	}
+
+    private void updateBounds()
+    {
+        for(Collider coll : allColliders)
+        {
+            if(collidersTree.contains(coll))
+            {
+                collidersTree.replace(coll, coll);
+            }
+            else
+            {
+                collidersTree.insert(coll);
+            }
+        }
+    }
 
     public List<Collider> getColliders()
     {

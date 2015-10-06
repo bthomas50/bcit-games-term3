@@ -11,11 +11,16 @@ import sketchwars.graphics.Texture;
 import sketchwars.character.Team;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.Random;
 
 public class WorldFactory
 {
+    private static final int NUM_TEAMS = 2;
+    private static final int CHARS_PER_TEAM = 3;
+
     private World world;
     private Physics physics;
     private SceneManager<SketchWars.Scenes> sceneManager;
@@ -33,10 +38,8 @@ public class WorldFactory
         try {
             createGameScene();
             createMap();
-            AbstractWeapon wep = createWeapon();
-            createCharacter(wep, Vectors.create(-300, 1024));
-            createCharacter(wep, Vectors.create(300, 1024));
-            createProjectile();
+            createTeams();
+            createProjectiles();
         } catch (SceneManagerException ex) {
             System.err.println(ex.getMessage());
         }
@@ -74,55 +77,49 @@ public class WorldFactory
         world.setMap(map);
     }
 
-    /*private void createCharacter(AbstractWeapon wep)
+    private void createTeams() 
     {
-        Texture texture = new Texture();
-        texture.loadTexture("content/char/char1.png");
-        Character character = new Character(texture);
-        
-        character.setWeapon(wep);
-        PixelCollider charCollider = new PixelCollider(BitMaskFactory.createRectangle(new BoundingBox(-100, 0, 50, 100)));
-        charCollider.setMass(10);
-        charCollider.setElasticity(1.0f);
-        character.setCollider(charCollider);
+        Random rng = new Random();
+        for(int t = 0; t < NUM_TEAMS; t++)
+        {
+            Team team = createTeam(rng);
+            world.addTeam(team);
+        }
+    }
 
-        physics.addCollider(charCollider);
-        scene.AddDrwableObject(character);
-        world.addCharacter(character);
-    }*/
-    
-    private void createCharacter(AbstractWeapon wep, long vPosition)
+    private Team createTeam(Random rng)
+    {
+        ArrayList<Character> characters = new ArrayList<>(CHARS_PER_TEAM);
+        HashMap<AbstractWeapon.WeaponEnum, AbstractWeapon> weapons = WeaponFactory.createDefaultWeaponSet();
+        for(int c = 0; c < CHARS_PER_TEAM; c++)
+        {
+            //random between -900, 900
+            double r = (rng.nextDouble() - 0.5) * 1800.0;
+            Character character = createCharacter(Vectors.create(r, 800.0));
+            characters.add(character);
+        }
+        return new Team(characters, weapons);
+    }
+
+    private Character createCharacter(long vPosition)
     {
         Texture texture = new Texture();
         texture.loadTexture("content/char/char1.png");
         Character character = new Character(texture);
-        ArrayList<Character> charList = new ArrayList<>();
-        Team team;
         
-        character.setWeapon(wep);
-        PixelCollider charCollider = new PixelCollider(BitMaskFactory.createCircle(50));
+        PixelCollider charCollider = new PixelCollider(BitMaskFactory.createCircle(64.0));
         charCollider.setPosition(vPosition);
         charCollider.setMass(10);
         charCollider.setElasticity(0.0f);
         character.setCollider(charCollider);
-        charList.add(character);
-        team = new Team(charList);
         
         physics.addCollider(charCollider);
         scene.AddDrwableObject(character);
-        world.addTeam(team);
         world.addCharacter(character);
-        
+        return character;
     }
     
-    private AbstractWeapon createWeapon()
-    {
-        Texture texture = new Texture();
-        texture.loadTexture("content/char/weapons/grenade.png");
-        AbstractWeapon weapon = new GrenadeWeapon(texture, 0.1);
-        return weapon;
-    }
-    private void createProjectile()
+    private void createProjectiles()
     {        
         Texture bulletTexture = new Texture();
         bulletTexture.loadTexture("content/char/weapons/grenade.png");

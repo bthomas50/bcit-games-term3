@@ -19,7 +19,8 @@ import sketchwars.physics.Vectors;
  */
 
 public abstract class AbstractWeapon implements GameObject, GraphicsObject {
-    
+    public static final int INFINITE_AMMO = -1;
+
     public enum WeaponEnum{
         MELEE_WEAPON,
         RANGED_WEAPON,
@@ -35,11 +36,14 @@ public abstract class AbstractWeapon implements GameObject, GraphicsObject {
     protected double scale;
     protected Texture texture;
     
+    protected int ammo;
+
     public AbstractWeapon(Texture texture, double scale) {
         this.texture = texture;
         this.scale = scale;
         
         rateOfFire = 1;
+        ammo = INFINITE_AMMO;
         elapsed = Integer.MAX_VALUE;
     }
     
@@ -143,4 +147,25 @@ public abstract class AbstractWeapon implements GameObject, GraphicsObject {
     }
 
     protected abstract AbstractProjectile getProjectile();
+
+    public int getAmmo()
+    {
+        return ammo;
+    }
+    public void setAmmo(int ammo)
+    {
+        this.ammo = ammo;
+    }
+    public void increaseAmmo(int num)
+    {
+        ammo += num;
+    }
+    public void decreaseAmmo(int num)
+    {
+        if(ammo != INFINITE_AMMO)
+        {
+            ammo -= num;
+            ammo = Math.max(ammo, 0);
+        }
+    }
 }

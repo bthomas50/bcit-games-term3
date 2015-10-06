@@ -23,12 +23,8 @@ public class Collisions
         BitMask collision = mask1.and(mask2);        
         if(!collision.isEmpty())
         {
-            System.out.println("collision: " + coll1 + ", " + coll2);
-            System.out.println(mask1.getBounds() + ":: " + mask2.getBounds());
             long vNorm1 = Vectors.normalize(mask1.getAverageNormal(collision));
             long vNorm2 = Vectors.normalize(mask2.getAverageNormal(collision));
-            System.out.println(collision.getBounds());
-            System.out.println(Vectors.toString(vNorm1) + ":: " + Vectors.toString(vNorm2));
             clip(coll1, coll2, collision, vNorm1, vNorm2);
 
             transferMomentum(coll1, coll2, vNorm1, vNorm2);
@@ -73,7 +69,6 @@ public class Collisions
     {
         long vVel1 = coll1.getVelocity();
         long vVel2 = coll2.getVelocity();
-        System.out.println(Vectors.toString(vVel1) + "::" + Vectors.toString(vVel2));
         long vTransfer1To2 = projection(vVel1, vNorm1);
         if(dot(vVel1, vNorm1) < 0.0)
         {
@@ -86,7 +81,6 @@ public class Collisions
         }
         double elasticityCoeff = coll1.getElasticity() * coll2.getElasticity() + 1.0;
 
-        System.out.println(Vectors.toString(vTransfer1To2) + "::" + Vectors.toString(vTransfer2To1));
         if(coll1.isStatic())
         {
             collisionDataHolder.vAcceleration1 = 0;
@@ -108,7 +102,6 @@ public class Collisions
             collisionDataHolder.vAcceleration1 = add(collisionDataHolder.vAcceleration1, scalarMultiply(vTransfer2To1, elasticityCoeff * massFraction2));
             collisionDataHolder.vAcceleration2 = add(collisionDataHolder.vAcceleration2, scalarMultiply(vTransfer2To1, -elasticityCoeff * massFraction1));
         }
-        System.out.println(Vectors.toString(collisionDataHolder.vAcceleration1) + "::" + Vectors.toString(collisionDataHolder.vAcceleration2));
     }
 
     public static void applyResults(Collider coll1, Collider coll2)
