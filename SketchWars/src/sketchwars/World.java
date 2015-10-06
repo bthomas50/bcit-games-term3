@@ -125,15 +125,18 @@ public class World {
 
     private void handleWeaponFiring() {
         AbstractWeapon weapon = characters.get(currentCharacter).getWeapon();
-        long direction = Vectors.create(1, 0);
-        AbstractProjectile projectile = weapon.fire(1000, direction);
- 
-        if (projectile != null) {            
-            Collider collider = projectile.getCollider();
-            
-            physics.addCollider(collider);
-            gamescene.AddDrwableObject(projectile);
-            addGameObject(projectile);
+        
+        if (weapon != null) {
+            long direction = Vectors.create(1, 0);
+            AbstractProjectile projectile = weapon.fire(1000, direction);
+
+            if (projectile != null) {            
+                Collider collider = projectile.getCollider();
+
+                physics.addCollider(collider);
+                gamescene.AddDrwableObject(projectile);
+                addGameObject(projectile);
+            }
         }
     }
     
