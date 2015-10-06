@@ -60,6 +60,11 @@ public class QuadTree
         this.children = new QuadTree[NUM_CHILDREN];
     }
 	
+    public BoundingBox getBounds()
+    {
+        return bounds;
+    }
+
     public int count()
     {
         if(this == control.rootNode)

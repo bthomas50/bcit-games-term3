@@ -51,6 +51,11 @@ public class Physics
         allPhysicsObjects = new ArrayList<>();
     }
 
+    public BoundingBox getBounds()
+    {
+        return collidersTree.getBounds();
+    }
+
     public void update(double elapsedMillis)
     {
         updateKinematics(elapsedMillis);

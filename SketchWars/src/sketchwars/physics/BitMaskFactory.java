@@ -15,10 +15,39 @@ public class BitMaskFactory
     private BitMaskFactory()
     {}
 
+    public static BitMask createEmpty()
+    {
+        return new BitMask();
+    }
+
+    public static BitMask createEmpty(BoundingBox bounds)
+    {
+        return new BitMask(bounds);
+    }
+
     public static BitMask createFromImageAlpha(BufferedImage im, BoundingBox bounds)
     {
         BitMask ret = new BitMask(bounds);
-
+        float width = (float)bounds.getWidth();
+        float height = (float)bounds.getHeight();
+        float widthRatio = (float) im.getWidth() / width;
+        float heightRatio = (float) im.getHeight() / height;
+        for(int i = bounds.getTop(); i <= bounds.getBottom(); i++)
+        {
+            float relativeI = (float)(i - bounds.getTop());
+            for(int j = bounds.getLeft(); j <= bounds.getRight(); j++)
+            {
+                float relativeJ = (float)(j - bounds.getLeft());
+                int imageI = im.getHeight() - 1 - (int) ((float)relativeI * heightRatio);
+                int imageJ = (int) ((float)relativeJ * widthRatio);
+                int alpha = im.getRGB(imageJ, imageI) >> 24;
+                if(alpha != 0)
+                {
+                    ret.setBit(i, j);
+                }
+            }
+        }
+        ret.trim();
         return ret;
     }
 
@@ -34,7 +63,6 @@ public class BitMaskFactory
 			long vPtInLine = add(vPt1, scalarMultiply(vNormalizedDirection, extent));
 			int i = iyComp(vPtInLine);
 			int j = ixComp(vPtInLine);
-			System.out.println(i + ", " + j);
 			ret.setBit(i, j);
 		}
 		return ret;

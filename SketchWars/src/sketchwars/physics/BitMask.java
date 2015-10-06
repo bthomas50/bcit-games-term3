@@ -81,7 +81,6 @@ public class BitMask
 	{
 		final int dataI = i - Vectors.iyComp(vOffset);
 		final int dataJ = j - Vectors.ixComp(vOffset);
-		System.out.println(dataI + ", " + dataJ);
 		if(isRowInBounds(dataI))
 		{
             final int jLongIdx = dataJ / BITS_PER_LONG;

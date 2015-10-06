@@ -1,6 +1,5 @@
 package sketchwars;
 
-import java.util.ArrayList;
 import sketchwars.physics.*;
 import sketchwars.scenes.*;
 import sketchwars.character.Character;
@@ -10,6 +9,10 @@ import sketchwars.map.*;
 import sketchwars.exceptions.SceneManagerException;
 import sketchwars.graphics.Texture;
 import sketchwars.character.Team;
+
+import java.util.ArrayList;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 
 public class WorldFactory
 {
@@ -31,8 +34,8 @@ public class WorldFactory
             createGameScene();
             createMap();
             AbstractWeapon wep = createWeapon();
-            createCharacter(wep, new BoundingBox(-100, 0, 50, 100));
-            createCharacter(wep, new BoundingBox(-100, -150, 50, -50));
+            createCharacter(wep, Vectors.create(-300, 1024));
+            createCharacter(wep, Vectors.create(300, 1024));
             createProjectile();
         } catch (SceneManagerException ex) {
             System.err.println(ex.getMessage());
@@ -46,12 +49,25 @@ public class WorldFactory
 
     private void createMap()
     {
-        AbstractMap map = new TestMap();
-        map.init();
-        PixelCollider mapCollider = new PixelCollider(BitMaskFactory.createRectangle(1800, 800));
-        mapCollider.setPosition(Vectors.create(-900, -1024));
+        Texture mapBGTexture = new Texture();
+        mapBGTexture.loadTexture("content/map/clouds.png");
+        Texture mapFGTexture = new Texture();
+        //it'll be empty if an error occurs when loading the map texture.
+        BitMask mapImageMask = BitMaskFactory.createEmpty();
+        try 
+        {
+            BufferedImage mapImage = mapFGTexture.loadTextureAndReturnImageData("content/map/map.png");
+            mapImageMask = BitMaskFactory.createFromImageAlpha(mapImage, physics.getBounds());
+        }
+        catch(IOException e) 
+        {
+            System.err.println(e);
+        }
+
+        TestMap map = new TestMap(mapFGTexture, mapBGTexture);
+
+        PixelCollider mapCollider = new PixelCollider(mapImageMask);
         mapCollider.setElasticity(1.0f);
-        map.setCollider(mapCollider);
 
         physics.addCollider(mapCollider);
         scene.AddDrwableObject(map);
@@ -75,7 +91,7 @@ public class WorldFactory
         world.addCharacter(character);
     }*/
     
-    private void createCharacter(AbstractWeapon wep, BoundingBox box)
+    private void createCharacter(AbstractWeapon wep, long vPosition)
     {
         Texture texture = new Texture();
         texture.loadTexture("content/char/char1.png");
@@ -84,9 +100,10 @@ public class WorldFactory
         Team team;
         
         character.setWeapon(wep);
-        PixelCollider charCollider = new PixelCollider(BitMaskFactory.createRectangle(box));
+        PixelCollider charCollider = new PixelCollider(BitMaskFactory.createCircle(50));
+        charCollider.setPosition(vPosition);
         charCollider.setMass(10);
-        charCollider.setElasticity(1.0f);
+        charCollider.setElasticity(0.0f);
         character.setCollider(charCollider);
         charList.add(character);
         team = new Team(charList);
