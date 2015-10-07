@@ -12,7 +12,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import org.joml.Matrix3d;
-import org.joml.Vector2d;
 import org.joml.Vector3d;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL30;
@@ -27,7 +26,6 @@ public class Texture {
     private static final HashMap<Integer, Integer> textureReference = new HashMap<>();
 
     private int textureID;
-    private String path;
     private float tWidth;
     private float tHeight;
     
@@ -53,62 +51,32 @@ public class Texture {
      * @param file texture path
      * @return returns the texture ID (negative value indicates error loading texture)
      */
-    public Texture loadTexture(final String file) {
+    public static Texture loadTexture(final String file) {
+        Texture texture;
         if (textureList.containsKey(file)) {
-            setToExistingTexture(file);
+            texture = textureList.get(file);
+            System.out.println("Texture previously loaded, using existing texture reference.");
         } else {
-            Texture texture = loadTextureFromFile(file);
-            setToTexture(texture, file);
+            texture = loadTextureFromFile(file);
+            textureList.put(file, texture);
         }
         
-        return this;
-    }
-
-    public BufferedImage loadTextureAndReturnImageData(final String file) throws IOException {
-        if (textureList.containsKey(file)) {
-            setToExistingTexture(file);
-            //I don't see a way to avoid this extra read currently.
-            return loadImageFile(file);
-        } else {
-            BufferedImage image = loadImageFile(file);
-            Texture texture = loadTextureFromImage(image);
-            setToTexture(texture, file);
-            return image;
-        }
-    }
-    
-    private void setToExistingTexture(final String file) {
-        Texture texture = textureList.get(file);
-        path = file;
-        loadTextureInfo(texture);
-        
-        System.out.println("Texture '" + file + "' already exists, using existing reference.");
-    }
-
-    private void setToTexture(final Texture texture, final String file) {
         if (texture == null) {
-            reset();
             System.err.println("Error loading texture from: " + file);
         } else {
-            loadTextureInfo(texture);
-            textureList.put(file, this);
-            path = file;
+            incrementReference(texture.getTextureID());
         }
+        
+        return texture;
     }
 
-    private void loadTextureInfo(Texture newTexture) {
-        incrementReference(newTexture.getTextureID());
-        
-        this.textureID = newTexture.getTextureID();
-        this.tWidth = newTexture.tWidth;
-        this.tHeight = newTexture.tHeight;
-    }
-    
     private static void incrementReference(int textureID) {
         int previous = 0;
 
         if (textureReference.containsKey(textureID)) {
             previous = textureReference.get(textureID);
+        } else {
+            textureReference.put(textureID, 0);
         }
 
         textureReference.put(textureID, previous + 1);
@@ -134,18 +102,11 @@ public class Texture {
         return textureReference.get(textureID);
     }
     
-     public static int getTotalReferences(int textureID) {
-         return textureReference.get(textureID);
-     }
-    
-    private void reset() {
-        path = null;
-        textureID = -1;
-        tWidth = 0;
-        tHeight = 0;
+    public static int getTotalReferences(int textureID) {
+        return textureReference.get(textureID);
     }
-
-    private static BufferedImage loadImageFile(final String file) throws IOException {
+    
+    public static BufferedImage loadImageFile(final String file) throws IOException {
         File imageFile = new File(file);
         return ImageIO.read(imageFile);
     }
@@ -355,8 +316,6 @@ public class Texture {
                 glDeleteTextures(textureID);
             }
         }
-        
-        reset();
     }
     
     /**

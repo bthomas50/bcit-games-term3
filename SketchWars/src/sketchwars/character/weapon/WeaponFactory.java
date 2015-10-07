@@ -18,8 +18,7 @@ public class WeaponFactory
 
     public static AbstractWeapon createGrenade(ProjectileFactory fact)
     {
-        Texture texture = new Texture();
-        texture.loadTexture("content/char/weapons/grenade.png");
+        Texture texture = Texture.loadTexture("content/char/weapons/grenade.png");
         AbstractWeapon weapon = new GrenadeWeapon(texture, 0.1, fact);
         weapon.setAmmo(AbstractWeapon.INFINITE_AMMO);
         return weapon;
@@ -27,8 +26,7 @@ public class WeaponFactory
 
     public static AbstractWeapon createBoxingGlove(ProjectileFactory fact)
     {
-        Texture texture = new Texture();
-        texture.loadTexture("content/char/weapons/meleeBoxing.png");
+        Texture texture = Texture.loadTexture("content/char/weapons/meleeBoxing.png");
         AbstractWeapon weapon = new MeleeWeapon(texture, 0.2, fact);
         weapon.setAmmo(AbstractWeapon.INFINITE_AMMO);
         return weapon;
@@ -36,8 +34,7 @@ public class WeaponFactory
 
     public static AbstractWeapon createRifle(ProjectileFactory fact)
     {
-        Texture texture = new Texture();
-        texture.loadTexture("content/char/weapons/rifle1.png");
+        Texture texture = Texture.loadTexture("content/char/weapons/rifle1.png");
         AbstractWeapon weapon = new RangedWeapon(texture, 0.5, fact);
         weapon.setAmmo(AbstractWeapon.INFINITE_AMMO);
         return weapon;

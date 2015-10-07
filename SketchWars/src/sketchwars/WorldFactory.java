@@ -51,14 +51,13 @@ public class WorldFactory
 
     private void createMap()
     {
-        Texture mapBGTexture = new Texture();
-        mapBGTexture.loadTexture("content/map/clouds.png");
-        Texture mapFGTexture = new Texture();
+        Texture mapBGTexture = Texture.loadTexture("content/map/clouds.png");
+        Texture mapFGTexture = Texture.loadTexture("content/map/map.png");
         //it'll be empty if an error occurs when loading the map texture.
         BitMask mapImageMask = BitMaskFactory.createEmpty();
         try 
         {
-            BufferedImage mapImage = mapFGTexture.loadTextureAndReturnImageData("content/map/map.png");
+            BufferedImage mapImage = Texture.loadImageFile("content/map/map.png");
             mapImageMask = BitMaskFactory.createFromImageAlpha(mapImage, physics.getBounds());
         }
         catch(IOException e) 
@@ -105,8 +104,7 @@ public class WorldFactory
 
     private Character createCharacter(long vPosition)
     {
-        Texture texture = new Texture();
-        texture.loadTexture("content/char/char1.png");
+        Texture texture = Texture.loadTexture("content/char/char1.png");
         Character character = new Character(texture);
         
         PixelCollider charCollider = new PixelCollider(BitMaskFactory.createCircle(64.0));

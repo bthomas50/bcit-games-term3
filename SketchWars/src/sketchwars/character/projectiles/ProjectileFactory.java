@@ -20,8 +20,7 @@ public class ProjectileFactory
 
     public BasicProjectile createGrenade(long vPosition, long vVelocity, double scale)
     {
-        Texture texture = new Texture();
-        texture.loadTexture("content/char/weapons/grenade.png");
+        Texture texture = Texture.loadTexture("content/char/weapons/grenade.png");
         BasicProjectile proj = new GrenadeProjectile(texture);
         Collider coll = new PixelCollider(BitMaskFactory.createCircle(32.0));
         proj.setCollider(coll);
@@ -36,8 +35,7 @@ public class ProjectileFactory
 
     public BasicProjectile createMelee(long vPosition, long vVelocity, double scale)
     {
-        Texture texture = new Texture();
-        texture.loadTexture("content/char/weapons/meleeBoxing.png");
+        Texture texture = Texture.loadTexture("content/char/weapons/meleeBoxing.png");
         BasicProjectile proj = new MeleeProjectile(texture);
         Collider coll = new PixelCollider(BitMaskFactory.createCircle(48.0));
         proj.setCollider(coll);
@@ -52,8 +50,7 @@ public class ProjectileFactory
 
     public BasicProjectile createRanged(long vPosition, long vVelocity, double scale)
     {
-        Texture texture = new Texture();
-        texture.loadTexture("content/char/weapons/bullet1.png");
+        Texture texture = Texture.loadTexture("content/char/weapons/bullet1.png");
         BasicProjectile proj = new RangedProjectile(texture);
         Collider coll = new PixelCollider(BitMaskFactory.createCircle(4.0));
         proj.setCollider(coll);
