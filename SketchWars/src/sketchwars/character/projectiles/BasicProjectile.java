@@ -8,19 +8,27 @@ import sketchwars.GameObject;
  *
  * @author Najash Najimudeen <najash.najm@gmail.com>
  */
-public class BasicProjectile implements GraphicsObject, GameObject{
+public abstract class BasicProjectile implements GraphicsObject, GameObject{
     protected Collider coll;
     protected Texture texture;
     protected float power;
     protected long direction;
-        
+    protected double lifespan; //in milliseconds
+    
+    protected double elapsed;
+    protected boolean isActive;
+    
+    protected int damage;
+    
     public BasicProjectile(Texture texture) {
         this.texture = texture;
     }
      
     @Override
     public void update(double elapsedMillis) {
-
+        if (isActive) {
+            elapsed += elapsedMillis;
+        }
     }
 
     public void setCollider(Collider coll) {
@@ -60,5 +68,25 @@ public class BasicProjectile implements GraphicsObject, GameObject{
 
     public void setDirection(long direction) {
         this.direction = direction;
+    }
+
+    public boolean hasExpired() {
+        return elapsed > lifespan;
+    }
+
+    public void setLifespan(double lifespan) {
+        this.lifespan = lifespan;
+    }
+    
+    public void setActive(boolean value) {
+        isActive = value;
+    }
+
+    public int getDamage() {
+        return damage;
+    }
+
+    public void setDamage(int damage) {
+        this.damage = damage;
     }
 }

@@ -55,15 +55,19 @@ public class Texture {
         Texture texture;
         if (textureList.containsKey(file)) {
             texture = textureList.get(file);
-            System.out.println("Texture previously loaded, using existing texture reference.");
+            System.out.println("Texture file '" + file + "' previously loaded, using existing texture reference.");
         } else {
             texture = loadTextureFromFile(file);
-            textureList.put(file, texture);
+            
+            if (texture != null) {
+                System.out.println("Texture file '" + file + "' loaded.");
+                textureList.put(file, texture);
+            }
         }
         
         if (texture == null) {
             System.err.println("Error loading texture from: " + file);
-        } else {
+        } else {            
             incrementReference(texture.getTextureID());
         }
         

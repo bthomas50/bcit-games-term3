@@ -25,6 +25,7 @@ public class WorldFactory
     private Physics physics;
     private SceneManager<SketchWars.Scenes> sceneManager;
     private GameScene scene;
+    private WeaponLogic weaponLogic;
 
     public WorldFactory(World world, Physics physics, SceneManager<SketchWars.Scenes> sceneManager)
     {
@@ -39,6 +40,7 @@ public class WorldFactory
             createGameScene();
             createMap();
             createTeams();
+            createGameLogic();
         } catch (SceneManagerException ex) {
             System.err.println(ex.getMessage());
         }
@@ -117,6 +119,12 @@ public class WorldFactory
         scene.addDrawableObject(character);
         world.addCharacter(character);
         return character;
+    }
+
+    private void createGameLogic() {
+        weaponLogic = new WeaponLogic(world, scene, physics);
+        world.setWeaponLogic(weaponLogic);
+        scene.addDrawableObject(weaponLogic);
     }
 
 }

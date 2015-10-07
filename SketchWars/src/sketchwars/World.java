@@ -18,12 +18,17 @@ public class World {
     protected ArrayList<Character> characters;
     protected ArrayList<GameObject> allObjects;
     protected ArrayList<Team> teams;
-            
+    
+    private WeaponLogic weaponLogic;
+    
     public World() {
-        
         characters = new ArrayList<>();
         teams = new ArrayList<>();
         allObjects = new ArrayList<>();
+    }
+
+    public void setWeaponLogic(WeaponLogic weaponLogic) {
+        this.weaponLogic = weaponLogic;
     }
     
     public void setMap(AbstractMap map) {
@@ -50,6 +55,8 @@ public class World {
         handleCharacterDrowning();
         checkTeamStatus();
         updateObjects(deltaMillis);
+        
+        updateGameLogic(deltaMillis);
     }
     
     protected void updateObjects(double deltaMillis) {
@@ -91,5 +98,19 @@ public class World {
         }
         
         System.out.println("There is " + counter + " teams alive");
+    }
+
+    private void updateGameLogic(double deltaMillis) {
+        if (weaponLogic != null) {
+            weaponLogic.update(deltaMillis);
+        }
+    }
+
+    public WeaponLogic getWeaponLogic() {
+        return weaponLogic;
+    }
+
+    public ArrayList<Character> getCharacters() {
+        return characters;
     }
 }

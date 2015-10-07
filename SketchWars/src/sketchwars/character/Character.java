@@ -207,4 +207,8 @@ public class Character implements GraphicsObject, GameObject {
         double getX = Vectors.xComp(oldVector);
         coll.setVelocity(create(getX, 200));
     }
+
+    public Collider getCollider() {
+        return coll;
+    }
 }

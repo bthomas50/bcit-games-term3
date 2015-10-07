@@ -17,6 +17,10 @@ public abstract class AbstractScene {
     public void addDrawableObject(GraphicsObject obj) {
         drawableObjs.add(obj);
     }
+    
+    public void removeDrawableObject(GraphicsObject obj) {
+        drawableObjs.remove(obj);
+    }
         
     public void render() {
         for (GraphicsObject obj : drawableObjs) {

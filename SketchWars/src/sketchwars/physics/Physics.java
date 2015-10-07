@@ -153,6 +153,11 @@ public class Physics
     {
         allPhysicsObjects.add(obj);
     }
+    
+    public void removePhysicsObject(PhysicsObject obj)
+    {
+        allPhysicsObjects.remove(obj);
+    }
 
     public List<PhysicsObject> getPhysicsObjects()
     {
