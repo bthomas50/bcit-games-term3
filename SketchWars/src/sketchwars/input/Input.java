@@ -50,7 +50,7 @@ public class Input
     
  
     
-    private byte[] serializeByteArray(ArrayList<Command> cmd) throws IOException
+    public byte[] serializeByteArray(ArrayList<Command> cmd) throws IOException
     {
         byte[] ret = new byte[1 + commands.size()];
         ret[0] = (byte) commands.size();
@@ -62,7 +62,7 @@ public class Input
 
     }
     
-    public static Input deseralizeByteArray(byte[] value)
+    public static Input deserializeByteArray(byte[] value)
     {
         //Lenght of command
         byte temp = value[0];
