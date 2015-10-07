@@ -65,16 +65,25 @@ public class WeaponLogic implements GameObject, GraphicsObject {
 
     private void updateDamageGiven(double delta) {
         ArrayList<Character> characters = world.characters;
+        ArrayList<BasicProjectile> consumedProjectiles = new ArrayList<>();
         
         for (BasicProjectile projectile: projectiles) {
             for (Character character: characters) {
                 
                 if (hasProjectileHitTarget(character, projectile)) {
                     character.takeDamage(projectile.getDamage());
-                    projectile.setExpired(true);
+                    
+                    if (consumedProjectiles.contains(projectile)) {
+                        consumedProjectiles.add(projectile);
+                    }
+                    
                     System.out.println(character + " is hit for " + projectile.getDamage() + " damage.");
                 }
             }
+        }
+        
+        for (BasicProjectile projectile: consumedProjectiles) {
+            projectile.setConsumed(true);
         }
     }
 
@@ -83,7 +92,7 @@ public class WeaponLogic implements GameObject, GraphicsObject {
         
         if (projectile instanceof GrenadeProjectile) { //handle grenades separately
             GrenadeProjectile grenade = (GrenadeProjectile)projectile;
-            if (projectile.hasExpired()) {
+            if (projectile.hasExpired() || projectile.isConsumed()) {
                 createExplosionObject(grenade, grenade.getExplosionRadius());
                 return hasGrenadeHitTarget(charCollider, grenade);
             }

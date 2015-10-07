@@ -19,6 +19,7 @@ public abstract class BasicProjectile implements GraphicsObject, GameObject{
     protected boolean isActive;
     
     protected int damage;
+    private boolean consumed;
     
     public BasicProjectile(Texture texture) {
         this.texture = texture;
@@ -96,5 +97,13 @@ public abstract class BasicProjectile implements GraphicsObject, GameObject{
         } else {
             elapsed = 0;
         }
+    }
+
+    public boolean isConsumed() {
+        return consumed;
+    }
+
+    public void setConsumed(boolean consumed) {
+        this.consumed = consumed;
     }
 }
