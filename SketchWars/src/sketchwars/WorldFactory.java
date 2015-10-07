@@ -95,7 +95,7 @@ public class WorldFactory
             //dont do randomness for now to simplify networking
             //random between -900, 900
             //double r = (rng.nextDouble() - 0.5) * 1800.0;
-            double r = ((double)c * 1500.0 / CHARS_PER_TEAM) - 1200.0 + teamNum * 100;
+            double r = ((double)c * 1500.0 / CHARS_PER_TEAM) - 800.0 + teamNum * 100;
             Character character = createCharacter(Vectors.create(r, 800.0));
             character.setWeapon(weapons.get(AbstractWeapon.WeaponEnum.MELEE_WEAPON));
             characters.add(character);
