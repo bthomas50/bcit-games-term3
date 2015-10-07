@@ -13,19 +13,17 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.util.Scanner;
 
-public class Client implements WindowListener {
+public class Client {
 	
 	private int id;
-	
 	public String host;
 	public int port;
 	private String username;
-    private int clientId;
+        private int clientId;
 	public boolean isRunning = false;
 	public Socket socket = null;
 	public HashMap<Integer, ClientEntityForClients> clients = null;
-    //update
-    public int tickCount = 0;
+
 	
 	public Client(String host, int port, String username) throws IOException {
 		this.host = host;
@@ -60,44 +58,6 @@ public class Client implements WindowListener {
 		}
 	}
 
-    @Override
-    public void windowOpened(WindowEvent e) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void windowClosing(WindowEvent e) {
-        PacketLogoutBroadcast packet = new PacketLogoutBroadcast(getId() ,getUsername());
-        Utils.outgoing(packet,socket);
-    }
-
-    @Override
-    public void windowClosed(WindowEvent e) {
-        PacketLogoutBroadcast packet = new PacketLogoutBroadcast(getId() ,getUsername());
-        Utils.outgoing(packet,socket);
-    }
-
-    @Override
-    public void windowIconified(WindowEvent e) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void windowDeiconified(WindowEvent e) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void windowActivated(WindowEvent e) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void windowDeactivated(WindowEvent e) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-        //
 
     /**
      * @return the username

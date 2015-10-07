@@ -5,6 +5,9 @@ import sketchwars.physics.*;
 import sketchwars.character.weapon.AbstractWeapon;
 import sketchwars.graphics.*;
 import sketchwars.GameObject;
+import sketchwars.input.Command;
+import sketchwars.input.Input;
+import static sketchwars.physics.Vectors.create;
 /**
  *
  * @author Najash Najimudeen <najash.najm@gmail.com>
@@ -45,7 +48,7 @@ public class Character implements GraphicsObject, GameObject {
     public void setCollider(Collider coll) {
         this.coll = coll;
     }
-
+    
     public void setWeapon(AbstractWeapon weapon) {
         this.weapon = weapon;
     }
@@ -61,7 +64,6 @@ public class Character implements GraphicsObject, GameObject {
         
         if(health <= 0)
             isDead = true;
-        
     }
 
     private void updateCharacterInfo() {
@@ -183,5 +185,19 @@ public class Character implements GraphicsObject, GameObject {
 
     public void aimDown(double elapsedMillis) {
         angle -= Math.PI * elapsedMillis / 1000.0;
+    }
+
+    void moveLeft(double elapsedMillis) 
+    {
+        long oldVector = coll.getVelocity();
+        double getY = Vectors.yComp(oldVector);
+        coll.setVelocity(create(-100, getY));
+    }
+
+    void moveRight(double elapsedMillis)
+    {
+        long oldVector = coll.getVelocity();
+        double getY = Vectors.yComp(oldVector);
+        coll.setVelocity(create(100, getY));
     }
 }

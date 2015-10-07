@@ -22,9 +22,16 @@ public class Team
     {
         this.characters = characters;
         this.weapons = weapons;
+        for(Character temp : characters)
+        {
+            temp.setWeapon(null);
+        }
+        
         if(this.characters.size() > 0)
         {
             active = this.characters.get(0);
+            active.setWeapon(weapons.get(AbstractWeapon.WeaponEnum.BASIC_GRENADE));
+            
         }
     }
 
@@ -56,6 +63,12 @@ public class Team
                 break;
             case AIM_DOWN:
                 active.aimDown(elapsedMillis);
+                break;
+            case MOVE_LEFT:
+               active.moveLeft(elapsedMillis);
+                break;
+            case MOVE_RIGHT:
+               active.moveRight(elapsedMillis);
                 break;
             }
         }
