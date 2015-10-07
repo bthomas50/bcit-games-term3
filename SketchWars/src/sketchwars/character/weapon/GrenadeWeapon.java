@@ -1,5 +1,6 @@
 package sketchwars.character.weapon;
 
+import sketchwars.character.SketchCharacter;
 import sketchwars.character.projectiles.*;
 import sketchwars.graphics.Texture;
 
@@ -33,8 +34,8 @@ public class GrenadeWeapon extends AbstractWeapon {
     }
 
     @Override
-    protected BasicProjectile createProjectile(long vPosition, long vVelocity) {
-        return projectileFactory.createGrenade(vPosition, vVelocity, scale);
+    protected BasicProjectile createProjectile(SketchCharacter owner, long vPosition, long vVelocity) {
+        return projectileFactory.createGrenade(owner, vPosition, vVelocity, scale);
     }
 
     @Override

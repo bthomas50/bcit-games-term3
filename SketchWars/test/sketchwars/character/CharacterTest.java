@@ -17,13 +17,13 @@ public class CharacterTest {
     @Test
     public void testCreation() {
         Texture t = new Texture();
-        Character character1 = new Character(t);
-        assertEquals(Character.DEFAULT_MAX_HEALTH, character1.getHealth());
-        assertEquals(Character.DEFAULT_MAX_HEALTH, character1.getMaxHealth());
+        SketchCharacter character1 = new SketchCharacter(t);
+        assertEquals(SketchCharacter.DEFAULT_MAX_HEALTH, character1.getHealth());
+        assertEquals(SketchCharacter.DEFAULT_MAX_HEALTH, character1.getMaxHealth());
         
         int maxHealth = 200;
         int startHealth = 100;
-        Character character2 = new Character(t, maxHealth, startHealth);
+        SketchCharacter character2 = new SketchCharacter(t, maxHealth, startHealth);
         
         assertEquals(startHealth, character2.getHealth());
         assertEquals(maxHealth, character2.getMaxHealth());
@@ -33,7 +33,7 @@ public class CharacterTest {
     @Test
     public void testDamageTaking() {
         Texture t = new Texture();
-        Character character1 = new Character(t, 200, 100);
+        SketchCharacter character1 = new SketchCharacter(t, 200, 100);
         
         character1.takeDamage(50);
         assertEquals(50, character1.getHealth());
@@ -48,7 +48,7 @@ public class CharacterTest {
         Texture t = new Texture();
         int maxHealth = 300;
         int startHealth = 100;
-        Character character1 = new Character(t, maxHealth, startHealth);
+        SketchCharacter character1 = new SketchCharacter(t, maxHealth, startHealth);
          
         character1.heal(50);
         assertEquals(startHealth + 50, character1.getHealth());

@@ -1,7 +1,7 @@
 package sketchwars;
 
 
-import sketchwars.character.Character;
+import sketchwars.character.SketchCharacter;
 import sketchwars.map.AbstractMap;
 import sketchwars.character.Team;
 import sketchwars.input.*;
@@ -15,7 +15,7 @@ import java.util.ArrayList;
  */
 public class World {    
     protected AbstractMap map;
-    protected ArrayList<Character> characters;
+    protected ArrayList<SketchCharacter> characters;
     protected ArrayList<GameObject> allObjects;
     protected ArrayList<Team> teams;
     
@@ -36,7 +36,7 @@ public class World {
         allObjects.add(map);
     }
 
-    public void addCharacter(Character character) {
+    public void addCharacter(SketchCharacter character) {
         characters.add(character);
         allObjects.add(character);
     }
@@ -78,7 +78,7 @@ public class World {
     }
     
     protected void handleCharacterDrowning(){
-        for(Character character: characters)
+        for(SketchCharacter character: characters)
         {
             if(character.getPosY() < -5)
             {
@@ -110,7 +110,7 @@ public class World {
         return weaponLogic;
     }
 
-    public ArrayList<Character> getCharacters() {
+    public ArrayList<SketchCharacter> getCharacters() {
         return characters;
     }
 }

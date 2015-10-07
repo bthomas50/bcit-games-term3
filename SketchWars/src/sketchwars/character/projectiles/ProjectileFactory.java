@@ -4,6 +4,7 @@ import sketchwars.*;
 import sketchwars.physics.*;
 import sketchwars.graphics.*;
 import sketchwars.scenes.*;
+import sketchwars.character.SketchCharacter;
 
 public class ProjectileFactory
 {
@@ -18,7 +19,7 @@ public class ProjectileFactory
         this.scene = scene;
     }
 
-    public BasicProjectile createGrenade(long vPosition, long vVelocity, double scale)
+    public BasicProjectile createGrenade(SketchCharacter owner, long vPosition, long vVelocity, double scale)
     {
         Texture texture = Texture.loadTexture("content/char/weapons/grenade.png");
         GrenadeProjectile proj = new GrenadeProjectile(texture);
@@ -27,12 +28,13 @@ public class ProjectileFactory
 
         setColliderProperties(coll, vPosition, vVelocity, 1.0f, 0.9f);
 
+        proj.setOwner(owner);
         addProjectile(proj);
         
         return proj;
     }
 
-    public BasicProjectile createMelee(long vPosition, long vVelocity, double scale)
+    public BasicProjectile createMelee(SketchCharacter owner, long vPosition, long vVelocity, double scale)
     {
         Texture texture = Texture.loadTexture("content/char/weapons/meleeBoxing.png");
         MeleeProjectile proj = new MeleeProjectile(texture);
@@ -41,19 +43,21 @@ public class ProjectileFactory
 
         setColliderProperties(coll, vPosition, vVelocity, 0.0f, 1.0f);
 
+        proj.setOwner(owner);
         addProjectile(proj);
         return proj;
     }
 
-    public BasicProjectile createRanged(long vPosition, long vVelocity, double scale)
+    public BasicProjectile createRanged(SketchCharacter owner, long vPosition, long vVelocity, double scale)
     {
         Texture texture = Texture.loadTexture("content/char/weapons/bullet1.png");
         RangedProjectile proj = new RangedProjectile(texture);
         Collider coll = new PixelCollider(BitMaskFactory.createLine(vPosition, vVelocity, proj.getProjectileRange()));
         proj.setCollider(coll);
-        System.out.println();
+        
         setColliderProperties(coll, vPosition, vVelocity, 0.1f, 0.5f);
 
+        proj.setOwner(owner);
         addProjectile(proj);
         return proj;
     }

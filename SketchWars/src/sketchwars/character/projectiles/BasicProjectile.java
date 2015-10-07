@@ -4,6 +4,8 @@ import sketchwars.graphics.GraphicsObject;
 import sketchwars.graphics.Texture;
 import sketchwars.physics.*;
 import sketchwars.GameObject;
+import sketchwars.character.SketchCharacter;
+
 /**
  *
  * @author Najash Najimudeen <najash.najm@gmail.com>
@@ -20,6 +22,7 @@ public abstract class BasicProjectile implements GraphicsObject, GameObject{
     
     protected int damage;
     private boolean consumed;
+    private SketchCharacter owner; //to prevent taking damage to it self (unless grenade)
     
     public BasicProjectile(Texture texture) {
         this.texture = texture;
@@ -105,5 +108,13 @@ public abstract class BasicProjectile implements GraphicsObject, GameObject{
 
     public void setConsumed(boolean consumed) {
         this.consumed = consumed;
+    }
+
+    public SketchCharacter getOwner() {
+        return owner;
+    }
+
+    public void setOwner(SketchCharacter owner) {
+        this.owner = owner;
     }
 }

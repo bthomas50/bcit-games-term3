@@ -1,7 +1,7 @@
 package sketchwars.character;
 
 import sketchwars.GameObject;
-import sketchwars.character.Character;
+import sketchwars.character.SketchCharacter;
 import sketchwars.character.weapon.AbstractWeapon;
 import sketchwars.input.*;
 
@@ -14,15 +14,15 @@ import static org.lwjgl.glfw.GLFW.*;
  */
 public class Team 
 {
-    private ArrayList<Character> characters;
+    private ArrayList<SketchCharacter> characters;
     private HashMap<AbstractWeapon.WeaponEnum, AbstractWeapon> weapons;
-    private Character active;
+    private SketchCharacter active;
     
-    public Team(ArrayList<Character> characters, HashMap<AbstractWeapon.WeaponEnum, AbstractWeapon> weapons)
+    public Team(ArrayList<SketchCharacter> characters, HashMap<AbstractWeapon.WeaponEnum, AbstractWeapon> weapons)
     {
         this.characters = characters;
         this.weapons = weapons;
-        for(Character temp : characters)
+        for(SketchCharacter temp : characters)
         {
             temp.setWeapon(null);
         }
@@ -30,7 +30,7 @@ public class Team
         if(this.characters.size() > 0)
         {
             active = this.characters.get(0);
-            active.setWeapon(weapons.get(AbstractWeapon.WeaponEnum.RANGED_WEAPON));
+            active.setWeapon(weapons.get(AbstractWeapon.WeaponEnum.MELEE_WEAPON));
             
         }
     }
@@ -79,7 +79,7 @@ public class Team
 
     public boolean isDead()
     {
-        for(Character character : characters)
+        for(SketchCharacter character : characters)
         {
            // System.out.println(character.isDead());
             if(!character.isDead())
@@ -93,7 +93,7 @@ public class Team
         return characters.size();
     }
 
-    public Character getActiveCharacter()
+    public SketchCharacter getActiveCharacter()
     {
         return active;
     }

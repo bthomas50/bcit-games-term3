@@ -1,7 +1,7 @@
 package sketchwars;
 
 
-import sketchwars.character.Character;
+import sketchwars.character.SketchCharacter;
 import sketchwars.map.AbstractMap;
 import sketchwars.character.Team;
 import sketchwars.input.*;

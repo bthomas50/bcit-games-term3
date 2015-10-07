@@ -12,7 +12,7 @@ import static sketchwars.physics.Vectors.create;
  *
  * @author Najash Najimudeen <najash.najm@gmail.com>
  */
-public class Character implements GraphicsObject, GameObject {
+public class SketchCharacter implements GraphicsObject, GameObject {
     public static final int DEFAULT_MAX_HEALTH = 100;
     
     private double posX;
@@ -30,11 +30,11 @@ public class Character implements GraphicsObject, GameObject {
     private boolean hasFired;
     private double angle;
 
-    public Character(Texture texture) {
+    public SketchCharacter(Texture texture) {
         this(texture, DEFAULT_MAX_HEALTH, DEFAULT_MAX_HEALTH);
     }
     
-    public Character(Texture texture, int maxHealth, int health) {
+    public SketchCharacter(Texture texture, int maxHealth, int health) {
         coll = new PixelCollider(BitMaskFactory.createRectangle(1, 1));
         
         this.texture = texture;
@@ -174,7 +174,7 @@ public class Character implements GraphicsObject, GameObject {
 
     public void fireCurrentWeapon(double power) {
         if(weapon != null) {
-            weapon.tryToFire((float)power, Vectors.createRTheta(1.0f, angle));
+            weapon.tryToFire(this, (float)power, Vectors.createRTheta(1.0f, angle));
             hasFired = true;
         }
     }

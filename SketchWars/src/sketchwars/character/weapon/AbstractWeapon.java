@@ -4,8 +4,7 @@ import sketchwars.GameObject;
 import sketchwars.character.projectiles.*;
 import sketchwars.graphics.GraphicsObject;
 import sketchwars.graphics.Texture;
-import sketchwars.physics.BitMaskFactory;
-import sketchwars.physics.PixelCollider;
+import sketchwars.character.SketchCharacter;
 import sketchwars.physics.Vectors;
 
 /**
@@ -93,29 +92,29 @@ public abstract class AbstractWeapon implements GameObject, GraphicsObject {
         this.scale = scale;
     }
 
-    public void tryToFire(float power, long direction) {
+    public void tryToFire(SketchCharacter owner, float power, long direction) {
         double timeFired = elapsed;
         double timeSinceLastFired = timeFired - lastTimeFired;
         float rateOfFireInMilli = 1000/rateOfFire;
                             
         if (timeSinceLastFired > rateOfFireInMilli) {
-            fire(power, direction);
+            fire(owner, power, direction);
             lastTimeFired = timeFired;
         }
     }
 
-    private void fire(float power, long direction) {
+    private void fire(SketchCharacter owner, float power, long direction) {
         long normalDir = Vectors.normalize(direction);
         long vVelocity = Vectors.scalarMultiply(getProjectileSpeed(power), normalDir);
         long vPosition = Vectors.create(posX * 1024.0, posY * 1024.0);
 
-        BasicProjectile projectile = createProjectile(vPosition, vVelocity);
+        BasicProjectile projectile = createProjectile(owner, vPosition, vVelocity);
 
         projectile.setPower(power);
         projectile.setDirection(direction);
     }
 
-    protected abstract BasicProjectile createProjectile(long vPosition, long vVelocity);
+    protected abstract BasicProjectile createProjectile(SketchCharacter owner, long vPosition, long vVelocity);
 
     protected abstract double getProjectileSpeed(float power);
 

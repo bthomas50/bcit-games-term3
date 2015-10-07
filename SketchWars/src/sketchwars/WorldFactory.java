@@ -2,7 +2,7 @@ package sketchwars;
 
 import sketchwars.physics.*;
 import sketchwars.scenes.*;
-import sketchwars.character.Character;
+import sketchwars.character.SketchCharacter;
 import sketchwars.character.projectiles.*;
 import sketchwars.character.weapon.*;
 import sketchwars.map.*;
@@ -89,7 +89,7 @@ public class WorldFactory
 
     private Team createTeam(Random rng, int teamNum)
     {
-        ArrayList<Character> characters = new ArrayList<>(CHARS_PER_TEAM);
+        ArrayList<SketchCharacter> characters = new ArrayList<>(CHARS_PER_TEAM);
         HashMap<AbstractWeapon.WeaponEnum, AbstractWeapon> weapons = WeaponFactory.createDefaultWeaponSet(new ProjectileFactory(world, physics, scene));
         for(int c = 0; c < CHARS_PER_TEAM; c++)
         {
@@ -97,17 +97,17 @@ public class WorldFactory
             //random between -900, 900
             //double r = (rng.nextDouble() - 0.5) * 1800.0;
             double r = ((double)c * 1500.0 / CHARS_PER_TEAM) - 800.0 + teamNum * 100;
-            Character character = createCharacter(Vectors.create(r, 800.0));
+            SketchCharacter character = createCharacter(Vectors.create(r, 800.0));
             character.setWeapon(weapons.get(AbstractWeapon.WeaponEnum.MELEE_WEAPON));
             characters.add(character);
         }
         return new Team(characters, weapons);
     }
 
-    private Character createCharacter(long vPosition)
+    private SketchCharacter createCharacter(long vPosition)
     {
         Texture texture = Texture.loadTexture("content/char/char1.png");
-        Character character = new Character(texture);
+        SketchCharacter character = new SketchCharacter(texture);
         
         PixelCollider charCollider = new PixelCollider(BitMaskFactory.createCircle(64.0));
         charCollider.setPosition(vPosition);

@@ -1,5 +1,6 @@
 package sketchwars.character.weapon;
 
+import sketchwars.character.SketchCharacter;
 import sketchwars.character.projectiles.*;
 import sketchwars.graphics.Texture;
 
@@ -25,8 +26,8 @@ public class MeleeWeapon extends AbstractWeapon {
     }
 
     @Override
-    public BasicProjectile createProjectile(long vPosition, long vVelocity) {
-        return projectileFactory.createMelee(vPosition, vVelocity, scale);
+    public BasicProjectile createProjectile(SketchCharacter owner, long vPosition, long vVelocity) {
+        return projectileFactory.createMelee(owner, vPosition, vVelocity, scale);
     }
 
     @Override

@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import sketchwars.character.projectiles.BasicProjectile;
 import sketchwars.graphics.GraphicsObject;
 import sketchwars.physics.Physics;
-import sketchwars.character.Character;
+import sketchwars.character.SketchCharacter;
 import sketchwars.character.projectiles.GrenadeProjectile;
 import sketchwars.physics.BitMask;
 import sketchwars.physics.BitMaskFactory;
@@ -64,11 +64,11 @@ public class WeaponLogic implements GameObject, GraphicsObject {
     }
 
     private void updateDamageGiven(double delta) {
-        ArrayList<Character> characters = world.characters;
+        ArrayList<SketchCharacter> characters = world.characters;
         ArrayList<BasicProjectile> consumedProjectiles = new ArrayList<>();
         
         for (BasicProjectile projectile: projectiles) {
-            for (Character character: characters) {
+            for (SketchCharacter character: characters) {
                 
                 if (hasProjectileHitTarget(character, projectile)) {
                     character.takeDamage(projectile.getDamage());
@@ -87,7 +87,7 @@ public class WeaponLogic implements GameObject, GraphicsObject {
         }
     }
 
-    private boolean hasProjectileHitTarget(Character character, BasicProjectile projectile) {
+    private boolean hasProjectileHitTarget(SketchCharacter character, BasicProjectile projectile) {
         Collider charCollider = character.getCollider();
         
         if (projectile instanceof GrenadeProjectile) { //handle grenades separately
@@ -96,7 +96,7 @@ public class WeaponLogic implements GameObject, GraphicsObject {
                 createExplosionObject(grenade, grenade.getExplosionRadius());
                 return hasGrenadeHitTarget(charCollider, grenade);
             }
-        } else {
+        } else if (!projectile.getOwner().equals(character)) {
             Collider projectileCollider = projectile.getCollider();
             return (Collisions.hasCollided(charCollider, projectileCollider));
         }
@@ -130,7 +130,7 @@ public class WeaponLogic implements GameObject, GraphicsObject {
             BasicProjectile bp = projectiles.get(i);
             
             if (bp.hasExpired()) {
-                physics.removePhysicsObject(bp.getCollider());
+                physics.removeCollider(bp.getCollider());
                 projectiles.remove(i);
             }
         }

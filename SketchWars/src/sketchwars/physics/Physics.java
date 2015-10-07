@@ -154,9 +154,11 @@ public class Physics
         allPhysicsObjects.add(obj);
     }
     
-    public void removePhysicsObject(PhysicsObject obj)
+    public void removeCollider(Collider coll)
     {
-        allPhysicsObjects.remove(obj);
+        allColliders.remove(coll);
+        allPhysicsObjects.remove(coll);
+        collidersTree.remove(coll);
     }
 
     public List<PhysicsObject> getPhysicsObjects()
