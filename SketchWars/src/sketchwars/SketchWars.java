@@ -4,6 +4,7 @@ import sketchwars.exceptions.SceneManagerException;
 import sketchwars.graphics.Texture;
 import sketchwars.physics.*;
 import sketchwars.scenes.*;
+import sketchwars.input.*;
 import sketchwars.sound.SoundPlayer;
 
 
@@ -66,6 +67,7 @@ public class SketchWars {
             // Run the rendering loop until the user has attempted to close
         // the window or has pressed the ESCAPE key.
             while (!openGL.windowsIsClosing()) {
+                Input.update();
                 openGL.beginUpdate();
                 double time = System.nanoTime(); //calculate frame length in milliseconds
                 double delta = (time - lastTime) / MILLION;
