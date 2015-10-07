@@ -1,12 +1,11 @@
-package sketchwars.network.gameTest;
+package main;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 public class InputHandler implements KeyListener {
 
-    public InputHandler(Game game) {
-        game.addKeyListener(this);
+    public InputHandler() {
     }
 
     public class Key {

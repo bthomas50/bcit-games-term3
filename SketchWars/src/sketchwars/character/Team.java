@@ -3,7 +3,7 @@ package sketchwars.character;
 import sketchwars.GameObject;
 import sketchwars.character.Character;
 import sketchwars.character.weapon.AbstractWeapon;
-import sketchwars.input.KeyboardHandler;
+import sketchwars.input.*;
 
 import java.util.*;
 import static org.lwjgl.glfw.GLFW.*;
@@ -42,28 +42,22 @@ public class Team
         return total;
     }
 
-    public void handleInput(double elapsedMillis)
+    public void handleInput(Input input, double elapsedMillis)
     {
-        if(KeyboardHandler.isKeyDown(GLFW_KEY_W)){
-            //?
-        } else if(KeyboardHandler.isKeyDown(GLFW_KEY_S)){
-            //?
-        }
-        
-        if(KeyboardHandler.isKeyDown(GLFW_KEY_A)){
-            //active.moveLeft();
-        } else if(KeyboardHandler.isKeyDown(GLFW_KEY_D)){
-            //active.moveRight();
-        }
-        
-        if(KeyboardHandler.isKeyDown(GLFW_KEY_SPACE)){
-            active.fireCurrentWeapon(1.0);
-        }
-        
-        if(KeyboardHandler.isKeyDown(GLFW_KEY_UP)){
-            active.aimUp(elapsedMillis);
-        } else if(KeyboardHandler.isKeyDown(GLFW_KEY_DOWN)){
-            active.aimDown(elapsedMillis);
+        for(Command command : input.getCommands())
+        {
+            switch(command)
+            {
+            case FIRE:
+                active.fireCurrentWeapon(1.0);
+                break;
+            case AIM_UP:
+                active.aimUp(elapsedMillis);
+                break;
+            case AIM_DOWN:
+                active.aimDown(elapsedMillis);
+                break;
+            }
         }
     }
 

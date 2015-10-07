@@ -4,6 +4,7 @@ package sketchwars;
 import sketchwars.character.Character;
 import sketchwars.map.AbstractMap;
 import sketchwars.character.Team;
+import sketchwars.input.*;
 
 import java.util.ArrayList;
 
@@ -58,8 +59,9 @@ public class World {
     }
 
     private void handleInput(double elapsedMillis) {
+        Input.update();
         for(Team t : teams) {
-            t.handleInput(elapsedMillis);
+            t.handleInput(Input.currentInput, elapsedMillis);
         }
     }
 
