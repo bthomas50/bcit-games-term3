@@ -2,6 +2,7 @@ package network;
 
 import entities.*;
 import packets.*;
+import sketchwars.input.Input;
 
 import java.net.DatagramSocket;
 import java.net.DatagramPacket;
@@ -14,7 +15,7 @@ public class Peer {
     private HashMap<Integer, PeerInfo> peers;
 
     private HashMap<Integer, Boolean> haveInput;
-    private HashMap<Integer, Integer> inputs;
+    private HashMap<Integer, Input> inputs;
 
     private DatagramSocket socket;
 
@@ -28,12 +29,14 @@ public class Peer {
         this.localId = localId;
     }
 
-    public void update(int frameNum) {
+    public void broadcastInput(int frameNum) {
+        byte[] data = new byte[256];
+        byte[] inputData = Input.currentInput.serializeByteArray();
+        data[0] = (byte) localId;
+        data[1] = (byte) frameNum;
+        System.arraycopy(inputData, 0, data, 2, inputData.length);
         for(PeerInfo peer : peers.values()) {
-            byte[] data = new byte[2];
-            data[0] = (byte) localId;
-            data[1] = (byte) frameNum;
-            DatagramPacket packet = new DatagramPacket(data, 2, peer.ipAddress, peer.portNum);
+            DatagramPacket packet = new DatagramPacket(data, inputData.length + 2, peer.ipAddress, peer.portNum);
             try {
                 socket.send(packet);
             } catch(IOException ioe) {
@@ -43,7 +46,7 @@ public class Peer {
     }
 
     //blocks until we get inputs from each peer.
-    public Map<Integer, Integer> getInputs() {
+    public Map<Integer, Input> getInputs() {
         while(true) {
             boolean haveAllInputs = true;
             synchronized(haveInput) {
@@ -63,7 +66,7 @@ public class Peer {
             for(PeerInfo peer : peers.values()) {
                 haveInput.put(peer.id, false);
             }
-            HashMap<Integer, Integer> ret = new HashMap<>();
+            HashMap<Integer, Input> ret = new HashMap<>();
             ret.putAll(inputs);
             return ret;
         }
@@ -92,9 +95,13 @@ public class Peer {
                 DatagramPacket packet = new DatagramPacket(data, 256);
                 try {
                     socket.receive(packet);
-                    int senderId = packet.getData()[0];
-                    int input = packet.getData()[1];
-                    System.out.println(packet.getAddress() + ":" + packet.getPort() + "(id = " + senderId + ") says " + input);
+                    byte[] pktData = packet.getData();
+                    int senderId = pktData[0];
+                    int frameNum = pktData[1];
+                    byte[] inputData = new byte[packet.getLength() - 2];
+                    System.arraycopy(pktData, 2, inputData, 0, inputData.length);
+                    Input input = Input.deserializeByteArray(inputData);
+                    System.out.println(packet.getAddress() + ":" + packet.getPort() + "(id = " + senderId + ") says " + frameNum);
                     synchronized(haveInput) {
                         haveInput.put(senderId, true);
                         inputs.put(senderId, input);

@@ -50,16 +50,15 @@ public class Input
     
  
     
-    public byte[] serializeByteArray(ArrayList<Command> cmd) throws IOException
+    public byte[] serializeByteArray()
     {
         byte[] ret = new byte[1 + commands.size()];
         ret[0] = (byte) commands.size();
         for(int i = 1; i < commands.size() + 1; i++)
         {
-            ret[i] = (byte) commands.get(i).ordinal();
+            ret[i] = (byte) commands.get(i - 1).ordinal();
         }
         return ret;
-
     }
     
     public static Input deserializeByteArray(byte[] value)

@@ -5,34 +5,33 @@ import sketchwars.graphics.Texture;
 import sketchwars.physics.*;
 import sketchwars.scenes.*;
 import sketchwars.sound.SoundPlayer;
-
+import sketchwars.input.*;
+import network.Peer;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.Map;
 import org.lwjgl.Sys;
+
 /**
  * The SketchWars main class
  * @author Najash Najimudeen <najash.najm@gmail.com>
  * @author Brian Thomas <bthomas50@my.bcit.ca>
  */
-public class SketchWars {
+public class MultiplayerSketchWars {
     private static final double MILLION = 1000000;//used in calculating frame length
     
-    public enum Scenes {
-        GAME, MAIN_MENU;
-    }
-    
     private OpenGL openGL;
-    private World world;
+    private MultiplayerWorld world;
     private Physics physics;
+    private Peer network;
     
-    private SceneManager<Scenes> sceneManager;
+    private SceneManager<SketchWars.Scenes> sceneManager;
     private double lastTime;
     
-    public static void main(String[] args) {
-        SketchWars sketchWars = new SketchWars();
-        sketchWars.init();
-        sketchWars.start();
+    public MultiplayerSketchWars(Peer networkInterface) {
+        network = networkInterface;
+        init();
     }
 
     private void init() {
@@ -45,14 +44,14 @@ public class SketchWars {
 
         GameScene gameScene = new GameScene();
         try {
-            sceneManager.addScene(Scenes.GAME, gameScene);
-            sceneManager.setCurrentScene(Scenes.GAME);
+            sceneManager.addScene(SketchWars.Scenes.GAME, gameScene);
+            sceneManager.setCurrentScene(SketchWars.Scenes.GAME);
         } catch (SceneManagerException ex) {
-            Logger.getLogger(SketchWars.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(MultiplayerSketchWars.class.getName()).log(Level.SEVERE, null, ex);
         }
         
         physics = new Physics(new BoundingBox(-1024, -1024, 1024, 1024));
-        world = new World();
+        world = new MultiplayerWorld();
 
         WorldFactory fact = new WorldFactory(world, physics, sceneManager);
         fact.startGame();
@@ -61,21 +60,26 @@ public class SketchWars {
     
     public void start() {
         lastTime = System.nanoTime();
- 
+        int frameNum = 0;
         try {
             // Run the rendering loop until the user has attempted to close
         // the window or has pressed the ESCAPE key.
             while (!openGL.windowsIsClosing()) {
+                Input.update();
+                //do network stuff.
+                network.broadcastInput(frameNum++);
+                Map<Integer, Input> allInputs = network.getInputs();
+
                 openGL.beginUpdate();
                 double time = System.nanoTime(); //calculate frame length in milliseconds
-                double delta = (time - lastTime) / MILLION;
+                double delta = 16;//(time - lastTime) / MILLION;
 
                 if (sceneManager != null) {
                     sceneManager.render();//call the main graphics renderer
                     sceneManager.update(delta);
                 }
                 
-                world.update(delta);
+                world.update(allInputs, delta);
                 physics.update(delta);
 
                 lastTime = time;

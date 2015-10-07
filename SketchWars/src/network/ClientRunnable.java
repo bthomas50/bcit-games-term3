@@ -1,5 +1,6 @@
 package network;
 
+import sketchwars.MultiplayerSketchWars;
 import packets.*;
 import entities.*;
 
@@ -56,16 +57,8 @@ class ClientRunnable implements Runnable {
                 me.addPeer(peer);
             }
             me.startListener();
-            for(int i = 0; i < 10; i++) {
-                try {
-                    Thread.sleep(1000);
-                } catch(InterruptedException ex) {}
-                me.update(i);
-                Map<Integer, Integer> inputs = me.getInputs();
-                for(Map.Entry<Integer, Integer> ent : inputs.entrySet()) {
-                    System.out.println("got input: " + ent.getValue() + " from peer: " + ent.getKey());
-                }
-            }
+            MultiplayerSketchWars sketchWars = new MultiplayerSketchWars(me);
+            sketchWars.start();
         } catch(IOException ioe) {
             System.out.println(ioe);
         }

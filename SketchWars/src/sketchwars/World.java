@@ -14,10 +14,10 @@ import java.util.ArrayList;
  * @author David Ly <ly_nekros@hotmail.com>
  */
 public class World {    
-    private AbstractMap map;
-    private ArrayList<Character> characters;
-    private ArrayList<GameObject> allObjects;
-    private ArrayList<Team> teams;
+    protected AbstractMap map;
+    protected ArrayList<Character> characters;
+    protected ArrayList<GameObject> allObjects;
+    protected ArrayList<Team> teams;
             
     public World() {
         
@@ -52,14 +52,13 @@ public class World {
         updateObjects(deltaMillis);
     }
     
-    private void updateObjects(double deltaMillis) {
+    protected void updateObjects(double deltaMillis) {
         for(GameObject obj : allObjects) {
             obj.update(deltaMillis);
         }
     }
 
     private void handleInput(double elapsedMillis) {
-        Input.update();
         for(Team t : teams) {
             t.handleInput(Input.currentInput, elapsedMillis);
         }
@@ -71,7 +70,7 @@ public class World {
         map = null;
     }
     
-    private void handleCharacterDrowning(){
+    protected void handleCharacterDrowning(){
         for(Character character: characters)
         {
             if(character.getPosY() < -5)
@@ -81,7 +80,7 @@ public class World {
         }
     }
     
-    private void checkTeamStatus()
+    protected void checkTeamStatus()
     {
         int counter = 0;
         

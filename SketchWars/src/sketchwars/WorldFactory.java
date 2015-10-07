@@ -81,19 +81,21 @@ public class WorldFactory
         Random rng = new Random();
         for(int t = 0; t < NUM_TEAMS; t++)
         {
-            Team team = createTeam(rng);
+            Team team = createTeam(rng, t);
             world.addTeam(team);
         }
     }
 
-    private Team createTeam(Random rng)
+    private Team createTeam(Random rng, int teamNum)
     {
         ArrayList<Character> characters = new ArrayList<>(CHARS_PER_TEAM);
         HashMap<AbstractWeapon.WeaponEnum, AbstractWeapon> weapons = WeaponFactory.createDefaultWeaponSet(new ProjectileFactory(world, physics, scene));
         for(int c = 0; c < CHARS_PER_TEAM; c++)
         {
+            //dont do randomness for now to simplify networking
             //random between -900, 900
-            double r = (rng.nextDouble() - 0.5) * 1800.0;
+            //double r = (rng.nextDouble() - 0.5) * 1800.0;
+            double r = ((double)c * 1500.0 / CHARS_PER_TEAM) - 1200.0 + teamNum * 100;
             Character character = createCharacter(Vectors.create(r, 800.0));
             character.setWeapon(weapons.get(AbstractWeapon.WeaponEnum.MELEE_WEAPON));
             characters.add(character);
