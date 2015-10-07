@@ -200,4 +200,11 @@ public class Character implements GraphicsObject, GameObject {
         double getY = Vectors.yComp(oldVector);
         coll.setVelocity(create(100, getY));
     }
+    
+    void jump(double elapsedMillis)
+    {
+        long oldVector = coll.getVelocity();
+        double getX = Vectors.xComp(oldVector);
+        coll.setVelocity(create(getX, 200));
+    }
 }

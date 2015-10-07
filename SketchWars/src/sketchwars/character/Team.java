@@ -70,6 +70,9 @@ public class Team
             case MOVE_RIGHT:
                active.moveRight(elapsedMillis);
                 break;
+            case JUMP:
+                active.jump(elapsedMillis);
+                break;
             }
         }
     }
