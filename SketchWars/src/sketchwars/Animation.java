@@ -28,8 +28,13 @@ public class Animation implements GraphicsObject, GameObject {
     @Override
     public void render() {
         if (!hasExpired()) {
-            texture.drawNormalized(Vectors.xComp(Position) * 1024.0, Vectors.yComp(Position) * 1024.0, 
-                    Vectors.xComp(dimension) * 1024.0, Vectors.yComp(dimension) * 1024.0);
+            double posX = Vectors.xComp(Position) / 1024.0;
+            double posY = Vectors.yComp(Position) / 1024.0;
+        
+            double width = (double) Vectors.xComp(dimension) / 2048.0;
+            double height = (double) Vectors.yComp(dimension) / 2048.0;
+        
+            texture.drawNormalized(posX, posY, width, height);
         }
     }
 

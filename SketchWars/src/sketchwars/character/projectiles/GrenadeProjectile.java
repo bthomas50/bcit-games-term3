@@ -8,7 +8,7 @@ import sketchwars.graphics.Texture;
 public class GrenadeProjectile extends BasicProjectile {
     private static final int DAMAGE = 25;
     private static final double COLLIDER_RADIUS = 32.0;
-    private static final double EXPLOSION_RADIUS = 96.0;
+    private static final double EXPLOSION_RADIUS = 256.0;
     
     private static final double LIFESPAN = 5000;
     

@@ -88,18 +88,19 @@ public class WeaponLogic implements GameObject, GraphicsObject {
                 projectiles.remove(i);
                 
                 if (bp instanceof GrenadeProjectile) {
-                    createExplosionObject(bp); 
+                    GrenadeProjectile grenade = (GrenadeProjectile) bp;
+                    createExplosionObject(grenade, grenade.getExplosionRadius()); 
                 }
             }
         }
     }
 
-    private void createExplosionObject(BasicProjectile bp) {
+    private void createExplosionObject(BasicProjectile bp, double radius) {
         long explosionPoint = bp.getCollider().getPosition();
         Explosion explosion = new Explosion();
         explosion.setPosition(explosionPoint);
-        explosion.setDimension(Vectors.create(bp.getCollider().getBounds().getWidth(), 
-                bp.getCollider().getBounds().getHeight()));
+        
+        explosion.setDimension(Vectors.create(radius, radius));
         scene.addAnimation(explosion);
         explosion.start();
     }
