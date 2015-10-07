@@ -1,5 +1,11 @@
 package sketchwars.input;
 
+import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutput;
+import java.io.ObjectOutputStream;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -40,6 +46,34 @@ public class Input
 
     private Input() {
         commands = new ArrayList<>();
+    }
+    
+ 
+    
+    private byte[] serializeByteArray(ArrayList<Command> cmd) throws IOException
+    {
+        byte[] ret = new byte[1 + commands.size()];
+        ret[0] = (byte) commands.size();
+        for(int i = 1; i < commands.size() + 1; i++)
+        {
+            ret[i] = (byte) commands.get(i).ordinal();
+        }
+        return ret;
+
+    }
+    
+    public static Input deseralizeByteArray(byte[] value)
+    {
+        //Lenght of command
+        byte temp = value[0];
+        Input input = new Input();
+        //Parase array to get input
+        for(int i = 1; i < temp +1; i++)
+        {
+            input.commands.add(Command.values()[value[i]]);
+        }
+        
+        return input;
     }
 
     public List<Command> getCommands() {
