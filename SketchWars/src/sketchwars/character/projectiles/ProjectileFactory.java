@@ -51,7 +51,7 @@ public class ProjectileFactory
         RangedProjectile proj = new RangedProjectile(texture);
         Collider coll = new PixelCollider(BitMaskFactory.createLine(vPosition, vVelocity, proj.getProjectileRange()));
         proj.setCollider(coll);
-
+        System.out.println();
         setColliderProperties(coll, vPosition, vVelocity, 0.1f, 0.5f);
 
         addProjectile(proj);

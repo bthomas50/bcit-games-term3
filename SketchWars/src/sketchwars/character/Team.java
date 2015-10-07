@@ -30,7 +30,7 @@ public class Team
         if(this.characters.size() > 0)
         {
             active = this.characters.get(0);
-            active.setWeapon(weapons.get(AbstractWeapon.WeaponEnum.BASIC_GRENADE));
+            active.setWeapon(weapons.get(AbstractWeapon.WeaponEnum.RANGED_WEAPON));
             
         }
     }

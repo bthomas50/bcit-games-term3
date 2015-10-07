@@ -57,7 +57,7 @@ public class BitMaskFactory
 		double numSamples = Math.ceil(length(vDirection));
 		long vNormalizedDirection = normalize(vDirection);
 		BitMask ret = new BitMask(new BoundingBox(vPt1, vPt2));
-		System.out.println(ret.getBounds());
+		//System.out.println(ret.getBounds());
 		for(double extent = 0; extent <= numSamples; extent += 1.0)
 		{
 			long vPtInLine = add(vPt1, scalarMultiply(vNormalizedDirection, extent));
