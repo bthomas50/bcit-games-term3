@@ -7,12 +7,12 @@ import java.util.HashMap;
 
 public class WeaponFactory
 {
-    public static HashMap<AbstractWeapon.WeaponEnum, AbstractWeapon> createDefaultWeaponSet(ProjectileFactory fact) 
+    public static HashMap<WeaponEnum, AbstractWeapon> createDefaultWeaponSet(ProjectileFactory fact) 
     {
-        HashMap<AbstractWeapon.WeaponEnum, AbstractWeapon> ret = new HashMap<>();
-        ret.put(AbstractWeapon.WeaponEnum.BASIC_GRENADE, createGrenade(fact));
-        ret.put(AbstractWeapon.WeaponEnum.MELEE_WEAPON, createBoxingGlove(fact));
-        ret.put(AbstractWeapon.WeaponEnum.RANGED_WEAPON, createRifle(fact));
+        HashMap<WeaponEnum, AbstractWeapon> ret = new HashMap<>();
+        ret.put(WeaponEnum.BASIC_GRENADE, createGrenade(fact));
+        ret.put(WeaponEnum.MELEE_WEAPON, createBoxingGlove(fact));
+        ret.put(WeaponEnum.RANGED_WEAPON, createRifle(fact));
         return ret;
     }
 

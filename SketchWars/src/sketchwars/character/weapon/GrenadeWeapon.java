@@ -3,6 +3,7 @@ package sketchwars.character.weapon;
 import sketchwars.character.SketchCharacter;
 import sketchwars.character.projectiles.*;
 import sketchwars.graphics.Texture;
+import sketchwars.sound.SoundPlayer;
 
 /**
  *
@@ -35,6 +36,12 @@ public class GrenadeWeapon extends AbstractWeapon {
 
     @Override
     protected BasicProjectile createProjectile(SketchCharacter owner, long vPosition, long vVelocity) {
+        try{
+            SoundPlayer.playSFX(2, true, 0);
+        } catch (Exception e)
+        {
+            System.err.println(e.getMessage());
+        }
         return projectileFactory.createGrenade(owner, vPosition, vVelocity, scale);
     }
 

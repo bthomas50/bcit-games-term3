@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.ArrayList;
 
 import static org.lwjgl.glfw.GLFW.*;
+import sketchwars.sound.SoundPlayer;
 
 public class Input 
 {
@@ -39,6 +40,28 @@ public class Input
             currentInput.commands.add(Command.AIM_UP);
         } else if(KeyboardHandler.isKeyDown(GLFW_KEY_DOWN) && !KeyboardHandler.isKeyDown(GLFW_KEY_UP)) {
             currentInput.commands.add(Command.AIM_DOWN);
+        }
+        
+        if(KeyboardHandler.isKeyDown(GLFW_KEY_1)){
+            currentInput.commands.add(Command.SWITCH_1);
+        }
+        
+        if(KeyboardHandler.isKeyDown(GLFW_KEY_2)){
+            currentInput.commands.add(Command.SWITCH_2);
+        }
+        
+        if(KeyboardHandler.isKeyDown(GLFW_KEY_3)){
+            currentInput.commands.add(Command.SWITCH_3);
+        }
+        
+        if(KeyboardHandler.isKeyDown(GLFW_KEY_T)){
+            //currentInput.commands.add(Command.HIGHER_BGM);
+            SoundPlayer.pause(0);
+        }
+            
+        if(KeyboardHandler.isKeyDown(GLFW_KEY_G)){
+            //currentInput.commands.add(Command.LOWER_BGM);
+            SoundPlayer.resume(0);
         }
     }
 

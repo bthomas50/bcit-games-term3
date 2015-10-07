@@ -14,13 +14,7 @@ import sketchwars.physics.Vectors;
 
 public abstract class AbstractWeapon implements GameObject, GraphicsObject {
     public static final int INFINITE_AMMO = -1;
-
-    public enum WeaponEnum{
-        MELEE_WEAPON,
-        RANGED_WEAPON,
-        BASIC_GRENADE
-    }
-
+    
     private float rateOfFire; //per second
     private double lastTimeFired;
     private double elapsed;

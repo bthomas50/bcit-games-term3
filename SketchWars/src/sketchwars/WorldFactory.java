@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Random;
+import sketchwars.sound.SoundPlayer;
 
 public class WorldFactory
 {
@@ -41,8 +42,12 @@ public class WorldFactory
             createMap();
             createTeams();
             createGameLogic();
+            SoundPlayer.playMusic(0, true, -15);
         } catch (SceneManagerException ex) {
             System.err.println(ex.getMessage());
+        } catch (Exception e)
+        {
+            System.err.println(e.getMessage());
         }
     }
 
@@ -90,7 +95,7 @@ public class WorldFactory
     private Team createTeam(Random rng, int teamNum)
     {
         ArrayList<SketchCharacter> characters = new ArrayList<>(CHARS_PER_TEAM);
-        HashMap<AbstractWeapon.WeaponEnum, AbstractWeapon> weapons = WeaponFactory.createDefaultWeaponSet(new ProjectileFactory(world, physics, scene));
+        HashMap<WeaponEnum, AbstractWeapon> weapons = WeaponFactory.createDefaultWeaponSet(new ProjectileFactory(world, physics, scene));
         for(int c = 0; c < CHARS_PER_TEAM; c++)
         {
             //dont do randomness for now to simplify networking
@@ -98,7 +103,7 @@ public class WorldFactory
             //double r = (rng.nextDouble() - 0.5) * 1800.0;
             double r = ((double)c * 1500.0 / CHARS_PER_TEAM) - 800.0 + teamNum * 100;
             SketchCharacter character = createCharacter(Vectors.create(r, 800.0));
-            character.setWeapon(weapons.get(AbstractWeapon.WeaponEnum.MELEE_WEAPON));
+            character.setWeapon(weapons.get(WeaponEnum.MELEE_WEAPON));
             characters.add(character);
         }
         return new Team(characters, weapons);

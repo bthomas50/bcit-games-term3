@@ -30,7 +30,7 @@ public final class SoundPlayer
             sfxList.add("content/bgm/mainTheme.wav");
             try
             {
-                AudioInputStream soundStream = AudioSystem.getAudioInputStream(new File("content/bgm/mainTheme.wav"));
+                AudioInputStream soundStream = AudioSystem.getAudioInputStream(new File("content/bgm/loopMainTheme.wav"));
                 bgmList.add(getClip(soundStream));
             }
             catch (Exception e)
@@ -48,7 +48,7 @@ public final class SoundPlayer
         Clip clip = getClip(soundStream);
         clip.setFramePosition(0);
 
-        setGainIfPossible(clip, gain);
+       // incrementGainIfPossible(refNumber, gain);
         
         if(autostart) clip.start();
     }
@@ -58,20 +58,20 @@ public final class SoundPlayer
         Clip clip = bgmList.get(refNumber);
         clip.setFramePosition(0);
 
-        setGainIfPossible(clip, gain);
+        incrementGainIfPossible(refNumber, gain);
 
         if(loop) 
             clip.loop(Clip.LOOP_CONTINUOUSLY);
         
     }
 
-    private static void setGainIfPossible(Clip clip, float gain)
+    public static void incrementGainIfPossible(int refNumber , float gain)
     {
-        if(clip.isControlSupported(FloatControl.Type.MASTER_GAIN))
+        if(bgmList.get(refNumber).isControlSupported(FloatControl.Type.MASTER_GAIN))
         {
             // values have min/max values, for now don't check for outOfBounds values
-            FloatControl gainControl = (FloatControl)clip.getControl(FloatControl.Type.MASTER_GAIN);
-            gainControl.setValue(gain);
+            FloatControl gainControl = (FloatControl)bgmList.get(refNumber).getControl(FloatControl.Type.MASTER_GAIN);
+            gainControl.setValue(gainControl.getValue() + gain);
         }
     }
     

@@ -3,6 +3,7 @@ package sketchwars.character.weapon;
 import sketchwars.character.SketchCharacter;
 import sketchwars.character.projectiles.*;
 import sketchwars.graphics.Texture;
+import sketchwars.sound.SoundPlayer;
 
 /**
  *
@@ -27,6 +28,12 @@ public class MeleeWeapon extends AbstractWeapon {
 
     @Override
     public BasicProjectile createProjectile(SketchCharacter owner, long vPosition, long vVelocity) {
+        try{
+            SoundPlayer.playSFX(0, true, 0);
+        } catch (Exception e)
+        {
+            System.err.println(e.getMessage());
+        }
         return projectileFactory.createMelee(owner, vPosition, vVelocity, scale);
     }
 
