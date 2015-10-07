@@ -89,4 +89,12 @@ public abstract class BasicProjectile implements GraphicsObject, GameObject{
     public void setDamage(int damage) {
         this.damage = damage;
     }
+
+    public void setExpired(boolean value) {
+        if (value) {
+            elapsed = lifespan + 1;
+        } else {
+            elapsed = 0;
+        }
+    }
 }

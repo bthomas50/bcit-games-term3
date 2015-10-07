@@ -6,8 +6,8 @@
 package sketchwars.scenes;
 
 import java.util.ArrayList;
-import sketchwars.Animation;
-import sketchwars.Explosion;
+import sketchwars.animation.Animation;
+import sketchwars.animation.Explosion;
 
 
 /**

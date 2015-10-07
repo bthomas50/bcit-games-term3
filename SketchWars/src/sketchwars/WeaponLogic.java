@@ -5,14 +5,18 @@
  */
 package sketchwars;
 
+import sketchwars.animation.Explosion;
 import java.util.ArrayList;
 import sketchwars.character.projectiles.BasicProjectile;
 import sketchwars.graphics.GraphicsObject;
 import sketchwars.physics.Physics;
 import sketchwars.character.Character;
 import sketchwars.character.projectiles.GrenadeProjectile;
+import sketchwars.physics.BitMask;
+import sketchwars.physics.BitMaskFactory;
 import sketchwars.physics.Collider;
 import sketchwars.physics.Collisions;
+import sketchwars.physics.PixelCollider;
 import sketchwars.physics.Vectors;
 import sketchwars.scenes.GameScene;
 
@@ -64,35 +68,40 @@ public class WeaponLogic implements GameObject, GraphicsObject {
         
         for (BasicProjectile projectile: projectiles) {
             for (Character character: characters) {
-                Collider charCollider = character.getCollider();
-                Collider projectileCollider = projectile.getCollider();
                 
-                boolean hasCollided = Collisions.hasCollided(charCollider, projectileCollider);
-                    System.out.println("----------------------------------------------------------------------" + hasCollided);
-                
-                if (hasCollided) {
+                if (hasProjectileHitTarget(character, projectile)) {
                     character.takeDamage(projectile.getDamage());
+                    projectile.setExpired(true);
+                    System.out.println(character + " is hit for " + projectile.getDamage() + " damage.");
                 }
             }
         }
     }
 
-    private void removeExpiredProjectiles(double delta) {
-        int size = projectiles.size();
+    private boolean hasProjectileHitTarget(Character character, BasicProjectile projectile) {
+        Collider charCollider = character.getCollider();
         
-        for (int i = size - 1; i >= 0; i--) {
-            BasicProjectile bp = projectiles.get(i);
-            
-            if (bp.hasExpired()) {
-                physics.removePhysicsObject(bp.getCollider());
-                projectiles.remove(i);
-                
-                if (bp instanceof GrenadeProjectile) {
-                    GrenadeProjectile grenade = (GrenadeProjectile) bp;
-                    createExplosionObject(grenade, grenade.getExplosionRadius()); 
-                }
+        if (projectile instanceof GrenadeProjectile) { //handle grenades separately
+            GrenadeProjectile grenade = (GrenadeProjectile)projectile;
+            if (projectile.hasExpired()) {
+                createExplosionObject(grenade, grenade.getExplosionRadius());
+                return hasGrenadeHitTarget(charCollider, grenade);
             }
+        } else {
+            Collider projectileCollider = projectile.getCollider();
+            return (Collisions.hasCollided(charCollider, projectileCollider));
         }
+        
+        return false;
+    }
+    
+    private boolean hasGrenadeHitTarget(Collider characterCollider, GrenadeProjectile grenade) {
+        Collider grenadeCollider = grenade.getCollider();
+        Collider explosionCollider = new PixelCollider(BitMaskFactory.createCircle(grenade.getExplosionRadius()));
+        
+        explosionCollider.setPosition(grenadeCollider.getPosition());
+        
+        return (Collisions.hasCollided(characterCollider, explosionCollider));
     }
 
     private void createExplosionObject(BasicProjectile bp, double radius) {
@@ -103,5 +112,18 @@ public class WeaponLogic implements GameObject, GraphicsObject {
         explosion.setDimension(Vectors.create(radius, radius));
         scene.addAnimation(explosion);
         explosion.start();
+    }
+    
+    private void removeExpiredProjectiles(double delta) {
+        int size = projectiles.size();
+        
+        for (int i = size - 1; i >= 0; i--) {
+            BasicProjectile bp = projectiles.get(i);
+            
+            if (bp.hasExpired()) {
+                physics.removePhysicsObject(bp.getCollider());
+                projectiles.remove(i);
+            }
+        }
     }
 }

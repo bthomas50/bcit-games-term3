@@ -14,7 +14,8 @@ public class Collisions
     public static boolean hasCollided(Collider coll1, Collider coll2) {
         BitMask mask1 = ((PixelCollider) coll1).getPixels();
         BitMask mask2 = ((PixelCollider) coll2).getPixels();
-        BitMask collision = mask1.and(mask2);        
+        BitMask collision = mask1.and(mask2);  
+        
         return (!collision.isEmpty());
     }
             

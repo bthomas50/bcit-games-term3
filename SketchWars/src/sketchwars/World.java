@@ -97,7 +97,7 @@ public class World {
                 counter++;
         }
         
-        System.out.println("There is " + counter + " teams alive");
+        //System.out.println("There is " + counter + " teams alive");
     }
 
     private void updateGameLogic(double deltaMillis) {

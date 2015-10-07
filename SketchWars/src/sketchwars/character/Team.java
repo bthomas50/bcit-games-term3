@@ -81,7 +81,7 @@ public class Team
     {
         for(Character character : characters)
         {
-            System.out.println(character.isDead());
+           // System.out.println(character.isDead());
             if(!character.isDead())
                 return false;
         }
