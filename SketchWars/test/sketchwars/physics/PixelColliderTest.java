@@ -23,7 +23,7 @@ public class PixelColliderTest
     @Test
     public void testCreate()
     {
-        assertEquals(new BoundingBox(0, 0, 0, -1), coll1.getBounds());
+        assertEquals(BoundingBox.EMPTY, coll1.getBounds());
         assertEquals(Vectors.create(0,0), coll1.getPosition());
         assertEquals(Vectors.create(0,0), coll1.getVelocity());
     }

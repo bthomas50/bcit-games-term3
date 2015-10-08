@@ -94,7 +94,11 @@ public class BitMask
 	
 	private void updateBounds()
 	{
-        bounds = new BoundingBox(0, 0, this.data.length - 1, this.data[0].length * BITS_PER_LONG - 1);
+        if(this.data.length == 0 || this.data[0].length == 0) {
+            bounds = BoundingBox.EMPTY;
+        } else {
+            bounds = new BoundingBox(0, 0, this.data.length - 1, this.data[0].length * BITS_PER_LONG - 1);
+        }
 	}
 	
     //returns a vector
@@ -222,7 +226,7 @@ public class BitMask
 
     public boolean isEmpty()
     {
-        return getArea() == 0;
+        return bounds == BoundingBox.EMPTY;
     }
 
     public BitMask and(BitMask other)

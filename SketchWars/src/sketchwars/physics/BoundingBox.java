@@ -11,21 +11,20 @@ public class BoundingBox
     private final int left;
     private final int bottom;
     private final int right;
+
+    public static final BoundingBox EMPTY = new BoundingBox(-1, -1, -1, -1);
     
     public BoundingBox(long vTopLeft, long vBottomRight)
     {
-		top = Vectors.iyComp(vTopLeft);
-        left = Vectors.ixComp(vTopLeft);
-        bottom = Vectors.iyComp(vBottomRight);
-        right = Vectors.ixComp(vBottomRight);
+        this(Vectors.iyComp(vTopLeft), Vectors.ixComp(vTopLeft), Vectors.iyComp(vBottomRight), Vectors.ixComp(vBottomRight));
     }
 	
     public BoundingBox(int top, int left, int bottom, int right)
     {
-        this.top = top;
-        this.left = left;
-        this.bottom = bottom;
-        this.right = right;
+        this.top = Math.min(top, bottom);
+        this.left = Math.min(left, right);
+        this.bottom = Math.max(top, bottom);
+        this.right = Math.max(left, right);
     }
 	
     public boolean contains(BoundingBox other)

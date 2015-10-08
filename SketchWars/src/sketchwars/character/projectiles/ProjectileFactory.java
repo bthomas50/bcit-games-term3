@@ -52,7 +52,10 @@ public class ProjectileFactory
     {
         Texture texture = Texture.loadTexture("content/char/weapons/bullet1.png");
         RangedProjectile proj = new RangedProjectile(texture);
-        Collider coll = new PixelCollider(BitMaskFactory.createLine(vPosition, vVelocity, proj.getProjectileRange()));
+        BitMask bm = BitMaskFactory.createLine(vPosition, vVelocity, proj.getProjectileRange());
+        bm.trim();
+        System.out.println(bm.getBounds());
+        Collider coll = new PixelCollider(bm);
         proj.setCollider(coll);
         
         setColliderProperties(coll, vPosition, vVelocity, 0.1f, 0.5f);
