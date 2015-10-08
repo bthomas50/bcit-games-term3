@@ -47,7 +47,7 @@ public class GrenadeWeapon extends AbstractWeapon {
 
     @Override
     protected double getProjectileSpeed(float power) {
-        return power * 100.0f;
+        return power * 500.0f;
     }
 
 }

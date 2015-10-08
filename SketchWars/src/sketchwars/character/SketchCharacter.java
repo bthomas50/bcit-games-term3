@@ -28,7 +28,10 @@ public class SketchCharacter implements GraphicsObject, GameObject {
     private boolean isDead;
     
     private boolean hasFired;
+    private boolean isFacingLeft;
     private double angle;
+
+    private Texture reticleTexture;
 
     public SketchCharacter(Texture texture) {
         this(texture, DEFAULT_MAX_HEALTH, DEFAULT_MAX_HEALTH);
@@ -43,6 +46,8 @@ public class SketchCharacter implements GraphicsObject, GameObject {
         this.isDead = false;
         this.hasFired = false;
         this.angle = 0.0;
+        this.isFacingLeft = false;//start facing right.
+        reticleTexture = Texture.loadTexture("content/misc/reticle.png");
     }
     
     public void setCollider(Collider coll) {
@@ -78,10 +83,12 @@ public class SketchCharacter implements GraphicsObject, GameObject {
 
     @Override
     public void render() {
-        texture.drawNormalized(posX , posY, width, height);
+        texture.drawNormalized(posX, posY, width, height);
         
         if (weapon != null) {
             weapon.render();
+            long vReticleOffset = Vectors.createRTheta(0.1, getActualFireAngle());
+            reticleTexture.drawNormalized(posX + Vectors.xComp(vReticleOffset), posY + Vectors.yComp(vReticleOffset), 0.05, 0.05);
         }
     }
     
@@ -105,7 +112,7 @@ public class SketchCharacter implements GraphicsObject, GameObject {
         return maxHealth;
     }
     
-    public int  setMaxHealth(int value) {
+    public int setMaxHealth(int value) {
         this.maxHealth = value;
         return maxHealth;
     }
@@ -174,22 +181,29 @@ public class SketchCharacter implements GraphicsObject, GameObject {
 
     public void fireCurrentWeapon(double power) {
         if(weapon != null) {
-            weapon.tryToFire(this, (float)power, Vectors.createRTheta(1.0f, angle));
+            weapon.tryToFire(this, (float)power, Vectors.createRTheta(1.0f, getActualFireAngle()));
             hasFired = true;
         }
     }
 
     public void aimUp(double elapsedMillis) {
         angle += Math.PI * elapsedMillis / 1000.0;
+        //make sure not to aim higher than straight up
+        angle = Math.min(angle, Math.PI / 2.0);
+        System.out.println("angle: " + angle);
     }
 
     public void aimDown(double elapsedMillis) {
         angle -= Math.PI * elapsedMillis / 1000.0;
+        //make sure not to aim lower than straight down
+        angle = Math.max(angle, -Math.PI / 2.0);
+        System.out.println("angle: " + angle);
     }
 
     void moveLeft(double elapsedMillis) 
     {
         long oldVector = coll.getVelocity();
+        this.isFacingLeft = true;
         double getY = Vectors.yComp(oldVector);
         coll.setVelocity(create(-100, getY));
     }
@@ -197,6 +211,7 @@ public class SketchCharacter implements GraphicsObject, GameObject {
     void moveRight(double elapsedMillis)
     {
         long oldVector = coll.getVelocity();
+        this.isFacingLeft = false;
         double getY = Vectors.yComp(oldVector);
         coll.setVelocity(create(100, getY));
     }
@@ -206,6 +221,14 @@ public class SketchCharacter implements GraphicsObject, GameObject {
         long oldVector = coll.getVelocity();
         double getX = Vectors.xComp(oldVector);
         coll.setVelocity(create(getX, 200));
+    }
+
+    private double getActualFireAngle() {
+        if(isFacingLeft) {
+            return Math.PI - angle;
+        } else {
+            return angle;
+        }
     }
 
     public Collider getCollider() {

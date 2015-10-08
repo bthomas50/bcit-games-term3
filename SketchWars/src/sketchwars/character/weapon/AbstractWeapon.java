@@ -100,8 +100,8 @@ public abstract class AbstractWeapon implements GameObject, GraphicsObject {
     private void fire(SketchCharacter owner, float power, long direction) {
         long normalDir = Vectors.normalize(direction);
         long vVelocity = Vectors.scalarMultiply(getProjectileSpeed(power), normalDir);
-        long vPosition = Vectors.create(posX * 1024.0, posY * 1024.0);
-
+        long vPosition = Vectors.add(owner.getCollider().getPosition(), Vectors.scaleToLength(normalDir, 100.0));
+        System.out.println("velocity: " + Vectors.toString(vVelocity));
         BasicProjectile projectile = createProjectile(owner, vPosition, vVelocity);
 
         projectile.setPower(power);
