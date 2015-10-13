@@ -8,15 +8,18 @@ import java.net.DatagramSocket;
 import java.net.DatagramPacket;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.ArrayList;
 import java.io.IOException;
 
 public class Peer {
-
+    private static final byte ACK = (byte)0xFF;
     private HashMap<Integer, PeerInfo> peers;
 
-    private HashMap<Integer, Boolean> haveInput;
+    private HashMap<Integer, Byte> lastInputsReceived;
+    private HashMap<Integer, Byte> lastInputAcknowledged;
+    private byte consumed;
     private HashMap<Integer, Input> inputs;
-
+    private ArrayList<ReliableMessage> outgoingMessages;
     private DatagramSocket socket;
 
     private int localId;
@@ -24,52 +27,72 @@ public class Peer {
     public Peer(int port, int localId) throws IOException {
         peers = new HashMap<>();
         socket = new DatagramSocket(port);
-        haveInput = new HashMap<>();
+        lastInputsReceived = new HashMap<>();
         inputs = new HashMap<>();
         this.localId = localId;
+        consumed = -1;
+        outgoingMessages = new ArrayList<>();
     }
 
     public void broadcastInput(int frameNum) {
-        byte[] data = new byte[256];
+        System.out.println("sending inputs for frame: " + frameNum);
         byte[] inputData = Input.currentInput.serializeByteArray();
+        byte[] data = new byte[inputData.length + 2];
         data[0] = (byte) localId;
         data[1] = (byte) frameNum;
         System.arraycopy(inputData, 0, data, 2, inputData.length);
         for(PeerInfo peer : peers.values()) {
-            DatagramPacket packet = new DatagramPacket(data, inputData.length + 2, peer.ipAddress, peer.portNum);
-            try {
-                socket.send(packet);
-            } catch(IOException ioe) {
-                System.err.println(ioe);
-            }
+            sendReliably(data, peer);
+        }
+    }
+
+    public void sendReliably(byte[] data, PeerInfo dest) {
+        ReliableMessage msg = new ReliableMessage(data, dest);
+        synchronized(outgoingMessages) {
+            outgoingMessages.add(msg);
+        }
+        msg.send(socket);
+    }
+
+    public void sendAck(int id, byte seq) {
+        System.out.println("sending ack to id " + id + " for seq: " + seq);
+        byte[] data = new byte[3];
+        data[0] = (byte) localId;
+        data[1] = seq;
+        data[2] = ACK;
+        PeerInfo sendTo = peers.get(id);
+        DatagramPacket packet = new DatagramPacket(data, 3, sendTo.ipAddress, sendTo.portNum);
+        try {
+            socket.send(packet);
+        } catch(IOException ioe) {
+            System.err.println(ioe);
         }
     }
 
     //blocks until we get inputs from each peer.
-    public Map<Integer, Input> getInputs() {
+    public Map<Integer, Input> getInputs(int frameNum) {
+        byte seq = (byte) frameNum;
         while(true) {
-            boolean haveAllInputs = true;
-            synchronized(haveInput) {
-                for(Boolean b : haveInput.values()) {
-                    //System.out.println(b);
-                    if(!b) {
-                        haveAllInputs = false;
-                        break;
-                    }
+            synchronized(lastInputsReceived) {
+                if(hasAllInputs(seq)) {
+                    consumed = seq;
+                    HashMap<Integer, Input> ret = new HashMap<>();
+                    ret.putAll(inputs);
+                    System.out.println("got inputs for frame: " + frameNum);
+                    return ret;
                 }
             }
-            if(haveAllInputs) {
-                break;
+        }
+        //unreachable, no return needed
+    }
+
+    private boolean hasAllInputs(byte seq) {
+        for(byte b : lastInputsReceived.values()) {
+            if(b != seq) {
+                return false;
             }
         }
-        synchronized(haveInput) {
-            for(PeerInfo peer : peers.values()) {
-                haveInput.put(peer.id, false);
-            }
-            HashMap<Integer, Input> ret = new HashMap<>();
-            ret.putAll(inputs);
-            return ret;
-        }
+        return true;
     }
 
     public void startListener() {
@@ -78,7 +101,7 @@ public class Peer {
 
     public void addPeer(PeerInfo info) {
         peers.put(info.id, info);
-        haveInput.put(info.id, false);
+        lastInputsReceived.put(info.id, (byte)-1);
     }
 
     private class Listener implements Runnable {
@@ -97,17 +120,52 @@ public class Peer {
                     socket.receive(packet);
                     byte[] pktData = packet.getData();
                     int senderId = pktData[0];
-                    int frameNum = pktData[1];
-                    byte[] inputData = new byte[packet.getLength() - 2];
-                    System.arraycopy(pktData, 2, inputData, 0, inputData.length);
-                    Input input = Input.deserializeByteArray(inputData);
-                    System.out.println(packet.getAddress() + ":" + packet.getPort() + "(id = " + senderId + ") says " + frameNum);
-                    synchronized(haveInput) {
-                        haveInput.put(senderId, true);
-                        inputs.put(senderId, input);
+                    byte seq = pktData[1];
+                    byte flag = pktData[2];
+                    if(flag == ACK) {
+                        receiveAck(senderId, seq);
+                    } else {
+                        receiveInput(senderId, seq, packet);
                     }
+                    
                 } catch(IOException ioe) {
                     System.err.println(ioe);
+                }
+            }
+        }
+
+        private void receiveAck(int senderId, byte seq) {
+            ReliableMessage matchingMsg = null;
+            synchronized(outgoingMessages) {
+                for (ReliableMessage msg : outgoingMessages) {
+                    if(msg.getDestinationId() == senderId && 
+                       msg.getSequence() == seq) {
+                        matchingMsg = msg;
+                        break;
+                    }
+                }
+                if(matchingMsg == null) {
+                    System.out.println("unexpected ack received from " + senderId + " for frame " + seq);
+                } else {
+                    matchingMsg.notifyAcknowledged();
+                    outgoingMessages.remove(matchingMsg);
+                    System.out.println("processed ack from " + senderId + " for frame " + seq);
+                }
+            }
+        }
+
+        private void receiveInput(int senderId, byte seq, DatagramPacket packet) {
+            byte[] pktData = packet.getData();
+            byte[] inputData = new byte[packet.getLength() - 2];
+            System.arraycopy(pktData, 2, inputData, 0, inputData.length);
+            Input input = Input.deserializeByteArray(inputData);
+            synchronized(lastInputsReceived) {
+                byte desiredSeq = (byte)((int)consumed + 1);
+                System.out.println(packet.getAddress() + ":" + packet.getPort() + "(id = " + senderId + ") says " + seq + ", wanted " + desiredSeq);
+                if(seq == desiredSeq) {
+                    lastInputsReceived.put(senderId, seq);
+                    inputs.put(senderId, input);
+                    sendAck(senderId, seq);
                 }
             }
         }

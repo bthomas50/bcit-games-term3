@@ -19,7 +19,8 @@ import org.lwjgl.Sys;
  * @author Brian Thomas <bthomas50@my.bcit.ca>
  */
 public class MultiplayerSketchWars {
-    private static final double MILLION = 1000000;//used in calculating frame length
+    //used in calculating frame length
+    private static final double NANOS_PER_MILLI = 1000000;
     
     private OpenGL openGL;
     private MultiplayerWorld world;
@@ -67,12 +68,12 @@ public class MultiplayerSketchWars {
             while (!openGL.windowsIsClosing()) {
                 Input.update();
                 //do network stuff.
-                network.broadcastInput(frameNum++);
-                Map<Integer, Input> allInputs = network.getInputs();
+                network.broadcastInput(frameNum);
+                Map<Integer, Input> allInputs = network.getInputs(frameNum);
 
                 openGL.beginUpdate();
                 double time = System.nanoTime(); //calculate frame length in milliseconds
-                double delta = 16;//(time - lastTime) / MILLION;
+                double delta = 16;//(time - lastTime) / NANOS_PER_MILLI;
 
                 if (sceneManager != null) {
                     sceneManager.render();//call the main graphics renderer
@@ -85,6 +86,8 @@ public class MultiplayerSketchWars {
                 lastTime = time;
 
                 openGL.endUpdate();
+                
+                frameNum++;
             }
         } finally {
             openGL.dispose();

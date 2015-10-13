@@ -4,10 +4,10 @@ import java.io.Serializable;
 import java.net.InetAddress;
 
 public class PeerInfo implements Serializable {
-    public InetAddress ipAddress;
-    public int portNum;
-    public String username;
-    public int id;
+    public final InetAddress ipAddress;
+    public final int portNum;
+    public final String username;
+    public final int id;
 
     public PeerInfo(InetAddress ipAddress, int portNum, String username, int id) {
         this.ipAddress = ipAddress;
@@ -18,6 +18,6 @@ public class PeerInfo implements Serializable {
 
     @Override
     public String toString() {
-        return ipAddress + " " + portNum + " " + username + " " + id;
+        return ipAddress + ":" + portNum + " " + username + " " + id;
     }
 }
