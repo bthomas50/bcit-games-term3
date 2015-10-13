@@ -44,7 +44,7 @@ public class SketchWars {
 
         SoundPlayer.loadSound();
 
-        GameScene gameScene = new GameScene();
+        Scene gameScene = new Scene();
         try {
             sceneManager.addScene(Scenes.GAME, gameScene);
             sceneManager.setCurrentScene(Scenes.GAME);

@@ -43,7 +43,7 @@ public class MultiplayerSketchWars {
 
         SoundPlayer.loadSound();
 
-        GameScene gameScene = new GameScene();
+        Scene gameScene = new Scene();
         try {
             sceneManager.addScene(SketchWars.Scenes.GAME, gameScene);
             sceneManager.setCurrentScene(SketchWars.Scenes.GAME);

@@ -10,9 +10,9 @@ public class ProjectileFactory
 {
     private World world;
     private Physics physics;
-    private AbstractScene scene;
+    private Scene scene;
 
-    public ProjectileFactory(World world, Physics physics, AbstractScene scene)
+    public ProjectileFactory(World world, Physics physics, Scene scene)
     {
         this.world = world;
         this.physics = physics;

@@ -8,32 +8,32 @@ package sketchwars;
 import sketchwars.animation.Explosion;
 import java.util.ArrayList;
 import sketchwars.character.projectiles.BasicProjectile;
-import sketchwars.graphics.GraphicsObject;
 import sketchwars.physics.Physics;
 import sketchwars.character.SketchCharacter;
 import sketchwars.character.projectiles.GrenadeProjectile;
-import sketchwars.physics.BitMask;
+import sketchwars.exceptions.SceneException;
 import sketchwars.physics.BitMaskFactory;
 import sketchwars.physics.Collider;
 import sketchwars.physics.Collisions;
 import sketchwars.physics.PixelCollider;
 import sketchwars.physics.Vectors;
-import sketchwars.scenes.GameScene;
+import sketchwars.scenes.Layer;
+import sketchwars.scenes.Scene;
 
 /**
  *
  * @author Najash Najimudeen <najash.najm@gmail.com>
  */
-public class WeaponLogic implements GameObject, GraphicsObject {
+public class WeaponLogic implements GameObject {
     private final ArrayList<BasicProjectile> projectiles;
     private final World world;
     private final Physics physics;
-    private final GameScene scene;
+    private final Scene gameScene;
         
-    public WeaponLogic(World world, GameScene scene, Physics physics) {
+    public WeaponLogic(World world, Scene scene, Physics physics) {
         this.world = world;
         this.physics = physics;
-        this.scene = scene;
+        this.gameScene = scene;
         projectiles = new ArrayList<>();
     }
 
@@ -43,18 +43,17 @@ public class WeaponLogic implements GameObject, GraphicsObject {
         updateDamageGiven(delta);
         removeExpiredProjectiles(delta);
     }
-
-    @Override
-    public void render() {
-        for (BasicProjectile projectile: projectiles) {
-            projectile.render();
-        }
-    }
     
     public void addProjectile(BasicProjectile projectile) {
-        projectiles.add(projectile);
-        physics.addCollider(projectile.getCollider());
-        projectile.setActive(true);
+        try {
+            projectiles.add(projectile);
+            physics.addCollider(projectile.getCollider());
+            projectile.setActive(true);
+            
+            gameScene.getLayer(WorldFactory.GameSceneLayers.PROJECTILES).addDrawableObject(projectile); //so it can be rendered
+        } catch (SceneException ex) {
+            System.err.println(ex.getMessage());
+        }
     }
 
     private void updateProjectiles(double delta) {
@@ -118,9 +117,13 @@ public class WeaponLogic implements GameObject, GraphicsObject {
         Explosion explosion = new Explosion();
         explosion.setPosition(explosionPoint);
         
-        explosion.setDimension(Vectors.create(radius, radius));
-        scene.addAnimation(explosion);
-        explosion.start();
+        try {
+            explosion.setDimension(Vectors.create(radius, radius));
+            gameScene.getLayer(WorldFactory.GameSceneLayers.PROJECTILES).addAnimation(explosion);
+            explosion.start();
+        } catch (SceneException ex) {
+            System.err.println(ex.getMessage());
+        }
     }
     
     private void removeExpiredProjectiles(double delta) {
@@ -132,6 +135,12 @@ public class WeaponLogic implements GameObject, GraphicsObject {
             if (bp.hasExpired()) {
                 physics.removeCollider(bp.getCollider());
                 projectiles.remove(i);
+                
+                try {
+                    gameScene.getLayer(WorldFactory.GameSceneLayers.PROJECTILES).removeDrawableObject(bp);
+                } catch (SceneException ex) {
+                    System.err.println(ex.getMessage());
+                }
             }
         }
     }

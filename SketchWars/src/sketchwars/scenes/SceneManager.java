@@ -14,15 +14,15 @@ import sketchwars.exceptions.SceneManagerException;
  * @param <T> key type
  */
 public class SceneManager <T> {            
-    private final HashMap<T, AbstractScene> scenes;
-    private AbstractScene currentScene;
+    private final HashMap<T, Scene> scenes;
+    private Scene currentScene;
     
     public SceneManager() {
         scenes = new HashMap<>();
         currentScene = null;
     }
     
-    public void addScene(T key, AbstractScene scene) throws SceneManagerException {
+    public void addScene(T key, Scene scene) throws SceneManagerException {
         if (scenes.containsKey(key)) {
             throw new SceneManagerException("A scene with the same key already exists.");            
         } else {
@@ -46,7 +46,7 @@ public class SceneManager <T> {
         }
     }
     
-    public AbstractScene getCurrentScene() {
+    public Scene getCurrentScene() {
         return currentScene;
     }
     
@@ -56,7 +56,7 @@ public class SceneManager <T> {
         }
     }
 
-    public AbstractScene getScene(T key) throws SceneManagerException {
+    public Scene getScene(T key) throws SceneManagerException {
         if (scenes.containsKey(key)) {
             return scenes.get(key);        
         } else {
