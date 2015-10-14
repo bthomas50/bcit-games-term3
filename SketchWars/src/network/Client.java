@@ -5,18 +5,17 @@ import main.InputHandler;
 import packets.*;
 
 import java.io.IOException;
-import java.net.Socket;
 import java.util.HashMap;
 import java.util.Random;
-import java.net.UnknownHostException;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.util.Scanner;
+import java.net.*;
 
 public class Client {
 	
 	private int id;
-	public String host;
+	public InetAddress hostIP;
 	public int port;
 	private String username;
         private int clientId;
@@ -26,16 +25,18 @@ public class Client {
 
 	
 	public Client(String host, int port, String username) throws IOException {
-		this.host = host;
-		this.port = port;
-		this.username = username;
-                this.clientId = clientId;
-		clients = new HashMap<Integer, ClientEntityForClients>();
-        socket = new Socket(host, port);
-        isRunning = false;
+        this(InetAddress.getByName(host), port, username);
 	}
-        
-        
+    
+    public Client(InetAddress addr, int port, String username) throws IOException {
+        this.hostIP = addr;
+        this.port = port;
+        this.username = username;
+                this.clientId = clientId;
+        clients = new HashMap<Integer, ClientEntityForClients>();
+        socket = new Socket(addr, port);
+        isRunning = false;
+    }
 
 	public void run() {
         isRunning = true;

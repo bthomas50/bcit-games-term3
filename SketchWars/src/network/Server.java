@@ -1,12 +1,13 @@
 package network;
 
-import java.io.IOException;
-import java.net.ServerSocket;
-import java.util.HashMap;
-import java.util.Collection;
-
 import entities.ClientEntityForManagementOnServer;
 import packets.*;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Collection;
+import java.util.Enumeration;
+import java.net.*;
 
 public class Server implements Runnable {
 	public int port;
@@ -15,16 +16,37 @@ public class Server implements Runnable {
 	public boolean isRunning = false;
 	public Thread runner = null;
 	public HashMap<Integer, ClientEntityForManagementOnServer> clients = null;
+	public InetAddress localAddress = null;
 
 	public Server(int port) {
 		this.port = port;
 		clients = new HashMap<Integer, ClientEntityForManagementOnServer>();
 		try {
-			socket = new ServerSocket(port);
+			localAddress = getReachableLocalAddress();
+			if(localAddress == null) {
+				System.out.println("no suitable IP address found - check your network settings.");
+			} else {
+				System.out.println("server IP is " + localAddress);
+			}
+			socket = new ServerSocket(port, -1, localAddress);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	private InetAddress getReachableLocalAddress() throws SocketException {
+		Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
+		while(interfaces.hasMoreElements()) {
+		    NetworkInterface inter = interfaces.nextElement();
+		    Enumeration<InetAddress> addresses = inter.getInetAddresses();
+		    while (addresses.hasMoreElements()) {
+		        InetAddress addr = addresses.nextElement();
+		        if(!addr.isLoopbackAddress() && !(addr instanceof Inet6Address)) {
+		        	return addr;
+		        }
+		    }
+		}
+		return null;
 	}
 
 	@Override
@@ -56,6 +78,7 @@ public class Server implements Runnable {
 		PeerInfo[] arrayOfPeers = new PeerInfo[clients.size()];
 		int i = 0;
 		for(ClientEntityForManagementOnServer client : clients.values()) {
+			System.out.println(client.socket.getLocalAddress().getHostAddress());
 			arrayOfPeers[i++] = new PeerInfo(client.socket.getInetAddress(), client.socket.getPort(), client.username, client.id);
 		}
 		PacketStart packet = new PacketStart(arrayOfPeers);

@@ -4,6 +4,7 @@ import network.*;
 
 import java.util.Scanner;
 import java.io.IOException;
+import java.net.InetAddress;
 
 public class ServerMain
 {
@@ -20,12 +21,12 @@ public class ServerMain
         System.out.println("Enter username: ");
         String username = in.next();
 
-        tryToRunClient("localhost", port, username);
+        tryToRunClient(server.localAddress, port, username);
     }
 
-    private static void tryToRunClient(String host, int port, String username) {
+    private static void tryToRunClient(InetAddress addr, int port, String username) {
         try {
-            Client client = new Client(host, port, username);
+            Client client = new Client(addr, port, username);
             client.run();
         } catch(IOException ex) {
             System.out.println(ex);
