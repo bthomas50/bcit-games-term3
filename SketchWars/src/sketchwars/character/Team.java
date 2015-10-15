@@ -45,6 +45,11 @@ public class Team
 
     public void handleInput(Input input, double elapsedMillis)
     {
+        //if it shot already, its turn is over.
+        if(active.hasFiredThisTurn())
+        {
+            return;
+        }
         for(Command command : input.getCommands())
         {
             switch(command)
