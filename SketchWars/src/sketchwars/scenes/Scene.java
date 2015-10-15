@@ -1,9 +1,8 @@
 package sketchwars.scenes;
 
-import com.google.common.collect.TreeMultiset;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.PriorityQueue;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import sketchwars.exceptions.SceneException;
 
 /**
@@ -13,11 +12,11 @@ import sketchwars.exceptions.SceneException;
  */
 public class Scene<T> {
     private final HashMap<T, Layer> layerIndex;
-    private final TreeMultiset<Layer> drawableLayers;
+    private final SortedSet<Layer> drawableLayers;
 
     public Scene() {
         layerIndex = new HashMap<>();
-        drawableLayers = TreeMultiset.create();
+        drawableLayers = new TreeSet<>();
     }
     
     /**
@@ -28,6 +27,18 @@ public class Scene<T> {
     public void addLayer(T index, Layer layer) {
         drawableLayers.add(layer);
         layerIndex.put(index, layer);
+    }
+    
+    /**
+     * Call this to change the z-order of a layer
+     * @param layer the layer to be changed
+     * @param zOrder new z-order
+     */
+    public void setZOrder(Layer layer, int zOrder) {
+         drawableLayers.remove(layer);
+         
+         layer.setZOrder(zOrder);
+         drawableLayers.add(layer);
     }
     
     /**

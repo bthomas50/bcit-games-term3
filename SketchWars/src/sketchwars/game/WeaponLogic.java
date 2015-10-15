@@ -12,7 +12,6 @@ import sketchwars.physics.Collider;
 import sketchwars.physics.Collisions;
 import sketchwars.physics.PixelCollider;
 import sketchwars.physics.Vectors;
-import sketchwars.scenes.Layer;
 import sketchwars.scenes.Scene;
 
 /**
@@ -23,7 +22,7 @@ public class WeaponLogic implements GameObject {
     private final ArrayList<BasicProjectile> projectiles;
     private final SketchWarsWorld world;
     private final Physics physics;
-    private Scene<GameLayers> gameScene;
+    private final Scene<GameLayers> gameScene;
         
     public WeaponLogic(SketchWarsWorld world, Scene<GameLayers> scene, Physics physics) {
         this.world = world;
