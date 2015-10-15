@@ -22,16 +22,10 @@ public class Team
     {
         this.characters = characters;
         this.weapons = weapons;
-        for(SketchCharacter temp : characters)
-        {
-            temp.setWeapon(null);
-        }
         
         if(this.characters.size() > 0)
         {
-            active = this.characters.get(0);
-            active.setWeapon(weapons.get(WeaponTypes.MELEE_WEAPON));
-            
+            setActiveCharacter(this.characters.get(0));
         }
     }
 
@@ -108,16 +102,46 @@ public class Team
         return active;
     }
 
-    public void incrementActiveCharacter()
+    public void cycleActiveCharacter()
     {
         int idx = characters.indexOf(active);
-        if(idx != size() - 1)
+        if(idx == size() - 1)
         {
-            active = characters.get(0);
+            setActiveCharacter(characters.get(0));
         }
         else
         {
-            active = characters.get(idx + 1);
+            setActiveCharacter(characters.get(idx + 1));
+        }
+    }
+
+    private void setActiveCharacter(SketchCharacter ch)
+    {
+        AbstractWeapon wep = getActiveWeapon();
+        if(wep == null)
+        {
+            wep = weapons.get(WeaponTypes.MELEE_WEAPON);
+        }
+        resetCharacters();
+        active = ch;
+        active.setWeapon(wep);
+    }
+
+    private AbstractWeapon getActiveWeapon()
+    {
+        if(active != null)
+        {
+            return active.getWeapon();
+        }
+        return null;
+    }
+
+    private void resetCharacters()
+    {
+        for(SketchCharacter temp : characters)
+        {
+            temp.resetHasFiredThisTurn();
+            temp.setWeapon(null);
         }
     }
 }

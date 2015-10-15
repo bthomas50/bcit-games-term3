@@ -24,6 +24,7 @@ public class SketchWarsWorld extends World {
     public SketchWarsWorld() {
         characters = new ArrayList<>();
         teams = new ArrayList<>();
+        currentTurn = Turn.createDefaultTurn();
     }
 
     public void setWeaponLogic(WeaponLogic weaponLogic) {
@@ -40,8 +41,7 @@ public class SketchWarsWorld extends World {
         addGameObject(character);
     }
     
-    public void addTeam (Team team)
-    {
+    public void addTeam (Team team) {
         teams.add(team);
     }
 
@@ -51,8 +51,8 @@ public class SketchWarsWorld extends World {
         handleCharacterDrowning();
         checkTeamStatus();
         updateObjects(deltaMillis);
-        
         updateGameLogic(deltaMillis);
+        updateTurn(deltaMillis);
     }
 
     protected void handleInput(double elapsedMillis) {
@@ -91,6 +91,22 @@ public class SketchWarsWorld extends World {
     private void updateGameLogic(double deltaMillis) {
         if (weaponLogic != null) {
             weaponLogic.update(deltaMillis);
+        }
+    }
+
+    private void updateTurn(double elapsedMillis) {
+        currentTurn.update(elapsedMillis);
+        if(currentTurn.isCompleted())
+        {
+            beginNextTurn();
+        }
+    }
+
+    private void beginNextTurn() {
+        currentTurn = Turn.createDefaultTurn();
+        for(Team t : teams) {
+            t.cycleActiveCharacter();
+            currentTurn.addCharacter(t.getActiveCharacter());
         }
     }
 

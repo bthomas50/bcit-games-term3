@@ -86,7 +86,7 @@ public abstract class AbstractWeapon implements GameObject, GraphicsObject {
         this.scale = scale;
     }
 
-    public void tryToFire(SketchCharacter owner, float power, long direction) {
+    public boolean tryToFire(SketchCharacter owner, float power, long direction) {
         double timeFired = elapsed;
         double timeSinceLastFired = timeFired - lastTimeFired;
         float rateOfFireInMilli = 1000/rateOfFire;
@@ -94,6 +94,9 @@ public abstract class AbstractWeapon implements GameObject, GraphicsObject {
         if (timeSinceLastFired > rateOfFireInMilli) {
             fire(owner, power, direction);
             lastTimeFired = timeFired;
+            return true;
+        } else {
+            return false;
         }
     }
 

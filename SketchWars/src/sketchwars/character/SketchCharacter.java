@@ -175,14 +175,17 @@ public class SketchCharacter implements GraphicsObject, GameObject {
         this.texture = texture;
     }
 
+    public void resetHasFiredThisTurn() {
+        hasFired = false;
+    }
+
     public boolean hasFiredThisTurn() {
         return hasFired;
     }
 
     public void fireCurrentWeapon(double power) {
         if(weapon != null) {
-            weapon.tryToFire(this, (float)power, Vectors.createRTheta(1.0f, getActualFireAngle()));
-            hasFired = true;
+            hasFired = weapon.tryToFire(this, (float)power, Vectors.createRTheta(1.0f, getActualFireAngle()));
         }
     }
 
