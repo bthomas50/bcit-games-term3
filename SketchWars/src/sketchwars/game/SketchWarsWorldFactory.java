@@ -17,6 +17,8 @@ import java.util.HashMap;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Random;
+import org.joml.Vector2d;
+import sketchwars.animation.Animation;
 
 public class SketchWarsWorldFactory
 {
@@ -44,6 +46,15 @@ public class SketchWarsWorldFactory
             createTeams();
             createGameLogic();
             SoundPlayer.playMusic(0, true, -15);
+            
+            //test animation - will remove when addign character animations
+            Texture anim = Texture.loadTexture("content/testSprite.png");
+            Animation test = new Animation(anim, 9, 1500, true);
+            test.setDimension(new Vector2d(100, 100));
+            test.setPosition(new Vector2d(5, 5));
+            test.start();
+            gameScene.getLayer(GameLayers.CHARACTER).addAnimation(test);
+            
         } catch (SceneManagerException ex) {
             System.err.println(ex.getMessage());
         } catch (Exception e)

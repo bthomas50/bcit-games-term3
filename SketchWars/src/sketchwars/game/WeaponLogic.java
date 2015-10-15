@@ -2,17 +2,19 @@ package sketchwars.game;
 
 import sketchwars.animation.Explosion;
 import java.util.ArrayList;
+import org.joml.Vector2d;
 import sketchwars.character.projectiles.BasicProjectile;
 import sketchwars.physics.Physics;
 import sketchwars.character.SketchCharacter;
 import sketchwars.character.projectiles.GrenadeProjectile;
+import sketchwars.exceptions.AnimationException;
 import sketchwars.exceptions.SceneException;
 import sketchwars.physics.BitMaskFactory;
 import sketchwars.physics.Collider;
 import sketchwars.physics.Collisions;
 import sketchwars.physics.PixelCollider;
-import sketchwars.physics.Vectors;
 import sketchwars.scenes.Scene;
+import sketchwars.util.CoordinateSystem;
 
 /**
  *
@@ -86,7 +88,6 @@ public class WeaponLogic implements GameObject {
         if (projectile instanceof GrenadeProjectile) { //handle grenades separately
             GrenadeProjectile grenade = (GrenadeProjectile)projectile;
             if (projectile.hasExpired() || projectile.isConsumed()) {
-                createExplosionObject(grenade, grenade.getExplosionRadius());
                 return hasGrenadeHitTarget(charCollider, grenade);
             }
         } else if (!projectile.getOwner().equals(character)) {
@@ -107,15 +108,15 @@ public class WeaponLogic implements GameObject {
     }
 
     private void createExplosionObject(BasicProjectile bp, double radius) {
-        long explosionPoint = bp.getCollider().getPosition();
-        Explosion explosion = new Explosion();
-        explosion.setPosition(explosionPoint);
-        
         try {
-            explosion.setDimension(Vectors.create(radius, radius));
+            long explosionPoint = bp.getCollider().getPosition();
+            Explosion explosion = new Explosion();
+            explosion.setPosition(CoordinateSystem.physicsToOpenGL(explosionPoint));
+            
+            explosion.setDimension(new Vector2d(radius, radius));
             gameScene.getLayer(GameLayers.PROJECTILE).addAnimation(explosion);
             explosion.start();
-        } catch (SceneException ex) {
+        } catch (AnimationException | SceneException ex) {
             System.err.println(ex.getMessage());
         }
     }
@@ -127,6 +128,11 @@ public class WeaponLogic implements GameObject {
             BasicProjectile bp = projectiles.get(i);
             
             if (bp.hasExpired()) {
+                if (bp instanceof GrenadeProjectile) {
+                    GrenadeProjectile grenade = (GrenadeProjectile)bp;
+                    createExplosionObject(grenade, grenade.getExplosionRadius());
+                }
+                
                 physics.removeCollider(bp.getCollider());
                 projectiles.remove(i);
                 

@@ -12,6 +12,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import org.joml.Matrix3d;
+import org.joml.Vector2d;
 import org.joml.Vector3d;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL30;
@@ -293,7 +294,7 @@ public class Texture {
      * @param textureCoord texture coordinates
      * @param matrix transformation matrix 
      */
-    public void draw(Vector3d[] textureCoord, Matrix3d matrix) {   
+    public void draw(Vector2d[] textureCoord, Matrix3d matrix) {   
         glPushMatrix();
         
         //translate so (0, 0) is center of window
@@ -335,7 +336,7 @@ public class Texture {
              (float)points[0].y, (float)points[1].y, (float)points[2].y, (float)points[3].y);
     }
     
-    private void draw(Vector3d[] textureCoord, Vector3d[] points) {
+    private void draw(Vector2d[] textureCoord, Vector3d[] points) {
         draw((float)textureCoord[0].x, (float)textureCoord[1].x, (float)textureCoord[2].x, (float)textureCoord[3].x, 
              (float)textureCoord[0].y, (float)textureCoord[1].y, (float)textureCoord[2].y, (float)textureCoord[3].y,
              (float)points[0].x, (float)points[1].x, (float)points[2].x, (float)points[3].x, 
