@@ -312,10 +312,10 @@ public class Texture {
         
         //quad
         Vector3d point1 = new Vector3d(-0.5, 0.5, 1);
-        Vector3d point2 = new Vector3d(0.5, 0.5, 1);
+        Vector3d point2 = new Vector3d(-0.5, -0.5, 1);
         Vector3d point3 = new Vector3d(0.5, -0.5, 1);
-        Vector3d point4 = new Vector3d(-0.5, -0.5, 1);
-        
+        Vector3d point4 = new Vector3d(0.5, 0.5, 1);
+                
         //tranform quad using the matrix
         point1.mul(matrix);
         point2.mul(matrix);

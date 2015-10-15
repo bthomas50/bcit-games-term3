@@ -3,7 +3,6 @@ package sketchwars.scenes;
 import java.util.ArrayList;
 import sketchwars.game.GameObject;
 import sketchwars.animation.Animation;
-import sketchwars.animation.Explosion;
 import sketchwars.graphics.GraphicsObject;
 
 /**
@@ -20,7 +19,7 @@ public class Layer implements GraphicsObject, GameObject, Comparable<Layer> {
         animations = new ArrayList<>();
     }
     
-    public void addAnimation(Explosion animation) {
+    public void addAnimation(Animation animation) {
         animations.add(animation);
         addDrawableObject(animation);
     }
