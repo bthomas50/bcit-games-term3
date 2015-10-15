@@ -282,6 +282,34 @@ public class Texture {
         int yCenterOffet = (int)(OpenGL.HEIGHT/2);
         glTranslated(xCenterOffet, yCenterOffet, 0);
         
+        Vector3d points[] = getTransformedQuad(matrix);
+        draw(points);
+        
+        glPopMatrix();
+    }
+    
+    /**
+     * draw the texture using a transformation matrix 
+     * @param textureCoord texture coordinates
+     * @param matrix transformation matrix 
+     */
+    public void draw(Vector3d[] textureCoord, Matrix3d matrix) {   
+        glPushMatrix();
+        
+        //translate so (0, 0) is center of window
+        int xCenterOffet = (int)(OpenGL.WIDTH/2);
+        int yCenterOffet = (int)(OpenGL.HEIGHT/2);
+        glTranslated(xCenterOffet, yCenterOffet, 0);
+        
+        Vector3d points[] = getTransformedQuad(matrix);
+        draw(textureCoord, points);
+        
+        glPopMatrix();
+    }
+    
+    private Vector3d[] getTransformedQuad(Matrix3d matrix) {
+        Vector3d tQuad[] = new Vector3d[4];
+        
         //quad
         Vector3d point1 = new Vector3d(-0.5, 0.5, 1);
         Vector3d point2 = new Vector3d(0.5, 0.5, 1);
@@ -294,13 +322,28 @@ public class Texture {
         point3.mul(matrix);
         point4.mul(matrix);
         
-        draw((int)point1.x, (int)point2.x, (int)point3.x, (int)point4.x, 
-             (int)point1.y, (int)point2.y, (int)point3.y, (int)point4.y);
-        glPopMatrix();
+        tQuad[0] = point1;
+        tQuad[1] = point2;
+        tQuad[2] = point3;
+        tQuad[3] = point4;
+        
+        return tQuad;
+    }
+
+    private void draw(Vector3d[] points) {
+        draw((float)points[0].x, (float)points[1].x, (float)points[2].x, (float)points[3].x, 
+             (float)points[0].y, (float)points[1].y, (float)points[2].y, (float)points[3].y);
     }
     
-    private void draw(int x1, int x2, int x3, int x4,
-                      int y1, int y2, int y3, int y4) {        
+    private void draw(Vector3d[] textureCoord, Vector3d[] points) {
+        draw((float)textureCoord[0].x, (float)textureCoord[1].x, (float)textureCoord[2].x, (float)textureCoord[3].x, 
+             (float)textureCoord[0].y, (float)textureCoord[1].y, (float)textureCoord[2].y, (float)textureCoord[3].y,
+             (float)points[0].x, (float)points[1].x, (float)points[2].x, (float)points[3].x, 
+             (float)points[0].y, (float)points[1].y, (float)points[2].y, (float)points[3].y);
+    }
+    
+    private void draw(float x1, float x2, float x3, float x4,
+                      float y1, float y2, float y3, float y4) {        
         glBindTexture(GL_TEXTURE_2D, textureID);
 
         // Draw a textured quad
@@ -309,6 +352,21 @@ public class Texture {
         glTexCoord2f(0, 1); glVertex3f(x2, y2, 0);
         glTexCoord2f(1, 1); glVertex3f(x3, y3, 0);
         glTexCoord2f(1, 0); glVertex3f(x4, y4, 0);
+        glEnd();
+    }
+    
+    private void draw(float tx1, float tx2, float tx3, float tx4,
+                      float ty1, float ty2, float ty3, float ty4,
+                      float x1, float x2, float x3, float x4,
+                      float y1, float y2, float y3, float y4) {        
+        glBindTexture(GL_TEXTURE_2D, textureID);
+
+        // Draw a textured quad
+        glBegin(GL_QUADS);
+        glTexCoord2f(tx1, ty1); glVertex3f(x1, y1, 0);
+        glTexCoord2f(tx2, ty2); glVertex3f(x2, y2, 0);
+        glTexCoord2f(tx3, ty3); glVertex3f(x3, y3, 0);
+        glTexCoord2f(tx4, ty4); glVertex3f(x4, y4, 0);
         glEnd();
     }
     
@@ -343,4 +401,5 @@ public class Texture {
             dispose();
         }
     }
+
 }

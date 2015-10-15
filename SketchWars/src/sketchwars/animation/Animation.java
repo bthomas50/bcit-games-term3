@@ -1,5 +1,11 @@
 package sketchwars.animation;
 
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import javax.imageio.ImageIO;
+import sketchwars.exceptions.AnimationException;
 import sketchwars.game.GameObject;
 import sketchwars.graphics.GraphicsObject;
 import sketchwars.graphics.Texture;
@@ -20,6 +26,17 @@ public class Animation implements GraphicsObject, GameObject {
      */
     protected double duration;
     protected double elapsed;
+
+  /*  public Animation(String imgFile, int xCount, int yCount, double duration) throws AnimationException, IOException {
+        BufferedImage image = ImageIO.read(new File(imgFile));
+        
+        loadTexture(image, xCount, yCount);
+        this.duration = duration;
+    }*/
+    
+    private void loadTexture(BufferedImage image, int xCount, int yCount) {
+        
+    }
     
     @Override
     public void render() {

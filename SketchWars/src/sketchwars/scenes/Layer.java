@@ -74,8 +74,8 @@ public class Layer implements GraphicsObject, GameObject, Comparable<Layer> {
 
     /**
      * Set z-order before adding a layer to a scene
-     * Note: Use Scene class setZOrder method to change 
-     * z-order after adding a layer to the scene
+     * (Note: Use Scene class setZOrder method to change 
+     * z-order after adding a layer to the scene)
      * @param zOrder new z-order
      */
     public void setZOrder(int zOrder) {

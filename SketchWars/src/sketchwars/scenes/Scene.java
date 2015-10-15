@@ -35,10 +35,12 @@ public class Scene<T> {
      * @param zOrder new z-order
      */
     public void setZOrder(Layer layer, int zOrder) {
-         drawableLayers.remove(layer);
-         
-         layer.setZOrder(zOrder);
-         drawableLayers.add(layer);
+         if (drawableLayers.remove(layer)) {
+            layer.setZOrder(zOrder);
+            drawableLayers.add(layer);
+         } else {
+            layer.setZOrder(zOrder);             
+         }
     }
     
     /**

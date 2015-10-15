@@ -10,6 +10,7 @@ public class Explosion extends Animation {
     private static final int DURATION = 500;
     
     public Explosion() {
+    //    super();
         setTexture(Texture.loadTexture("content/animation/explosion.png"));
         setDuration(DURATION);
     }  
