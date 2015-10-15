@@ -6,6 +6,7 @@ import sketchwars.physics.*;
 import sketchwars.scenes.*;
 import sketchwars.sound.SoundPlayer;
 import sketchwars.input.*;
+import sketchwars.game.*;
 import network.Peer;
 
 import java.util.logging.Level;
@@ -27,7 +28,7 @@ public class MultiplayerSketchWars {
     private Physics physics;
     private Peer network;
     
-    private SceneManager<SketchWars.Scenes> sceneManager;
+    private SceneManager<Scenes> sceneManager;
     private double lastTime;
     
     public MultiplayerSketchWars(Peer networkInterface) {
@@ -45,8 +46,8 @@ public class MultiplayerSketchWars {
 
         Scene gameScene = new Scene();
         try {
-            sceneManager.addScene(SketchWars.Scenes.GAME, gameScene);
-            sceneManager.setCurrentScene(SketchWars.Scenes.GAME);
+            sceneManager.addScene(Scenes.GAME, gameScene);
+            sceneManager.setCurrentScene(Scenes.GAME);
         } catch (SceneManagerException ex) {
             Logger.getLogger(MultiplayerSketchWars.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -54,7 +55,7 @@ public class MultiplayerSketchWars {
         physics = new Physics(new BoundingBox(-1024, -1024, 1024, 1024));
         world = new MultiplayerWorld();
 
-        WorldFactory fact = new WorldFactory(world, physics, sceneManager);
+        SketchWarsWorldFactory fact = new SketchWarsWorldFactory(world, physics, sceneManager);
         fact.startGame();
     }
     

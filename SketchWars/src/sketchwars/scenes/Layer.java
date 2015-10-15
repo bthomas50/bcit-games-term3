@@ -1,12 +1,7 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package sketchwars.scenes;
 
 import java.util.ArrayList;
-import sketchwars.GameObject;
+import sketchwars.game.GameObject;
 import sketchwars.animation.Animation;
 import sketchwars.animation.Explosion;
 import sketchwars.graphics.GraphicsObject;

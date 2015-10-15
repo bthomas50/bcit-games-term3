@@ -1,9 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package sketchwars;
+package sketchwars.game;
 
 import sketchwars.animation.Explosion;
 import java.util.ArrayList;
@@ -26,11 +21,11 @@ import sketchwars.scenes.Scene;
  */
 public class WeaponLogic implements GameObject {
     private final ArrayList<BasicProjectile> projectiles;
-    private final World world;
+    private final SketchWarsWorld world;
     private final Physics physics;
-    private final Scene gameScene;
+    private Scene<GameLayers> gameScene;
         
-    public WeaponLogic(World world, Scene scene, Physics physics) {
+    public WeaponLogic(SketchWarsWorld world, Scene<GameLayers> scene, Physics physics) {
         this.world = world;
         this.physics = physics;
         this.gameScene = scene;
@@ -50,7 +45,7 @@ public class WeaponLogic implements GameObject {
             physics.addCollider(projectile.getCollider());
             projectile.setActive(true);
             
-            gameScene.getLayer(WorldFactory.GameSceneLayers.PROJECTILES).addDrawableObject(projectile); //so it can be rendered
+            gameScene.getLayer(GameLayers.PROJECTILE).addDrawableObject(projectile); //so it can be rendered
         } catch (SceneException ex) {
             System.err.println(ex.getMessage());
         }
@@ -119,7 +114,7 @@ public class WeaponLogic implements GameObject {
         
         try {
             explosion.setDimension(Vectors.create(radius, radius));
-            gameScene.getLayer(WorldFactory.GameSceneLayers.PROJECTILES).addAnimation(explosion);
+            gameScene.getLayer(GameLayers.PROJECTILE).addAnimation(explosion);
             explosion.start();
         } catch (SceneException ex) {
             System.err.println(ex.getMessage());
@@ -137,7 +132,7 @@ public class WeaponLogic implements GameObject {
                 projectiles.remove(i);
                 
                 try {
-                    gameScene.getLayer(WorldFactory.GameSceneLayers.PROJECTILES).removeDrawableObject(bp);
+                    gameScene.getLayer(GameLayers.PROJECTILE).removeDrawableObject(bp);
                 } catch (SceneException ex) {
                     System.err.println(ex.getMessage());
                 }

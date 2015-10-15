@@ -1,6 +1,6 @@
 package sketchwars.character.projectiles;
 
-import sketchwars.*;
+import sketchwars.game.*;
 import sketchwars.physics.*;
 import sketchwars.graphics.*;
 import sketchwars.scenes.*;
@@ -8,11 +8,11 @@ import sketchwars.character.SketchCharacter;
 
 public class ProjectileFactory
 {
-    private World world;
+    private SketchWarsWorld world;
     private Physics physics;
     private Scene scene;
 
-    public ProjectileFactory(World world, Physics physics, Scene scene)
+    public ProjectileFactory(SketchWarsWorld world, Physics physics, Scene scene)
     {
         this.world = world;
         this.physics = physics;

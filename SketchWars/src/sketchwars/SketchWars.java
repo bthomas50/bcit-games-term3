@@ -5,6 +5,7 @@ import sketchwars.graphics.Texture;
 import sketchwars.physics.*;
 import sketchwars.scenes.*;
 import sketchwars.input.*;
+import sketchwars.game.*;
 import sketchwars.sound.SoundPlayer;
 
 
@@ -18,13 +19,9 @@ import org.lwjgl.Sys;
  */
 public class SketchWars {
     private static final double MILLION = 1000000;//used in calculating frame length
-    
-    public enum Scenes {
-        GAME, MAIN_MENU;
-    }
-    
+        
     private OpenGL openGL;
-    private World world;
+    private SketchWarsWorld world;
     private Physics physics;
     
     private SceneManager<Scenes> sceneManager;
@@ -53,9 +50,9 @@ public class SketchWars {
         }
         
         physics = new Physics(new BoundingBox(-1024, -1024, 1024, 1024));
-        world = new World();
+        world = new SketchWarsWorld();
 
-        WorldFactory fact = new WorldFactory(world, physics, sceneManager);
+        SketchWarsWorldFactory fact = new SketchWarsWorldFactory(world, physics, sceneManager);
         fact.startGame();
     }
     

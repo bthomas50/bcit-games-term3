@@ -1,9 +1,8 @@
 package sketchwars.character;
 
-import sketchwars.GameObject;
 import sketchwars.character.SketchCharacter;
 import sketchwars.character.weapon.AbstractWeapon;
-import sketchwars.character.weapon.WeaponEnum;
+import sketchwars.character.weapon.WeaponTypes;
 import sketchwars.input.*;
 
 import java.util.*;
@@ -16,10 +15,10 @@ import static org.lwjgl.glfw.GLFW.*;
 public class Team 
 {
     private ArrayList<SketchCharacter> characters;
-    private HashMap<WeaponEnum, AbstractWeapon> weapons;
+    private HashMap<WeaponTypes, AbstractWeapon> weapons;
     private SketchCharacter active;
     
-    public Team(ArrayList<SketchCharacter> characters, HashMap<WeaponEnum, AbstractWeapon> weapons)
+    public Team(ArrayList<SketchCharacter> characters, HashMap<WeaponTypes, AbstractWeapon> weapons)
     {
         this.characters = characters;
         this.weapons = weapons;
@@ -31,12 +30,12 @@ public class Team
         if(this.characters.size() > 0)
         {
             active = this.characters.get(0);
-            active.setWeapon(weapons.get(WeaponEnum.MELEE_WEAPON));
+            active.setWeapon(weapons.get(WeaponTypes.MELEE_WEAPON));
             
         }
     }
 
-    public void changeAmmo(WeaponEnum weaponType, int num)
+    public void changeAmmo(WeaponTypes weaponType, int num)
     {
         weapons.get(weaponType).setAmmo(num);
     }
@@ -75,13 +74,13 @@ public class Team
                 active.jump(elapsedMillis);
                 break;
             case SWITCH_1:
-                active.setWeapon(weapons.get(WeaponEnum.MELEE_WEAPON));
+                active.setWeapon(weapons.get(WeaponTypes.MELEE_WEAPON));
                 break;
             case SWITCH_2:
-                active.setWeapon(weapons.get(WeaponEnum.RANGED_WEAPON));
+                active.setWeapon(weapons.get(WeaponTypes.RANGED_WEAPON));
                 break;
             case SWITCH_3:
-                active.setWeapon(weapons.get(WeaponEnum.BASIC_GRENADE));
+                active.setWeapon(weapons.get(WeaponTypes.BASIC_GRENADE));
                 break;
             }
         

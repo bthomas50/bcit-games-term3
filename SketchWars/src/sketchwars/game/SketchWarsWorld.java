@@ -1,10 +1,10 @@
-package sketchwars;
-
+package sketchwars.game;
 
 import sketchwars.character.SketchCharacter;
 import sketchwars.map.AbstractMap;
 import sketchwars.character.Team;
 import sketchwars.input.*;
+import sketchwars.game.*;
 
 import java.util.ArrayList;
 
@@ -13,18 +13,17 @@ import java.util.ArrayList;
  * @author Brian Thomas <bthomas50@my,bcit.ca>
  * @author David Ly <ly_nekros@hotmail.com>
  */
-public class World {    
+public class SketchWarsWorld extends World {    
     protected AbstractMap map;
     protected ArrayList<SketchCharacter> characters;
-    protected ArrayList<GameObject> allObjects;
     protected ArrayList<Team> teams;
-    
+    protected Turn currentTurn;
+
     private WeaponLogic weaponLogic;
     
-    public World() {
+    public SketchWarsWorld() {
         characters = new ArrayList<>();
         teams = new ArrayList<>();
-        allObjects = new ArrayList<>();
     }
 
     public void setWeaponLogic(WeaponLogic weaponLogic) {
@@ -33,12 +32,12 @@ public class World {
     
     public void setMap(AbstractMap map) {
         this.map = map;
-        allObjects.add(map);
+        addGameObject(map);
     }
 
     public void addCharacter(SketchCharacter character) {
         characters.add(character);
-        allObjects.add(character);
+        addGameObject(character);
     }
     
     public void addTeam (Team team)
@@ -46,10 +45,7 @@ public class World {
         teams.add(team);
     }
 
-    public void addGameObject(GameObject obj) {
-        allObjects.add(obj);
-    }
-
+    @Override
     public void update(double deltaMillis) {
         handleInput(deltaMillis);
         handleCharacterDrowning();
@@ -58,19 +54,14 @@ public class World {
         
         updateGameLogic(deltaMillis);
     }
-    
-    protected void updateObjects(double deltaMillis) {
-        for(GameObject obj : allObjects) {
-            obj.update(deltaMillis);
-        }
-    }
 
-    private void handleInput(double elapsedMillis) {
+    protected void handleInput(double elapsedMillis) {
         for(Team t : teams) {
             t.handleInput(Input.currentInput, elapsedMillis);
         }
     }
 
+    @Override
     public void clear() {
         allObjects.clear();
         characters.clear();
@@ -90,14 +81,11 @@ public class World {
     protected void checkTeamStatus()
     {
         int counter = 0;
-        
         for(Team team: teams)
         {
             if(!team.isDead())
                 counter++;
         }
-        
-        //System.out.println("There is " + counter + " teams alive");
     }
 
     private void updateGameLogic(double deltaMillis) {

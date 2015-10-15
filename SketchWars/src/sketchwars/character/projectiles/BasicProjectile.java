@@ -3,7 +3,7 @@ package sketchwars.character.projectiles;
 import sketchwars.graphics.GraphicsObject;
 import sketchwars.graphics.Texture;
 import sketchwars.physics.*;
-import sketchwars.GameObject;
+import sketchwars.game.GameObject;
 import sketchwars.character.SketchCharacter;
 
 /**

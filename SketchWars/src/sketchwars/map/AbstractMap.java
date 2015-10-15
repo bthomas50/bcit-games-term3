@@ -3,7 +3,7 @@ package sketchwars.map;
 import sketchwars.graphics.GraphicsObject;
 import sketchwars.graphics.Texture;
 import sketchwars.physics.*;
-import sketchwars.GameObject;
+import sketchwars.game.GameObject;
 
 /**
  *

@@ -4,7 +4,7 @@ import org.joml.Matrix3d;
 import sketchwars.physics.*;
 import sketchwars.character.weapon.AbstractWeapon;
 import sketchwars.graphics.*;
-import sketchwars.GameObject;
+import sketchwars.game.GameObject;
 import sketchwars.input.Command;
 import sketchwars.input.Input;
 import static sketchwars.physics.Vectors.create;

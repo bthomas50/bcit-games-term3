@@ -1,39 +1,35 @@
-package sketchwars;
+package sketchwars.game;
 
 import sketchwars.physics.*;
 import sketchwars.scenes.*;
-import sketchwars.character.SketchCharacter;
-import sketchwars.character.projectiles.*;
+import sketchwars.character.*;
 import sketchwars.character.weapon.*;
+import sketchwars.character.projectiles.*;
 import sketchwars.map.*;
-import sketchwars.exceptions.SceneManagerException;
+import sketchwars.exceptions.*;
 import sketchwars.graphics.Texture;
 import sketchwars.character.Team;
+import sketchwars.sound.SoundPlayer;
+import sketchwars.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Random;
-import sketchwars.exceptions.SceneException;
-import sketchwars.sound.SoundPlayer;
 
-public class WorldFactory
+public class SketchWarsWorldFactory
 {
-    public enum GameSceneLayers {
-        MAP, CHARACTERS, PROJECTILES;
-    }
-    
     private static final int NUM_TEAMS = 2;
     private static final int CHARS_PER_TEAM = 3;
 
-    private final World world;
+    private final SketchWarsWorld world;
     private final Physics physics;
-    private final SceneManager<SketchWars.Scenes> sceneManager;
-    private Scene<GameSceneLayers> gameScene;
+    private final SceneManager<Scenes> sceneManager;
+    private Scene<GameLayers> gameScene;
     private WeaponLogic weaponLogic;
 
-    public WorldFactory(World world, Physics physics, SceneManager<SketchWars.Scenes> sceneManager)
+    public SketchWarsWorldFactory(SketchWarsWorld world, Physics physics, SceneManager<Scenes> sceneManager)
     {
         this.world = world;
         this.physics = physics;
@@ -58,7 +54,7 @@ public class WorldFactory
 
     private void createGameScene() throws SceneManagerException
     {
-        gameScene = sceneManager.getScene(SketchWars.Scenes.GAME);
+        gameScene = sceneManager.getScene(Scenes.GAME);
         
         Layer mapLayer = new Layer();
         Layer characterLayer = new Layer();
@@ -68,9 +64,9 @@ public class WorldFactory
         characterLayer.setZOrder(0);
         projectileLayer.setZOrder(1);
         
-        gameScene.addLayer(GameSceneLayers.MAP, mapLayer);
-        gameScene.addLayer(GameSceneLayers.CHARACTERS, characterLayer);
-        gameScene.addLayer(GameSceneLayers.PROJECTILES, projectileLayer);
+        gameScene.addLayer(GameLayers.MAP, mapLayer);
+        gameScene.addLayer(GameLayers.CHARACTER, characterLayer);
+        gameScene.addLayer(GameLayers.PROJECTILE, projectileLayer);
     }
 
     private void createMap()
@@ -95,7 +91,7 @@ public class WorldFactory
         mapCollider.setElasticity(1.0f);
 
         try {
-            gameScene.getLayer(GameSceneLayers.MAP).addDrawableObject(map);
+            gameScene.getLayer(GameLayers.MAP).addDrawableObject(map);
         } catch (SceneException ex) {
             System.err.println(ex.getMessage());
         }
@@ -117,7 +113,7 @@ public class WorldFactory
     private Team createTeam(Random rng, int teamNum)
     {
         ArrayList<SketchCharacter> characters = new ArrayList<>(CHARS_PER_TEAM);
-        HashMap<WeaponEnum, AbstractWeapon> weapons = WeaponFactory.createDefaultWeaponSet(new ProjectileFactory(world, physics, gameScene));
+        HashMap<WeaponTypes, AbstractWeapon> weapons = WeaponFactory.createDefaultWeaponSet(new ProjectileFactory(world, physics, gameScene));
         for(int c = 0; c < CHARS_PER_TEAM; c++)
         {
             //dont do randomness for now to simplify networking
@@ -125,7 +121,7 @@ public class WorldFactory
             //double r = (rng.nextDouble() - 0.5) * 1800.0;
             double r = ((double)c * 1500.0 / CHARS_PER_TEAM) - 800.0 + teamNum * 100;
             SketchCharacter character = createCharacter(Vectors.create(r, 800.0));
-            character.setWeapon(weapons.get(WeaponEnum.MELEE_WEAPON));
+            character.setWeapon(weapons.get(WeaponTypes.MELEE_WEAPON));
             characters.add(character);
         }
         return new Team(characters, weapons);
@@ -145,7 +141,7 @@ public class WorldFactory
         physics.addCollider(charCollider);
         
         try {
-            gameScene.getLayer(GameSceneLayers.CHARACTERS).addDrawableObject(character);
+            gameScene.getLayer(GameLayers.CHARACTER).addDrawableObject(character);
         } catch (SceneException ex) {
             System.err.println(ex.getMessage());
         }
