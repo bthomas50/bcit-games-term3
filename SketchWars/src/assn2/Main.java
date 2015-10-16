@@ -1,12 +1,14 @@
 package assn2;
 
+import assn2.ai.*;
+
 import sketchwars.exceptions.SceneManagerException;
 import sketchwars.graphics.Texture;
 import sketchwars.physics.*;
 import sketchwars.scenes.*;
 import sketchwars.input.*;
-import sketchwars.game.*;
-import sketchwars.sound.SoundPlayer;
+import sketchwars.*;
+import sketchwars.util.Config;
 
 
 import java.util.logging.Level;
@@ -18,12 +20,13 @@ public class Main
     private static final double MILLION = 1000000;//used in calculating frame length
         
     private OpenGL openGL;
-    private World world;
-    
+    private UI ui;
+    private Tamagotchi tamagotchi;
     private SceneManager<Scenes> sceneManager;
     private double lastTime;
     
     public static void main(String[] args) {
+        Config.appendToLibraryPath("lib/native/");
         Main game = new Main();
         game.init();
         game.start();
@@ -35,15 +38,22 @@ public class Main
         openGL = new OpenGL();
         openGL.init();
 
-        Scene gameScene = new Scene();
+        Scene<Integer> gameScene = new Scene<>();
+        Layer mainLayer = new Layer();
+        gameScene.addLayer(0, mainLayer);
         try {
             sceneManager.addScene(Scenes.GAME, gameScene);
             sceneManager.setCurrentScene(Scenes.GAME);
+
         } catch (SceneManagerException ex) {
             Logger.getLogger(SketchWars.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-        world = new World();
+        tamagotchi = new Tamagotchi(new BoundingBox(50, 325, 400, 575), Texture.loadTexture("content/char/pikachu.png"));
+        FiniteStateMachine<States> stateMachine = TamagotchiStateMachine.create(tamagotchi);
+        tamagotchi.setStateMachine(stateMachine);
+        ui = TamagotchiUI.create(stateMachine);
+        mainLayer.addDrawableObject(ui);
+        mainLayer.addDrawableObject(tamagotchi);
     }
     
     
@@ -62,7 +72,8 @@ public class Main
                 sceneManager.render();
                 sceneManager.update(delta);
                 
-                world.update(delta);
+                tamagotchi.handleInput(ui.getCurrentCommands());
+                tamagotchi.update(delta);
 
                 lastTime = time;
 
@@ -74,7 +85,7 @@ public class Main
     }
     
     public void dispose() {
-        world.clear();
         Texture.disposeAllTextures(); //not sure where to delete all the textures from the texure bank
     }
+
 }

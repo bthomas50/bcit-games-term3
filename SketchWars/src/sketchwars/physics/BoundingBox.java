@@ -35,6 +35,14 @@ public class BoundingBox
                (right >= other.right);
     }
 
+    public boolean contains(int x, int y)
+    {
+        return top <= y &&
+               bottom >= y &&
+               left <= x &&
+               right >= x;
+    }
+
     public boolean intersects(BoundingBox other)
     {
         return top <= other.bottom &&

@@ -3,13 +3,12 @@ package sketchwars;
 import java.nio.ByteBuffer;
 import static org.lwjgl.glfw.Callbacks.errorCallbackPrint;
 import static org.lwjgl.glfw.GLFW.*;
-import org.lwjgl.glfw.GLFWErrorCallback;
-import org.lwjgl.glfw.GLFWvidmode;
+import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GLContext;
 import static org.lwjgl.system.MemoryUtil.NULL;
-import sketchwars.input.KeyboardHandler;
+import sketchwars.input.*;
 /**
  *
  * @author Najash Najimudeen <najash.najm@gmail.com>
@@ -21,12 +20,15 @@ public class OpenGL {
     // We need to strongly reference callback instances.
     private GLFWErrorCallback errorCallback;
     private KeyboardHandler   keyboardHandler;
- 
+    private GLFWMouseButtonCallback mouseButtonCallback;
+    private GLFWCursorPosCallback mousePosCallback;
     // The window handle
     private long window;
     
     public OpenGL() {
-        this.keyboardHandler = new KeyboardHandler();
+        keyboardHandler = new KeyboardHandler();
+        mouseButtonCallback = new MouseHandler.ButtonCallback();
+        mousePosCallback = new MouseHandler.PositionCallback();
     }
     
     public void dispose() {
@@ -34,7 +36,8 @@ public class OpenGL {
             // Release window and window callbacks
             glfwDestroyWindow(window);
             keyboardHandler.release();
-            
+            mouseButtonCallback.release();
+            mousePosCallback.release();
             
         } finally { 
             // Terminate GLFW and release the GLFWerrorfun
@@ -64,6 +67,8 @@ public class OpenGL {
  
         // Setup a key callback. It will be called every time a key is pressed, repeated or released.
         glfwSetKeyCallback(window, keyboardHandler);
+        glfwSetCursorPosCallback(window, mousePosCallback);
+        glfwSetMouseButtonCallback(window, mouseButtonCallback);
  
         // Get the resolution of the primary monitor
         ByteBuffer vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());

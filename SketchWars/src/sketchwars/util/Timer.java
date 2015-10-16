@@ -12,12 +12,7 @@ public class Timer
 
     public Timer(double durationMillis)
     {
-        if(durationMillis < 0.0)
-        {
-            throw new IllegalArgumentException("Duration must be positive!");
-        }
-        startingMillis = durationMillis;
-        remainingMillis = durationMillis;
+        setDuration(durationMillis);
         state = State.PAUSED;
     }
 
@@ -63,6 +58,17 @@ public class Timer
     public double getRemainingMillis() 
     {
         return remainingMillis;
+    }
+
+    //sets both the total duration of the timer and the current time remaining.
+    public final void setDuration(double durationMillis)
+    {
+        if(durationMillis < 0.0)
+        {
+            throw new IllegalArgumentException("Duration must be positive!");
+        }
+        remainingMillis = durationMillis;
+        startingMillis = durationMillis;
     }
 
     private enum State

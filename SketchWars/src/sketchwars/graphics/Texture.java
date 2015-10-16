@@ -175,7 +175,14 @@ public class Texture {
         return buffer;
     }
     
-    
+    //0,0 is the top left.
+    public void drawInScreenCoords(int x, int y, int width, int height)
+    {
+        int newY = OpenGL.HEIGHT - y;
+        draw(x, x, x + width, x + width,
+             newY, newY - height, newY - height, newY);
+    }
+
     /**
      * Draw the texture - coordinates (0, 0) is the middle of the screen
      * @param x X-axis coordinates

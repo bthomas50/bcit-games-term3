@@ -16,6 +16,10 @@ public class Layer implements GraphicsObject, GameObject, Comparable<Layer> {
     private int zOrder;
     
     public Layer() {
+        this(0);
+    }
+
+    public Layer(int z) {
         drawableObjs = new ArrayList<>();
         animations = new ArrayList<>();
     }
