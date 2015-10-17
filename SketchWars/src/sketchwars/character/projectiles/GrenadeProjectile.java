@@ -1,43 +1,42 @@
 package sketchwars.character.projectiles;
 
 import sketchwars.graphics.Texture;
+import sketchwars.character.*;
+import sketchwars.util.Timer;
+
 /**
  *
  * @author Najash Najimudeen <najash.najm@gmail.com>
  */
 public class GrenadeProjectile extends BasicProjectile {
     private static final int DAMAGE = 25;
-    private static final double COLLIDER_RADIUS = 32.0;
-    private static final double EXPLOSION_RADIUS = 128.0;
+    public static final double COLLIDER_RADIUS = 32.0;
+    public static final double EXPLOSION_RADIUS = 128.0;
     
-    private static final double LIFESPAN = 5000;
-    
+    private static final double LIFESPAN_MILLIS = 5000;
+    private Timer timer;
     private double colliderRadius;
     private double explosionRadius;
     
     public GrenadeProjectile(Texture texture) {
-        super(texture);
+        super(texture, null, DAMAGE);
         
-        setLifespan(LIFESPAN);
-        
-        colliderRadius = COLLIDER_RADIUS;
-        explosionRadius = EXPLOSION_RADIUS;
-        setDamage(DAMAGE);
+        timer = new Timer(LIFESPAN_MILLIS);
+        timer.start();
     }
 
-    public double getColliderRadius() {
-        return colliderRadius;
+    @Override
+    public void update(double elapsedMillis)
+    {
+        timer.update(elapsedMillis);
     }
 
-    public void setColliderRadius(double colliderRadius) {
-        this.colliderRadius = colliderRadius;
+    @Override 
+    public boolean hasExpired()
+    {
+        return timer.hasElapsed();
     }
-
-    public double getExplosionRadius() {
-        return explosionRadius;
-    }
-
-    public void setExplosionRadius(double explosionRadius) {
-        this.explosionRadius = explosionRadius;
-    }
+    //Grenade doesn't do any damage!
+    @Override
+    protected void handleCollisionWithCharacter(SketchCharacter ch) {}
 }

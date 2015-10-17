@@ -5,30 +5,34 @@ import sketchwars.physics.*;
 import sketchwars.graphics.*;
 import sketchwars.scenes.*;
 import sketchwars.character.SketchCharacter;
+import sketchwars.animation.*;
+import sketchwars.util.CoordinateSystem;
+import sketchwars.exceptions.*;
+
+import org.joml.Vector2d;
 
 public class ProjectileFactory
 {
     private SketchWarsWorld world;
     private Physics physics;
-    private Scene scene;
+    private Layer projectileLayer;
 
-    public ProjectileFactory(SketchWarsWorld world, Physics physics, Scene scene)
+    public ProjectileFactory(SketchWarsWorld world, Physics physics, Scene<GameLayers> scene) throws SceneException
     {
         this.world = world;
         this.physics = physics;
-        this.scene = scene;
+        this.projectileLayer = scene.getLayer(GameLayers.PROJECTILE);
     }
 
     public BasicProjectile createGrenade(SketchCharacter owner, long vPosition, long vVelocity, double scale)
     {
         Texture texture = Texture.loadTexture("content/char/weapons/grenade.png");
         GrenadeProjectile proj = new GrenadeProjectile(texture);
-        Collider coll = new PixelCollider(BitMaskFactory.createCircle(proj.getColliderRadius()));
+        Collider coll = new GamePixelCollider(proj, BitMaskFactory.createCircle(GrenadeProjectile.COLLIDER_RADIUS));
         proj.setCollider(coll);
 
         setColliderProperties(coll, vPosition, vVelocity, 1.0f, 0.9f);
 
-        proj.setOwner(owner);
         addProjectile(proj);
         
         return proj;
@@ -37,13 +41,12 @@ public class ProjectileFactory
     public BasicProjectile createMelee(SketchCharacter owner, long vPosition, long vVelocity, double scale)
     {
         Texture texture = Texture.loadTexture("content/char/weapons/meleeBoxing.png");
-        MeleeProjectile proj = new MeleeProjectile(texture);
-        Collider coll = new PixelCollider(BitMaskFactory.createCircle(proj.getMeleeObjRadius()));
+        MeleeProjectile proj = new MeleeProjectile(texture, owner);
+        Collider coll = new GamePixelCollider(proj, BitMaskFactory.createCircle(MeleeProjectile.COLLIDER_RADIUS));
         proj.setCollider(coll);
 
         setColliderProperties(coll, vPosition, vVelocity, 0.0f, 1.0f);
 
-        proj.setOwner(owner);
         addProjectile(proj);
         return proj;
     }
@@ -51,18 +54,36 @@ public class ProjectileFactory
     public BasicProjectile createRanged(SketchCharacter owner, long vPosition, long vVelocity, double scale)
     {
         Texture texture = Texture.loadTexture("content/char/weapons/bullet1.png");
-        RangedProjectile proj = new RangedProjectile(texture);
-        BitMask bm = BitMaskFactory.createLine(vPosition, vVelocity, proj.getProjectileRange());
+        RangedProjectile proj = new RangedProjectile(texture, owner);
+        BitMask bm = BitMaskFactory.createLine(vPosition, vVelocity, RangedProjectile.RANGE);
         bm.trim();
-        System.out.println(bm.getBounds());
-        Collider coll = new PixelCollider(bm);
+        Collider coll = new GamePixelCollider(proj, bm);
         proj.setCollider(coll);
         
         setColliderProperties(coll, vPosition, vVelocity, 0.1f, 0.5f);
 
-        proj.setOwner(owner);
         addProjectile(proj);
         return proj;
+    }
+
+    public AnimatedProjectile createExplosion(BasicProjectile bp, double radius) {
+        try {
+            long explosionPoint = bp.getCollider().getPosition();
+            Explosion explosion = new Explosion();
+            explosion.setPosition(CoordinateSystem.physicsToOpenGL(explosionPoint));
+            
+            explosion.setDimension(new Vector2d(radius, radius));
+            AnimatedProjectile proj = new AnimatedProjectile(explosion);
+            Collider coll = new GamePixelCollider(proj, BitMaskFactory.createCircle(radius));
+            proj.setCollider(coll);
+            coll.setPosition(bp.getCollider().getPosition());
+            projectileLayer.addAnimation(explosion);
+            explosion.start();
+            return proj;
+        } catch (AnimationException ex) {
+            System.err.println(ex.getMessage());
+        }
+        return null;
     }
 
     protected void setColliderProperties(Collider coll, long vPosition, long vVelocity, float mass, float elasticity)
@@ -73,14 +94,13 @@ public class ProjectileFactory
         coll.setElasticity(elasticity);
     }
 
-    private void addProjectile(BasicProjectile proj) {
-        WeaponLogic weaponLogic = world.getWeaponLogic();
-        
-        if (weaponLogic != null) {
-            weaponLogic.addProjectile(proj);
-        } else {
-            System.err.println("Weapon logic object given by the world class is a null pointer.");
-        }
+    private void addProjectile(BasicProjectile proj) 
+    {
+        world.addGameObject(proj);
+        physics.addCollider(proj.getCollider());
+        projectileLayer.addDrawableObject(proj); //so it can be rendered
     }
+
+
 
 }

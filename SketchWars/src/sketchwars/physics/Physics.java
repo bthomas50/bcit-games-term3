@@ -61,6 +61,7 @@ public class Physics
         updateKinematics(elapsedMillis);
         updateBounds();
 		handleCollisions();
+        removeExpiredObjects();
     }
 	
 	private void updateKinematics(double elapsedMillis)
@@ -164,6 +165,27 @@ public class Physics
     public List<PhysicsObject> getPhysicsObjects()
     {
         return allPhysicsObjects;
+    }
+
+    private void removeExpiredObjects()
+    {
+        ArrayList<PhysicsObject> toDelete = new ArrayList<>();
+        for(PhysicsObject obj : allPhysicsObjects)
+        {
+            if(obj.hasExpired())
+            {
+                toDelete.add(obj);
+            }
+        }
+        for(PhysicsObject deleting : toDelete)
+        {
+            allPhysicsObjects.remove(deleting);
+            if(allColliders.contains(deleting))
+            {
+                allColliders.remove((Collider) deleting);
+                collidersTree.remove((Collider) deleting);
+            }
+        }
     }
 
 }

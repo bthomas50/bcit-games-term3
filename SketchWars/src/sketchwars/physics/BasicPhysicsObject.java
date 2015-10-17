@@ -66,4 +66,9 @@ public class BasicPhysicsObject implements PhysicsObject
 			vVelocity = Vectors.add(vVelocity, Vectors.scalarMultiply(vForce, elapsedMillis/(mass * 1000)));
 		}
 	}
+    @Override
+    public boolean hasExpired()
+    {
+        return false;
+    }
 }

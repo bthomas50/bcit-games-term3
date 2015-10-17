@@ -71,6 +71,11 @@ public class SketchCharacter implements GraphicsObject, GameObject {
             isDead = true;
     }
 
+    @Override
+    public boolean hasExpired() {
+        return false;
+    }
+
     private void updateCharacterInfo() {
         BoundingBox bounds = coll.getBounds();
         long vCenter = bounds.getCenterVector();

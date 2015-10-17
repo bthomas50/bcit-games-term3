@@ -1,8 +1,8 @@
 package sketchwars.character.weapon;
 
-import sketchwars.game.GameObject;
+import sketchwars.Updateable;
 import sketchwars.character.projectiles.*;
-import sketchwars.graphics.GraphicsObject;
+import sketchwars.graphics.Drawable;
 import sketchwars.graphics.Texture;
 import sketchwars.character.SketchCharacter;
 import sketchwars.physics.Vectors;
@@ -12,7 +12,7 @@ import sketchwars.physics.Vectors;
  * @author Najash Najimudeen <najash.najm@gmail.com>
  */
 
-public abstract class AbstractWeapon implements GameObject, GraphicsObject {
+public abstract class AbstractWeapon implements Updateable, Drawable {
     public static final int INFINITE_AMMO = -1;
     
     private float rateOfFire; //per second
@@ -106,9 +106,6 @@ public abstract class AbstractWeapon implements GameObject, GraphicsObject {
         long vPosition = Vectors.add(owner.getCollider().getPosition(), Vectors.scaleToLength(normalDir, 100.0));
         System.out.println("velocity: " + Vectors.toString(vVelocity));
         BasicProjectile projectile = createProjectile(owner, vPosition, vVelocity);
-
-        projectile.setPower(power);
-        projectile.setDirection(direction);
     }
 
     protected abstract BasicProjectile createProjectile(SketchCharacter owner, long vPosition, long vVelocity);

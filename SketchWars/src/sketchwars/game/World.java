@@ -20,11 +20,24 @@ public class World {
 
     public void update(double deltaMillis) {
         updateObjects(deltaMillis);
+        removeExpiredObjects();
     }
     
     protected final void updateObjects(double deltaMillis) {
         for(GameObject obj : allObjects) {
             obj.update(deltaMillis);
+        }
+    }
+
+    protected final void removeExpiredObjects() {
+        ArrayList<GameObject> toDelete = new ArrayList<>();
+        for(GameObject obj : allObjects) {
+            if(obj.hasExpired()) {
+                toDelete.add(obj);
+            }
+        }
+        for(GameObject deleting : toDelete) {
+            allObjects.remove(deleting);
         }
     }
 

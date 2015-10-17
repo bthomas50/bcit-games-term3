@@ -5,7 +5,7 @@ import sketchwars.graphics.*;
 import sketchwars.input.Command;
 
 //a generic button that generates a command of type T
-public class Button<T> implements GraphicsObject
+public class Button<T> implements Drawable
 {
     private BoundingBox bounds;
     private Texture normalTexture;
@@ -35,4 +35,5 @@ public class Button<T> implements GraphicsObject
     {
         normalTexture.drawInScreenCoords(bounds.getLeft(), bounds.getTop(), bounds.getWidth(), bounds.getHeight());
     }
+
 };

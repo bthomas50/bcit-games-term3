@@ -45,4 +45,10 @@ public class UI<T> implements GraphicsObject
             b.render();
         }
     }
+
+    @Override
+    public boolean hasExpired()
+    {
+        return false;
+    }
 }

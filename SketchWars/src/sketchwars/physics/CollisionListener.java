@@ -2,5 +2,5 @@ package sketchwars.physics;
 
 public interface CollisionListener
 {
-    void collided(Collider coll1, Collider coll2);
+    void collided(Collider thisColl, Collider otherColl);
 }

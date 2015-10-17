@@ -15,5 +15,11 @@ public abstract class AbstractMap implements GraphicsObject, GameObject {
     public void update(double elapsedMillis) 
     {}
 
+    @Override
+    public boolean hasExpired()
+    {
+        return false;
+    }
+
     public abstract void dispose();
 }

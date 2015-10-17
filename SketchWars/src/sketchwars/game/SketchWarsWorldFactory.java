@@ -29,7 +29,6 @@ public class SketchWarsWorldFactory
     private final Physics physics;
     private final SceneManager<Scenes> sceneManager;
     private Scene<GameLayers> gameScene;
-    private WeaponLogic weaponLogic;
 
     public SketchWarsWorldFactory(SketchWarsWorld world, Physics physics, SceneManager<Scenes> sceneManager)
     {
@@ -44,7 +43,6 @@ public class SketchWarsWorldFactory
             createGameScene();
             createMap();
             createTeams();
-            createGameLogic();
             SoundPlayer.playMusic(0, true, -15);
             
             //test animation - will remove when addign character animations
@@ -124,7 +122,15 @@ public class SketchWarsWorldFactory
     private Team createTeam(Random rng, int teamNum)
     {
         ArrayList<SketchCharacter> characters = new ArrayList<>(CHARS_PER_TEAM);
-        HashMap<WeaponTypes, AbstractWeapon> weapons = WeaponFactory.createDefaultWeaponSet(new ProjectileFactory(world, physics, gameScene));
+        HashMap<WeaponTypes, AbstractWeapon> weapons = new HashMap<>();
+        try
+        {
+            weapons = WeaponFactory.createDefaultWeaponSet(new ProjectileFactory(world, physics, gameScene));
+        }
+        catch(SceneException ex)
+        {
+            System.err.println(ex);
+        }
         for(int c = 0; c < CHARS_PER_TEAM; c++)
         {
             //dont do randomness for now to simplify networking
@@ -143,7 +149,7 @@ public class SketchWarsWorldFactory
         Texture texture = Texture.loadTexture("content/char/char1.png");
         SketchCharacter character = new SketchCharacter(texture);
         
-        PixelCollider charCollider = new PixelCollider(BitMaskFactory.createCircle(64.0));
+        PixelCollider charCollider = new GamePixelCollider(character, BitMaskFactory.createCircle(64.0));
         charCollider.setPosition(vPosition);
         charCollider.setMass(10);
         charCollider.setElasticity(0.0f);
@@ -159,11 +165,6 @@ public class SketchWarsWorldFactory
         
         world.addCharacter(character);
         return character;
-    }
-
-    private void createGameLogic() {
-        weaponLogic = new WeaponLogic(world, gameScene, physics);
-        world.setWeaponLogic(weaponLogic);
     }
 
 }

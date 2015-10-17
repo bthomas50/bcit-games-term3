@@ -1,5 +1,7 @@
 package sketchwars.physics;
 
+import sketchwars.game.GameObject;
+
 import java.util.List;
 import java.util.ArrayList;
 /**
@@ -80,5 +82,17 @@ public class PixelCollider extends BasicPhysicsObject implements Collider
     public void removeCollisionListener(CollisionListener list)
     {
         listeners.remove(list);
+    }
+
+    @Override
+    public boolean hasAttachedGameObject()
+    {
+        return false;
+    }
+
+    @Override
+    public GameObject getAttachedGameObject()
+    {
+        return null;
     }
 }

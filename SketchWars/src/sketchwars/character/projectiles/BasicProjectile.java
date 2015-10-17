@@ -13,30 +13,35 @@ import sketchwars.character.SketchCharacter;
 public abstract class BasicProjectile implements GraphicsObject, GameObject{
     protected Collider coll;
     protected Texture texture;
-    protected float power;
-    protected long direction;
-    protected double lifespan; //in milliseconds
-    
-    protected double elapsed;
-    protected boolean isActive;
     
     protected int damage;
-    private boolean consumed;
-    private SketchCharacter owner; //to prevent taking damage to it self (unless grenade)
+    private boolean expired;
+    //to prevent taking damage to it self (unless grenade)
+    private SketchCharacter owner; 
     
-    public BasicProjectile(Texture texture) {
+    public BasicProjectile(Texture texture, SketchCharacter owner, int damage) {
         this.texture = texture;
+        this.owner = owner;
+        this.damage = damage;
+        this.expired = false;
     }
      
     @Override
     public void update(double elapsedMillis) {
-        if (isActive) {
-            elapsed += elapsedMillis;
-        }
     }
 
+    @Override
+    public boolean hasExpired() {
+        return expired;
+    }
+
+    public Collider getCollider() {
+        return coll;
+    }
+    
     public void setCollider(Collider coll) {
         this.coll = coll;
+        coll.addCollisionListener(new BasicCollisionHandler());
     }
 
     @Override
@@ -54,67 +59,23 @@ public abstract class BasicProjectile implements GraphicsObject, GameObject{
         }
     }
 
-    public Collider getCollider() {
-        return coll;
-    }
-
-    public Texture getTexture() {
-        return texture;
-    }
-
-    public void setTexture(Texture texture) {
-        this.texture = texture;
-    }
-
-    public void setPower(float power) {
-        this.power = power;
-    }
-
-    public void setDirection(long direction) {
-        this.direction = direction;
-    }
-
-    public boolean hasExpired() {
-        return elapsed > lifespan;
-    }
-
-    public void setLifespan(double lifespan) {
-        this.lifespan = lifespan;
-    }
-    
-    public void setActive(boolean value) {
-        isActive = value;
-    }
-
-    public int getDamage() {
-        return damage;
-    }
-
-    public void setDamage(int damage) {
-        this.damage = damage;
-    }
-
-    public void setExpired(boolean value) {
-        if (value) {
-            elapsed = lifespan + 1;
-        } else {
-            elapsed = 0;
+    protected void handleCollisionWithCharacter(SketchCharacter ch) {
+        if(ch != owner) {
+            ch.takeDamage(damage);
+            System.out.println(ch + " is hit for " + damage + " damage.");
+            expired = true;
         }
     }
 
-    public boolean isConsumed() {
-        return consumed;
-    }
-
-    public void setConsumed(boolean consumed) {
-        this.consumed = consumed;
-    }
-
-    public SketchCharacter getOwner() {
-        return owner;
-    }
-
-    public void setOwner(SketchCharacter owner) {
-        this.owner = owner;
+    private class BasicCollisionHandler implements CollisionListener {
+        @Override
+        public void collided(Collider thisColl, Collider otherColl) {
+            if(otherColl.hasAttachedGameObject()) {
+                GameObject otherObj = otherColl.getAttachedGameObject();
+                if(otherObj instanceof SketchCharacter) {
+                    handleCollisionWithCharacter((SketchCharacter)otherObj);
+                }
+            }
+        }
     }
 }
