@@ -11,7 +11,7 @@ import sketchwars.game.GameObject;
 import sketchwars.graphics.GraphicsObject;
 
 /**
- * Set of animations a character needs
+ * Set of animations
  * @author Najash Najimudeen <najash.najm@gmail.com>
  * @param <T> animation index type
  */

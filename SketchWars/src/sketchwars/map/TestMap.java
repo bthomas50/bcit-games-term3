@@ -19,8 +19,8 @@ public class TestMap extends AbstractMap {
 
     @Override
     public void render() {
-        background.drawNormalized(0, 0, 1, 1);
-        foreground.drawNormalized(0, 0, 1, 1);
+        background.drawNormalized(null, 0, 0, 1, 1);
+        foreground.drawNormalized(null, 0, 0, 1, 1);
     }
 
     @Override

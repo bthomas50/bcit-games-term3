@@ -98,7 +98,7 @@ public class SketchCharacter implements GraphicsObject, GameObject {
         if (weapon != null) {
             weapon.render();
             long vReticleOffset = Vectors.createRTheta(0.1, getActualFireAngle());
-            reticleTexture.drawNormalized(posX + Vectors.xComp(vReticleOffset), posY + Vectors.yComp(vReticleOffset), 0.05, 0.05);
+            reticleTexture.drawNormalized(null, posX + Vectors.xComp(vReticleOffset), posY + Vectors.yComp(vReticleOffset), 0.05, 0.05);
         }
         
     }

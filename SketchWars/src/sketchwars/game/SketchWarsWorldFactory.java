@@ -17,9 +17,6 @@ import java.util.HashMap;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Random;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.joml.Vector2d;
 import sketchwars.animation.Animation;
 import sketchwars.animation.AnimationSet;
 import sketchwars.animation.CharacterAnimations;
@@ -45,6 +42,7 @@ public class SketchWarsWorldFactory
     public void startGame()
     {
         try {
+            preloadTextures();
             createGameScene();
             createMap();
             createTeams();
@@ -128,17 +126,17 @@ public class SketchWarsWorldFactory
             //random between -900, 900
             //double r = (rng.nextDouble() - 0.5) * 1800.0;
             double r = ((double)c * 1500.0 / CHARS_PER_TEAM) - 800.0 + teamNum * 100;
-            SketchCharacter character = createCharacter(Vectors.create(r, 800.0));
+            SketchCharacter character = createCharacter(Vectors.create(r, 800.0), rng);
             character.setWeapon(weapons.get(WeaponTypes.MELEE_WEAPON));
             characters.add(character);
         }
         return new Team(characters, weapons);
     }
 
-    private SketchCharacter createCharacter(long vPosition)
+    private SketchCharacter createCharacter(long vPosition, Random rng)
     {
         SketchCharacter character = new SketchCharacter();
-        AnimationSet<CharacterAnimations> animationSet = createCharacterAniamtions();
+        AnimationSet<CharacterAnimations> animationSet = createCharacterAniamtions(rng);
         
         character.setAnimationSet(animationSet);
         PixelCollider charCollider = new PixelCollider(BitMaskFactory.createCircle(64.0));
@@ -164,22 +162,26 @@ public class SketchWarsWorldFactory
         world.setWeaponLogic(weaponLogic);
     }
 
-    private AnimationSet<CharacterAnimations> createCharacterAniamtions() {
+    private AnimationSet<CharacterAnimations> createCharacterAniamtions(Random rng) {
         AnimationSet<CharacterAnimations> animationSet = new AnimationSet<>();
         
         try {
-            BufferedImage idleSpriteSheet = Texture.loadImageFile("content/animation/characters/default/charSheet.png");
-            Animation idle = new Animation(idleSpriteSheet, 12, 5000, true);
-            idle.start();
+            Texture idleSpriteSheet = Texture.loadTexture("content/animation/characters/default/charSheet.png", true);
+            Animation idle = new Animation(idleSpriteSheet, 12, 12, 1, 5000, true);
+            idle.start(rng.nextInt(750));
             animationSet.addAnimation(CharacterAnimations.IDLE, idle);
             
             
             animationSet.setCurrentAnimation(CharacterAnimations.IDLE);
-        } catch (AnimationException | IOException ex) {
+        } catch (AnimationException ex) {
             System.out.println(ex.getMessage());
         }
         
         return animationSet;
+    }
+
+    private void preloadTextures() {
+        Texture.loadTexture("content/animation/explosions/explosion.png", false);
     }
 
 }

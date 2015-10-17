@@ -235,15 +235,16 @@ public class Texture {
         draw(newX, newX, newX + width, newX + width,
              newY, newY - height, newY - height, newY);
     }
-    
+      
     /**
      * Draw the texture centered - coordinates (0, 0) is the middle of the screen
+     * @param textureCoord texture coordinates to use. pass in null to use default.
      * @param xP X-axis coordinates (-1 to 1)
      * @param yP Y-axis coordinates (1 to -1)
      * @param widthP 'draw width' percentage of screen width (0 to 1)
      * @param heightP 'draw height' percentage of screen height (0 to 1)
      */
-    public void drawNormalized(double xP, double yP, double widthP, double heightP) {
+    public void drawNormalized(Vector2d textureCoord[], double xP, double yP, double widthP, double heightP) {
         int width = (int)(OpenGL.WIDTH * widthP);
         int height = (int)(OpenGL.HEIGHT * heightP);
 
@@ -254,8 +255,15 @@ public class Texture {
         int newX = x + OpenGL.WIDTH/2 - width/2;
         int newY = y + OpenGL.HEIGHT/2 + height/2;
         
-        draw(newX, newX, newX + width, newX + width,
-             newY, newY - height, newY - height, newY);
+        if (textureCoord != null) {
+            draw((float)textureCoord[0].x, (float)textureCoord[1].x, (float)textureCoord[2].x, (float)textureCoord[3].x, 
+                 (float)textureCoord[0].y, (float)textureCoord[1].y, (float)textureCoord[2].y, (float)textureCoord[3].y,
+                 newX, newX, newX + width, newX + width,
+                 newY, newY - height, newY - height, newY);
+        } else {
+            draw(newX, newX, newX + width, newX + width,
+                 newY, newY - height, newY - height, newY);
+        }
     }
     
     /**
