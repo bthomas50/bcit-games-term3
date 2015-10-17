@@ -8,12 +8,11 @@ import static org.lwjgl.opengl.GL11.*;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import org.joml.Matrix3d;
 import org.joml.Vector2d;
 import org.joml.Vector3d;
+import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL30;
 import sketchwars.OpenGL;
@@ -34,6 +33,26 @@ public class Texture {
         tWidth = 0;
         tHeight = 0;
     }
+
+    /**
+     * Load texture from buffered image
+     * warning: the texture will not be part of the reference counter
+     *          so the same image can be loaded multiple times
+     * @param image 
+     * @param disableMipMap 
+     */
+    public Texture(BufferedImage image, boolean disableMipMap) {
+        if (image == null) {
+            System.err.println("Given image is a null pointer");
+        }
+        
+        Texture texture = loadTextureFromImage(image, disableMipMap);
+        textureID = texture.getTextureID();
+        tWidth = texture.getTextureWidth();
+        tHeight = texture.getTextureHeight();
+    }
+    
+    
     
     public float getTextureWidth() {
         return tWidth;
@@ -50,15 +69,16 @@ public class Texture {
     /**
      * Load a texture into vram
      * @param file texture path
+     * @param disableMipMap
      * @return returns the texture ID (negative value indicates error loading texture)
      */
-    public static Texture loadTexture(final String file) {
+    public static Texture loadTexture(final String file, boolean disableMipMap) {
         Texture texture;
         if (textureList.containsKey(file)) {
             texture = textureList.get(file);
             System.out.println("Texture file '" + file + "' previously loaded, using existing texture reference.");
         } else {
-            texture = loadTextureFromFile(file);
+            texture = loadTextureFromFile(file, disableMipMap);
             
             if (texture != null) {
                 System.out.println("Texture file '" + file + "' loaded.");
@@ -116,7 +136,7 @@ public class Texture {
         return ImageIO.read(imageFile);
     }
 
-    private static Texture loadTextureFromImage(final BufferedImage image) {
+    private static Texture loadTextureFromImage(final BufferedImage image, boolean disableMipMap) {
         if (image != null) {
             Texture texture = new Texture();
              
@@ -138,6 +158,13 @@ public class Texture {
             // Upload the texture data and generate mip maps (for scaling)
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, 
                 GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+            
+            if (disableMipMap) {
+                GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
+            } else {
+                GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_NEAREST_MIPMAP_LINEAR, GL11.GL_NEAREST);
+            }
+            
             GL30.glGenerateMipmap(GL_TEXTURE_2D);
             
             return texture;
@@ -145,12 +172,12 @@ public class Texture {
         return null;
     }
 
-    private static Texture loadTextureFromFile(final String file) {
+    private static Texture loadTextureFromFile(final String file, boolean disableMipMap) {
         try {
             BufferedImage im = loadImageFile(file);
-            return loadTextureFromImage(im);
+            return loadTextureFromImage(im, disableMipMap);
         } catch (IOException ex) {
-            Logger.getLogger(Texture.class.getName()).log(Level.SEVERE, null, ex);
+            System.err.println(file + " : " + ex.getMessage());
         }
         
         return null;

@@ -1,7 +1,9 @@
 package sketchwars.animation;
 
+import java.io.File;
+import java.io.IOException;
+import javax.imageio.ImageIO;
 import sketchwars.exceptions.AnimationException;
-import sketchwars.graphics.Texture;
 
 /**
  * This for the alpha grenade explosion (will re-factor and improve after alpha)
@@ -10,7 +12,7 @@ import sketchwars.graphics.Texture;
 public class Explosion extends Animation {
     private static final int DURATION = 500;
     
-    public Explosion() throws AnimationException {
-        super(Texture.loadTexture("content/animation/explosion.png"), 1, DURATION, false);
+    public Explosion() throws IOException, AnimationException {
+        super(ImageIO.read(new File("content/animation/explosion.png")), 1, DURATION, false);
     }  
 }

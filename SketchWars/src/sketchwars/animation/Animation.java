@@ -1,14 +1,11 @@
 package sketchwars.animation;
 
-import org.joml.Matrix3d;
+import java.awt.image.BufferedImage;
 import org.joml.Vector2d;
-import sketchwars.OpenGL;
 import sketchwars.exceptions.AnimationException;
 import sketchwars.game.GameObject;
 import sketchwars.graphics.GraphicsObject;
 import sketchwars.graphics.Texture;
-import sketchwars.physics.Vectors;
-import sketchwars.util.CoordinateSystem;
 
 /**
  * This for the alpha grenade explosion (will re-factor and improve after alpha)
@@ -18,7 +15,6 @@ public class Animation implements GraphicsObject, GameObject {
     private Vector2d position;
     private Vector2d dimension;
     
-    protected Texture spriteSheet;
     protected int totalSprites;
     private final double frameLength;       
     protected float spriteWidth;
@@ -33,6 +29,8 @@ public class Animation implements GraphicsObject, GameObject {
     protected double elapsed;
     protected boolean loop;
     
+    private final Texture[] frams;
+    
     /**
      * Load an animation 
      * @param spriteSheet Animation sprite sheet
@@ -41,26 +39,28 @@ public class Animation implements GraphicsObject, GameObject {
      * @param loop loop the animation
      * @throws sketchwars.exceptions.AnimationException any load errors
      */
-    public Animation(Texture spriteSheet, int totalSprites, double duration, boolean loop) throws AnimationException {
+    public Animation(BufferedImage spriteSheet, int totalSprites, double duration, boolean loop) throws AnimationException {
         if (duration == 0) {
             throw new AnimationException("Duration cannot be 0.");
         } else if (spriteSheet == null) {
             throw new AnimationException("SpriteSheet cannot be a null pointer.");
         } else if (totalSprites == 0) {
             throw new AnimationException("Sprite count cannot be 0.");
-        } else if (spriteSheet.getTextureID() == -1) {
-            throw new AnimationException("Given sprite sheet has nothing in it.");
+        } else if (spriteSheet.getWidth() < totalSprites || spriteSheet.getHeight() < 1) {
+            throw new AnimationException("Given sprite sheet is too small.");
         }
         
-        this.spriteSheet = spriteSheet;
         this.totalSprites = totalSprites;
         this.duration = duration;
         
         frameLength = duration/totalSprites;
-        spriteWidth = spriteSheet.getTextureWidth()/totalSprites;
-        spriteHeight = spriteSheet.getTextureHeight();
+        
+        frams = loadFrames(spriteSheet, totalSprites);
         
         this.loop = loop;
+        
+        position = new Vector2d();
+        dimension = new Vector2d();
     }
     
     @Override
@@ -68,22 +68,10 @@ public class Animation implements GraphicsObject, GameObject {
         if (!hasExpired() && totalSprites > 0) {
             int currentFrame = (int)(elapsed/frameLength);
 
-            Matrix3d transformation = new Matrix3d();
-            transformation.translation(position);
-            transformation.scale(dimension.x, dimension.y, 1);
-            
-            float xTexCoordStart = (1.0f/totalSprites) * currentFrame;
-            float xTexCoordEnd = (1.0f/totalSprites) * (currentFrame + 1);
-            
-            xTexCoordEnd = (xTexCoordEnd > 1) ? 1 : xTexCoordEnd;
-            
-            Vector2d textCoords[] = new Vector2d[4];
-            textCoords[0] = new Vector2d(xTexCoordStart, 0);
-            textCoords[1] = new Vector2d(xTexCoordStart, 1);
-            textCoords[2] = new Vector2d(xTexCoordEnd, 1);
-            textCoords[3] = new Vector2d(xTexCoordEnd, 0);
-            
-            spriteSheet.draw(textCoords, transformation);
+            if (currentFrame >= 0 && currentFrame < totalSprites) {
+                Texture frame = frams[currentFrame];
+                frame.drawNormalized(position.x, position.y, dimension.x, dimension.y);
+            }
         }
     }
 
@@ -95,14 +83,6 @@ public class Animation implements GraphicsObject, GameObject {
         this.dimension = dimension;
     }
     
-    public Texture getTexture() {
-        return spriteSheet;
-    }
-
-    public void setTexture(Texture texture) {
-        this.spriteSheet = texture;
-    }
-
     @Override
     public void update(double delta) {
         if (startAnimation) {
@@ -141,5 +121,38 @@ public class Animation implements GraphicsObject, GameObject {
         } else {
             elapsed = 0;
         }
+    }
+
+    private Texture[] loadFrames(BufferedImage spriteSheet, int totalSprites) {
+        Texture frame[] = new Texture[totalSprites];
+        spriteWidth = spriteSheet.getWidth()/(float)totalSprites;
+        spriteHeight = spriteSheet.getHeight();
+        
+        for (int i = 0; i < totalSprites; i++) {
+            int posX = (int)(i * spriteWidth);
+            
+            BufferedImage frameImg = spriteSheet.getSubimage(posX, 0,
+                    (int)spriteWidth, (int)spriteHeight);
+            Texture texture = new Texture(frameImg, true);
+            frame[i] = texture;
+        }
+        
+        return frame;
+    }
+
+    public Texture[] getFrames() {
+        return frams;
+    }
+
+    public int getFrameCount() {
+        return totalSprites;
+    }
+
+    public Vector2d getPosition() {
+        return position;
+    }
+
+    public Vector2d getDimension() {
+        return dimension;
     }
 }

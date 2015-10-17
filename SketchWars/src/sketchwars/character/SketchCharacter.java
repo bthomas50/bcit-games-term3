@@ -1,14 +1,15 @@
 package sketchwars.character;
 
-import org.joml.Matrix3d;
+import org.joml.Vector2d;
+import sketchwars.animation.AnimationSet;
+import sketchwars.animation.CharacterAnimations;
 import sketchwars.physics.*;
 import sketchwars.character.weapon.AbstractWeapon;
 import sketchwars.graphics.*;
 import sketchwars.game.GameObject;
-import sketchwars.input.Command;
-import sketchwars.input.Input;
 import static sketchwars.physics.Vectors.create;
-/**
+
+/*
  *
  * @author Najash Najimudeen <najash.najm@gmail.com>
  */
@@ -32,22 +33,23 @@ public class SketchCharacter implements GraphicsObject, GameObject {
     private double angle;
 
     private Texture reticleTexture;
+    
+    private AnimationSet<CharacterAnimations> animationSet;
 
-    public SketchCharacter(Texture texture) {
-        this(texture, DEFAULT_MAX_HEALTH, DEFAULT_MAX_HEALTH);
+    public SketchCharacter() {
+        this(DEFAULT_MAX_HEALTH, DEFAULT_MAX_HEALTH);
     }
     
-    public SketchCharacter(Texture texture, int maxHealth, int health) {
+    public SketchCharacter(int maxHealth, int health) {
         coll = new PixelCollider(BitMaskFactory.createRectangle(1, 1));
         
-        this.texture = texture;
         this.maxHealth = maxHealth;
         this.health = health;
         this.isDead = false;
         this.hasFired = false;
         this.angle = 0.0;
         this.isFacingLeft = false;//start facing right.
-        reticleTexture = Texture.loadTexture("content/misc/reticle.png");
+        reticleTexture = Texture.loadTexture("content/misc/reticle.png", false);
     }
     
     public void setCollider(Collider coll) {
@@ -61,6 +63,12 @@ public class SketchCharacter implements GraphicsObject, GameObject {
     @Override
     public void update(double delta) {
         updateCharacterInfo();
+        
+        if (animationSet != null) {
+            animationSet.setAnimationPosition(new Vector2d(posX, posY));
+            animationSet.setAnimationDimension(new Vector2d(width, height));
+            animationSet.update(delta);
+        }
         
         if (weapon != null) {
             weapon.setPosition(posX + 0.01, posY - 0.01);
@@ -83,13 +91,16 @@ public class SketchCharacter implements GraphicsObject, GameObject {
 
     @Override
     public void render() {
-        texture.drawNormalized(posX, posY, width, height);
+        if (animationSet != null) {
+            animationSet.render();
+        }
         
         if (weapon != null) {
             weapon.render();
             long vReticleOffset = Vectors.createRTheta(0.1, getActualFireAngle());
             reticleTexture.drawNormalized(posX + Vectors.xComp(vReticleOffset), posY + Vectors.yComp(vReticleOffset), 0.05, 0.05);
         }
+        
     }
     
     public void dispose() {
@@ -236,5 +247,13 @@ public class SketchCharacter implements GraphicsObject, GameObject {
 
     public Collider getCollider() {
         return coll;
+    }
+
+    public AnimationSet<CharacterAnimations> getAnimationSet() {
+        return animationSet;
+    }
+
+    public void setAnimationSet(AnimationSet<CharacterAnimations> animationSet) {
+        this.animationSet = animationSet;
     }
 }

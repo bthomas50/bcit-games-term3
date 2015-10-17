@@ -11,7 +11,7 @@ import sketchwars.sound.SoundPlayer;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.lwjgl.Sys;
+
 /**
  * The SketchWars main class
  * @author Najash Najimudeen <najash.najm@gmail.com>

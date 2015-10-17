@@ -17,8 +17,12 @@ import java.util.HashMap;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.joml.Vector2d;
 import sketchwars.animation.Animation;
+import sketchwars.animation.AnimationSet;
+import sketchwars.animation.CharacterAnimations;
 
 public class SketchWarsWorldFactory
 {
@@ -46,23 +50,6 @@ public class SketchWarsWorldFactory
             createTeams();
             createGameLogic();
             SoundPlayer.playMusic(0, true, -15);
-            
-            //test animation - will remove when addign character animations
-            Texture anim = Texture.loadTexture("content/animation/characters/1/charSheet.png");
-            Animation test = new Animation(anim, 12, 2000, true);
-            test.setDimension(new Vector2d(100, 100));
-            test.setPosition(new Vector2d(100, 5));
-            test.start();
-            gameScene.getLayer(GameLayers.CHARACTER).addAnimation(test);
-            
-            Texture anim2 = Texture.loadTexture("content/testSprite.png");
-            Animation test2 = new Animation(anim2, 9, 2000, true);
-            test2.setDimension(new Vector2d(100, 100));
-            test2.setPosition(new Vector2d(5, 5));
-            test2.start();
-            gameScene.getLayer(GameLayers.CHARACTER).addAnimation(test2);
-            
-            
         } catch (SceneManagerException ex) {
             System.err.println(ex.getMessage());
         } catch (Exception e)
@@ -90,8 +77,8 @@ public class SketchWarsWorldFactory
 
     private void createMap()
     {
-        Texture mapBGTexture = Texture.loadTexture("content/map/clouds.png");
-        Texture mapFGTexture = Texture.loadTexture("content/map/map.png");
+        Texture mapBGTexture = Texture.loadTexture("content/map/clouds.png", false);
+        Texture mapFGTexture = Texture.loadTexture("content/map/map.png", false);
         //it'll be empty if an error occurs when loading the map texture.
         BitMask mapImageMask = BitMaskFactory.createEmpty();
         try 
@@ -122,6 +109,7 @@ public class SketchWarsWorldFactory
     private void createTeams() 
     {
         Random rng = new Random();
+        
         for(int t = 0; t < NUM_TEAMS; t++)
         {
             Team team = createTeam(rng, t);
@@ -133,6 +121,7 @@ public class SketchWarsWorldFactory
     {
         ArrayList<SketchCharacter> characters = new ArrayList<>(CHARS_PER_TEAM);
         HashMap<WeaponTypes, AbstractWeapon> weapons = WeaponFactory.createDefaultWeaponSet(new ProjectileFactory(world, physics, gameScene));
+        
         for(int c = 0; c < CHARS_PER_TEAM; c++)
         {
             //dont do randomness for now to simplify networking
@@ -148,9 +137,10 @@ public class SketchWarsWorldFactory
 
     private SketchCharacter createCharacter(long vPosition)
     {
-        Texture texture = Texture.loadTexture("content/char/char1.png");
-        SketchCharacter character = new SketchCharacter(texture);
+        SketchCharacter character = new SketchCharacter();
+        AnimationSet<CharacterAnimations> animationSet = createCharacterAniamtions();
         
+        character.setAnimationSet(animationSet);
         PixelCollider charCollider = new PixelCollider(BitMaskFactory.createCircle(64.0));
         charCollider.setPosition(vPosition);
         charCollider.setMass(10);
@@ -172,6 +162,24 @@ public class SketchWarsWorldFactory
     private void createGameLogic() {
         weaponLogic = new WeaponLogic(world, gameScene, physics);
         world.setWeaponLogic(weaponLogic);
+    }
+
+    private AnimationSet<CharacterAnimations> createCharacterAniamtions() {
+        AnimationSet<CharacterAnimations> animationSet = new AnimationSet<>();
+        
+        try {
+            BufferedImage idleSpriteSheet = Texture.loadImageFile("content/animation/characters/default/charSheet.png");
+            Animation idle = new Animation(idleSpriteSheet, 12, 5000, true);
+            idle.start();
+            animationSet.addAnimation(CharacterAnimations.IDLE, idle);
+            
+            
+            animationSet.setCurrentAnimation(CharacterAnimations.IDLE);
+        } catch (AnimationException | IOException ex) {
+            System.out.println(ex.getMessage());
+        }
+        
+        return animationSet;
     }
 
 }

@@ -1,5 +1,6 @@
 package sketchwars.game;
 
+import java.io.IOException;
 import sketchwars.animation.Explosion;
 import java.util.ArrayList;
 import org.joml.Vector2d;
@@ -13,8 +14,8 @@ import sketchwars.physics.BitMaskFactory;
 import sketchwars.physics.Collider;
 import sketchwars.physics.Collisions;
 import sketchwars.physics.PixelCollider;
+import sketchwars.physics.Vectors;
 import sketchwars.scenes.Scene;
-import sketchwars.util.CoordinateSystem;
 
 /**
  *
@@ -111,12 +112,15 @@ public class WeaponLogic implements GameObject {
         try {
             long explosionPoint = bp.getCollider().getPosition();
             Explosion explosion = new Explosion();
-            explosion.setPosition(CoordinateSystem.physicsToOpenGL(explosionPoint));
+            
+            double posX = Vectors.xComp(explosionPoint);
+            double posY = Vectors.yComp(explosionPoint);
+            explosion.setPosition(new Vector2d(posX, posY));
             
             explosion.setDimension(new Vector2d(radius, radius));
             gameScene.getLayer(GameLayers.PROJECTILE).addAnimation(explosion);
             explosion.start();
-        } catch (AnimationException | SceneException ex) {
+        } catch (IOException | AnimationException | SceneException ex) {
             System.err.println(ex.getMessage());
         }
     }
