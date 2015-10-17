@@ -17,6 +17,7 @@ public class Input
     public static Input currentInput;
 
     public static void update() {
+        MouseHandler.update();
         currentInput = new Input();
 
         if(KeyboardHandler.isKeyDown(GLFW_KEY_W)){

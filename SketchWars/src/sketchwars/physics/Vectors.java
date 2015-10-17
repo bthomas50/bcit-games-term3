@@ -17,6 +17,12 @@ public class Vectors
     private static final long FACTOR = 64L;
 
     private static final long INT_OFFSET = 32L;
+
+    //useful constants!
+    private static final long V_ZERO = create(0,0);
+    private static final long V_UNIT_X = create(1,0);
+    private static final long V_UNIT_Y = create(0,1);
+
     
     public static long create(double x, double y)
     {

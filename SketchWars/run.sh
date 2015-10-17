@@ -29,4 +29,4 @@ esac
 
 LIBRARY_PATH="lib/native/"
 CLASS_PATH="build/"$PATH_SEPARATOR$(find lib/* | grep .jar | tr '\n' $PATH_SEPARATOR)
-java -Djava.library.path=$LIBRARY_PATH -cp $CLASS_PATH sketchwars.SketchWars
+java -Djava.library.path=$LIBRARY_PATH -cp $CLASS_PATH assn2.Main

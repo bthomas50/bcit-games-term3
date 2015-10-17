@@ -1,0 +1,3 @@
+Main-Class: assn2.Main
+Class-Path: lib/PNGDecoder.jar lib/lwjgl.jar lib/joml.jar lib/google-collect-1.0/google-collect-1.0.jar
+Library-Path: lib/native/
