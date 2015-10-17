@@ -73,7 +73,7 @@ public class SketchCharacter implements GraphicsObject, GameObject {
 
     @Override
     public boolean hasExpired() {
-        return false;
+        return isDead();
     }
 
     private void updateCharacterInfo() {

@@ -46,7 +46,7 @@ public class Team
     public void handleInput(Input input, double elapsedMillis)
     {
         //if it shot already, its turn is over.
-        if(active.hasFiredThisTurn())
+        if(active == null || active.isDead() || active.hasFiredThisTurn())
         {
             return;
         }
@@ -109,14 +109,29 @@ public class Team
 
     public void cycleActiveCharacter()
     {
-        int idx = characters.indexOf(active);
-        if(idx == size() - 1)
+        int startIdx = characters.indexOf(active);
+        int curIdx = startIdx;
+        do
         {
-            setActiveCharacter(characters.get(0));
+            curIdx = getNextIdx(curIdx);
+            SketchCharacter trial = characters.get(curIdx);
+            if(!trial.isDead())
+            {
+                setActiveCharacter(trial);
+                break;
+            }
+        } while(curIdx != startIdx);
+    }
+
+    private int getNextIdx(int curIdx) 
+    {
+        if(curIdx == size() - 1)
+        {
+            return 0;
         }
         else
         {
-            setActiveCharacter(characters.get(idx + 1));
+            return curIdx+1;
         }
     }
 

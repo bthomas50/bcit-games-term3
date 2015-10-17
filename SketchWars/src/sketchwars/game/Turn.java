@@ -33,14 +33,14 @@ public class Turn
 
     public boolean isCompleted()
     {
-        return haveAllFired() || timer.hasElapsed();
+        return areAllCharactersDone() || timer.hasElapsed();
     }
 
-    private boolean haveAllFired()
+    private boolean areAllCharactersDone()
     {
         for(SketchCharacter ch : activeCharacters)
         {
-            if(!ch.hasFiredThisTurn())
+            if(!ch.hasFiredThisTurn() && !ch.isDead())
             {
                 return false;
             }

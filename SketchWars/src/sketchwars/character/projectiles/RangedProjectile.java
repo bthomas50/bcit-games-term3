@@ -27,6 +27,7 @@ public class RangedProjectile extends AbstractProjectile {
         }
     }
 
+    //do damage to the character we hit
     @Override
     protected void handleCollisionWithCharacter(SketchCharacter ch) {
         if(ch != owner) {
@@ -36,9 +37,10 @@ public class RangedProjectile extends AbstractProjectile {
         }
     }
 
+    //expire on any collision except for with owner
     @Override
     protected void handleCollision(Collider c) {
-        if(c != coll) {
+        if(c != owner.getCollider()) {
             expired = true;
         }
     }
