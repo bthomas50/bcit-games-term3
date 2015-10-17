@@ -32,6 +32,8 @@ public class SketchCharacter implements GraphicsObject, GameObject {
     private boolean isFacingLeft;
     private double angle;
 
+    private double lastActionTime; //last time input recieved
+    
     private Texture reticleTexture;
     
     private AnimationSet<CharacterAnimations> animationSet;
@@ -62,6 +64,7 @@ public class SketchCharacter implements GraphicsObject, GameObject {
     
     @Override
     public void update(double delta) {
+        handleAnimationInput();
         updateCharacterInfo();
         
         if (animationSet != null) {
@@ -216,6 +219,8 @@ public class SketchCharacter implements GraphicsObject, GameObject {
 
     void moveLeft(double elapsedMillis) 
     {
+        lastActionTime = System.currentTimeMillis();
+        animationSet.setCurrentAnimation(CharacterAnimations.WALK_LEFT);
         long oldVector = coll.getVelocity();
         this.isFacingLeft = true;
         double getY = Vectors.yComp(oldVector);
@@ -224,6 +229,8 @@ public class SketchCharacter implements GraphicsObject, GameObject {
 
     void moveRight(double elapsedMillis)
     {
+        lastActionTime = System.currentTimeMillis();
+        animationSet.setCurrentAnimation(CharacterAnimations.WALK_RIGHT);
         long oldVector = coll.getVelocity();
         this.isFacingLeft = false;
         double getY = Vectors.yComp(oldVector);
@@ -232,6 +239,8 @@ public class SketchCharacter implements GraphicsObject, GameObject {
     
     void jump(double elapsedMillis)
     {
+        lastActionTime = System.currentTimeMillis();
+        animationSet.setCurrentAnimation(CharacterAnimations.JUMP);
         long oldVector = coll.getVelocity();
         double getX = Vectors.xComp(oldVector);
         coll.setVelocity(create(getX, 200));
@@ -255,5 +264,14 @@ public class SketchCharacter implements GraphicsObject, GameObject {
 
     public void setAnimationSet(AnimationSet<CharacterAnimations> animationSet) {
         this.animationSet = animationSet;
+    }
+
+    private void handleAnimationInput() {
+        double current = System.currentTimeMillis();
+        double diff = current - lastActionTime;
+  
+        if (diff > 200) {
+            animationSet.setCurrentAnimation(CharacterAnimations.IDLE);
+        }
     }
 }

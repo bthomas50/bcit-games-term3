@@ -171,6 +171,20 @@ public class SketchWarsWorldFactory
             idle.start(rng.nextInt(750));
             animationSet.addAnimation(CharacterAnimations.IDLE, idle);
             
+            Texture jumpSpriteSheet = Texture.loadTexture("content/animation/characters/default/charSheet_jump.png", true);
+            Animation jump = new Animation(jumpSpriteSheet, 36, 6, 6, 1000, true);
+            jump.start();
+            animationSet.addAnimation(CharacterAnimations.JUMP, jump);
+            
+            Texture walkLeftSpriteSheet = Texture.loadTexture("content/animation/characters/default/charSheet_walkleft.png", true);
+            Animation walkLeft = new Animation(walkLeftSpriteSheet, 12, 12, 1, 2000, true);
+            walkLeft.start();
+            animationSet.addAnimation(CharacterAnimations.WALK_LEFT, walkLeft);
+            
+            Texture walkRightSpriteSheet = Texture.loadTexture("content/animation/characters/default/charSheet_walkright.png", true);
+            Animation walkRight = new Animation(walkRightSpriteSheet, 12, 12, 1, 2000, true);
+            walkRight.start();
+            animationSet.addAnimation(CharacterAnimations.WALK_RIGHT, walkRight);
             
             animationSet.setCurrentAnimation(CharacterAnimations.IDLE);
         } catch (AnimationException ex) {
