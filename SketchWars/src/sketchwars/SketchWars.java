@@ -7,6 +7,7 @@ import sketchwars.scenes.*;
 import sketchwars.input.*;
 import sketchwars.game.*;
 import sketchwars.sound.SoundPlayer;
+import static sketchwars.util.Config.*;
 
 
 import java.util.logging.Level;
@@ -28,6 +29,7 @@ public class SketchWars {
     private double lastTime;
     
     public static void main(String[] args) {
+        appendToLibraryPath("lib/native/");
         SketchWars sketchWars = new SketchWars();
         sketchWars.init();
         sketchWars.start();

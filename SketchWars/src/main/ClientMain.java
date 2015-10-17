@@ -1,6 +1,7 @@
 package main;
 
 import network.*;
+import static sketchwars.util.Config.*;
 
 import java.util.Scanner;
 import java.io.IOException;
@@ -9,6 +10,7 @@ public class ClientMain
 {
     public static void main(String[] args) 
     {
+        appendToLibraryPath("lib/native/");
         Scanner in = new Scanner(System.in);
 
         System.out.println("Enter host: ");

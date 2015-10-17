@@ -1,4 +1,4 @@
-package assn2.ai;
+package sketchwars.ai;
 
 //this listener is invoked whenever a fsm undergoes a state transition.
 public interface TransitionListener<T>

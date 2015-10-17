@@ -1,4 +1,4 @@
-package assn2.ai;
+package sketchwars.ai;
 
 import java.util.Set;
 import java.util.HashSet;

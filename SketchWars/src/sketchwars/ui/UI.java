@@ -1,4 +1,4 @@
-package assn2;
+package sketchwars.ui;
 
 import sketchwars.input.*;
 import sketchwars.graphics.*;
@@ -6,26 +6,27 @@ import sketchwars.graphics.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UI implements GraphicsObject
+//a generic collection of buttons that generates commands of type T
+public class UI<T> implements GraphicsObject
 {
-    private List<Button> buttons;
+    private List<Button<T> > buttons;
 
     public UI()
     {
         buttons = new ArrayList<>();
     }
 
-    public void addButton(Button b)
+    public void addButton(Button<T> b)
     {
         buttons.add(b);
     }
 
-    public List<ButtonClickCommands> getCurrentCommands()
+    public List<T> getCurrentCommands()
     {
-        List<ButtonClickCommands> commands = new ArrayList<>();
+        List<T> commands = new ArrayList<>();
         if(MouseHandler.state == MouseState.RISING)
         {
-            for(Button b : buttons)
+            for(Button<T> b : buttons)
             {
                 if(b.contains(MouseHandler.x, MouseHandler.y))
                 {
@@ -39,7 +40,7 @@ public class UI implements GraphicsObject
     @Override
     public void render()
     {
-        for(Button b : buttons)
+        for(Button<T> b : buttons)
         {
             b.render();
         }

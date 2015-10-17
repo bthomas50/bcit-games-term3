@@ -1,4 +1,4 @@
-package assn2.ai;
+package sketchwars.ai;
 
 //represents a possible state transition from one state to another
 public abstract class StateTransition<T>
