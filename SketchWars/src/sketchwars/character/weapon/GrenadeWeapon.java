@@ -35,7 +35,7 @@ public class GrenadeWeapon extends AbstractWeapon {
     }
 
     @Override
-    protected BasicProjectile createProjectile(SketchCharacter owner, long vPosition, long vVelocity) {
+    protected AbstractProjectile createProjectile(SketchCharacter owner, long vPosition, long vVelocity) {
         try{
             SoundPlayer.playSFX(2, true, 0);
         } catch (Exception e)

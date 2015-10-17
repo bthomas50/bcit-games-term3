@@ -25,7 +25,7 @@ public class RangedWeapon extends AbstractWeapon {
     }
     
     @Override
-    public BasicProjectile createProjectile(SketchCharacter owner, long vPosition, long vVelocity) {
+    public AbstractProjectile createProjectile(SketchCharacter owner, long vPosition, long vVelocity) {
         try{
             SoundPlayer.playSFX(1, true, 0);
         } catch (Exception e)

@@ -10,16 +10,16 @@ import sketchwars.character.SketchCharacter;
  *
  * @author Najash Najimudeen <najash.najm@gmail.com>
  */
-public abstract class BasicProjectile implements GraphicsObject, GameObject{
+public abstract class AbstractProjectile implements GraphicsObject, GameObject{
     protected Collider coll;
     protected Texture texture;
     
     protected int damage;
-    private boolean expired;
-    //to prevent taking damage to it self (unless grenade)
-    private SketchCharacter owner; 
+    protected boolean expired;
+    //the character that fired this projectile (we can ignore collisions with it if we want)
+    protected SketchCharacter owner; 
     
-    public BasicProjectile(Texture texture, SketchCharacter owner, int damage) {
+    public AbstractProjectile(Texture texture, SketchCharacter owner, int damage) {
         this.texture = texture;
         this.owner = owner;
         this.damage = damage;
@@ -27,8 +27,7 @@ public abstract class BasicProjectile implements GraphicsObject, GameObject{
     }
      
     @Override
-    public void update(double elapsedMillis) {
-    }
+    public void update(double elapsedMillis) { }
 
     @Override
     public boolean hasExpired() {
@@ -41,7 +40,7 @@ public abstract class BasicProjectile implements GraphicsObject, GameObject{
     
     public void setCollider(Collider coll) {
         this.coll = coll;
-        coll.addCollisionListener(new BasicCollisionHandler());
+        coll.addCollisionListener(new ProjectileCollisionHandler());
     }
 
     @Override
@@ -59,17 +58,14 @@ public abstract class BasicProjectile implements GraphicsObject, GameObject{
         }
     }
 
-    protected void handleCollisionWithCharacter(SketchCharacter ch) {
-        if(ch != owner) {
-            ch.takeDamage(damage);
-            System.out.println(ch + " is hit for " + damage + " damage.");
-            expired = true;
-        }
-    }
+    protected abstract void handleCollisionWithCharacter(SketchCharacter ch);
 
-    private class BasicCollisionHandler implements CollisionListener {
+    protected abstract void handleCollision(Collider other);
+
+    private class ProjectileCollisionHandler implements CollisionListener {
         @Override
         public void collided(Collider thisColl, Collider otherColl) {
+            handleCollision(otherColl);
             if(otherColl.hasAttachedGameObject()) {
                 GameObject otherObj = otherColl.getAttachedGameObject();
                 if(otherObj instanceof SketchCharacter) {

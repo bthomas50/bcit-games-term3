@@ -105,10 +105,10 @@ public abstract class AbstractWeapon implements Updateable, Drawable {
         long vVelocity = Vectors.scalarMultiply(getProjectileSpeed(power), normalDir);
         long vPosition = Vectors.add(owner.getCollider().getPosition(), Vectors.scaleToLength(normalDir, 100.0));
         System.out.println("velocity: " + Vectors.toString(vVelocity));
-        BasicProjectile projectile = createProjectile(owner, vPosition, vVelocity);
+        AbstractProjectile projectile = createProjectile(owner, vPosition, vVelocity);
     }
 
-    protected abstract BasicProjectile createProjectile(SketchCharacter owner, long vPosition, long vVelocity);
+    protected abstract AbstractProjectile createProjectile(SketchCharacter owner, long vPosition, long vVelocity);
 
     protected abstract double getProjectileSpeed(float power);
 

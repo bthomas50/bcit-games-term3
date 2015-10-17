@@ -24,7 +24,7 @@ public class ProjectileFactory
         this.projectileLayer = scene.getLayer(GameLayers.PROJECTILE);
     }
 
-    public BasicProjectile createGrenade(SketchCharacter owner, long vPosition, long vVelocity, double scale)
+    public AbstractProjectile createGrenade(SketchCharacter owner, long vPosition, long vVelocity, double scale)
     {
         Texture texture = Texture.loadTexture("content/char/weapons/grenade.png");
         GrenadeProjectile proj = new GrenadeProjectile(texture);
@@ -38,7 +38,7 @@ public class ProjectileFactory
         return proj;
     }
 
-    public BasicProjectile createMelee(SketchCharacter owner, long vPosition, long vVelocity, double scale)
+    public AbstractProjectile createMelee(SketchCharacter owner, long vPosition, long vVelocity, double scale)
     {
         Texture texture = Texture.loadTexture("content/char/weapons/meleeBoxing.png");
         MeleeProjectile proj = new MeleeProjectile(texture, owner);
@@ -51,7 +51,7 @@ public class ProjectileFactory
         return proj;
     }
 
-    public BasicProjectile createRanged(SketchCharacter owner, long vPosition, long vVelocity, double scale)
+    public AbstractProjectile createRanged(SketchCharacter owner, long vPosition, long vVelocity, double scale)
     {
         Texture texture = Texture.loadTexture("content/char/weapons/bullet1.png");
         RangedProjectile proj = new RangedProjectile(texture, owner);
@@ -66,7 +66,7 @@ public class ProjectileFactory
         return proj;
     }
 
-    public AnimatedProjectile createExplosion(BasicProjectile bp, double radius) {
+    public AnimatedProjectile createExplosion(AbstractProjectile bp, double radius) {
         try {
             long explosionPoint = bp.getCollider().getPosition();
             Explosion explosion = new Explosion();
@@ -94,7 +94,7 @@ public class ProjectileFactory
         coll.setElasticity(elasticity);
     }
 
-    private void addProjectile(BasicProjectile proj) 
+    private void addProjectile(AbstractProjectile proj) 
     {
         world.addGameObject(proj);
         physics.addCollider(proj.getCollider());

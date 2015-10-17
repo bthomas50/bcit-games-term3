@@ -27,7 +27,7 @@ public class MeleeWeapon extends AbstractWeapon {
     }
 
     @Override
-    public BasicProjectile createProjectile(SketchCharacter owner, long vPosition, long vVelocity) {
+    public AbstractProjectile createProjectile(SketchCharacter owner, long vPosition, long vVelocity) {
         try{
             SoundPlayer.playSFX(0, true, 0);
         } catch (Exception e)
