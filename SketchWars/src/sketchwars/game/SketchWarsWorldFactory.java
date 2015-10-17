@@ -46,12 +46,20 @@ public class SketchWarsWorldFactory
             SoundPlayer.playMusic(0, true, -15);
             
             //test animation - will remove when addign character animations
-            Texture anim = Texture.loadTexture("content/testSprite.png");
-            Animation test = new Animation(anim, 9, 1500, true);
+            Texture anim = Texture.loadTexture("content/animation/characters/1/charSheet.png");
+            Animation test = new Animation(anim, 12, 2000, true);
             test.setDimension(new Vector2d(100, 100));
-            test.setPosition(new Vector2d(5, 5));
+            test.setPosition(new Vector2d(100, 5));
             test.start();
             gameScene.getLayer(GameLayers.CHARACTER).addAnimation(test);
+            
+            Texture anim2 = Texture.loadTexture("content/testSprite.png");
+            Animation test2 = new Animation(anim2, 9, 2000, true);
+            test2.setDimension(new Vector2d(100, 100));
+            test2.setPosition(new Vector2d(5, 5));
+            test2.start();
+            gameScene.getLayer(GameLayers.CHARACTER).addAnimation(test2);
+            
             
         } catch (SceneManagerException ex) {
             System.err.println(ex.getMessage());
