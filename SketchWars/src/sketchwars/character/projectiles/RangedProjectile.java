@@ -13,8 +13,8 @@ public class RangedProjectile extends BasicProjectile {
     
     private double projectileRange;
     
-    public RangedProjectile(Texture texture, double scale) {
-        super(texture, scale);
+    public RangedProjectile(Texture texture) {
+        super(texture);
         
         setLifespan(LIFESPAN);
         

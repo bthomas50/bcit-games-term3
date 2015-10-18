@@ -84,4 +84,8 @@ public class AnimationSet<T> implements GameObject, GraphicsObject {
     public Animation getCurrentAnimation() {
         return currentAnimation;
     }
+
+    public Animation getAnimation(T index) {
+        return animations.get(index);
+    }
 }

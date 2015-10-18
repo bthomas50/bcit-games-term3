@@ -12,12 +12,8 @@ import sketchwars.sound.SoundPlayer;
 public class GrenadeWeapon extends AbstractWeapon {   
     private double explosionRadius;
     
-    public GrenadeWeapon(Texture texture, ProjectileFactory projectileFactory) {
-        this(texture, 1, projectileFactory);
-    }
-    
-    public GrenadeWeapon(Texture texture, double scale, ProjectileFactory projectileFactory) {
-        super(texture, scale, projectileFactory);
+    public GrenadeWeapon(Texture texture, double width, double height, ProjectileFactory projectileFactory) {
+        super(texture, width, height, projectileFactory);
         init();
     }
     
@@ -42,7 +38,7 @@ public class GrenadeWeapon extends AbstractWeapon {
         {
             System.err.println(e.getMessage());
         }
-        return projectileFactory.createGrenade(owner, vPosition, vVelocity, scale);
+        return projectileFactory.createGrenade(owner, vPosition, vVelocity);
     }
 
     @Override

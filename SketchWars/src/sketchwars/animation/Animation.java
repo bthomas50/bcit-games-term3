@@ -67,6 +67,9 @@ public class Animation implements GraphicsObject, GameObject {
         
         position = new Vector2d();
         dimension = new Vector2d();
+        
+        spriteWidth = spriteSheet.getTextureWidth()/xTotalSprites;
+        spriteHeight = spriteSheet.getTextureHeight()/yTotalSprites;
     }
     
     @Override
@@ -168,4 +171,21 @@ public class Animation implements GraphicsObject, GameObject {
     public void start(int startAfter) {
         this.startAfter = startAfter;
     }
+    
+    /**
+     * get single sprite width
+     * @return 
+     */
+    public double getSpriteWidth() {
+        return spriteWidth;
+    }
+    
+    /**
+     * get single sprite height
+     * @return 
+     */
+    public double getSpriteHeight() {
+        return spriteHeight;
+    }
+
 }

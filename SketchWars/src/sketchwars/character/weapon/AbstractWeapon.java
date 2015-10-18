@@ -21,28 +21,35 @@ public abstract class AbstractWeapon implements GameObject, GraphicsObject {
             
     protected double posX;
     protected double posY;
-    protected double scale;
+    protected double width;
+    protected double height;
     protected Texture texture;
     
     protected int ammo;
     protected ProjectileFactory projectileFactory;
 
-    public AbstractWeapon(Texture texture, double scale, ProjectileFactory projectileFactory) {
+    /**
+     * 
+     * @param texture
+     * @param width percentage of screen width
+     * @param height percentage of screen height
+     * @param projectileFactory 
+     */
+    public AbstractWeapon(Texture texture, double width, double height, ProjectileFactory projectileFactory) {
         this.texture = texture;
-        this.scale = scale;
         this.projectileFactory = projectileFactory;
         
         rateOfFire = 1;
         ammo = INFINITE_AMMO;
         elapsed = Integer.MAX_VALUE;
+        this.width = width;
+        this.height = height;
     }
-    
-    
     
     @Override
     public void render() {
         if (texture != null) {
-            texture.drawNormalized(posX, posY, scale);
+            texture.drawNormalized(null, posX, posY, width, height);
         }
     }
     
@@ -78,14 +85,25 @@ public abstract class AbstractWeapon implements GameObject, GraphicsObject {
         this.posY = posY;
     }
 
-    public double getScale() {
-        return scale;
+    public double getWidth() {
+        return width;
     }
 
-    public void setScale(double scale) {
-        this.scale = scale;
+    /**
+     * 
+     * @param width percentage of screen width
+     * @param height percentage of screen height
+     */
+    public void setDimension(double width, double height) {
+        this.width = width;
+        this.height = height;
     }
 
+    public double getHeight() {
+        return height;
+    }
+   
+    
     public boolean tryToFire(SketchCharacter owner, float power, long direction) {
         double timeFired = elapsed;
         double timeSinceLastFired = timeFired - lastTimeFired;

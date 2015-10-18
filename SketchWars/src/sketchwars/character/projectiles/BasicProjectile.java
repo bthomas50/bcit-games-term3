@@ -24,11 +24,8 @@ public abstract class BasicProjectile implements GraphicsObject, GameObject{
     private boolean consumed;
     private SketchCharacter owner; //to prevent taking damage to it self (unless grenade)
     
-    private double scale;
-    
-    public BasicProjectile(Texture texture, double scale) {
+    public BasicProjectile(Texture texture) {
         this.texture = texture;
-        this.scale = scale;
     }
      
     @Override
@@ -42,16 +39,13 @@ public abstract class BasicProjectile implements GraphicsObject, GameObject{
         this.coll = coll;
     }
 
-    public double getScale() {
-        return scale;
-    }
-    
     @Override
     public void render() {
         if (texture != null) {
             BoundingBox bounds = coll.getBounds();
             long vCenter = bounds.getCenterVector();
-            texture.drawNormalized(Vectors.xComp(vCenter) / 1024.0 , Vectors.yComp(vCenter) / 1024.0, scale);
+            texture.drawNormalized(null, Vectors.xComp(vCenter) / 1024.0, Vectors.yComp(vCenter) / 1024.0, 
+                     bounds.getWidth() / 2048.0, bounds.getHeight() / 2048.0);
         }
     }
     

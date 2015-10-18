@@ -15,8 +15,8 @@ import sketchwars.input.KeyboardHandler;
  * @author Najash Najimudeen <najash.najm@gmail.com>
  */
 public class OpenGL {
-    public static final int WIDTH = 800;
-    public static final int HEIGHT = 600;
+    public static final int WIDTH = 1920;
+    public static final int HEIGHT = 1080;
     
     // We need to strongly reference callback instances.
     private GLFWErrorCallback errorCallback;
@@ -58,7 +58,7 @@ public class OpenGL {
         glfwWindowHint(GLFW_RESIZABLE, GL11.GL_FALSE); // the window will be resizable
   
         // Create the window
-        window = glfwCreateWindow(WIDTH, HEIGHT, "Sketch Wars!", NULL, NULL);
+        window = glfwCreateWindow(WIDTH, HEIGHT, "Sketch Wars!", glfwGetPrimaryMonitor(), NULL);
         if ( window == NULL )
             throw new RuntimeException("Failed to create the GLFW window");
  
@@ -81,7 +81,7 @@ public class OpenGL {
  
         // Make the window visible
         glfwShowWindow(window);
-        
+       
         GLContext.createFromCurrent();
         
         initCamera();
@@ -113,6 +113,8 @@ public class OpenGL {
         GL11.glLoadIdentity();
         GL11.glDisable(GL11.GL_LIGHTING);
         GL11.glEnable(GL11.GL_TEXTURE_2D);
+        
+        
     }
     
     public boolean windowsIsClosing() {

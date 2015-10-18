@@ -2,7 +2,6 @@ package sketchwars.game;
 
 import sketchwars.animation.Explosion;
 import java.util.ArrayList;
-import javax.imageio.IIOException;
 import org.joml.Vector2d;
 import sketchwars.character.projectiles.BasicProjectile;
 import sketchwars.physics.Physics;
@@ -22,6 +21,7 @@ import sketchwars.scenes.Scene;
  * @author Najash Najimudeen <najash.najm@gmail.com>
  */
 public class WeaponLogic implements GameObject {
+    
     private final ArrayList<BasicProjectile> projectiles;
     private final SketchWarsWorld world;
     private final Physics physics;
@@ -101,7 +101,7 @@ public class WeaponLogic implements GameObject {
     
     private boolean hasGrenadeHitTarget(Collider characterCollider, GrenadeProjectile grenade) {
         Collider grenadeCollider = grenade.getCollider();
-        Collider explosionCollider = new PixelCollider(BitMaskFactory.createCircle(grenade.getExplosionRadius()));
+        Collider explosionCollider = new PixelCollider(BitMaskFactory.createCircle(grenade.getExplosionRadius() * 2048.0));
         
         explosionCollider.setPosition(grenadeCollider.getPosition());
         
@@ -118,8 +118,7 @@ public class WeaponLogic implements GameObject {
             double posY = Vectors.yComp(explosionPoint)/1024.0;
             explosion.setPosition(new Vector2d(posX, posY));
             
-            double size = radius/2048.0;
-            explosion.setDimension(new Vector2d(size, size));
+            explosion.setDimension(new Vector2d(radius, radius * 1.3));
             gameScene.getLayer(GameLayers.PROJECTILE).addAnimation(explosion);
         } catch (AnimationException | SceneException ex) {
             System.err.println(ex.getMessage());

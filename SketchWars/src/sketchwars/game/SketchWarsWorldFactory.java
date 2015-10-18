@@ -23,6 +23,8 @@ import sketchwars.animation.CharacterAnimations;
 
 public class SketchWarsWorldFactory
 {
+    private static final double CHARACTER_SCALE = 0.00002;
+    
     private static final int NUM_TEAMS = 2;
     private static final int CHARS_PER_TEAM = 3;
 
@@ -139,7 +141,23 @@ public class SketchWarsWorldFactory
         AnimationSet<CharacterAnimations> animationSet = createCharacterAniamtions(rng);
         
         character.setAnimationSet(animationSet);
-        PixelCollider charCollider = new PixelCollider(BitMaskFactory.createRectangle(100, 120));
+        
+        Animation idle = animationSet.getAnimation(CharacterAnimations.IDLE);
+        
+        PixelCollider charCollider;
+        
+        if (idle != null) {
+            double ratio = idle.getSpriteHeight()/idle.getSpriteWidth();
+            int widthP = (int)(OpenGL.WIDTH * CHARACTER_SCALE * 2048.0);
+            int heightP = (int)(widthP * ratio);
+            
+            System.out.println(ratio + ", " + widthP + ", " + heightP);
+            
+            charCollider = new PixelCollider(BitMaskFactory.createRectangle(widthP, heightP));
+        } else {
+            charCollider = new PixelCollider(BitMaskFactory.createRectangle(100, 120));
+        }
+        
         charCollider.setPosition(vPosition);
         charCollider.setMass(10);
         charCollider.setElasticity(0.0f);

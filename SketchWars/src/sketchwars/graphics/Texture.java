@@ -270,27 +270,6 @@ public class Texture {
      * Draw the texture centered - coordinates (0, 0) is the middle of the screen
      * @param xP X-axis coordinates (-1 to 1)
      * @param yP Y-axis coordinates (1 to -1)
-     * @param scale value by which to scale the original texture
-     */
-    public void drawNormalized(double xP, double yP, double scale) {
-        int width = (int)(tWidth * scale);
-        int height = (int)(tHeight * scale);
-
-        int x = (int)((OpenGL.WIDTH/2) * xP);
-        int y = (int)((OpenGL.HEIGHT/2) * yP);
-        
-        //convert the position to make sure (0, 0) is the center
-        int newX = x + OpenGL.WIDTH/2 - width/2;
-        int newY = y + OpenGL.HEIGHT/2 + height/2;
-        
-        draw(newX, newX, newX + width, newX + width,
-             newY, newY - height, newY - height, newY);
-    }
-    
-    /**
-     * Draw the texture centered - coordinates (0, 0) is the middle of the screen
-     * @param xP X-axis coordinates (-1 to 1)
-     * @param yP Y-axis coordinates (1 to -1)
      * @param width 'draw width' in pixels
      * @param height 'draw height' in pixels
      */
