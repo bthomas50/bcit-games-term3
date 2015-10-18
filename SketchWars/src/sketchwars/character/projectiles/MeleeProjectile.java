@@ -11,21 +11,11 @@ public class MeleeProjectile extends BasicProjectile {
     private static final double OBJECT_RADIUS = 36.0;
     private static final double LIFESPAN = 200;
     
-    private double meleeObjRadius;
-    
-    public MeleeProjectile(Texture texture) {
-        super(texture);
+    public MeleeProjectile(Texture texture, double scale) {
+        super(texture, scale);
         
         setLifespan(LIFESPAN);
-        meleeObjRadius = OBJECT_RADIUS;
         setDamage(DAMAGE);
     }
 
-    public double getMeleeObjRadius() {
-        return meleeObjRadius;
-    }
-
-    public void setMeleeObjRadius(double meleeObjRadius) {
-        this.meleeObjRadius = meleeObjRadius;
-    }
 }

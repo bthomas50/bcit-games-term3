@@ -139,7 +139,7 @@ public class SketchWarsWorldFactory
         AnimationSet<CharacterAnimations> animationSet = createCharacterAniamtions(rng);
         
         character.setAnimationSet(animationSet);
-        PixelCollider charCollider = new PixelCollider(BitMaskFactory.createCircle(64.0));
+        PixelCollider charCollider = new PixelCollider(BitMaskFactory.createRectangle(100, 120));
         charCollider.setPosition(vPosition);
         charCollider.setMass(10);
         charCollider.setElasticity(0.0f);

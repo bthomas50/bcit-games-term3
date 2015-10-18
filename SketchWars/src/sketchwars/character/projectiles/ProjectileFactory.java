@@ -22,8 +22,12 @@ public class ProjectileFactory
     public BasicProjectile createGrenade(SketchCharacter owner, long vPosition, long vVelocity, double scale)
     {
         Texture texture = Texture.loadTexture("content/char/weapons/grenade.png", false);
-        GrenadeProjectile proj = new GrenadeProjectile(texture);
-        Collider coll = new PixelCollider(BitMaskFactory.createCircle(proj.getColliderRadius()));
+        GrenadeProjectile proj = new GrenadeProjectile(texture, scale);
+        
+        double width = texture.getTextureWidth() * scale;
+        double height = texture.getTextureHeight() * scale;
+        
+        Collider coll = new PixelCollider(BitMaskFactory.createCircle(Math.max(width, height)));
         proj.setCollider(coll);
 
         setColliderProperties(coll, vPosition, vVelocity, 1.0f, 0.9f);
@@ -37,8 +41,10 @@ public class ProjectileFactory
     public BasicProjectile createMelee(SketchCharacter owner, long vPosition, long vVelocity, double scale)
     {
         Texture texture = Texture.loadTexture("content/char/weapons/meleeBoxing.png", false);
-        MeleeProjectile proj = new MeleeProjectile(texture);
-        Collider coll = new PixelCollider(BitMaskFactory.createCircle(proj.getMeleeObjRadius()));
+        MeleeProjectile proj = new MeleeProjectile(texture, scale);
+        double width = texture.getTextureWidth() * scale;
+        double height = texture.getTextureHeight() * scale;
+        Collider coll = new PixelCollider(BitMaskFactory.createCircle(Math.max(width, height)));
         proj.setCollider(coll);
 
         setColliderProperties(coll, vPosition, vVelocity, 0.0f, 1.0f);
@@ -51,7 +57,7 @@ public class ProjectileFactory
     public BasicProjectile createRanged(SketchCharacter owner, long vPosition, long vVelocity, double scale)
     {
         Texture texture = Texture.loadTexture("content/char/weapons/bullet1.png", false);
-        RangedProjectile proj = new RangedProjectile(texture);
+        RangedProjectile proj = new RangedProjectile(texture, scale);
         BitMask bm = BitMaskFactory.createLine(vPosition, vVelocity, proj.getProjectileRange());
         bm.trim();
         System.out.println(bm.getBounds());
