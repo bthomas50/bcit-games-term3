@@ -101,7 +101,7 @@ public class WeaponLogic implements GameObject {
     
     private boolean hasGrenadeHitTarget(Collider characterCollider, GrenadeProjectile grenade) {
         Collider grenadeCollider = grenade.getCollider();
-        Collider explosionCollider = new PixelCollider(BitMaskFactory.createCircle(grenade.getExplosionRadius() * 2048.0));
+        Collider explosionCollider = new PixelCollider(BitMaskFactory.createCircle(grenade.getExplosionRadius() * 1024.0f));
         
         explosionCollider.setPosition(grenadeCollider.getPosition());
         
@@ -114,8 +114,8 @@ public class WeaponLogic implements GameObject {
             Explosion explosion = new Explosion();
             explosion.start();
             
-            double posX = Vectors.xComp(explosionPoint)/1024.0;
-            double posY = Vectors.yComp(explosionPoint)/1024.0;
+            float posX = (float)Vectors.xComp(explosionPoint)/1024.0f;
+            float posY = (float)Vectors.yComp(explosionPoint)/1024.0f;
             explosion.setPosition(new Vector2d(posX, posY));
             
             explosion.setDimension(new Vector2d(radius, radius * 1.3));

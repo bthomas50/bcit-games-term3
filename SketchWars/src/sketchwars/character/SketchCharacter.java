@@ -16,10 +16,10 @@ import static sketchwars.physics.Vectors.create;
 public class SketchCharacter implements GraphicsObject, GameObject {
     public static final int DEFAULT_MAX_HEALTH = 100;
     
-    private double posX;
-    private double posY;
-    private double width;
-    private double height;
+    private float posX;
+    private float posY;
+    private float width;
+    private float height;
         
     private Texture texture;
     private AbstractWeapon weapon;
@@ -30,9 +30,9 @@ public class SketchCharacter implements GraphicsObject, GameObject {
     
     private boolean hasFired;
     private boolean isFacingLeft;
-    private double angle;
+    private float angle;
 
-    private double lastActionTime; //last time input recieved
+    private float lastActionTime; //last time input recieved
     
     private Texture reticleTexture;
     
@@ -49,7 +49,7 @@ public class SketchCharacter implements GraphicsObject, GameObject {
         this.health = health;
         this.isDead = false;
         this.hasFired = false;
-        this.angle = 0.0;
+        this.angle = 0.0f;
         this.isFacingLeft = false;//start facing right.
         reticleTexture = Texture.loadTexture("content/misc/reticle.png", false);
     }
@@ -74,7 +74,7 @@ public class SketchCharacter implements GraphicsObject, GameObject {
         }
         
         if (weapon != null) {
-            weapon.setPosition(posX + 0.01, posY - 0.01);
+            weapon.setPosition(posX, posY);
             weapon.update(delta);
         }
         
@@ -85,11 +85,11 @@ public class SketchCharacter implements GraphicsObject, GameObject {
     private void updateCharacterInfo() {
         BoundingBox bounds = coll.getBounds();
         long vCenter = bounds.getCenterVector();
-        posX = Vectors.xComp(vCenter) / 1024.0;
-        posY = Vectors.yComp(vCenter) / 1024.0;
+        posX = (float)Vectors.xComp(vCenter) / 1024.0f;
+        posY = (float)Vectors.yComp(vCenter) / 1024.0f;
         
-        width = (double) bounds.getWidth() / 2048.0;
-        height = (double) bounds.getHeight() / 2048.0;
+        width = (float) bounds.getWidth() / 1024.0f;
+        height = (float) bounds.getHeight() / 1024.0f;
     }
 
     @Override
@@ -101,7 +101,7 @@ public class SketchCharacter implements GraphicsObject, GameObject {
         if (weapon != null) {
             weapon.render();
             long vReticleOffset = Vectors.createRTheta(0.1, getActualFireAngle());
-            reticleTexture.drawNormalized(null, posX + Vectors.xComp(vReticleOffset), posY + Vectors.yComp(vReticleOffset), 0.05, 0.05);
+            reticleTexture.draw(null, posX + (float)Vectors.xComp(vReticleOffset), posY + (float)Vectors.yComp(vReticleOffset), 0.05f, 0.05f);
         }
         
     }
@@ -156,24 +156,24 @@ public class SketchCharacter implements GraphicsObject, GameObject {
         return isDead;
     }
     
-    public double getPosX() {
+    public float getPosX() {
         return posX;
     }
 
-    public double getPosY() {
+    public float getPosY() {
         return posY;
     }
 
-    public void setPosition(double posX, double posY) {
+    public void setPosition(float posX, float posY) {
         this.posX = posX;
         this.posY = posY;
     }
 
-    public double getWidth() {
+    public float getWidth() {
         return width;
     }
 
-    public double getHeight() {
+    public float getHeight() {
         return height;
     }
 
@@ -197,7 +197,7 @@ public class SketchCharacter implements GraphicsObject, GameObject {
         return hasFired;
     }
 
-    public void fireCurrentWeapon(double power) {
+    public void fireCurrentWeapon(float power) {
         if(weapon != null) {
             hasFired = weapon.tryToFire(this, (float)power, Vectors.createRTheta(1.0f, getActualFireAngle()));
         }
@@ -206,14 +206,14 @@ public class SketchCharacter implements GraphicsObject, GameObject {
     public void aimUp(double elapsedMillis) {
         angle += Math.PI * elapsedMillis / 1000.0;
         //make sure not to aim higher than straight up
-        angle = Math.min(angle, Math.PI / 2.0);
+        angle = (float)Math.min(angle, Math.PI / 2.0);
         System.out.println("angle: " + angle);
     }
 
     public void aimDown(double elapsedMillis) {
         angle -= Math.PI * elapsedMillis / 1000.0;
         //make sure not to aim lower than straight down
-        angle = Math.max(angle, -Math.PI / 2.0);
+        angle = (float)Math.max(angle, -Math.PI / 2.0);
         System.out.println("angle: " + angle);
     }
 
@@ -223,7 +223,7 @@ public class SketchCharacter implements GraphicsObject, GameObject {
         animationSet.setCurrentAnimation(CharacterAnimations.WALK_LEFT);
         long oldVector = coll.getVelocity();
         this.isFacingLeft = true;
-        double getY = Vectors.yComp(oldVector);
+        float getY = (float)Vectors.yComp(oldVector);
         coll.setVelocity(create(-100, getY));
     }
 
@@ -233,7 +233,7 @@ public class SketchCharacter implements GraphicsObject, GameObject {
         animationSet.setCurrentAnimation(CharacterAnimations.WALK_RIGHT);
         long oldVector = coll.getVelocity();
         this.isFacingLeft = false;
-        double getY = Vectors.yComp(oldVector);
+        float getY = (float)Vectors.yComp(oldVector);
         coll.setVelocity(create(100, getY));
     }
     
@@ -242,13 +242,13 @@ public class SketchCharacter implements GraphicsObject, GameObject {
         lastActionTime = System.currentTimeMillis();
         animationSet.setCurrentAnimation(CharacterAnimations.JUMP);
         long oldVector = coll.getVelocity();
-        double getX = Vectors.xComp(oldVector);
+        float getX = (float)Vectors.xComp(oldVector);
         coll.setVelocity(create(getX, 200));
     }
 
-    private double getActualFireAngle() {
+    private float getActualFireAngle() {
         if(isFacingLeft) {
-            return Math.PI - angle;
+            return (float)(Math.PI - angle);
         } else {
             return angle;
         }
@@ -267,8 +267,8 @@ public class SketchCharacter implements GraphicsObject, GameObject {
     }
 
     private void handleAnimationInput() {
-        double current = System.currentTimeMillis();
-        double diff = current - lastActionTime;
+        float current = System.currentTimeMillis();
+        float diff = current - lastActionTime;
   
         if (diff > 200) {
             animationSet.setCurrentAnimation(CharacterAnimations.IDLE);

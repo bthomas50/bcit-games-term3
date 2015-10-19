@@ -10,7 +10,7 @@ import sketchwars.sound.SoundPlayer;
  * @author Najash Najimudeen <najash.najm@gmail.com>
  */
 public class MeleeWeapon extends AbstractWeapon {
-    public MeleeWeapon(Texture texture, double width, double height, ProjectileFactory projectileFactory) {
+    public MeleeWeapon(Texture texture, float width, float height, ProjectileFactory projectileFactory) {
         super(texture, width, height, projectileFactory);
         setRateOfFire(0.5f);
     }

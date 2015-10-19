@@ -203,57 +203,17 @@ public class Texture {
         return buffer;
     }
     
-    
-    /**
-     * Draw the texture - coordinates (0, 0) is the middle of the screen
-     * @param x X-axis coordinates
-     * @param y Y-axis coordinates
-     * @param width 'draw width' in pixels
-     * @param height 'draw height' in pixels
-     */
-    public void draw(int x, int y, int width, int height) {
-        //convert the position to make sure (0, 0) is the center
-        int newX = x + OpenGL.WIDTH/2;
-        int newY = y + OpenGL.HEIGHT/2;
-        
-        draw(newX, newX, newX + width, newX + width,
-             newY, newY - height, newY - height, newY);
-    }
-    
-    /**
-     * Draw the texture centered - coordinates (0, 0) is the middle of the screen
-     * @param x X-axis coordinates
-     * @param y Y-axis coordinates
-     * @param width 'draw width' in pixels
-     * @param height 'draw height' in pixels
-     */
-    public void drawTextureCentered(int x, int y, int width, int height) {
-        //convert the position to make sure (0, 0) is the center
-        int newX = x + OpenGL.WIDTH/2 - width/2;
-        int newY = y + OpenGL.HEIGHT/2 + height/2;
-        
-        draw(newX, newX, newX + width, newX + width,
-             newY, newY - height, newY - height, newY);
-    }
-      
     /**
      * Draw the texture centered - coordinates (0, 0) is the middle of the screen
      * @param textureCoord texture coordinates to use. pass in null to use default.
-     * @param xP X-axis coordinates (-1 to 1)
-     * @param yP Y-axis coordinates (1 to -1)
-     * @param widthP 'draw width' percentage of screen width (0 to 1)
-     * @param heightP 'draw height' percentage of screen height (0 to 1)
+     * @param x X-axis coordinates (-1 to 1)
+     * @param y Y-axis coordinates (1 to -1)
+     * @param width 'draw width' percentage of screen width (0 to 2)
+     * @param height 'draw height' percentage of screen height (0 to 2)
      */
-    public void drawNormalized(Vector2d textureCoord[], double xP, double yP, double widthP, double heightP) {
-        int width = (int)(OpenGL.WIDTH * widthP);
-        int height = (int)(OpenGL.HEIGHT * heightP);
-
-        int x = (int)((OpenGL.WIDTH/2) * xP);
-        int y = (int)((OpenGL.HEIGHT/2) * yP);
-        
-        //convert the position to make sure (0, 0) is the center
-        int newX = x + OpenGL.WIDTH/2 - width/2;
-        int newY = y + OpenGL.HEIGHT/2 + height/2;
+    public void draw(Vector2d textureCoord[], float x, float y, float width, float height) {
+        float newX = x - width/2;
+        float newY = y + height/2;
         
         if (textureCoord != null) {
             draw((float)textureCoord[0].x, (float)textureCoord[1].x, (float)textureCoord[2].x, (float)textureCoord[3].x, 
@@ -267,38 +227,14 @@ public class Texture {
     }
     
     /**
-     * Draw the texture centered - coordinates (0, 0) is the middle of the screen
-     * @param xP X-axis coordinates (-1 to 1)
-     * @param yP Y-axis coordinates (1 to -1)
-     * @param width 'draw width' in pixels
-     * @param height 'draw height' in pixels
-     */
-    public void drawNormalizedPosition(double xP, double yP, int width, int height) {
-        int x = (int)((OpenGL.WIDTH/2) * xP);
-        int y = (int)((OpenGL.HEIGHT/2) * yP);
-        
-        //convert the position to make sure (0, 0) is the center
-        int newX = x + OpenGL.WIDTH/2 - width/2;
-        int newY = y + OpenGL.HEIGHT/2 + height/2;
-        
-        draw(newX, newX, newX + width, newX + width,
-             newY, newY - height, newY - height, newY);
-    }
-    
-    /**
      * draw the texture using a transformation matrix 
      * @param matrix transformation matrix 
      */
     public void draw(Matrix3d matrix) {   
         glPushMatrix();
         
-        //translate so (0, 0) is center of window
-        int xCenterOffet = (int)(OpenGL.WIDTH/2);
-        int yCenterOffet = (int)(OpenGL.HEIGHT/2);
-        glTranslated(xCenterOffet, yCenterOffet, 0);
-        
         Vector3d points[] = getTransformedQuad(matrix);
-        draw(points);
+        Texture.this.draw(points);
         
         glPopMatrix();
     }
@@ -311,13 +247,8 @@ public class Texture {
     public void draw(Vector2d[] textureCoord, Matrix3d matrix) {   
         glPushMatrix();
         
-        //translate so (0, 0) is center of window
-        int xCenterOffet = (int)(OpenGL.WIDTH/2);
-        int yCenterOffet = (int)(OpenGL.HEIGHT/2);
-        glTranslated(xCenterOffet, yCenterOffet, 0);
-        
         Vector3d points[] = getTransformedQuad(matrix);
-        draw(textureCoord, points);
+        Texture.this.draw(textureCoord, points);
         
         glPopMatrix();
     }
@@ -346,12 +277,12 @@ public class Texture {
     }
 
     private void draw(Vector3d[] points) {
-        draw((float)points[0].x, (float)points[1].x, (float)points[2].x, (float)points[3].x, 
+        Texture.this.draw((float)points[0].x, (float)points[1].x, (float)points[2].x, (float)points[3].x, 
              (float)points[0].y, (float)points[1].y, (float)points[2].y, (float)points[3].y);
     }
     
     private void draw(Vector2d[] textureCoord, Vector3d[] points) {
-        draw((float)textureCoord[0].x, (float)textureCoord[1].x, (float)textureCoord[2].x, (float)textureCoord[3].x, 
+        Texture.this.draw((float)textureCoord[0].x, (float)textureCoord[1].x, (float)textureCoord[2].x, (float)textureCoord[3].x, 
              (float)textureCoord[0].y, (float)textureCoord[1].y, (float)textureCoord[2].y, (float)textureCoord[3].y,
              (float)points[0].x, (float)points[1].x, (float)points[2].x, (float)points[3].x, 
              (float)points[0].y, (float)points[1].y, (float)points[2].y, (float)points[3].y);

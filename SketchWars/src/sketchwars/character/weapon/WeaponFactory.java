@@ -4,14 +4,13 @@ import sketchwars.graphics.*;
 import sketchwars.character.projectiles.ProjectileFactory;
 
 import java.util.HashMap;
-import sketchwars.OpenGL;
 
 public class WeaponFactory
 {
-    private static final double GRENADE_SCALE = 0.000012;
-    private static final double RIFLE_SCALE = 0.00003;
-    private static final double MELEE_SCALE = 0.000015;
-    
+    public static final float GRENADE_SCALE = 0.04f;
+    public static final float MELEE_SCALE = 0.052f;
+    public static final float RIFLE_SCALE = 0.01f;
+        
     public static HashMap<WeaponTypes, AbstractWeapon> createDefaultWeaponSet(ProjectileFactory fact) 
     {
         HashMap<WeaponTypes, AbstractWeapon> ret = new HashMap<>();
@@ -25,11 +24,11 @@ public class WeaponFactory
     {
         Texture texture = Texture.loadTexture("content/char/weapons/grenade.png", false);
         
-        double ratio = texture.getTextureHeight()/texture.getTextureWidth();
-        double widthP = OpenGL.WIDTH * GRENADE_SCALE;
-        double heightP = widthP * ratio;
+        float ratio = texture.getTextureHeight()/texture.getTextureWidth();
+        float width = GRENADE_SCALE;
+        float height = width * ratio;
         
-        AbstractWeapon weapon = new GrenadeWeapon(texture, widthP, heightP, fact);
+        AbstractWeapon weapon = new GrenadeWeapon(texture, width, height, fact);
         weapon.setAmmo(AbstractWeapon.INFINITE_AMMO);
         return weapon;
     }
@@ -38,11 +37,11 @@ public class WeaponFactory
     {
         Texture texture = Texture.loadTexture("content/char/weapons/meleeBoxing.png", false);
         
-        double ratio = texture.getTextureHeight()/texture.getTextureWidth();
-        double widthP = OpenGL.WIDTH * MELEE_SCALE;
-        double heightP = widthP * ratio;
+        float ratio = texture.getTextureHeight()/texture.getTextureWidth();
+        float width = MELEE_SCALE;
+        float height = width * ratio;
         
-        AbstractWeapon weapon = new MeleeWeapon(texture, widthP, heightP, fact);
+        AbstractWeapon weapon = new MeleeWeapon(texture, width, height, fact);
         weapon.setAmmo(AbstractWeapon.INFINITE_AMMO);
         return weapon;
     }
@@ -51,11 +50,11 @@ public class WeaponFactory
     {
         Texture texture = Texture.loadTexture("content/char/weapons/rifle1.png", false);
         
-        double ratio = texture.getTextureHeight()/texture.getTextureWidth();
-        double widthP = OpenGL.WIDTH * RIFLE_SCALE;
-        double heightP = widthP * ratio;
+        float ratio = texture.getTextureHeight()/texture.getTextureWidth();
+        float width = RIFLE_SCALE;
+        float height = width * ratio;
         
-        AbstractWeapon weapon = new RangedWeapon(texture, widthP, heightP, fact);
+        AbstractWeapon weapon = new RangedWeapon(texture, width, height, fact);
         weapon.setAmmo(AbstractWeapon.INFINITE_AMMO);
         return weapon;
     }

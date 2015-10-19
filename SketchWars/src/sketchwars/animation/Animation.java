@@ -1,5 +1,6 @@
 package sketchwars.animation;
 
+import org.joml.Matrix3d;
 import org.joml.Vector2d;
 import sketchwars.exceptions.AnimationException;
 import sketchwars.game.GameObject;
@@ -18,7 +19,7 @@ public class Animation implements GraphicsObject, GameObject {
     protected int xTotalSprites;
     protected int yTotalSprites;
     protected int totalSprites;
-    private final double frameLength;       
+    private final float frameLength;       
     protected float spriteWidth;
     protected float spriteHeight;
     
@@ -27,9 +28,9 @@ public class Animation implements GraphicsObject, GameObject {
     /**
      * In milliseconds
      */
-    protected double duration;
-    protected double elapsed;
-    protected double startAfter;
+    protected float duration;
+    protected float elapsed;
+    protected float startAfter;
     protected boolean loop;
     
     /**
@@ -42,7 +43,7 @@ public class Animation implements GraphicsObject, GameObject {
      * @param loop loop the animation
      * @throws sketchwars.exceptions.AnimationException any load errors
      */
-    public Animation(Texture spriteSheet, int totalSprites, int xTotalSprites, int yTotalSprites,  double duration, boolean loop) throws AnimationException {
+    public Animation(Texture spriteSheet, int totalSprites, int xTotalSprites, int yTotalSprites,  float duration, boolean loop) throws AnimationException {
         if (duration == 0) {
             throw new AnimationException("Duration cannot be 0.");
         } else if (spriteSheet == null) {
@@ -92,7 +93,8 @@ public class Animation implements GraphicsObject, GameObject {
                 textCoords[2] = new Vector2d(xTexCoordEnd, yTexCoordEnd);
                 textCoords[3] = new Vector2d(xTexCoordEnd, yTexCoordStart);
                 
-                spriteSheet.drawNormalized(textCoords, position.x, position.y, dimension.x, dimension.y);
+                
+                spriteSheet.draw(textCoords, (float)position.x, (float)position.y, (float)dimension.x, (float)dimension.y);
             }
         }
     }
@@ -140,7 +142,7 @@ public class Animation implements GraphicsObject, GameObject {
         elapsed = 0;
     }
 
-    public void setDuration(double duration) {
+    public void setDuration(float duration) {
         this.duration = duration;
     }
     

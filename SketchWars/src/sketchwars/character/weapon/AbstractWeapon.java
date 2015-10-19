@@ -19,10 +19,10 @@ public abstract class AbstractWeapon implements GameObject, GraphicsObject {
     private double lastTimeFired;
     private double elapsed;
             
-    protected double posX;
-    protected double posY;
-    protected double width;
-    protected double height;
+    protected float posX;
+    protected float posY;
+    protected float width;
+    protected float height;
     protected Texture texture;
     
     protected int ammo;
@@ -35,7 +35,7 @@ public abstract class AbstractWeapon implements GameObject, GraphicsObject {
      * @param height percentage of screen height
      * @param projectileFactory 
      */
-    public AbstractWeapon(Texture texture, double width, double height, ProjectileFactory projectileFactory) {
+    public AbstractWeapon(Texture texture, float width, float height, ProjectileFactory projectileFactory) {
         this.texture = texture;
         this.projectileFactory = projectileFactory;
         
@@ -49,7 +49,7 @@ public abstract class AbstractWeapon implements GameObject, GraphicsObject {
     @Override
     public void render() {
         if (texture != null) {
-            texture.drawNormalized(null, posX, posY, width, height);
+            texture.draw(null, posX, posY, width, height);
         }
     }
     
@@ -80,7 +80,7 @@ public abstract class AbstractWeapon implements GameObject, GraphicsObject {
         return posY;
     }
 
-    public void setPosition(double posX, double posY) {
+    public void setPosition(float posX, float posY) {
         this.posX = posX;
         this.posY = posY;
     }
@@ -94,7 +94,7 @@ public abstract class AbstractWeapon implements GameObject, GraphicsObject {
      * @param width percentage of screen width
      * @param height percentage of screen height
      */
-    public void setDimension(double width, double height) {
+    public void setDimension(float width, float height) {
         this.width = width;
         this.height = height;
     }

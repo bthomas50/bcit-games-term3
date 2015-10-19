@@ -12,7 +12,7 @@ import sketchwars.sound.SoundPlayer;
 public class GrenadeWeapon extends AbstractWeapon {   
     private double explosionRadius;
     
-    public GrenadeWeapon(Texture texture, double width, double height, ProjectileFactory projectileFactory) {
+    public GrenadeWeapon(Texture texture, float width, float height, ProjectileFactory projectileFactory) {
         super(texture, width, height, projectileFactory);
         init();
     }

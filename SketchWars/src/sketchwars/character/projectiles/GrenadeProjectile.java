@@ -1,6 +1,5 @@
 package sketchwars.character.projectiles;
 
-import sketchwars.OpenGL;
 import sketchwars.graphics.Texture;
 /**
  *
@@ -8,7 +7,7 @@ import sketchwars.graphics.Texture;
  */
 public class GrenadeProjectile extends BasicProjectile {
     private static final int DAMAGE = 25;
-    private static final double EXPLOSION_RADIUS = 0.00012;
+    private static final float EXPLOSION_RADIUS = 0.36f;
     
     private static final double LIFESPAN = 5000;
     
@@ -21,8 +20,8 @@ public class GrenadeProjectile extends BasicProjectile {
     }
 
     
-    public double getExplosionRadius() {
-        return EXPLOSION_RADIUS * OpenGL.WIDTH;
+    public float getExplosionRadius() {
+        return EXPLOSION_RADIUS;
     }
 
 }

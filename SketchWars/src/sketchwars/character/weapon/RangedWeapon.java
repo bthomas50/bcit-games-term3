@@ -10,7 +10,7 @@ import sketchwars.sound.SoundPlayer;
  * @author Najash Najimudeen <najash.najm@gmail.com>
  */
 public class RangedWeapon extends AbstractWeapon {
-    public RangedWeapon(Texture texture, double width, double height, ProjectileFactory projectileFactory) {
+    public RangedWeapon(Texture texture, float width, float height, ProjectileFactory projectileFactory) {
         super(texture, width, height, projectileFactory);     
         init();
     }
