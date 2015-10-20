@@ -8,21 +8,31 @@ import java.util.ArrayList;
  * @author David Ly <ly_nekros@hotmail.com>
  */
 public class World {
+    private ArrayList<GameObject> toAdd;
     protected ArrayList<GameObject> allObjects;
     
     public World() {
+        toAdd = new ArrayList<>();
         allObjects = new ArrayList<>();
     }
 
     public final void addGameObject(GameObject obj) {
-        allObjects.add(obj);
+        toAdd.add(obj);
     }
 
     public void update(double deltaMillis) {
+        addPendingObjects();
         updateObjects(deltaMillis);
         removeExpiredObjects();
     }
     
+    protected final void addPendingObjects() {
+        for(GameObject obj : toAdd) {
+            allObjects.add(obj);
+        }
+        toAdd.clear();
+    }
+
     protected final void updateObjects(double deltaMillis) {
         for(GameObject obj : allObjects) {
             obj.update(deltaMillis);

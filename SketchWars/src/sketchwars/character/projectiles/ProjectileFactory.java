@@ -27,7 +27,7 @@ public class ProjectileFactory
     public AbstractProjectile createGrenade(SketchCharacter owner, long vPosition, long vVelocity, double scale)
     {
         Texture texture = Texture.loadTexture("content/char/weapons/grenade.png");
-        GrenadeProjectile proj = new GrenadeProjectile(texture);
+        GrenadeProjectile proj = new GrenadeProjectile(texture, this);
         Collider coll = new GamePixelCollider(proj, BitMaskFactory.createCircle(GrenadeProjectile.COLLIDER_RADIUS));
         proj.setCollider(coll);
 
@@ -66,19 +66,19 @@ public class ProjectileFactory
         return proj;
     }
 
-    public AnimatedProjectile createExplosion(AbstractProjectile bp, double radius) {
+    public AnimatedProjectile createExplosion(long vPosition, double radius, int damage) {
         try {
-            long explosionPoint = bp.getCollider().getPosition();
             Explosion explosion = new Explosion();
-            explosion.setPosition(CoordinateSystem.physicsToOpenGL(explosionPoint));
+            explosion.setPosition(CoordinateSystem.physicsToOpenGL(vPosition));
             
             explosion.setDimension(new Vector2d(radius, radius));
-            AnimatedProjectile proj = new AnimatedProjectile(explosion);
+            AnimatedProjectile proj = new AnimatedProjectile(explosion, damage);
             Collider coll = new GamePixelCollider(proj, BitMaskFactory.createCircle(radius));
             proj.setCollider(coll);
-            coll.setPosition(bp.getCollider().getPosition());
-            projectileLayer.addAnimation(explosion);
-            explosion.start();
+            coll.setPosition(vPosition);
+            world.addGameObject(proj);
+            physics.addCollider(coll);
+            projectileLayer.addDrawableObject(proj);
             return proj;
         } catch (AnimationException ex) {
             System.err.println(ex.getMessage());

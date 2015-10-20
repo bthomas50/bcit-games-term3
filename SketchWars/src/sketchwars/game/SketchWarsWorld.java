@@ -41,6 +41,7 @@ public class SketchWarsWorld extends World {
 
     @Override
     public void update(double deltaMillis) {
+        addPendingObjects();
         handleInput(deltaMillis);
         handleCharacterDrowning();
         checkTeamStatus();

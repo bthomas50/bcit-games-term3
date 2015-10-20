@@ -10,16 +10,17 @@ import sketchwars.physics.*;
  * @author Najash Najimudeen <najash.najm@gmail.com>
  */
 public class GrenadeProjectile extends AbstractProjectile {
-    private static final int DAMAGE = 25;
+    private static final int EXPLOSION_DAMAGE = 25;
     public static final double COLLIDER_RADIUS = 32.0;
     public static final double EXPLOSION_RADIUS = 128.0;
     
     private static final double LIFESPAN_MILLIS = 5000;
+    private ProjectileFactory factory;
     private Timer timer;
     
-    public GrenadeProjectile(Texture texture) {
-        super(texture, null, DAMAGE);
-        
+    public GrenadeProjectile(Texture texture, ProjectileFactory factory) {
+        super(texture, null, 0);
+        this.factory = factory;
         timer = new Timer(LIFESPAN_MILLIS);
         timer.start();
     }
@@ -28,6 +29,10 @@ public class GrenadeProjectile extends AbstractProjectile {
     public void update(double elapsedMillis)
     {
         timer.update(elapsedMillis);
+        if(hasExpired())
+        {
+            factory.createExplosion(coll.getPosition(), EXPLOSION_RADIUS, EXPLOSION_DAMAGE);
+        }
     }
 
     @Override 
