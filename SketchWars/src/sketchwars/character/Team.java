@@ -55,7 +55,7 @@ public class Team
             switch(command)
             {
             case FIRE:
-                active.fireCurrentWeapon(1.0);
+                active.fireCurrentWeapon(1.0f);
                 break;
             case AIM_UP:
                 active.aimUp(elapsedMillis);

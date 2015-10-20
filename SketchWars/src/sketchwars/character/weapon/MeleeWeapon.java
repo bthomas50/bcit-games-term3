@@ -10,12 +10,8 @@ import sketchwars.sound.SoundPlayer;
  * @author Najash Najimudeen <najash.najm@gmail.com>
  */
 public class MeleeWeapon extends AbstractWeapon {
-    public MeleeWeapon(Texture texture, ProjectileFactory projectileFactory) {
-        this(texture, 1, projectileFactory);
-    }
-    
-    public MeleeWeapon(Texture texture, double scale, ProjectileFactory projectileFactory) {
-        super(texture, scale, projectileFactory);
+    public MeleeWeapon(Texture texture, float width, float height, ProjectileFactory projectileFactory) {
+        super(texture, width, height, projectileFactory);
         setRateOfFire(0.5f);
     }
     
@@ -34,7 +30,7 @@ public class MeleeWeapon extends AbstractWeapon {
         {
             System.err.println(e.getMessage());
         }
-        return projectileFactory.createMelee(owner, vPosition, vVelocity, scale);
+        return projectileFactory.createMelee(owner, vPosition, vVelocity);
     }
 
     @Override

@@ -26,12 +26,18 @@ public class ProjectileFactory
 
     public AbstractProjectile createGrenade(SketchCharacter owner, long vPosition, long vVelocity, double scale)
     {
-        Texture texture = Texture.loadTexture("content/char/weapons/grenade.png");
+        Texture texture = Texture.loadTexture("content/char/weapons/grenade.png", false);
         GrenadeProjectile proj = new GrenadeProjectile(texture, this);
         Collider coll = new GamePixelCollider(proj, BitMaskFactory.createCircle(GrenadeProjectile.COLLIDER_RADIUS));
+        
+        double ratio = texture.getTextureHeight()/texture.getTextureWidth();
+        int widthP = (int)(WeaponFactory.GRENADE_SCALE * 1024.0f) ;
+        int heightP = (int)(widthP * ratio) ;
+        
+        Collider coll = new PixelCollider(BitMaskFactory.createRectangle(widthP, heightP));
         proj.setCollider(coll);
 
-        setColliderProperties(coll, vPosition, vVelocity, 1.0f, 0.9f);
+        setColliderProperties(coll, vPosition, vVelocity, 1.0f, 0.2f);
 
         addProjectile(proj);
         
@@ -40,9 +46,14 @@ public class ProjectileFactory
 
     public AbstractProjectile createMelee(SketchCharacter owner, long vPosition, long vVelocity, double scale)
     {
-        Texture texture = Texture.loadTexture("content/char/weapons/meleeBoxing.png");
+        Texture texture = Texture.loadTexture("content/char/weapons/meleeBoxing.png", false);
         MeleeProjectile proj = new MeleeProjectile(texture, owner);
         Collider coll = new GamePixelCollider(proj, BitMaskFactory.createCircle(MeleeProjectile.COLLIDER_RADIUS));
+        double ratio = texture.getTextureHeight()/texture.getTextureWidth();
+        int widthP = (int)(WeaponFactory.MELEE_SCALE * 1024.0f) ;
+        int heightP = (int)(widthP * ratio) ;
+        
+        Collider coll = new PixelCollider(BitMaskFactory.createRectangle(widthP, heightP));
         proj.setCollider(coll);
 
         setColliderProperties(coll, vPosition, vVelocity, 0.0f, 1.0f);
@@ -53,7 +64,7 @@ public class ProjectileFactory
 
     public AbstractProjectile createRanged(SketchCharacter owner, long vPosition, long vVelocity, double scale)
     {
-        Texture texture = Texture.loadTexture("content/char/weapons/bullet1.png");
+        Texture texture = Texture.loadTexture("content/char/weapons/bullet1.png", false);
         RangedProjectile proj = new RangedProjectile(texture, owner);
         BitMask bm = BitMaskFactory.createLine(vPosition, vVelocity, RangedProjectile.RANGE);
         bm.trim();

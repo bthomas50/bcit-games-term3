@@ -19,30 +19,37 @@ public abstract class AbstractWeapon implements Updateable, Drawable {
     private double lastTimeFired;
     private double elapsed;
             
-    protected double posX;
-    protected double posY;
-    protected double scale;
+    protected float posX;
+    protected float posY;
+    protected float width;
+    protected float height;
     protected Texture texture;
     
     protected int ammo;
     protected ProjectileFactory projectileFactory;
 
-    public AbstractWeapon(Texture texture, double scale, ProjectileFactory projectileFactory) {
+    /**
+     * 
+     * @param texture
+     * @param width percentage of screen width
+     * @param height percentage of screen height
+     * @param projectileFactory 
+     */
+    public AbstractWeapon(Texture texture, float width, float height, ProjectileFactory projectileFactory) {
         this.texture = texture;
-        this.scale = scale;
         this.projectileFactory = projectileFactory;
         
         rateOfFire = 1;
         ammo = INFINITE_AMMO;
         elapsed = Integer.MAX_VALUE;
+        this.width = width;
+        this.height = height;
     }
-    
-    
     
     @Override
     public void render() {
         if (texture != null) {
-            texture.drawNormalized(posX, posY, scale);
+            texture.draw(null, posX, posY, width, height);
         }
     }
     
@@ -73,19 +80,30 @@ public abstract class AbstractWeapon implements Updateable, Drawable {
         return posY;
     }
 
-    public void setPosition(double posX, double posY) {
+    public void setPosition(float posX, float posY) {
         this.posX = posX;
         this.posY = posY;
     }
 
-    public double getScale() {
-        return scale;
+    public double getWidth() {
+        return width;
     }
 
-    public void setScale(double scale) {
-        this.scale = scale;
+    /**
+     * 
+     * @param width percentage of screen width
+     * @param height percentage of screen height
+     */
+    public void setDimension(float width, float height) {
+        this.width = width;
+        this.height = height;
     }
 
+    public double getHeight() {
+        return height;
+    }
+   
+    
     public boolean tryToFire(SketchCharacter owner, float power, long direction) {
         double timeFired = elapsed;
         double timeSinceLastFired = timeFired - lastTimeFired;

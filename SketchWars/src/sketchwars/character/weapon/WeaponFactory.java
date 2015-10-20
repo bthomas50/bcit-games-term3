@@ -7,6 +7,10 @@ import java.util.HashMap;
 
 public class WeaponFactory
 {
+    public static final float GRENADE_SCALE = 0.04f;
+    public static final float MELEE_SCALE = 0.052f;
+    public static final float RIFLE_SCALE = 0.01f;
+        
     public static HashMap<WeaponTypes, AbstractWeapon> createDefaultWeaponSet(ProjectileFactory fact) 
     {
         HashMap<WeaponTypes, AbstractWeapon> ret = new HashMap<>();
@@ -18,24 +22,39 @@ public class WeaponFactory
 
     public static AbstractWeapon createGrenade(ProjectileFactory fact)
     {
-        Texture texture = Texture.loadTexture("content/char/weapons/grenade.png");
-        AbstractWeapon weapon = new GrenadeWeapon(texture, 0.1, fact);
+        Texture texture = Texture.loadTexture("content/char/weapons/grenade.png", false);
+        
+        float ratio = texture.getTextureHeight()/texture.getTextureWidth();
+        float width = GRENADE_SCALE;
+        float height = width * ratio;
+        
+        AbstractWeapon weapon = new GrenadeWeapon(texture, width, height, fact);
         weapon.setAmmo(AbstractWeapon.INFINITE_AMMO);
         return weapon;
     }
 
     public static AbstractWeapon createBoxingGlove(ProjectileFactory fact)
     {
-        Texture texture = Texture.loadTexture("content/char/weapons/meleeBoxing.png");
-        AbstractWeapon weapon = new MeleeWeapon(texture, 0.2, fact);
+        Texture texture = Texture.loadTexture("content/char/weapons/meleeBoxing.png", false);
+        
+        float ratio = texture.getTextureHeight()/texture.getTextureWidth();
+        float width = MELEE_SCALE;
+        float height = width * ratio;
+        
+        AbstractWeapon weapon = new MeleeWeapon(texture, width, height, fact);
         weapon.setAmmo(AbstractWeapon.INFINITE_AMMO);
         return weapon;
     }
 
     public static AbstractWeapon createRifle(ProjectileFactory fact)
     {
-        Texture texture = Texture.loadTexture("content/char/weapons/rifle1.png");
-        AbstractWeapon weapon = new RangedWeapon(texture, 0.5, fact);
+        Texture texture = Texture.loadTexture("content/char/weapons/rifle1.png", false);
+        
+        float ratio = texture.getTextureHeight()/texture.getTextureWidth();
+        float width = RIFLE_SCALE;
+        float height = width * ratio;
+        
+        AbstractWeapon weapon = new RangedWeapon(texture, width, height, fact);
         weapon.setAmmo(AbstractWeapon.INFINITE_AMMO);
         return weapon;
     }

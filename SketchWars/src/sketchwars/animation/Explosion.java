@@ -11,6 +11,6 @@ public class Explosion extends Animation {
     private static final int DURATION = 500;
     
     public Explosion() throws AnimationException {
-        super(Texture.loadTexture("content/animation/explosion.png"), 1, DURATION, false);
+        super(Texture.loadTexture(("content/animation/explosions/explosion.png"), false), 48, 8, 6, DURATION, false);
     }  
 }

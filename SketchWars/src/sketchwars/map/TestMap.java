@@ -1,7 +1,7 @@
 package sketchwars.map;
 
 import sketchwars.graphics.Texture;
-import sketchwars.physics.*;
+
 /**
  *
  * @author Najash Najimudeen <najash.najm@gmail.com>
@@ -19,8 +19,8 @@ public class TestMap extends AbstractMap {
 
     @Override
     public void render() {
-        background.drawNormalized(0, 0, 1, 1);
-        foreground.drawNormalized(0, 0, 1, 1);
+        background.draw(null, 0, 0, 2, 2);
+        foreground.draw(null, 0, 0, 2, 2);
     }
 
     @Override

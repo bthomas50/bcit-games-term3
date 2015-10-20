@@ -14,8 +14,8 @@ import sketchwars.input.*;
  * @author Najash Najimudeen <najash.najm@gmail.com>
  */
 public class OpenGL {
-    public static final int WIDTH = 800;
-    public static final int HEIGHT = 600;
+    private static final int WIDTH = 1920;
+    private static final int HEIGHT = 1080;
     
     // We need to strongly reference callback instances.
     private GLFWErrorCallback errorCallback;
@@ -61,7 +61,7 @@ public class OpenGL {
         glfwWindowHint(GLFW_RESIZABLE, GL11.GL_FALSE); // the window will be resizable
   
         // Create the window
-        window = glfwCreateWindow(WIDTH, HEIGHT, "Sketch Wars!", NULL, NULL);
+        window = glfwCreateWindow(WIDTH, HEIGHT, "Sketch Wars!", glfwGetPrimaryMonitor(), NULL);
         if ( window == NULL )
             throw new RuntimeException("Failed to create the GLFW window");
  
@@ -86,10 +86,11 @@ public class OpenGL {
  
         // Make the window visible
         glfwShowWindow(window);
-        
+       
         GLContext.createFromCurrent();
         
         initCamera();
+        
         
         // This line is critical for LWJGL's interoperation with GLFW's
         // OpenGL context, or any context that is managed externally.
@@ -111,7 +112,8 @@ public class OpenGL {
         GL11.glMatrixMode(GL11.GL_PROJECTION);
         GL11.glPushMatrix();
         GL11.glLoadIdentity();
-        GL11.glOrtho(0.0, WIDTH, 0.0, HEIGHT, -1.0, 1.0);
+        GL11.glViewport(-1, 1, -1, 1);
+        GL11.glOrtho(-1.0, 1.0, -1.0, 1.0, -1.0, 1.0);
         GL11.glMatrixMode(GL11.GL_MODELVIEW);
         GL11.glPushMatrix();
         GL11.glLoadIdentity();

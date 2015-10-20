@@ -10,13 +10,8 @@ import sketchwars.sound.SoundPlayer;
  * @author Najash Najimudeen <najash.najm@gmail.com>
  */
 public class RangedWeapon extends AbstractWeapon {
-
-    public RangedWeapon(Texture texture, ProjectileFactory projectileFactory) {
-        this(texture, 1, projectileFactory);
-    }
-    
-    public RangedWeapon(Texture texture, double scale, ProjectileFactory projectileFactory) {
-        super(texture, scale, projectileFactory);       
+    public RangedWeapon(Texture texture, float width, float height, ProjectileFactory projectileFactory) {
+        super(texture, width, height, projectileFactory);     
         init();
     }
 
@@ -32,7 +27,7 @@ public class RangedWeapon extends AbstractWeapon {
         {
             System.err.println(e.getMessage());
         }
-        return  projectileFactory.createRanged(owner, vPosition, vVelocity, scale);
+        return  projectileFactory.createRanged(owner, vPosition, vVelocity);
     }
 
     @Override

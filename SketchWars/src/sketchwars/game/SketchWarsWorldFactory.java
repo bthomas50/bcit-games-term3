@@ -17,11 +17,14 @@ import java.util.HashMap;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Random;
-import org.joml.Vector2d;
 import sketchwars.animation.Animation;
+import sketchwars.animation.AnimationSet;
+import sketchwars.animation.CharacterAnimations;
 
 public class SketchWarsWorldFactory
 {
+    private static final float CHARACTER_SCALE = 0.07f;
+    
     private static final int NUM_TEAMS = 2;
     private static final int CHARS_PER_TEAM = 3;
 
@@ -40,27 +43,11 @@ public class SketchWarsWorldFactory
     public void startGame()
     {
         try {
+            preloadTextures();
             createGameScene();
             createMap();
             createTeams();
             SoundPlayer.playMusic(0, true, -15);
-            
-            //test animation - will remove when addign character animations
-            Texture anim = Texture.loadTexture("content/animation/characters/1/charSheet.png");
-            Animation test = new Animation(anim, 12, 2000, true);
-            test.setDimension(new Vector2d(100, 100));
-            test.setPosition(new Vector2d(100, 5));
-            test.start();
-            gameScene.getLayer(GameLayers.CHARACTER).addAnimation(test);
-            
-            Texture anim2 = Texture.loadTexture("content/testSprite.png");
-            Animation test2 = new Animation(anim2, 9, 2000, true);
-            test2.setDimension(new Vector2d(100, 100));
-            test2.setPosition(new Vector2d(5, 5));
-            test2.start();
-            gameScene.getLayer(GameLayers.CHARACTER).addAnimation(test2);
-            
-            
         } catch (SceneManagerException ex) {
             System.err.println(ex.getMessage());
         } catch (Exception e)
@@ -88,8 +75,8 @@ public class SketchWarsWorldFactory
 
     private void createMap()
     {
-        Texture mapBGTexture = Texture.loadTexture("content/map/clouds.png");
-        Texture mapFGTexture = Texture.loadTexture("content/map/map.png");
+        Texture mapBGTexture = Texture.loadTexture("content/map/clouds.png", false);
+        Texture mapFGTexture = Texture.loadTexture("content/map/map.png", false);
         //it'll be empty if an error occurs when loading the map texture.
         BitMask mapImageMask = BitMaskFactory.createEmpty();
         try 
@@ -120,6 +107,7 @@ public class SketchWarsWorldFactory
     private void createTeams() 
     {
         Random rng = new Random();
+        
         for(int t = 0; t < NUM_TEAMS; t++)
         {
             Team team = createTeam(rng, t);
@@ -145,17 +133,33 @@ public class SketchWarsWorldFactory
             //random between -900, 900
             //double r = (rng.nextDouble() - 0.5) * 1800.0;
             double r = ((double)c * 1500.0 / CHARS_PER_TEAM) - 800.0 + teamNum * 100;
-            SketchCharacter character = createCharacter(Vectors.create(r, 800.0));
+            SketchCharacter character = createCharacter(Vectors.create(r, 800.0), rng);
             character.setWeapon(weapons.get(WeaponTypes.MELEE_WEAPON));
             characters.add(character);
         }
         return new Team(characters, weapons);
     }
 
-    private SketchCharacter createCharacter(long vPosition)
+    private SketchCharacter createCharacter(long vPosition, Random rng)
     {
-        Texture texture = Texture.loadTexture("content/char/char1.png");
-        SketchCharacter character = new SketchCharacter(texture);
+        SketchCharacter character = new SketchCharacter();
+        AnimationSet<CharacterAnimations> animationSet = createCharacterAniamtions(rng);
+        
+        character.setAnimationSet(animationSet);
+        
+        Animation idle = animationSet.getAnimation(CharacterAnimations.IDLE);
+        
+        PixelCollider charCollider;
+        
+        if (idle != null) {
+            double ratio = idle.getSpriteHeight()/idle.getSpriteWidth();
+            int widthP = (int)(CHARACTER_SCALE * 1024.0f);
+            int heightP = (int)(widthP * ratio);
+            
+            charCollider = new PixelCollider(BitMaskFactory.createRectangle(widthP, heightP));
+        } else {
+            charCollider = new PixelCollider(BitMaskFactory.createRectangle(100, 120));
+        }
         
         PixelCollider charCollider = new GamePixelCollider(character, BitMaskFactory.createCircle(64.0));
         charCollider.setPosition(vPosition);
@@ -175,4 +179,39 @@ public class SketchWarsWorldFactory
         return character;
     }
 
+    private AnimationSet<CharacterAnimations> createCharacterAniamtions(Random rng) {
+        AnimationSet<CharacterAnimations> animationSet = new AnimationSet<>();
+        
+        try {
+            Texture idleSpriteSheet = Texture.loadTexture("content/animation/characters/default/charSheet.png", true);
+            Animation idle = new Animation(idleSpriteSheet, 12, 12, 1, 5000, true);
+            idle.start(rng.nextInt(750));
+            animationSet.addAnimation(CharacterAnimations.IDLE, idle);
+            
+            Texture jumpSpriteSheet = Texture.loadTexture("content/animation/characters/default/charSheet_jump.png", true);
+            Animation jump = new Animation(jumpSpriteSheet, 36, 6, 6, 1000, true);
+            jump.start();
+            animationSet.addAnimation(CharacterAnimations.JUMP, jump);
+            
+            Texture walkLeftSpriteSheet = Texture.loadTexture("content/animation/characters/default/charSheet_walkleft.png", true);
+            Animation walkLeft = new Animation(walkLeftSpriteSheet, 12, 12, 1, 2000, true);
+            walkLeft.start();
+            animationSet.addAnimation(CharacterAnimations.WALK_LEFT, walkLeft);
+            
+            Texture walkRightSpriteSheet = Texture.loadTexture("content/animation/characters/default/charSheet_walkright.png", true);
+            Animation walkRight = new Animation(walkRightSpriteSheet, 12, 12, 1, 2000, true);
+            walkRight.start();
+            animationSet.addAnimation(CharacterAnimations.WALK_RIGHT, walkRight);
+            
+            animationSet.setCurrentAnimation(CharacterAnimations.IDLE);
+        } catch (AnimationException ex) {
+            System.out.println(ex.getMessage());
+        }
+        
+        return animationSet;
+    }
+
+    private void preloadTextures() {
+        Texture.loadTexture("content/animation/explosions/explosion.png", false);
+    }
 }
