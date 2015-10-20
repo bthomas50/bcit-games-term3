@@ -74,7 +74,6 @@ public class SketchCharacter implements GraphicsObject, GameObject {
         }
         
         if (weapon != null) {
-            weapon.setPosition(posX, posY);
             weapon.update(delta);
         }
         
@@ -104,8 +103,11 @@ public class SketchCharacter implements GraphicsObject, GameObject {
         }
         
         if (weapon != null) {
+            float fireAngle = getActualFireAngle();
+            weapon.setAngle(fireAngle);
+            weapon.setPosition(posX, posY);
             weapon.render();
-            long vReticleOffset = Vectors.createRTheta(0.1, getActualFireAngle());
+            long vReticleOffset = Vectors.createRTheta(0.1, fireAngle);
             reticleTexture.draw(null, posX + (float)Vectors.xComp(vReticleOffset), posY + (float)Vectors.yComp(vReticleOffset), 0.05f, 0.05f);
         }
         
@@ -212,14 +214,14 @@ public class SketchCharacter implements GraphicsObject, GameObject {
         angle += Math.PI * elapsedMillis / 1000.0;
         //make sure not to aim higher than straight up
         angle = (float)Math.min(angle, Math.PI / 2.0);
-        System.out.println("angle: " + angle);
+        //System.out.println("angle: " + angle);
     }
 
     public void aimDown(double elapsedMillis) {
         angle -= Math.PI * elapsedMillis / 1000.0;
         //make sure not to aim lower than straight down
         angle = (float)Math.max(angle, -Math.PI / 2.0);
-        System.out.println("angle: " + angle);
+        //System.out.println("angle: " + angle);
     }
 
     void moveLeft(double elapsedMillis) 

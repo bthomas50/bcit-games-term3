@@ -36,7 +36,7 @@ public class MeleeProjectile extends AbstractProjectile {
 
     @Override
     protected void handleCollisionWithCharacter(SketchCharacter ch) {
-        if(ch != owner) {
+        if(!ch.equals(owner)) {
             ch.takeDamage(damage);
             System.out.println(ch + " is hit for " + damage + " damage.");
         }

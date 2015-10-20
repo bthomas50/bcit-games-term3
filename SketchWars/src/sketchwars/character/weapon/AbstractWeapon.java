@@ -1,5 +1,7 @@
 package sketchwars.character.weapon;
 
+import org.joml.Matrix3d;
+import org.joml.Vector2d;
 import sketchwars.Updateable;
 import sketchwars.character.projectiles.*;
 import sketchwars.graphics.Drawable;
@@ -28,6 +30,7 @@ public abstract class AbstractWeapon implements Updateable, Drawable {
     protected int ammo;
     protected ProjectileFactory projectileFactory;
 
+    private float angle;
     /**
      * 
      * @param texture
@@ -49,7 +52,23 @@ public abstract class AbstractWeapon implements Updateable, Drawable {
     @Override
     public void render() {
         if (texture != null) {
-            texture.draw(null, posX, posY, width, height);
+            float xOffset = width/2;
+            long vReticleOffset = Vectors.createRTheta(0.03, angle);
+            
+            Matrix3d matrix = new Matrix3d();
+            
+            matrix.translation(new Vector2d(posX + (float)Vectors.xComp(vReticleOffset), 
+                    posY + (float)Vectors.yComp(vReticleOffset)));
+            
+            matrix.rotateZ(angle);
+            
+            if (angle >= Math.PI/2.0f) {
+                matrix.scale(width, -height, 1);
+            } else {
+                matrix.scale(width, height, 1);
+            }
+            
+            texture.draw(matrix);
         }
     }
     
@@ -80,6 +99,10 @@ public abstract class AbstractWeapon implements Updateable, Drawable {
         return posY;
     }
 
+    public void setAngle(float angle) {
+        this.angle = angle;
+    }
+    
     public void setPosition(float posX, float posY) {
         this.posX = posX;
         this.posY = posY;

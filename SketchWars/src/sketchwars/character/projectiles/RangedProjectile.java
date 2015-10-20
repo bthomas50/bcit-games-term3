@@ -1,6 +1,5 @@
 package sketchwars.character.projectiles;
 
-import sketchwars.graphics.Texture;
 import sketchwars.character.SketchCharacter;
 
 import sketchwars.graphics.Texture;
@@ -30,7 +29,7 @@ public class RangedProjectile extends AbstractProjectile {
     //do damage to the character we hit
     @Override
     protected void handleCollisionWithCharacter(SketchCharacter ch) {
-        if(ch != owner) {
+        if(!ch.equals(owner)) {
             ch.takeDamage(damage);
             System.out.println(ch + " is hit for " + damage + " damage.");
             expired = true;

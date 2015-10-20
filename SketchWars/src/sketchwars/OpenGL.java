@@ -1,8 +1,6 @@
 package sketchwars;
 
 import java.nio.ByteBuffer;
-import java.nio.IntBuffer;
-import org.lwjgl.BufferUtils;
 import static org.lwjgl.glfw.Callbacks.errorCallbackPrint;
 import static org.lwjgl.glfw.GLFW.*;
 import org.lwjgl.glfw.*;

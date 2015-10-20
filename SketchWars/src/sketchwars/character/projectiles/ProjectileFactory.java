@@ -26,7 +26,7 @@ public class ProjectileFactory
 
     public AbstractProjectile createGrenade(SketchCharacter owner, long vPosition, long vVelocity)
     {
-        Texture texture = Texture.loadTexture("content/char/weapons/grenade.png", false);
+        Texture texture = Texture.loadTexture("content/char/weapons/grenade.png", true);
         GrenadeProjectile proj = new GrenadeProjectile(texture, this);
         
         double ratio = texture.getTextureHeight()/texture.getTextureWidth();
@@ -45,7 +45,7 @@ public class ProjectileFactory
 
     public AbstractProjectile createMelee(SketchCharacter owner, long vPosition, long vVelocity)
     {
-        Texture texture = Texture.loadTexture("content/char/weapons/meleeBoxing.png", false);
+        Texture texture = Texture.loadTexture("content/char/weapons/meleeBoxing.png", true);
         MeleeProjectile proj = new MeleeProjectile(texture, owner);
         double ratio = texture.getTextureHeight()/texture.getTextureWidth();
         int widthP = (int)(WeaponFactory.MELEE_SCALE * 1024.0f) ;
@@ -62,7 +62,7 @@ public class ProjectileFactory
 
     public AbstractProjectile createRanged(SketchCharacter owner, long vPosition, long vVelocity)
     {
-        Texture texture = Texture.loadTexture("content/char/weapons/bullet1.png", false);
+        Texture texture = Texture.loadTexture("content/char/weapons/bullet1.png", true);
         RangedProjectile proj = new RangedProjectile(texture, owner);
         BitMask bm = BitMaskFactory.createLine(vPosition, vVelocity, RangedProjectile.RANGE);
         bm.trim();

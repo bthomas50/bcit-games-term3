@@ -22,7 +22,7 @@ public class WeaponFactory
 
     public static AbstractWeapon createGrenade(ProjectileFactory fact)
     {
-        Texture texture = Texture.loadTexture("content/char/weapons/grenade.png", false);
+        Texture texture = Texture.loadTexture("content/char/weapons/grenade.png", true);
         
         float ratio = texture.getTextureHeight()/texture.getTextureWidth();
         float width = GRENADE_SCALE;
@@ -35,7 +35,7 @@ public class WeaponFactory
 
     public static AbstractWeapon createBoxingGlove(ProjectileFactory fact)
     {
-        Texture texture = Texture.loadTexture("content/char/weapons/meleeBoxing.png", false);
+        Texture texture = Texture.loadTexture("content/char/weapons/meleeBoxing.png", true);
         
         float ratio = texture.getTextureHeight()/texture.getTextureWidth();
         float width = MELEE_SCALE;
@@ -48,7 +48,7 @@ public class WeaponFactory
 
     public static AbstractWeapon createRifle(ProjectileFactory fact)
     {
-        Texture texture = Texture.loadTexture("content/char/weapons/rifle1.png", false);
+        Texture texture = Texture.loadTexture("content/char/weapons/rifle1.png", true);
         
         float ratio = texture.getTextureHeight()/texture.getTextureWidth();
         float width = RIFLE_SCALE;
