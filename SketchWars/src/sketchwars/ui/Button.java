@@ -33,7 +33,7 @@ public class Button<T> implements Drawable
     @Override
     public void render()
     {
-        normalTexture.drawInScreenCoords(bounds.getLeft(), bounds.getTop(), bounds.getWidth(), bounds.getHeight());
+        normalTexture.draw(null, bounds.getLeft()/1024.0f, bounds.getTop()/1024.0f, bounds.getWidth()/1024.0f, bounds.getHeight()/1024.0f);
     }
 
 };

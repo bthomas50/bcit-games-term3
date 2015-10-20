@@ -13,10 +13,7 @@ import sketchwars.input.*;
  *
  * @author Najash Najimudeen <najash.najm@gmail.com>
  */
-public class OpenGL {
-    public static final int WIDTH = 800;
-    public static final int HEIGHT = 600;
-    
+public class OpenGL {    
     // We need to strongly reference callback instances.
     private GLFWErrorCallback errorCallback;
     private KeyboardHandler   keyboardHandler;
@@ -59,9 +56,12 @@ public class OpenGL {
         glfwDefaultWindowHints(); // optional, the current window hints are already the default
         glfwWindowHint(GLFW_VISIBLE, GL11.GL_FALSE); // the window will stay hidden after creation
         glfwWindowHint(GLFW_RESIZABLE, GL11.GL_FALSE); // the window will be resizable
-  
+         
+        // Get the resolution of the primary monitor
+        ByteBuffer vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+        
         // Create the window
-        window = glfwCreateWindow(WIDTH, HEIGHT, "Sketch Wars!", fullscreen ? glfwGetPrimaryMonitor() : NULL, NULL);
+        window = glfwCreateWindow(GLFWvidmode.width(vidmode), GLFWvidmode.height(vidmode), "Sketch Wars!", fullscreen ? glfwGetPrimaryMonitor() : NULL, NULL);
         if ( window == NULL )
             throw new RuntimeException("Failed to create the GLFW window");
  
@@ -70,15 +70,7 @@ public class OpenGL {
         glfwSetCursorPosCallback(window, mousePosCallback);
         glfwSetMouseButtonCallback(window, mouseButtonCallback);
  
-        // Get the resolution of the primary monitor
-        ByteBuffer vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-        // Center our window
-        glfwSetWindowPos(
-            window,
-            (GLFWvidmode.width(vidmode) - WIDTH) / 2,
-            (GLFWvidmode.height(vidmode) - HEIGHT) / 2
-        );
- 
+        
         // Make the OpenGL context current
         glfwMakeContextCurrent(window);
         // Enable v-sync
@@ -112,8 +104,8 @@ public class OpenGL {
         GL11.glMatrixMode(GL11.GL_PROJECTION);
         GL11.glPushMatrix();
         GL11.glLoadIdentity();
-        GL11.glViewport(-1, 1, -1, 1);
         GL11.glOrtho(-1.0, 1.0, -1.0, 1.0, -1.0, 1.0);
+        GL11.glViewport(-1, 1, -1, 1);
         GL11.glMatrixMode(GL11.GL_MODELVIEW);
         GL11.glPushMatrix();
         GL11.glLoadIdentity();

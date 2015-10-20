@@ -44,8 +44,12 @@ public class SketchWars {
         SoundPlayer.loadSound();
 
         Scene gameScene = new Scene();
+        Scene mainMenuScene = new Scene();
+        
         try {
             sceneManager.addScene(Scenes.GAME, gameScene);
+            sceneManager.addScene(Scenes.MAIN_MENU, mainMenuScene);
+            
             sceneManager.setCurrentScene(Scenes.GAME);
         } catch (SceneManagerException ex) {
             Logger.getLogger(SketchWars.class.getName()).log(Level.SEVERE, null, ex);

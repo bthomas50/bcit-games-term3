@@ -226,14 +226,6 @@ public class Texture {
         }
     }
 
-    //0,0 is the top left.
-    public void drawInScreenCoords(int x, int y, int width, int height)
-    {
-        int newY = OpenGL.HEIGHT - y;
-        draw(x, x, x + width, x + width,
-             newY, newY - height, newY - height, newY);
-    }
-    
     /**
      * draw the texture using a transformation matrix 
      * @param matrix transformation matrix 

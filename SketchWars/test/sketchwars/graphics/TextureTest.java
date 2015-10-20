@@ -25,7 +25,7 @@ public class TextureTest {
             
     @BeforeClass
     public static void setupTest() throws IOException {
-        opengl.init();
+        opengl.init(false);
                 
         BufferedImage image = new BufferedImage(TEST_WIDTH, TEST_HEIGHT, BufferedImage.TYPE_INT_ARGB);
         File outputfile = new File(testImage);
