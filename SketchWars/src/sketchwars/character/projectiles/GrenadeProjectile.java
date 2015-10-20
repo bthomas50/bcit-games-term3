@@ -11,8 +11,7 @@ import sketchwars.physics.*;
  */
 public class GrenadeProjectile extends AbstractProjectile {
     private static final int EXPLOSION_DAMAGE = 25;
-    public static final double COLLIDER_RADIUS = 32.0;
-    public static final double EXPLOSION_RADIUS = 128.0;
+    public static final double EXPLOSION_RADIUS = 300.0;
     
     private static final double LIFESPAN_MILLIS = 5000;
     private ProjectileFactory factory;

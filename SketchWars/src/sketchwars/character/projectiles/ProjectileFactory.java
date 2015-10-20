@@ -82,7 +82,7 @@ public class ProjectileFactory
             float posY = (float)Vectors.yComp(vPosition)/1024.0f;
             explosion.setPosition(new Vector2d(posX, posY));
             
-            explosion.setDimension(new Vector2d(radius / 1024.0f, radius / 1024.0f * 1.3));
+            explosion.setDimension(new Vector2d(radius / 1024.0f, (radius / 1024.0f) * 1.3));
             AnimatedProjectile proj = new AnimatedProjectile(explosion, damage);
             Collider coll = new GamePixelCollider(proj, BitMaskFactory.createCircle(radius));
             proj.setCollider(coll);

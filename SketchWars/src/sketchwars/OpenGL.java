@@ -1,6 +1,8 @@
 package sketchwars;
 
 import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
+import org.lwjgl.BufferUtils;
 import static org.lwjgl.glfw.Callbacks.errorCallbackPrint;
 import static org.lwjgl.glfw.GLFW.*;
 import org.lwjgl.glfw.*;
@@ -14,11 +16,15 @@ import sketchwars.input.*;
  * @author Najash Najimudeen <najash.najm@gmail.com>
  */
 public class OpenGL {    
+    private static final int WIDTH = 800;
+    private static final int HEIGHT = 600;
+    
     // We need to strongly reference callback instances.
     private GLFWErrorCallback errorCallback;
-    private KeyboardHandler   keyboardHandler;
-    private GLFWMouseButtonCallback mouseButtonCallback;
-    private GLFWCursorPosCallback mousePosCallback;
+    
+    private final KeyboardHandler   keyboardHandler;
+    private final GLFWMouseButtonCallback mouseButtonCallback;
+    private final GLFWCursorPosCallback mousePosCallback;
     // The window handle
     private long window;
     
@@ -58,19 +64,33 @@ public class OpenGL {
         glfwWindowHint(GLFW_RESIZABLE, GL11.GL_FALSE); // the window will be resizable
          
         // Get the resolution of the primary monitor
-        ByteBuffer vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-        
+        long primaryMonitor = glfwGetPrimaryMonitor();
+        ByteBuffer vidmode = glfwGetVideoMode(primaryMonitor);
+         
         // Create the window
-        window = glfwCreateWindow(GLFWvidmode.width(vidmode), GLFWvidmode.height(vidmode), "Sketch Wars!", fullscreen ? glfwGetPrimaryMonitor() : NULL, NULL);
+        if (fullscreen) {
+            window = glfwCreateWindow(GLFWvidmode.width(vidmode), GLFWvidmode.height(vidmode), "Sketch Wars!", primaryMonitor, NULL);
+        } else {
+            window = glfwCreateWindow(WIDTH, HEIGHT, "Sketch Wars!", NULL, NULL);
+        }
+        
         if ( window == NULL )
-            throw new RuntimeException("Failed to create the GLFW window");
- 
+                   throw new RuntimeException("Failed to create the GLFW window");
+        
+        if (!fullscreen) {
+            // Center our window
+            glfwSetWindowPos(
+                window,
+                (GLFWvidmode.width(vidmode) - WIDTH) / 2,
+                (GLFWvidmode.height(vidmode) - HEIGHT) / 2
+            );
+        }
+                
         // Setup a key callback. It will be called every time a key is pressed, repeated or released.
         glfwSetKeyCallback(window, keyboardHandler);
         glfwSetCursorPosCallback(window, mousePosCallback);
         glfwSetMouseButtonCallback(window, mouseButtonCallback);
- 
-        
+            
         // Make the OpenGL context current
         glfwMakeContextCurrent(window);
         // Enable v-sync

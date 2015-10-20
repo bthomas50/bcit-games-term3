@@ -1,5 +1,6 @@
 package sketchwars.character.projectiles;
 
+import java.util.ArrayList;
 import sketchwars.animation.*;
 import sketchwars.game.*;
 import sketchwars.character.SketchCharacter;
@@ -8,6 +9,7 @@ import sketchwars.physics.*;
 
 public class AnimatedProjectile implements GameObject, GraphicsObject
 {
+    private ArrayList<SketchCharacter> damagedCharacters; 
     private Animation animation;
     protected Collider coll;
     private int damage;
@@ -17,6 +19,8 @@ public class AnimatedProjectile implements GameObject, GraphicsObject
         animation = anim;
         anim.start();
         this.damage = damage;
+        
+        damagedCharacters = new ArrayList<>();
     }
 
     public void setCollider(Collider coll) {
@@ -43,8 +47,11 @@ public class AnimatedProjectile implements GameObject, GraphicsObject
     }
 
     private void handleCollisionWithCharacter(SketchCharacter other) {
-        other.takeDamage(damage);
-        System.out.println(other + " is hit for " + damage + " damage.");
+        if (!damagedCharacters.contains(other)) {
+            other.takeDamage(damage);
+            damagedCharacters.add(other);
+            System.out.println(other + " is hit for " + damage + " damage.");
+        }
     }
 
     private class ProjectileCollisionHandler implements CollisionListener {

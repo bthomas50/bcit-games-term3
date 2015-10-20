@@ -1,6 +1,5 @@
 package sketchwars.animation;
 
-import org.joml.Matrix3d;
 import org.joml.Vector2d;
 import sketchwars.exceptions.AnimationException;
 import sketchwars.game.GameObject;
