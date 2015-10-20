@@ -14,13 +14,6 @@ public class MeleeWeapon extends AbstractWeapon {
         super(texture, width, height, projectileFactory);
         setRateOfFire(0.5f);
     }
-    
-    @Override
-    public void render() {
-        if (texture != null) {
-            texture.drawNormalized(posX, posY, scale);
-        }
-    }
 
     @Override
     public AbstractProjectile createProjectile(SketchCharacter owner, long vPosition, long vVelocity) {

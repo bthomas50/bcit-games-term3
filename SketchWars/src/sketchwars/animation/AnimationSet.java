@@ -88,4 +88,9 @@ public class AnimationSet<T> implements GameObject, GraphicsObject {
     public Animation getAnimation(T index) {
         return animations.get(index);
     }
+
+    @Override
+    public boolean hasExpired() {
+        return false;
+    }
 }

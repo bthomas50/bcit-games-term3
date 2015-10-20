@@ -14,8 +14,8 @@ import sketchwars.input.*;
  * @author Najash Najimudeen <najash.najm@gmail.com>
  */
 public class OpenGL {
-    private static final int WIDTH = 1920;
-    private static final int HEIGHT = 1080;
+    public static final int WIDTH = 800;
+    public static final int HEIGHT = 600;
     
     // We need to strongly reference callback instances.
     private GLFWErrorCallback errorCallback;
@@ -46,7 +46,7 @@ public class OpenGL {
         }
     }
     
-    public void init() {
+    public void init(boolean fullscreen) {
         // Setup an error callback. The default implementation
         // will print the error message in System.err.
         glfwSetErrorCallback(errorCallback = errorCallbackPrint(System.err));
@@ -61,7 +61,7 @@ public class OpenGL {
         glfwWindowHint(GLFW_RESIZABLE, GL11.GL_FALSE); // the window will be resizable
   
         // Create the window
-        window = glfwCreateWindow(WIDTH, HEIGHT, "Sketch Wars!", glfwGetPrimaryMonitor(), NULL);
+        window = glfwCreateWindow(WIDTH, HEIGHT, "Sketch Wars!", fullscreen ? glfwGetPrimaryMonitor() : NULL, NULL);
         if ( window == NULL )
             throw new RuntimeException("Failed to create the GLFW window");
  
@@ -136,4 +136,5 @@ public class OpenGL {
         // invoked during this call.
         glfwPollEvents();
     }
+
 }

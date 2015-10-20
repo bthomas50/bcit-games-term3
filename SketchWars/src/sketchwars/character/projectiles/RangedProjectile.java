@@ -12,7 +12,7 @@ import sketchwars.physics.*;
 public class RangedProjectile extends AbstractProjectile {
     public static final double RANGE = 100;
     private static final int DAMAGE = 35;
-    private static final double DRAW_SIZE = 10.0 / 2048.0;
+    private static final float DRAW_SIZE = 10.0f / 1024.0f;
 
     public RangedProjectile(Texture texture, SketchCharacter owner) {
         super(texture, owner, DAMAGE);
@@ -23,7 +23,7 @@ public class RangedProjectile extends AbstractProjectile {
         if (texture != null) {
             BoundingBox bounds = coll.getBounds();
             long vCenter = bounds.getCenterVector();
-            texture.drawNormalized(Vectors.xComp(vCenter) / 1024.0 , Vectors.yComp(vCenter) / 1024.0, DRAW_SIZE, DRAW_SIZE);
+            texture.draw(null, (float)Vectors.xComp(vCenter) / 1024.0f , (float)Vectors.yComp(vCenter) / 1024.0f, DRAW_SIZE, DRAW_SIZE);
         }
     }
 

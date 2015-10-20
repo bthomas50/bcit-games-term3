@@ -5,8 +5,8 @@ import sketchwars.physics.*;
 import sketchwars.graphics.*;
 import sketchwars.scenes.*;
 import sketchwars.character.SketchCharacter;
+import sketchwars.character.weapon.WeaponFactory;
 import sketchwars.animation.*;
-import sketchwars.util.CoordinateSystem;
 import sketchwars.exceptions.*;
 
 import org.joml.Vector2d;
@@ -24,17 +24,16 @@ public class ProjectileFactory
         this.projectileLayer = scene.getLayer(GameLayers.PROJECTILE);
     }
 
-    public AbstractProjectile createGrenade(SketchCharacter owner, long vPosition, long vVelocity, double scale)
+    public AbstractProjectile createGrenade(SketchCharacter owner, long vPosition, long vVelocity)
     {
         Texture texture = Texture.loadTexture("content/char/weapons/grenade.png", false);
         GrenadeProjectile proj = new GrenadeProjectile(texture, this);
-        Collider coll = new GamePixelCollider(proj, BitMaskFactory.createCircle(GrenadeProjectile.COLLIDER_RADIUS));
         
         double ratio = texture.getTextureHeight()/texture.getTextureWidth();
         int widthP = (int)(WeaponFactory.GRENADE_SCALE * 1024.0f) ;
         int heightP = (int)(widthP * ratio) ;
+        Collider coll = new GamePixelCollider(proj, BitMaskFactory.createRectangle(widthP, heightP));
         
-        Collider coll = new PixelCollider(BitMaskFactory.createRectangle(widthP, heightP));
         proj.setCollider(coll);
 
         setColliderProperties(coll, vPosition, vVelocity, 1.0f, 0.2f);
@@ -44,16 +43,15 @@ public class ProjectileFactory
         return proj;
     }
 
-    public AbstractProjectile createMelee(SketchCharacter owner, long vPosition, long vVelocity, double scale)
+    public AbstractProjectile createMelee(SketchCharacter owner, long vPosition, long vVelocity)
     {
         Texture texture = Texture.loadTexture("content/char/weapons/meleeBoxing.png", false);
         MeleeProjectile proj = new MeleeProjectile(texture, owner);
-        Collider coll = new GamePixelCollider(proj, BitMaskFactory.createCircle(MeleeProjectile.COLLIDER_RADIUS));
         double ratio = texture.getTextureHeight()/texture.getTextureWidth();
         int widthP = (int)(WeaponFactory.MELEE_SCALE * 1024.0f) ;
         int heightP = (int)(widthP * ratio) ;
         
-        Collider coll = new PixelCollider(BitMaskFactory.createRectangle(widthP, heightP));
+        Collider coll = new GamePixelCollider(proj, BitMaskFactory.createRectangle(widthP, heightP));
         proj.setCollider(coll);
 
         setColliderProperties(coll, vPosition, vVelocity, 0.0f, 1.0f);
@@ -62,7 +60,7 @@ public class ProjectileFactory
         return proj;
     }
 
-    public AbstractProjectile createRanged(SketchCharacter owner, long vPosition, long vVelocity, double scale)
+    public AbstractProjectile createRanged(SketchCharacter owner, long vPosition, long vVelocity)
     {
         Texture texture = Texture.loadTexture("content/char/weapons/bullet1.png", false);
         RangedProjectile proj = new RangedProjectile(texture, owner);
@@ -80,9 +78,11 @@ public class ProjectileFactory
     public AnimatedProjectile createExplosion(long vPosition, double radius, int damage) {
         try {
             Explosion explosion = new Explosion();
-            explosion.setPosition(CoordinateSystem.physicsToOpenGL(vPosition));
+            float posX = (float)Vectors.xComp(vPosition)/1024.0f;
+            float posY = (float)Vectors.yComp(vPosition)/1024.0f;
+            explosion.setPosition(new Vector2d(posX, posY));
             
-            explosion.setDimension(new Vector2d(radius, radius));
+            explosion.setDimension(new Vector2d(radius / 1024.0f, radius / 1024.0f * 1.3));
             AnimatedProjectile proj = new AnimatedProjectile(explosion, damage);
             Collider coll = new GamePixelCollider(proj, BitMaskFactory.createCircle(radius));
             proj.setCollider(coll);

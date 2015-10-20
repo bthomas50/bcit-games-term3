@@ -13,7 +13,6 @@ public class GrenadeProjectile extends AbstractProjectile {
     private static final int EXPLOSION_DAMAGE = 25;
     public static final double COLLIDER_RADIUS = 32.0;
     public static final double EXPLOSION_RADIUS = 128.0;
-    private static final float EXPLOSION_GFX_RADIUS = 0.36f;
     
     private static final double LIFESPAN_MILLIS = 5000;
     private ProjectileFactory factory;

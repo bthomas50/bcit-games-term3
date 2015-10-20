@@ -149,19 +149,18 @@ public class SketchWarsWorldFactory
         
         Animation idle = animationSet.getAnimation(CharacterAnimations.IDLE);
         
-        PixelCollider charCollider;
+        Collider charCollider;
         
         if (idle != null) {
             double ratio = idle.getSpriteHeight()/idle.getSpriteWidth();
             int widthP = (int)(CHARACTER_SCALE * 1024.0f);
             int heightP = (int)(widthP * ratio);
             
-            charCollider = new PixelCollider(BitMaskFactory.createRectangle(widthP, heightP));
+            charCollider = new GamePixelCollider(character, BitMaskFactory.createRectangle(widthP, heightP));
         } else {
-            charCollider = new PixelCollider(BitMaskFactory.createRectangle(100, 120));
+            charCollider = new GamePixelCollider(character, BitMaskFactory.createRectangle(100, 120));
         }
         
-        PixelCollider charCollider = new GamePixelCollider(character, BitMaskFactory.createCircle(64.0));
         charCollider.setPosition(vPosition);
         charCollider.setMass(10);
         charCollider.setElasticity(0.0f);

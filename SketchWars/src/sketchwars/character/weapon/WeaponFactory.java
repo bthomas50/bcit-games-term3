@@ -9,7 +9,7 @@ public class WeaponFactory
 {
     public static final float GRENADE_SCALE = 0.04f;
     public static final float MELEE_SCALE = 0.052f;
-    public static final float RIFLE_SCALE = 0.01f;
+    public static final float RIFLE_SCALE = 0.1f;
         
     public static HashMap<WeaponTypes, AbstractWeapon> createDefaultWeaponSet(ProjectileFactory fact) 
     {

@@ -40,7 +40,7 @@ public class MultiplayerSketchWars {
         sceneManager = new SceneManager<>();
         
         openGL = new OpenGL();
-        openGL.init();
+        openGL.init(true);
 
         SoundPlayer.loadSound();
 
