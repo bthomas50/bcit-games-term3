@@ -344,7 +344,6 @@ public class Texture {
                 data = convertToByteBuffer(subImage);
             }
             
-            
             return setSubTexture(data, xOffset, yOffset, width, height);
         }
         

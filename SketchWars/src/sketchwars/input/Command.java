@@ -12,6 +12,7 @@ public enum Command
     SWITCH_1, 
     SWITCH_2,
     SWITCH_3,
+    SWITCH_4,
     LOWER_BGM,
     HIGHER_BGM
 }

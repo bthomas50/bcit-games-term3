@@ -7,5 +7,6 @@ package sketchwars.character.weapon;
 public enum WeaponTypes {
     MELEE_WEAPON,
     RANGED_WEAPON,
-    BASIC_GRENADE
+    BASIC_GRENADE,
+    ERASER
 }

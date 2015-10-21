@@ -81,6 +81,9 @@ public class Team
             case SWITCH_3:
                 active.setWeapon(weapons.get(WeaponTypes.BASIC_GRENADE));
                 break;
+            case SWITCH_4:
+                active.setWeapon(weapons.get(WeaponTypes.ERASER));
+                break;
             }
         
         }

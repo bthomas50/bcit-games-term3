@@ -1,6 +1,7 @@
 package sketchwars;
 
 import java.nio.ByteBuffer;
+import org.joml.Vector2d;
 import static org.lwjgl.glfw.Callbacks.errorCallbackPrint;
 import static org.lwjgl.glfw.GLFW.*;
 import org.lwjgl.glfw.*;
@@ -26,6 +27,8 @@ public class OpenGL {
     // The window handle
     private long window;
     
+    private static boolean fullscreen;
+    
     public OpenGL() {
         keyboardHandler = new KeyboardHandler();
         mouseButtonCallback = new MouseHandler.ButtonCallback();
@@ -48,6 +51,7 @@ public class OpenGL {
     }
     
     public void init(boolean fullscreen) {
+        OpenGL.fullscreen = fullscreen;
         // Setup an error callback. The default implementation
         // will print the error message in System.err.
         glfwSetErrorCallback(errorCallback = errorCallbackPrint(System.err));
@@ -147,4 +151,15 @@ public class OpenGL {
         glfwPollEvents();
     }
 
+    public static Vector2d getDisplaySize() {
+        if (fullscreen) {
+            // Get the resolution of the primary monitor
+            long primaryMonitor = glfwGetPrimaryMonitor();
+            ByteBuffer vidmode = glfwGetVideoMode(primaryMonitor);
+
+            return new Vector2d(GLFWvidmode.width(vidmode), GLFWvidmode.height(vidmode));
+        } else {
+            return new Vector2d(WIDTH, HEIGHT);
+        }
+    }
 }

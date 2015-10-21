@@ -55,6 +55,10 @@ public class Input
             currentInput.commands.add(Command.SWITCH_3);
         }
         
+        if(KeyboardHandler.isKeyDown(GLFW_KEY_4)){
+            currentInput.commands.add(Command.SWITCH_4);
+        }
+        
         if(KeyboardHandler.isKeyDown(GLFW_KEY_T)){
             //currentInput.commands.add(Command.HIGHER_BGM);
             SoundPlayer.pause(0);

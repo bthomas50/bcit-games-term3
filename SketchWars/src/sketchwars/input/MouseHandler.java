@@ -1,8 +1,10 @@
 package sketchwars.input;
 
+import org.joml.Vector2d;
 import org.lwjgl.glfw.GLFWMouseButtonCallback;
 import org.lwjgl.glfw.GLFWCursorPosCallback;
 import static org.lwjgl.glfw.GLFW.*;
+import sketchwars.OpenGL;
 
 public class MouseHandler 
 {
@@ -55,5 +57,15 @@ public class MouseHandler
             MouseHandler.x = (int) xPos;
             MouseHandler.y = (int) yPos;
         }
+    }
+    
+    public static float getNormalizedX() {
+        Vector2d screenSize = OpenGL.getDisplaySize();
+        return -1 + (float)((2/screenSize.x) * x);
+    }
+    
+    public static float getNormalizedY() {
+        Vector2d screenSize = OpenGL.getDisplaySize();
+        return 1 - (float)((2/screenSize.y) * y);
     }
 }
