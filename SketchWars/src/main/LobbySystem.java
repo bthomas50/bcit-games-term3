@@ -1,348 +1,332 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.SocketException;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Performs broadcast and multicast peer detection. 
+ * 
  */
-package main;
+public class LobbySystem
+{
+  private static final byte QUERY_PACKET = 80;
+  private static final byte RESPONSE_PACKET = 81;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.awt.image.BufferedImage;
-import java.util.Random;
-import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.*;
-
-public class LobbySystem {
- 
-   private JFrame mainFrame;
-   private JLabel headerLabel;
-   private JLabel statusLabel;
-   private JPanel controlPanel;
-   private JPanel myStatus;
-   
-   //pet stats
-   private boolean gameStart = false;
-   private boolean petAlive = true;
-   
-//state
-   private boolean petHasToy = false;
-   private boolean petSleeping = false;
-   
-   private int currentFood = 50;
-   private int currentEngery = 100;
-   private String petStatus = "Waiting";
-   Random rand = new Random();
-   //private enum petStatusIcon {sleeping,  hungry, waiting};
-   // playing,  eating , dead 
-    //resources folder should be inside SWING folder.
-    final JLabel petStatusIcon = new JLabel();
-    ImageIcon iconDead = createImageIcon("/resources/dead.png","Java");
-    final ImageIcon iconEat = createImageIcon("/resources/eating.png","Java");
-    final ImageIcon iconHungry = createImageIcon("/resources/hungry.png","Java");
-    final ImageIcon iconPlay = createImageIcon("/resources/playing.png","Java");
-    final ImageIcon iconSleep = createImageIcon("/resources/sleep.png","Java");
-    final ImageIcon iconWait = createImageIcon("/resources/waiting.png","Java");
-
-   public LobbySystem(){
-      prepareGUI();
-   }
-
-   public static void main(String[] args){
-      LobbySystem  swingControlDemo = new LobbySystem();      
-      swingControlDemo.showButtonDemo();
-   }
-   
-   private void prepareGUI(){
-      mainFrame = new JFrame("Java Swing Examples");
-      mainFrame.setSize(400,400);
-      mainFrame.setLayout(new GridLayout(3, 1));
-      mainFrame.addWindowListener(new WindowAdapter() {
-         public void windowClosing(WindowEvent windowEvent){
-            System.exit(0);
-         }        
-      });
-	  
-      headerLabel = new JLabel("", JLabel.CENTER);        
-      statusLabel = new JLabel("",JLabel.CENTER);    
-
-      statusLabel.setSize(350,100);
-
-      controlPanel = new JPanel();
-      myStatus = new JPanel();
-      controlPanel.setLayout(new FlowLayout());
-
-      mainFrame.add(headerLabel);
-      mainFrame.add(controlPanel);
-      mainFrame.add(statusLabel);
-      mainFrame.setVisible(true);  
-   }
-    
-   private static ImageIcon createImageIcon(String path, 
-      String description) {
-      java.net.URL imgURL = LobbySystem.class.getResource(path);
-      if (imgURL != null) {
-         return new ImageIcon(imgURL, description);
-      } else {            
-         System.err.println("Couldn't find file: " + path);
-         return null;
-      }
-   }
-   /*
-    LOGIC !!!
-
+  /**
+   * The group identifier. Determines the set of peers that are able
+   * to discover each other
    */
-   public void update() throws InterruptedException
-   {
-       Thread.sleep(3000); 
-       int  n = rand.nextInt(3) + 1;
-       if(isGameStart() && isPetAlive()== true) // pet alive and game is start
-       {
-            //Check Engery
-            checkEnery(n);
-            //Check Health
-            checkHealth(n);
-            
-            //Update Face
-            updateFace();
-            // Update screen values
-            statusLabel.setText("Energy :"+ getCurrentEngery() +"|| Food: "+ getCurrentFood()+ "|| Has Toy: "+isPetHasToy());
-            update();
-       }
-       System.out.println("Game finished: " + getPetStatus()+n);
-   }
-   
-   private void checkHealth(int n)
-   {
-       if( isPetAlive() && n > 1) // pet alive and game is start
-       {
-           //
-           if(getCurrentFood() > 0)
-           {
-               setPetStatus("Eating");
-               setCurrentFood(getCurrentFood()-5);
-           }
-           else
-           {
-               setPetStatus("Dead");
-               // close the game pet died
-               setGameStart(false);
-           }
-       }
-       else
-       {
-            setPetStatus("Sleeping");
-            setCurrentEngery(100);
-       }
-       headerLabel.setText("Pet Status: "+ getPetStatus()); 
-       updateFace();
-   }
-   /*
-    Non-deterministic, sometimes it will play with toy not always
+  public final int group;
+
+  /**
+   * The port number that we operate on
    */
-   private void checkEnery(int n)
-   {
-       // random chance pet plays with toy
-   
-        // pet plays with toy sometimes
-       if( isPetHasToy() == true && n > 1 && getPetStatus() !="Sleeping")
-       {
-           if(getCurrentEngery() > 0)
-           {
-               // playing
-               setCurrentEngery(getCurrentEngery()-10);
-               setPetStatus("Playing");
-           }
-           else
-           {
-               // pet dies
-               setPetStatus("Dead");
-               // close the game pet died
-               setGameStart(false);
-           }
-       } else {
-           setPetStatus("Waiting");
-       }
-       headerLabel.setText("Pet Status: "+ getPetStatus()); 
-       updateFace();
-   }
-   /*
-    Update faces
+  public final int port;
+
+  /**
+   * Data returned with discovery
    */
-   public void updateFace()
-   {
-       if(getPetStatus() == "Sleeping"){petStatusIcon.setIcon(iconSleep);}
-       else if(getPetStatus() == "Eating"){ petStatusIcon.setIcon(iconEat);}
-       else if(getPetStatus() == "Hungry"){ petStatusIcon.setIcon(iconHungry);}
-       else if(getPetStatus() == "Waiting"){ petStatusIcon.setIcon(iconWait);}
-       else if(getPetStatus() == "Dead"){ petStatusIcon.setIcon(iconDead);}
-       else // playing
-       {
-           petStatusIcon.setIcon(iconPlay);
-       }
-   }
-   
+  public int peerData;
 
-   private void showButtonDemo(){
+  private final DatagramSocket bcastSocket;
 
-      headerLabel.setText("Pet Status: "+ getPetStatus()); 
+  private final InetSocketAddress broadcastAddress;
 
+  private boolean shouldStop = false;
 
-      
-      
-      JButton okButton = new JButton("Start");        
-      JButton javaButton = new JButton("Feed");
-      JButton cancelButton = new JButton("Give toy");
-      
-      
-      cancelButton.setHorizontalTextPosition(SwingConstants.LEFT);   
+  private List<Peer> responseList = null;
 
-      //start
-      okButton.addActionListener(new ActionListener() 
+  /**
+   * Used to detect and ignore this peers response to it's own query.
+   * When we send a response packet, we set this to the destination.
+   * When we receive a response, if this matches the source, we know
+   * that we're talking to ourselves and we can ignore the response.
+   */
+  private InetAddress lastResponseDestination = null;
+
+  /**
+   * Redefine this to be notified of exceptions on the listen thread.
+   * Default behaviour is to print to stdout. Can be left as null for
+   * no-op
+   */
+  public ExceptionHandler rxExceptionHandler = new ExceptionHandler();
+
+  private Thread bcastListen = new Thread( LobbySystem.class.getSimpleName()
+      + " broadcast listen thread" ) {
+    @Override
+    public void run()
+    {
+      try
       {
-         public void actionPerformed(ActionEvent e) 
-         {
-           if(!isGameStart())
-           {
-             petStatusIcon.setIcon(iconEat);
-             setGameStart(true);
-             setPetAlive(true);
-             //
-                Thread thread = new Thread("update Thread created") {
-                     public void run(){
-                         try {
-                             update();
-                         } catch (InterruptedException ex) {
-                             Logger.getLogger(LobbySystem.class.getName()).log(Level.SEVERE, null, ex);
-                         }
-                     }
-                  };
-                thread.start();
-                System.out.println(thread.getName());
-            //
-           }
-         }          
-      });
+        byte[] buffy = new byte[ 5 ];
+        DatagramPacket rx = new DatagramPacket( buffy, buffy.length );
 
-      //feed
-      javaButton.addActionListener(new ActionListener() {
-         public void actionPerformed(ActionEvent e) {
-            petStatusIcon.setIcon(iconEat);
-            setCurrentFood(getCurrentFood()+20);
-            System.out.println("pet Eating..+20 food");
-         }
-      });
+        while( !shouldStop )
+        {
+          try
+          {
+            buffy[ 0 ] = 0;
 
-      //give toy
-      cancelButton.addActionListener(new ActionListener() {
-         public void actionPerformed(ActionEvent e) {
-             if(isPetHasToy() == true)
-             {
-                 setPetHasToy(false);
-                 System.out.println("pet lost the toy");
-             }
-             else
-             {
-                 setPetHasToy(true);
-                 System.out.println("pet got a toy");
-             }
-           
-           
-         }
-      });
+            bcastSocket.receive( rx );
 
-      controlPanel.add(okButton);
-      controlPanel.add(javaButton);
-      controlPanel.add(cancelButton);
-      //status
-      controlPanel.add(petStatusIcon);
+            int recData = decode( buffy, 1 );
 
-      mainFrame.setVisible(true);  
-   }
+            if( buffy[ 0 ] == QUERY_PACKET && recData == group )
+            {
+              byte[] data = new byte[ 5 ];
+              data[ 0 ] = RESPONSE_PACKET;
+              encode( peerData, data, 1 );
 
-    /**
-     * @return the gameStart
-     */
-    public boolean isGameStart() {
-        return gameStart;
+              DatagramPacket tx =
+                  new DatagramPacket( data, data.length, rx.getAddress(), port );
+
+              lastResponseDestination = rx.getAddress();
+
+              bcastSocket.send( tx );
+            }
+            else if( buffy[ 0 ] == RESPONSE_PACKET )
+            {
+              if( responseList != null && !rx.getAddress().equals( lastResponseDestination ) )
+              {
+                synchronized( responseList )
+                {
+                  responseList.add( new Peer( rx.getAddress(), recData ) );
+                }
+              }
+            }
+          }
+          catch( SocketException se )
+          {
+            // someone may have called disconnect()
+          }
+        }
+
+        bcastSocket.disconnect();
+        bcastSocket.close();
+      }
+      catch( Exception e )
+      {
+        if( rxExceptionHandler != null )
+        {
+          rxExceptionHandler.handle( e );
+        }
+      }
+    };
+  };
+
+  /**
+   * Constructs a UDP broadcast-based peer
+   * 
+   * @param group
+   *           The identifier shared by the peers that will be
+   *           discovered.
+   * @param port
+   *           a valid port, i.e.: in the range 1025 to 65535
+   *           inclusive
+   * @throws IOException
+   */
+  public LobbySystem( int group, int port ) throws IOException
+  {
+    this.group = group;
+    this.port = port;
+
+    bcastSocket = new DatagramSocket( port );
+    broadcastAddress = new InetSocketAddress( "255.255.255.255", port );
+
+    bcastListen.setDaemon( true );
+    bcastListen.start();
+  }
+
+  /**
+   * Signals this {@link LobbySystem} to shut down. This call will
+   * block until everything's timed out and closed etc.
+   */
+  public void disconnect()
+  {
+    shouldStop = true;
+
+    bcastSocket.close();
+    bcastSocket.disconnect();
+
+    try
+    {
+      bcastListen.join();
+    }
+    catch( InterruptedException e )
+    {
+      e.printStackTrace();
+    }
+  }
+
+  /**
+   * Queries the network and finds the addresses of other peers in
+   * the same group
+   * 
+   * @param timeout
+   *           How long to wait for responses, in milliseconds. Call
+   *           will block for this long, although you can
+   *           {@link Thread#interrupt()} to cut the wait short
+   * @param peerType
+   *           The type flag of the peers to look for
+   * @return The addresses of other peers in the group
+   * @throws IOException
+   *            If something goes wrong when sending the query packet
+   */
+  public Peer[] getPeers( int timeout, byte peerType ) throws IOException
+  {
+    responseList = new ArrayList<Peer>();
+
+    // send query byte, appended with the group id
+    byte[] data = new byte[ 5 ];
+    data[ 0 ] = QUERY_PACKET;
+    encode( group, data, 1 );
+
+    DatagramPacket tx = new DatagramPacket( data, data.length, broadcastAddress );
+
+    bcastSocket.send( tx );
+
+    // wait for the listen thread to do its thing
+    try
+    {
+      Thread.sleep( timeout );
+    }
+    catch( InterruptedException e )
+    {
     }
 
-    /**
-     * @param gameStart the gameStart to set
-     */
-    public void setGameStart(boolean gameStart) {
-        this.gameStart = gameStart;
+    Peer[] peers;
+    synchronized( responseList )
+    {
+      peers = responseList.toArray( new Peer[ responseList.size() ] );
     }
 
+    responseList = null;
+
+    return peers;
+  }
+
+  /**
+   * Record of a peer
+   * 
+   * @author ryanm
+   */
+  public class Peer
+  {
     /**
-     * @return the petAlive
+     * The ip of the peer
      */
-    public boolean isPetAlive() {
-        return petAlive;
-    }
+    public final InetAddress ip;
 
     /**
-     * @param petAlive the petAlive to set
+     * The data of the peer
      */
-    public void setPetAlive(boolean petAlive) {
-        this.petAlive = petAlive;
+    public final int data;
+
+    private Peer( InetAddress ip, int data )
+    {
+      this.ip = ip;
+      this.data = data;
     }
 
+    @Override
+    public String toString()
+    {
+      return ip.getHostAddress() + " " + data;
+    }
+  }
+
+  /**
+   * Handles an exception.
+   * 
+   * @author ryanm
+   */
+  public class ExceptionHandler
+  {
     /**
-     * @return the petHasToy
+     * Called whenever an exception is thrown from the listen
+     * thread. The listen thread should now be dead
+     * 
+     * @param e
      */
-    public boolean isPetHasToy() {
-        return petHasToy;
+    public void handle( Exception e )
+    {
+      e.printStackTrace();
     }
+  }
 
-    /**
-     * @param petHasToy the petHasToy to set
-     */
-    public void setPetHasToy(boolean petHasToy) {
-        this.petHasToy = petHasToy;
+  /**
+   * @param args
+   */
+  public static void main( String[] args )
+  {
+    try
+    {
+      int group = 6966;
+
+      LobbySystem mp = new LobbySystem( group, 6969 );
+
+      boolean stop = false;
+
+      BufferedReader br = new BufferedReader( new InputStreamReader( System.in ) );
+
+      while( !stop )
+      {
+        System.out.println( "enter \"q\" to quit, or anything else to query peers" );
+        String s = br.readLine();
+
+        if( s.equals( "q" ) )
+        {
+          System.out.print( "Closing down..." );
+          mp.disconnect();
+          System.out.println( " done" );
+          stop = true;
+        }
+        else
+        {
+          System.out.println( "Querying" );
+
+          Peer[] peers = mp.getPeers( 100, ( byte ) 0 );
+
+          System.out.println( peers.length + " peers found" );
+          for( Peer p : peers )
+          {
+            System.out.println( "\t" + p );
+          }
+        }
+      }
     }
-
-    /**
-     * @return the currentFood
-     */
-    public int getCurrentFood() {
-        return currentFood;
+    catch( Exception e )
+    {
+      e.printStackTrace();
     }
+  }
 
-    /**
-     * @param currentFood the currentFood to set
-     */
-    public void setCurrentFood(int currentFood) {
-        this.currentFood = currentFood;
-    }
+  private static int decode( byte[] b, int index )
+  {
+    int i = 0;
 
+    i |= b[ index ] << 24;
+    i |= b[ index + 1 ] << 16;
+    i |= b[ index + 2 ] << 8;
+    i |= b[ index + 3 ];
 
-    /**
-     * @return the petStatusIcon
-     */
-    public String getPetStatus() {
-        return petStatus;
-    }
+    return i;
+  }
 
-    /**
-     * @param petStatus the petStatusIcon to set
-     */
-    public void setPetStatus(String petStatus) {
-        this.petStatus = petStatus;
-    }
-
-    /**
-     * @return the currentEngery
-     */
-    public int getCurrentEngery() {
-        return currentEngery;
-    }
-
-    /**
-     * @param currentEngery the currentEngery to set
-     */
-    public void setCurrentEngery(int currentEngery) {
-        this.currentEngery = currentEngery;
-    }
+  private static void encode( int i, byte[] b, int index )
+  {
+    b[ index ] = ( byte ) ( i >> 24 & 0xff );
+    b[ index + 1 ] = ( byte ) ( i >> 16 & 0xff );
+    b[ index + 2 ] = ( byte ) ( i >> 8 & 0xff );
+    b[ index + 3 ] = ( byte ) ( i & 0xff );
+  }
 }
+
+   
