@@ -12,6 +12,7 @@ import static sketchwars.util.Config.*;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import sketchwars.ui.menu.MainMenu;
 
 /**
  * The SketchWars main class
@@ -44,13 +45,13 @@ public class SketchWars {
         SoundPlayer.loadSound();
 
         Scene gameScene = new Scene();
-        Scene mainMenuScene = new Scene();
+        MainMenu mainMenuScene = new MainMenu(sceneManager);
         
         try {
             sceneManager.addScene(Scenes.GAME, gameScene);
             sceneManager.addScene(Scenes.MAIN_MENU, mainMenuScene);
             
-            sceneManager.setCurrentScene(Scenes.GAME);
+            sceneManager.setCurrentScene(Scenes.MAIN_MENU);
         } catch (SceneManagerException ex) {
             Logger.getLogger(SketchWars.class.getName()).log(Level.SEVERE, null, ex);
         }

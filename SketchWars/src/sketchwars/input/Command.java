@@ -14,5 +14,9 @@ public enum Command
     SWITCH_3,
     SWITCH_4,
     LOWER_BGM,
-    HIGHER_BGM
+    HIGHER_BGM,
+    MAIN_MENU_PLAY,
+    MAIN_MENU_OPTIONS,
+    MAIN_MENU_CREATE,
+    MAIN_MENU_EXIT
 }
