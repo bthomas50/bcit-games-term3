@@ -1,5 +1,6 @@
 package sketchwars.graphics;
 
+import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import org.lwjgl.BufferUtils;
 import java.io.File;
@@ -15,6 +16,7 @@ import org.joml.Vector3d;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL30;
+import org.lwjgl.opengl.GL45;
 import sketchwars.OpenGL;
 
 /**
@@ -316,6 +318,63 @@ public class Texture {
         glEnd();
     }
     
+    /**
+     * replace a sub-texture area with the given image
+     * @param subImage given image
+     * @param xOffset sub texture start point 
+     * @param yOffset sub texture start point 
+     * @param width sub texture width
+     * @param height sub texture height
+     * @return true if successful
+     */
+    public boolean setSubTexture(BufferedImage subImage, int xOffset, int yOffset, int width, int height) {
+        if (xOffset < 0 || yOffset < 0) {
+            System.err.println("Texture::setSubTexture: Given sub texture offset cannot be less than 0.");
+        } else if (xOffset >= width || yOffset >= height) {
+            System.err.println("Texture::setSubTexture: Given sub texture offset cannot be greater than texture size.");
+        } else if (subImage == null) {
+            System.err.println("Texture::setSubTexture: Given image cannot be null.");
+        } else {
+            ByteBuffer data;
+            
+            if (subImage.getWidth() != width || subImage.getHeight() != height) {
+                BufferedImage resizedImage = resizeImage(subImage, width, height);
+                data = convertToByteBuffer(resizedImage);
+            } else {
+                data = convertToByteBuffer(subImage);
+            }
+            
+            
+            return setSubTexture(data, xOffset, yOffset, width, height);
+        }
+        
+        return false;
+    }
+    
+    /**
+     * replace a sub-texture area with the given image
+     * @param subImage given image in ByteBuffer
+     * @param xOffset sub texture start point 
+     * @param yOffset sub texture start point 
+     * @param width sub texture width
+     * @param height sub texture height
+     * @return true if successful
+     */
+    public boolean setSubTexture(ByteBuffer subImage, int xOffset, int yOffset, int width, int height) {
+        if (xOffset < 0 || yOffset < 0) {
+            System.err.println("Texture::setSubTexture: Given sub texture offset cannot be less than 0.");
+        } else if (xOffset >= width || yOffset >= height) {
+            System.err.println("Texture::setSubTexture: Given sub texture offset cannot be greater than texture size.");
+        } else if (subImage == null) {
+            System.err.println("Texture::setSubTexture: Given ByteBuffer cannot be null.");
+        } else {
+            GL45.glTextureSubImage2D(textureID, 0, xOffset, yOffset, width, height, GL_RGBA, GL_UNSIGNED_BYTE, subImage);
+            return true;
+        }
+        
+        return false;
+    }
+    
     public void dispose() {
         if (textureID != -1 && getTotalReferences() > 0) {
             decrementReference(textureID);
@@ -338,7 +397,6 @@ public class Texture {
         textureList.clear();
     }
     
-    
     @Override
     protected void finalize() throws Throwable {
         super.finalize();
@@ -346,6 +404,12 @@ public class Texture {
         if (textureID != -1) {
             dispose();
         }
-    }
+    }    
 
+    private BufferedImage resizeImage(BufferedImage image, int width, int height) {
+        BufferedImage newImage = new BufferedImage(width, height, image.getType());
+        Graphics g = newImage.getGraphics();
+        g.drawImage(image, 0, 0, width, height, null);
+        return newImage;
+    }
 }

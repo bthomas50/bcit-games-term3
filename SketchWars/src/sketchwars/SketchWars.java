@@ -39,7 +39,7 @@ public class SketchWars {
         sceneManager = new SceneManager<>();
         
         openGL = new OpenGL();
-        openGL.init(true);
+        openGL.init(false);
 
         SoundPlayer.loadSound();
 
