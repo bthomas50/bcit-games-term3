@@ -12,6 +12,7 @@ import org.joml.Vector2d;
 import sketchwars.Scenes;
 import sketchwars.exceptions.SceneException;
 import sketchwars.exceptions.SceneManagerException;
+import sketchwars.graphics.GraphicElement;
 import sketchwars.graphics.GraphicsObject;
 import sketchwars.graphics.Texture;
 import sketchwars.input.Command;
@@ -44,6 +45,7 @@ public class MainMenu extends Scene {
 
         createLayers();
         createButtons();
+        createBackground();
     }
     /*
     background
@@ -67,12 +69,12 @@ public class MainMenu extends Scene {
 
     private void createButtons() {
         //bakc to game sceneManager.setCurrentScene(Scenes.GAME);
-        playBtn = Texture.loadTexture("content/menu/play.png", false);
-        createBtn = Texture.loadTexture("content/menu/create.png", false);
-        optionsBtn = Texture.loadTexture("content/menu/options.png", false);
-        exitBtn = Texture.loadTexture("content/menu/exit.png", false);
+        playBtn = Texture.loadTexture("content/menu/play.png", true);
+        createBtn = Texture.loadTexture("content/menu/create.png", true);
+        optionsBtn = Texture.loadTexture("content/menu/options.png", true);
+        exitBtn = Texture.loadTexture("content/menu/exit.png", true);
         
-        Vector2d size = new Vector2d(0.5f,0.15f);
+        Vector2d size = new Vector2d(0.5f,0.20f);
 
         try {
             Layer btnLayer = getLayer(MenuLayers.BUTTONS);
@@ -141,7 +143,18 @@ public class MainMenu extends Scene {
 
     
     private void createBackground() {
-    backgroundImage.loadTexture("content/menu/play.png", false);
+        
+        backgroundImage = Texture.loadTexture("content/menu/sketchWars_bg.jpg", false);
+        Vector2d size = new Vector2d(2,2);
+        try {
+            Layer bgLayer = getLayer(MenuLayers.BACKGROUND);
+            GraphicElement bg = new GraphicElement(new Vector2d(0,0),size,backgroundImage);
+            bgLayer.addDrawableObject(bg);
+            
+            
+        } catch (SceneException ex) {
+            Logger.getLogger(MainMenu.class.getName()).log(Level.SEVERE, null, ex);
+        }
         
     }
     

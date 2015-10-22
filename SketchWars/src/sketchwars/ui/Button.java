@@ -7,6 +7,7 @@ import sketchwars.graphics.*;
 //a generic button that generates a command of type T
 public class Button<T> implements GraphicsObject
 {
+    
     private Vector2d position;
     private Vector2d size;
     private Texture normalTexture;
