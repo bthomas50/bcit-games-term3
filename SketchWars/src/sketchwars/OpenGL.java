@@ -25,7 +25,7 @@ public class OpenGL {
     private final GLFWMouseButtonCallback mouseButtonCallback;
     private final GLFWCursorPosCallback mousePosCallback;
     // The window handle
-    private long window;
+    private static long window;
     
     private static boolean fullscreen;
     
@@ -105,7 +105,6 @@ public class OpenGL {
         
         initCamera();
         
-        
         // This line is critical for LWJGL's interoperation with GLFW's
         // OpenGL context, or any context that is managed externally.
         // LWJGL detects the context that is current in the current thread,
@@ -160,6 +159,18 @@ public class OpenGL {
             return new Vector2d(GLFWvidmode.width(vidmode), GLFWvidmode.height(vidmode));
         } else {
             return new Vector2d(WIDTH, HEIGHT);
+        }
+    }
+    
+    public static void hideMousePointer() {
+        if (window != NULL) {
+            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN); 
+        }
+    }
+    
+    public static void showMousePointer() {
+        if (window != NULL) {
+            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL); 
         }
     }
 }

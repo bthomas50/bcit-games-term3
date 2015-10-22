@@ -17,7 +17,6 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.opengl.GL45;
-import sketchwars.OpenGL;
 
 /**
  * Texture class is capable of loading and rendering images
@@ -330,7 +329,7 @@ public class Texture {
     public boolean setSubTexture(BufferedImage subImage, int xOffset, int yOffset, int width, int height) {
         if (xOffset < 0 || yOffset < 0) {
             System.err.println("Texture::setSubTexture: Given sub texture offset cannot be less than 0.");
-        } else if (xOffset >= width || yOffset >= height) {
+        } else if ((xOffset + width) >= tWidth || (yOffset + height) >= tHeight) {
             System.err.println("Texture::setSubTexture: Given sub texture offset cannot be greater than texture size.");
         } else if (subImage == null) {
             System.err.println("Texture::setSubTexture: Given image cannot be null.");
@@ -362,7 +361,7 @@ public class Texture {
     public boolean setSubTexture(ByteBuffer subImage, int xOffset, int yOffset, int width, int height) {
         if (xOffset < 0 || yOffset < 0) {
             System.err.println("Texture::setSubTexture: Given sub texture offset cannot be less than 0.");
-        } else if (xOffset >= width || yOffset >= height) {
+        } else if ((xOffset + width) >= tWidth || (yOffset + height) >= tHeight) {
             System.err.println("Texture::setSubTexture: Given sub texture offset cannot be greater than texture size.");
         } else if (subImage == null) {
             System.err.println("Texture::setSubTexture: Given ByteBuffer cannot be null.");
@@ -405,7 +404,7 @@ public class Texture {
         }
     }    
 
-    private BufferedImage resizeImage(BufferedImage image, int width, int height) {
+    public static BufferedImage resizeImage(BufferedImage image, int width, int height) {
         BufferedImage newImage = new BufferedImage(width, height, image.getType());
         Graphics g = newImage.getGraphics();
         g.drawImage(image, 0, 0, width, height, null);

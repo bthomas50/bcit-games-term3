@@ -83,25 +83,24 @@ public class SketchWarsWorldFactory
         {
             BufferedImage mapImage = Texture.loadImageFile("content/map/map.png");
             mapImageMask = BitMaskFactory.createFromImageAlpha(mapImage, physics.getBounds());
+            
+            PixelCollider mapCollider = new PixelCollider(mapImageMask);
+            mapCollider.setElasticity(1.0f);
+            TestMap map = new TestMap(mapCollider, mapBGTexture, mapFGTexture, mapImage);
+
+            try {
+                gameScene.getLayer(GameLayers.MAP).addDrawableObject(map);
+            } catch (SceneException ex) {
+                System.err.println(ex.getMessage());
+            }
+
+            physics.addCollider(mapCollider);
+            world.setMap(map);
         }
         catch(IOException e) 
         {
             System.err.println(e);
         }
-
-        TestMap map = new TestMap(mapFGTexture, mapBGTexture);
-
-        PixelCollider mapCollider = new PixelCollider(mapImageMask);
-        mapCollider.setElasticity(1.0f);
-
-        try {
-            gameScene.getLayer(GameLayers.MAP).addDrawableObject(map);
-        } catch (SceneException ex) {
-            System.err.println(ex.getMessage());
-        }
-        
-        physics.addCollider(mapCollider);
-        world.setMap(map);
     }
 
     private void createTeams() 
@@ -122,6 +121,9 @@ public class SketchWarsWorldFactory
         try
         {
             weapons = WeaponFactory.createDefaultWeaponSet(new ProjectileFactory(world, physics, gameScene));
+            
+            EraserWeapon eraser = (EraserWeapon)weapons.get(WeaponTypes.ERASER);
+            eraser.setMap(world.getMap());
         }
         catch(SceneException ex)
         {

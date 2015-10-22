@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.joml.Vector2d;
+import sketchwars.OpenGL;
 import sketchwars.Scenes;
 import sketchwars.exceptions.SceneException;
 import sketchwars.exceptions.SceneManagerException;
@@ -118,6 +119,7 @@ public class MainMenu extends Scene {
                   {
                       try {
                           sceneManager.setCurrentScene(Scenes.GAME);
+                          OpenGL.hideMousePointer();
                       } catch (SceneManagerException ex) {
                           Logger.getLogger(MainMenu.class.getName()).log(Level.SEVERE, null, ex);
                       }

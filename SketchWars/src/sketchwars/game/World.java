@@ -1,6 +1,7 @@
 package sketchwars.game;
 
 import java.util.ArrayList;
+import sketchwars.map.TestMap;
 
 /**
  * @author Najash Najimudeen <najash.najm@gmail.com>

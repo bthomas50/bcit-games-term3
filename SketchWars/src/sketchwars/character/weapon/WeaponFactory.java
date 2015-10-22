@@ -1,9 +1,14 @@
 package sketchwars.character.weapon;
 
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import sketchwars.graphics.*;
 import sketchwars.character.projectiles.ProjectileFactory;
 
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import sketchwars.game.World;
 
 public class WeaponFactory
 {
@@ -63,13 +68,21 @@ public class WeaponFactory
 
     private static AbstractWeapon createEraser(ProjectileFactory fact) {
         Texture texture = Texture.loadTexture("content/char/weapons/pencileraser.png", true);
+        Texture eraserImgTex = Texture.loadTexture("content/char/weapons/pencileraserArea.png", true);
+        BufferedImage eraserImage = null;
+        try {
+            eraserImage = Texture.loadImageFile("content/char/weapons/pencileraserArea.png");
+        } catch (IOException ex) {
+            System.err.println(ex.getMessage());
+        }
         
         float ratio = texture.getTextureHeight()/texture.getTextureWidth();
         float width = RIFLE_SCALE;
         float height = width * ratio;
         
-        EraserWeapon eraser = new EraserWeapon(texture, width, height, fact);
+        EraserWeapon eraser = new EraserWeapon(texture, eraserImgTex, eraserImage, width, height, fact);
         eraser.setAmmo(AbstractWeapon.INFINITE_AMMO);
+        
         return eraser;
     }
 

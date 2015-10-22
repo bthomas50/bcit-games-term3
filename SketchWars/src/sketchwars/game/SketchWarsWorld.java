@@ -102,4 +102,8 @@ public class SketchWarsWorld extends World {
     public ArrayList<SketchCharacter> getCharacters() {
         return characters;
     }
+
+    public AbstractMap getMap() {
+        return map;
+    }
 }
