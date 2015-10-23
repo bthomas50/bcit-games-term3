@@ -6,7 +6,6 @@
 package sketchwars.character.weapon;
 
 import java.awt.Color;
-import java.awt.Transparency;
 import java.awt.image.BufferedImage;
 import sketchwars.character.SketchCharacter;
 import sketchwars.character.projectiles.AbstractProjectile;
@@ -52,17 +51,15 @@ public class EraserWeapon extends AbstractWeapon {
             
             int widthFG = mapForegroundImage.getWidth();
             int heightFG = mapForegroundImage.getHeight();
-            int xFG = (int)((widthFG/2.0f)*(xEraser + 1));
-            int yFG = (int)((heightFG/2.0f)*(2 - (yEraser + 1)));
-            
-            System.out.println(xFG + ",, " + yFG);
-            
+            int xFG = (int)((widthFG/2.0)*(xEraser + 1.0))  - 6;
+            int yFG = (int)((heightFG/2.0)*(2.0 - (yEraser + 1.0))) - 2;
+                    
             BufferedImage replacedRegion = eraseArea(mapForegroundImage, erasingImage, xFG, yFG);
             
             eraser.draw(null, xEraser, yEraser, eWidth, eHeight);
             
             if (replacedRegion != null) {
-                mapForeground.setSubTexture(replacedRegion, xFG, yFG, erasingImage.getWidth(), erasingImage.getHeight());
+                mapForeground.setSubTexture(replacedRegion, xFG, yFG, replacedRegion.getWidth(), replacedRegion.getHeight());
             }
         }
         
@@ -80,7 +77,7 @@ public class EraserWeapon extends AbstractWeapon {
 
             this.erasingImage = Texture.resizeImage(erasingImage, newWidth, newHeight);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            System.out.println(ex.getMessage());
         }
     }
 
@@ -95,18 +92,18 @@ public class EraserWeapon extends AbstractWeapon {
     }
 
     private BufferedImage eraseArea(BufferedImage image, BufferedImage subImage, int xImage, int yImage) {
-        int width = image.getWidth();
-        int height = image.getHeight();
+        int sWidth = image.getWidth();
+        int sHeight = image.getHeight();
                 
         int subWidth = subImage.getWidth();
         int subHeight = subImage.getHeight();
         
-        if ((xImage + erasingImage.getWidth()) < width && (erasingImage.getHeight() + yImage) < height) {
+        if ((xImage + subWidth) < sWidth && (yImage + subHeight) < sHeight) {
             for (int i = 0; i < subWidth; i++) {
                 for (int j = 0; j < subHeight; j++) {
                     int xSet = xImage + i;
                     int ySet = yImage + j;
-                    if (xSet < width && ySet < height) {
+                    if (xSet < sWidth && ySet < sHeight) {
                         int alpha = subImage.getRGB(i, j) >> 24;
 
                         if (alpha != 0) { 
@@ -115,7 +112,7 @@ public class EraserWeapon extends AbstractWeapon {
                     }
                 }
             }
-            return image.getSubimage(xImage, yImage, erasingImage.getWidth(), erasingImage.getHeight());
+            return image.getSubimage(xImage, yImage, subImage.getWidth(), subImage.getHeight());
         }
         return null;
     }
