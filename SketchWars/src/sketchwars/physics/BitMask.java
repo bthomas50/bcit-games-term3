@@ -472,4 +472,18 @@ public class BitMask
             }
         }
     }
+
+    void unsetBit(int i, int j) {
+        final int dataI = i - Vectors.iyComp(vOffset);
+        final int dataJ = j - Vectors.ixComp(vOffset);
+        if(isRowInBounds(dataI))
+        {
+            final int jLongIdx = dataJ / BITS_PER_LONG;
+            if(isColInBounds(jLongIdx))
+            {
+                final int jBitIdx = dataJ % BITS_PER_LONG;
+                data[dataI][jLongIdx] &= LONG_MASKS[jBitIdx];
+            }
+        }
+    }
 }

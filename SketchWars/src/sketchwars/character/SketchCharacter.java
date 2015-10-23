@@ -32,6 +32,8 @@ public class SketchCharacter implements GraphicsObject, GameObject {
     private boolean isFacingLeft;
     private float angle;
 
+    private long vReticleOffset;
+            
     private float lastActionTime; //last time input recieved
     
     private Texture reticleTexture;
@@ -74,6 +76,10 @@ public class SketchCharacter implements GraphicsObject, GameObject {
         }
         
         if (weapon != null) {
+            float fireAngle = getActualFireAngle();
+            weapon.setAngle(fireAngle);
+            weapon.setPosition(posX, posY);
+            vReticleOffset = Vectors.createRTheta(0.1, fireAngle);
             weapon.update(delta);
         }
         
@@ -103,11 +109,7 @@ public class SketchCharacter implements GraphicsObject, GameObject {
         }
         
         if (weapon != null) {
-            float fireAngle = getActualFireAngle();
-            weapon.setAngle(fireAngle);
-            weapon.setPosition(posX, posY);
             weapon.render();
-            long vReticleOffset = Vectors.createRTheta(0.1, fireAngle);
             reticleTexture.draw(null, posX + (float)Vectors.xComp(vReticleOffset), posY + (float)Vectors.yComp(vReticleOffset), 0.05f, 0.05f);
         }
         

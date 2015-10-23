@@ -14,6 +14,9 @@ import sketchwars.graphics.Texture;
 import sketchwars.input.MouseHandler;
 import sketchwars.input.MouseState;
 import sketchwars.map.AbstractMap;
+import sketchwars.physics.BitMask;
+import sketchwars.physics.BitMaskFactory;
+import sketchwars.physics.BoundingBox;
 
 /**
  *
@@ -24,8 +27,8 @@ public class EraserWeapon extends AbstractWeapon {
     private BufferedImage erasingImage;
     private AbstractMap currentMap;
     
-    private float eWidth;
-    private float eHeight;
+    private final float eWidth;
+    private final float eHeight;
     
     public EraserWeapon(Texture texture, Texture eraser, BufferedImage erasingImage, float width, float height, ProjectileFactory projectileFactory) {
         super(texture, width, height, projectileFactory);
@@ -38,32 +41,20 @@ public class EraserWeapon extends AbstractWeapon {
     }
 
     @Override
-    public void render() {
+    public void update(double elapsed) {
         posX = MouseHandler.getNormalizedX();
         posY = MouseHandler.getNormalizedY();
         
-        if (eraser != null && currentMap != null && erasingImage != null &&
-                MouseHandler.state == MouseState.DOWN) {
-            Texture mapForeground = currentMap.getForeground();
-            BufferedImage mapForegroundImage = currentMap.getForegroundImage();
-            float xEraser = posX - 0.04f;
-            float yEraser = posY - 0.08f;
-            
-            int widthFG = mapForegroundImage.getWidth();
-            int heightFG = mapForegroundImage.getHeight();
-            int xFG = (int)((widthFG/2.0)*(xEraser + 1.0))  - 6;
-            int yFG = (int)((heightFG/2.0)*(2.0 - (yEraser + 1.0))) - 2;
-                    
-            BufferedImage replacedRegion = eraseArea(mapForegroundImage, erasingImage, xFG, yFG);
-            
-            eraser.draw(null, xEraser, yEraser, eWidth, eHeight);
-            
-            if (replacedRegion != null) {
-                mapForeground.setSubTexture(replacedRegion, xFG, yFG, replacedRegion.getWidth(), replacedRegion.getHeight());
-            }
-        }
+        handleErasing();
         
-        super.render();
+        super.update(elapsed); 
+    }
+    
+    @Override
+    public void render() {
+        if (texture != null) {
+            texture.draw(null, posX, posY, width, height);
+        }
     }
 
     public void setMap(AbstractMap map) {
@@ -91,6 +82,29 @@ public class EraserWeapon extends AbstractWeapon {
         return 0;
     }
 
+    private void handleErasing() {
+        if (eraser != null && currentMap != null && erasingImage != null &&
+                MouseHandler.state == MouseState.DOWN) {
+            Texture mapForeground = currentMap.getForeground();
+            BufferedImage mapForegroundImage = currentMap.getForegroundImage();
+            float xEraser = posX - 0.04f;
+            float yEraser = posY - 0.08f;
+            
+            int widthFG = mapForegroundImage.getWidth();
+            int heightFG = mapForegroundImage.getHeight();
+            int xFG = (int)((widthFG/2.0)*(xEraser + 1.0))  - 6;
+            int yFG = (int)((heightFG/2.0)*(2.0 - (yEraser + 1.0))) - 2;
+                    
+            BufferedImage replacedRegion = eraseArea(mapForegroundImage, erasingImage, xFG, yFG);
+            eraser.draw(null, xEraser, yEraser, eWidth, eHeight);
+            
+            if (replacedRegion != null) {
+                mapForeground.setSubTexture(replacedRegion, xFG, yFG, replacedRegion.getWidth(), replacedRegion.getHeight());
+                eraseInPhysics(xEraser, yEraser, eWidth, eHeight);
+            }
+        }
+    }
+    
     private BufferedImage eraseArea(BufferedImage image, BufferedImage subImage, int xImage, int yImage) {
         int sWidth = image.getWidth();
         int sHeight = image.getHeight();
@@ -116,5 +130,17 @@ public class EraserWeapon extends AbstractWeapon {
         }
         return null;
     }
-    
+
+    private void eraseInPhysics(float xEraser, float yEraser, float eWidth, float eHeight) {
+        BitMask mapBitmask = currentMap.getMapCollider().getPixels();
+        
+        int xPhysics = (int) (xEraser * 1024.0);
+        int yPhysics = (int) (yEraser * 1024.0);
+        
+        int widthPhysics = (int)(eWidth * 1024.0);
+        int heightPhysics = (int)(eHeight * 1024.0);
+        
+        BoundingBox bb = new BoundingBox(yPhysics, xPhysics, yPhysics + heightPhysics, xPhysics + widthPhysics);
+        BitMaskFactory.updateFromImageAlpha(erasingImage, mapBitmask, bb);
+    }
 }
