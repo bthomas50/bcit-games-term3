@@ -98,10 +98,8 @@ public class ProjectileFactory
             
             //destroy terrain
             AbstractMap map = world.getMap();
-            float x = posX - width/2.2f;
-            float y = posY + height/2.0f;
-            if (map.updateTexture(explosionAlpha, true, x, y, width, height)) {
-                map.updateInPhysics(explosionAlpha, true, x + 0.01f, y - height + 0.05f, width, height);
+            if (map.updateTexture(explosionAlpha, true, posX, posY, width, height)) {
+                map.updateInPhysics(explosionAlpha, true, posX, posY, width, height);
             }
             
             return proj;

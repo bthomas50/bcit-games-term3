@@ -2,6 +2,8 @@ package sketchwars.map;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
+import org.joml.Vector2d;
+import sketchwars.OpenGL;
 import sketchwars.graphics.GraphicsObject;
 import sketchwars.game.GameObject;
 import sketchwars.graphics.Texture;
@@ -71,10 +73,14 @@ public abstract class AbstractMap implements GraphicsObject, GameObject {
         int subWidth = subImage.getWidth();
         int subHeight = subImage.getHeight();
 
-        int xImage = (int)((widthFG/2.0)*(xStart + 1.0))  - 6;
-        int yImage = (int)((heightFG/2.0)*(2.0 - (yStart + 1.0))) - 2;
-        int subNewWidth = (int)(widthFG * width/2.0);
-        int subNewHeight = (int)(heightFG * height/2.0);
+        Vector2d screen = OpenGL.getDisplaySize();
+        float widthRatioFG = (float)(widthFG/screen.x);
+        float heightRatioFG = (float)(heightFG/screen.y);
+        
+        int subNewWidth = (int)(widthRatioFG * screen.x * width/2.0);
+        int subNewHeight = (int)(heightRatioFG * screen.y * height/2.0);
+        int xImage = (int)(widthRatioFG * (screen.x/2.0)*(xStart + 1.0)) - subNewWidth/2;
+        int yImage = (int)(heightRatioFG * (screen.y/2.0)*(2.0 - (yStart + 1.0))) - subNewHeight/2;
         
         float widthRatio = (float) subWidth / subNewWidth;
         float heightRatio = (float) subHeight / subNewHeight;
@@ -109,22 +115,11 @@ public abstract class AbstractMap implements GraphicsObject, GameObject {
     public void updateInPhysics(BufferedImage subImage, boolean erase, float xStart, float yStart, float width, float height) {
         BitMask mapBitmask = mapCollider.getPixels();
         
-        float xOffet;
-        float yOffet;
-        
-        if (erase) {
-            xOffet = 0.018f;
-            yOffet = 0.025f;
-        } else {
-            xOffet = 0.025f;
-            yOffet = 0.035f;
-        }
-        
-        int xPhysics = (int) ((xStart - xOffet) * 1024.0);
-        int yPhysics = (int) ((yStart - yOffet) * 1024.0);
-        
         int widthPhysics = (int)(width * 1024.0);
         int heightPhysics = (int)(height * 1024.0);
+        
+        int xPhysics = (int) (xStart * 1024.0) - widthPhysics/2;
+        int yPhysics = (int) (yStart * 1024.0) - heightPhysics/2;
         
         BoundingBox bb = new BoundingBox(yPhysics, xPhysics, yPhysics + heightPhysics, xPhysics + widthPhysics);
         
