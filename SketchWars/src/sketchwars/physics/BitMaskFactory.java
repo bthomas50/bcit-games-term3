@@ -52,25 +52,56 @@ public class BitMaskFactory
     }
     
     public static void updateFromImageAlpha(BufferedImage im, BitMask bitmask, BoundingBox bounds, boolean set) {
-        float width = (float)bounds.getWidth();
+        /*float width = (float)bounds.getWidth();
         float height = (float)bounds.getHeight();
         float widthRatio = (float) im.getWidth() / width;
         float heightRatio = (float) im.getHeight() / height;
-        for(int i = bounds.getTop(); i <= bounds.getBottom(); i++)
-        {
+        
+        for(int i = bounds.getTop(); i <= bounds.getBottom(); i++) {
             float relativeI = (float)(i - bounds.getTop());
-            for(int j = bounds.getLeft(); j <= bounds.getRight(); j++)
-            {
+            for(int j = bounds.getLeft(); j <= bounds.getRight(); j++) {
                 float relativeJ = (float)(j - bounds.getLeft());
+                
                 int imageI = im.getHeight() - 1 - (int) ((float)relativeI * heightRatio);
                 int imageJ = (int) ((float)relativeJ * widthRatio);
+                
                 int alpha = im.getRGB(imageJ, imageI) >> 24;
-                if(alpha != 0)
-                {
+                if(alpha != 0) {
                     if (set) {
                         bitmask.setBit(i, j);
                     } else {
                         bitmask.unsetBit(i, j);
+                    }
+                }
+            }
+        }*/
+        int subWidth = im.getWidth();
+        int subHeight = im.getHeight();
+
+        int xImage = bounds.getLeft();
+        int yImage = bounds.getTop();
+        int subNewWidth = bounds.getWidth();
+        int subNewHeight = bounds.getHeight();
+        
+        float widthRatio = (float) subWidth / subNewWidth;
+        float heightRatio = (float) subHeight / subNewHeight;
+        
+        for (int i = 0; i < subNewWidth; i++) {
+            for (int j = 0; j < subNewHeight; j++) {
+                int imageI = (int) ((float)i * widthRatio);
+                int imageJ = (int) ((float)j * heightRatio);
+
+                int xSet = xImage + i;
+                int ySet = yImage + j;
+                
+                int color = im.getRGB(imageI, imageJ);
+                int alpha = color >> 24;
+
+                if (alpha != 0) { 
+                    if (set) {
+                        bitmask.setBit(ySet, xSet);
+                    } else {
+                        bitmask.unsetBit(ySet, xSet);
                     }
                 }
             }

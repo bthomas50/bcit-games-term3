@@ -1,5 +1,7 @@
 package sketchwars.character.projectiles;
 
+import java.awt.Graphics;
+import java.awt.image.BufferedImage;
 import sketchwars.graphics.Texture;
 import sketchwars.character.*;
 import sketchwars.util.Timer;
@@ -11,17 +13,23 @@ import sketchwars.physics.*;
  */
 public class GrenadeProjectile extends AbstractProjectile {
     private static final int EXPLOSION_DAMAGE = 25;
-    public static final double EXPLOSION_RADIUS = 300.0;
+    public static final double EXPLOSION_RADIUS = 250.0;
     
     private static final double LIFESPAN_MILLIS = 5000;
-    private ProjectileFactory factory;
-    private Timer timer;
-    
+    private final ProjectileFactory factory;
+    private final Timer timer;
+    private BufferedImage explosionAlpha;
+       
     public GrenadeProjectile(Texture texture, ProjectileFactory factory) {
         super(texture, null, 0);
         this.factory = factory;
         timer = new Timer(LIFESPAN_MILLIS);
         timer.start();
+        
+        int radius = (int)EXPLOSION_RADIUS;
+        explosionAlpha = new BufferedImage(radius, radius, BufferedImage.TYPE_INT_ARGB);
+        Graphics g = explosionAlpha.getGraphics();
+        g.fillOval(0, 0, radius, radius);
     }
 
     @Override
@@ -30,7 +38,7 @@ public class GrenadeProjectile extends AbstractProjectile {
         timer.update(elapsedMillis);
         if(hasExpired())
         {
-            factory.createExplosion(coll.getPosition(), EXPLOSION_RADIUS, EXPLOSION_DAMAGE);
+            factory.createExplosion(coll.getPosition(), EXPLOSION_RADIUS, EXPLOSION_DAMAGE, explosionAlpha);
         }
     }
 

@@ -5,7 +5,6 @@
  */
 package sketchwars.character.weapon;
 
-import java.awt.Color;
 import java.awt.image.BufferedImage;
 import sketchwars.character.SketchCharacter;
 import sketchwars.character.projectiles.AbstractProjectile;
@@ -21,7 +20,7 @@ import sketchwars.map.AbstractMap;
  */
 public class PencilWeapon extends AbstractWeapon {
     private final Texture point;
-    private BufferedImage pointImage;
+    private final BufferedImage pointImage;
     private AbstractMap currentMap;
     
     private final float eWidth;
@@ -60,17 +59,6 @@ public class PencilWeapon extends AbstractWeapon {
 
     public void setMap(AbstractMap map) {
         this.currentMap = map;
-        
-        try {
-            BufferedImage mapForegroundImage = map.getForegroundImage();
-
-            int newWidth = (int)((mapForegroundImage.getWidth()/2.0f) * eWidth);
-            int newHeight = (int)((mapForegroundImage.getHeight()/2.0f) * eHeight);
-
-            this.pointImage = Texture.resizeImage(pointImage, newWidth, newHeight);
-        } catch (Exception ex) {
-            System.out.println(ex.getMessage());
-        }
     }
 
     @Override
@@ -91,7 +79,7 @@ public class PencilWeapon extends AbstractWeapon {
             
             point.draw(null, xEraser, yEraser, eWidth, eHeight);
             
-            if (currentMap.updateTexture(pointImage, eraser, xEraser, yEraser)) {
+            if (currentMap.updateTexture(pointImage, eraser, xEraser, yEraser, eWidth, eHeight)) {
                 currentMap.updateInPhysics(pointImage, eraser, xEraser, yEraser, eWidth, eHeight);
             }
         }

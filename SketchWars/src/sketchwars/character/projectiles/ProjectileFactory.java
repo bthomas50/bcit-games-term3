@@ -1,5 +1,6 @@
 package sketchwars.character.projectiles;
 
+import java.awt.image.BufferedImage;
 import sketchwars.game.*;
 import sketchwars.physics.*;
 import sketchwars.graphics.*;
@@ -10,6 +11,7 @@ import sketchwars.animation.*;
 import sketchwars.exceptions.*;
 
 import org.joml.Vector2d;
+import sketchwars.map.AbstractMap;
 
 public class ProjectileFactory
 {
@@ -75,14 +77,17 @@ public class ProjectileFactory
         return proj;
     }
 
-    public AnimatedProjectile createExplosion(long vPosition, double radius, int damage) {
+    public AnimatedProjectile createExplosion(long vPosition, double radius, int damage, BufferedImage explosionAlpha) {
         try {
             Explosion explosion = new Explosion();
             float posX = (float)Vectors.xComp(vPosition)/1024.0f;
             float posY = (float)Vectors.yComp(vPosition)/1024.0f;
-            explosion.setPosition(new Vector2d(posX, posY));
+            float width = (float) (radius / 1024.0f);
+            float height = (float) ((radius / 1024.0f) * 1.4);
             
-            explosion.setDimension(new Vector2d(radius / 1024.0f, (radius / 1024.0f) * 1.3));
+            explosion.setPosition(new Vector2d(posX, posY));
+            explosion.setDimension(new Vector2d(width, height));
+            
             AnimatedProjectile proj = new AnimatedProjectile(explosion, damage);
             Collider coll = new GamePixelCollider(proj, BitMaskFactory.createCircle(radius));
             proj.setCollider(coll);
@@ -90,6 +95,15 @@ public class ProjectileFactory
             world.addGameObject(proj);
             physics.addCollider(coll);
             projectileLayer.addDrawableObject(proj);
+            
+            //destroy terrain
+            AbstractMap map = world.getMap();
+            float x = posX - width/2.2f;
+            float y = posY + height/2.0f;
+            if (map.updateTexture(explosionAlpha, true, x, y, width, height)) {
+                map.updateInPhysics(explosionAlpha, true, x + 0.01f, y - height + 0.05f, width, height);
+            }
+            
             return proj;
         } catch (AnimationException ex) {
             System.err.println(ex.getMessage());
@@ -111,7 +125,6 @@ public class ProjectileFactory
         physics.addCollider(proj.getCollider());
         projectileLayer.addDrawableObject(proj); //so it can be rendered
     }
-
 
 
 }
