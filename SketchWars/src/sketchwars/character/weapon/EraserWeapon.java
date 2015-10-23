@@ -134,15 +134,13 @@ public class EraserWeapon extends AbstractWeapon {
     private void eraseInPhysics(float xEraser, float yEraser, float eWidth, float eHeight) {
         BitMask mapBitmask = currentMap.getMapCollider().getPixels();
         
-        int xPhysics = (int) ((xEraser - 0.012) * 1024.0);
+        int xPhysics = (int) ((xEraser - 0.018) * 1024.0);
         int yPhysics = (int) ((yEraser - 0.025) * 1024.0);
         
         int widthPhysics = (int)(eWidth * 1024.0);
         int heightPhysics = (int)(eHeight * 1024.0);
         
-        BufferedImage newErasingimg = Texture.resizeImage(erasingImage, widthPhysics, heightPhysics);
-        
         BoundingBox bb = new BoundingBox(yPhysics, xPhysics, yPhysics + heightPhysics, xPhysics + widthPhysics);
-        BitMaskFactory.updateFromImageAlpha(newErasingimg, mapBitmask, bb);
+        BitMaskFactory.updateFromImageAlpha(erasingImage, mapBitmask, bb);
     }
 }
