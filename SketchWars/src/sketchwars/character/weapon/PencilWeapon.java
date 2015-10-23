@@ -86,14 +86,12 @@ public class PencilWeapon extends AbstractWeapon {
     private void handleErasing() {
         if (point != null && currentMap != null && pointImage != null &&
                 MouseHandler.state == MouseState.DOWN) {
-            Texture mapForeground = currentMap.getForeground();
-            BufferedImage mapForegroundImage = currentMap.getForegroundImage();
             float xEraser = posX - 0.04f;
             float yEraser = posY - 0.08f;
             
             point.draw(null, xEraser, yEraser, eWidth, eHeight);
             
-            if (currentMap.updateTexture(mapForegroundImage, pointImage, eraser, xEraser, yEraser)) {
+            if (currentMap.updateTexture(pointImage, eraser, xEraser, yEraser)) {
                 currentMap.updateInPhysics(pointImage, eraser, xEraser, yEraser, eWidth, eHeight);
             }
         }

@@ -64,9 +64,9 @@ public abstract class AbstractMap implements GraphicsObject, GameObject {
         foreground.dispose();
     }
 
-    public boolean updateTexture(BufferedImage image, BufferedImage subImage, boolean erase, float xStart, float yStart) {
-        int sWidth = image.getWidth();
-        int sHeight = image.getHeight();
+    public boolean updateTexture(BufferedImage subImage, boolean erase, float xStart, float yStart) {
+        int sWidth = foregroundImage.getWidth();
+        int sHeight = foregroundImage.getHeight();
                 
         int subWidth = subImage.getWidth();
         int subHeight = subImage.getHeight();
@@ -82,33 +82,33 @@ public abstract class AbstractMap implements GraphicsObject, GameObject {
                     int xSet = xImage + i;
                     int ySet = yImage + j;
                     if (xSet < sWidth && ySet < sHeight) {
-                        int argb = subImage.getRGB(i, j);
-                        int alpha = argb >> 24;
+                        int color = subImage.getRGB(i, j);
+                        int alpha = color >> 24;
 
                         if (alpha != 0) { 
                             if (erase) {
-                                image.setRGB(xSet, ySet, Color.TRANSLUCENT);
+                                foregroundImage.setRGB(xSet, ySet, Color.TRANSLUCENT);
                             } else {
-                                image.setRGB(xSet, ySet, argb);
+                                foregroundImage.setRGB(xSet, ySet, color);
                             }
                         }
                     }
                 }
             }
-            BufferedImage replacedRegion = image.getSubimage(xImage, yImage, subImage.getWidth(), subImage.getHeight());
+            BufferedImage replacedRegion = foregroundImage.getSubimage(xImage, yImage, subImage.getWidth(), subImage.getHeight());
             return foreground.setSubTexture(replacedRegion, xImage, yImage, replacedRegion.getWidth(), replacedRegion.getHeight());
         }
         return false;
     }
 
-    public void updateInPhysics(BufferedImage subImage, boolean erase, float xEraser, float yEraser, float eWidth, float eHeight) {
+    public void updateInPhysics(BufferedImage subImage, boolean erase, float xStart, float yStart, float width, float height) {
         BitMask mapBitmask = mapCollider.getPixels();
         
-        int xPhysics = (int) ((xEraser - 0.018) * 1024.0);
-        int yPhysics = (int) ((yEraser - 0.025) * 1024.0);
+        int xPhysics = (int) ((xStart - 0.018) * 1024.0);
+        int yPhysics = (int) ((yStart - 0.025) * 1024.0);
         
-        int widthPhysics = (int)(eWidth * 1024.0);
-        int heightPhysics = (int)(eHeight * 1024.0);
+        int widthPhysics = (int)(width * 1024.0);
+        int heightPhysics = (int)(height * 1024.0);
         
         BoundingBox bb = new BoundingBox(yPhysics, xPhysics, yPhysics + heightPhysics, xPhysics + widthPhysics);
         
