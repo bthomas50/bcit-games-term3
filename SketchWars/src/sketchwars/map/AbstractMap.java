@@ -1,9 +1,13 @@
 package sketchwars.map;
 
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 import sketchwars.graphics.GraphicsObject;
 import sketchwars.game.GameObject;
 import sketchwars.graphics.Texture;
+import sketchwars.physics.BitMask;
+import sketchwars.physics.BitMaskFactory;
+import sketchwars.physics.BoundingBox;
 import sketchwars.physics.PixelCollider;
 
 /**
@@ -58,5 +62,60 @@ public abstract class AbstractMap implements GraphicsObject, GameObject {
     public void dispose() {
         background.dispose();
         foreground.dispose();
+    }
+
+    public boolean updateTexture(BufferedImage image, BufferedImage subImage, boolean erase, float xStart, float yStart) {
+        int sWidth = image.getWidth();
+        int sHeight = image.getHeight();
+                
+        int subWidth = subImage.getWidth();
+        int subHeight = subImage.getHeight();
+
+        int widthFG = foregroundImage.getWidth();
+        int heightFG = foregroundImage.getHeight();
+        int xImage = (int)((widthFG/2.0)*(xStart + 1.0))  - 6;
+        int yImage = (int)((heightFG/2.0)*(2.0 - (yStart + 1.0))) - 2;
+            
+        if ((xImage + subWidth) < sWidth && (yImage + subHeight) < sHeight) {
+            for (int i = 0; i < subWidth; i++) {
+                for (int j = 0; j < subHeight; j++) {
+                    int xSet = xImage + i;
+                    int ySet = yImage + j;
+                    if (xSet < sWidth && ySet < sHeight) {
+                        int argb = subImage.getRGB(i, j);
+                        int alpha = argb >> 24;
+
+                        if (alpha != 0) { 
+                            if (erase) {
+                                image.setRGB(xSet, ySet, Color.TRANSLUCENT);
+                            } else {
+                                image.setRGB(xSet, ySet, argb);
+                            }
+                        }
+                    }
+                }
+            }
+            BufferedImage replacedRegion = image.getSubimage(xImage, yImage, subImage.getWidth(), subImage.getHeight());
+            return foreground.setSubTexture(replacedRegion, xImage, yImage, replacedRegion.getWidth(), replacedRegion.getHeight());
+        }
+        return false;
+    }
+
+    public void updateInPhysics(BufferedImage subImage, boolean erase, float xEraser, float yEraser, float eWidth, float eHeight) {
+        BitMask mapBitmask = mapCollider.getPixels();
+        
+        int xPhysics = (int) ((xEraser - 0.018) * 1024.0);
+        int yPhysics = (int) ((yEraser - 0.025) * 1024.0);
+        
+        int widthPhysics = (int)(eWidth * 1024.0);
+        int heightPhysics = (int)(eHeight * 1024.0);
+        
+        BoundingBox bb = new BoundingBox(yPhysics, xPhysics, yPhysics + heightPhysics, xPhysics + widthPhysics);
+        
+        if (erase) {
+            BitMaskFactory.updateFromImageAlpha(subImage, mapBitmask, bb, false);
+        } else {
+            BitMaskFactory.updateFromImageAlpha(subImage, mapBitmask, bb, true);
+        }
     }
 }
