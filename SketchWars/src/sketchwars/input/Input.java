@@ -1,11 +1,5 @@
 package sketchwars.input;
 
-import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutput;
-import java.io.ObjectOutputStream;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -57,6 +51,10 @@ public class Input
         
         if(KeyboardHandler.isKeyDown(GLFW_KEY_4)){
             currentInput.commands.add(Command.SWITCH_4);
+        }
+        
+        if(KeyboardHandler.isKeyDown(GLFW_KEY_5)){
+            currentInput.commands.add(Command.SWITCH_5);
         }
         
         if(KeyboardHandler.isKeyDown(GLFW_KEY_T)){

@@ -120,10 +120,7 @@ public class SketchWarsWorldFactory
         HashMap<WeaponTypes, AbstractWeapon> weapons = new HashMap<>();
         try
         {
-            weapons = WeaponFactory.createDefaultWeaponSet(new ProjectileFactory(world, physics, gameScene));
-            
-            EraserWeapon eraser = (EraserWeapon)weapons.get(WeaponTypes.ERASER);
-            eraser.setMap(world.getMap());
+            weapons = WeaponFactory.createDefaultWeaponSet(new ProjectileFactory(world, physics, gameScene), world);
         }
         catch(SceneException ex)
         {

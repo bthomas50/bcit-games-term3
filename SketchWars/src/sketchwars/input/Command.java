@@ -13,6 +13,7 @@ public enum Command
     SWITCH_2,
     SWITCH_3,
     SWITCH_4,
+    SWITCH_5,
     LOWER_BGM,
     HIGHER_BGM,
     MAIN_MENU_PLAY,

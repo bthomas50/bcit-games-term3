@@ -22,19 +22,23 @@ import sketchwars.physics.BoundingBox;
  *
  * @author Najash Najimudeen <najash.najm@gmail.com>
  */
-public class EraserWeapon extends AbstractWeapon {
-    private final Texture eraser;
-    private BufferedImage erasingImage;
+public class PencilWeapon extends AbstractWeapon {
+    private final Texture point;
+    private BufferedImage pointImage;
     private AbstractMap currentMap;
     
     private final float eWidth;
     private final float eHeight;
     
-    public EraserWeapon(Texture texture, Texture eraser, BufferedImage erasingImage, float width, float height, ProjectileFactory projectileFactory) {
+    private final boolean eraser;
+    
+    public PencilWeapon(Texture texture, Texture point, BufferedImage pointImage, float width, float height, 
+            ProjectileFactory projectileFactory, boolean eraser) {
         super(texture, width, height, projectileFactory);
         
         this.eraser = eraser;
-        this.erasingImage = erasingImage;
+        this.point = point;
+        this.pointImage = pointImage;
         
         eWidth = width/2;
         eHeight = height/2;
@@ -66,7 +70,7 @@ public class EraserWeapon extends AbstractWeapon {
             int newWidth = (int)((mapForegroundImage.getWidth()/2.0f) * eWidth);
             int newHeight = (int)((mapForegroundImage.getHeight()/2.0f) * eHeight);
 
-            this.erasingImage = Texture.resizeImage(erasingImage, newWidth, newHeight);
+            this.pointImage = Texture.resizeImage(pointImage, newWidth, newHeight);
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
         }
@@ -83,7 +87,7 @@ public class EraserWeapon extends AbstractWeapon {
     }
 
     private void handleErasing() {
-        if (eraser != null && currentMap != null && erasingImage != null &&
+        if (point != null && currentMap != null && pointImage != null &&
                 MouseHandler.state == MouseState.DOWN) {
             Texture mapForeground = currentMap.getForeground();
             BufferedImage mapForegroundImage = currentMap.getForegroundImage();
@@ -95,17 +99,17 @@ public class EraserWeapon extends AbstractWeapon {
             int xFG = (int)((widthFG/2.0)*(xEraser + 1.0))  - 6;
             int yFG = (int)((heightFG/2.0)*(2.0 - (yEraser + 1.0))) - 2;
                     
-            BufferedImage replacedRegion = eraseArea(mapForegroundImage, erasingImage, xFG, yFG);
-            eraser.draw(null, xEraser, yEraser, eWidth, eHeight);
+            BufferedImage replacedRegion = updateArea(mapForegroundImage, pointImage, xFG, yFG);
+            point.draw(null, xEraser, yEraser, eWidth, eHeight);
             
             if (replacedRegion != null) {
                 mapForeground.setSubTexture(replacedRegion, xFG, yFG, replacedRegion.getWidth(), replacedRegion.getHeight());
-                eraseInPhysics(xEraser, yEraser, eWidth, eHeight);
+                updateInPhysics(xEraser, yEraser, eWidth, eHeight);
             }
         }
     }
     
-    private BufferedImage eraseArea(BufferedImage image, BufferedImage subImage, int xImage, int yImage) {
+    private BufferedImage updateArea(BufferedImage image, BufferedImage subImage, int xImage, int yImage) {
         int sWidth = image.getWidth();
         int sHeight = image.getHeight();
                 
@@ -118,10 +122,15 @@ public class EraserWeapon extends AbstractWeapon {
                     int xSet = xImage + i;
                     int ySet = yImage + j;
                     if (xSet < sWidth && ySet < sHeight) {
-                        int alpha = subImage.getRGB(i, j) >> 24;
+                        int argb = subImage.getRGB(i, j);
+                        int alpha = argb >> 24;
 
                         if (alpha != 0) { 
-                            image.setRGB(xSet, ySet, Color.TRANSLUCENT);
+                            if (eraser) {
+                                image.setRGB(xSet, ySet, Color.TRANSLUCENT);
+                            } else {
+                                image.setRGB(xSet, ySet, argb);
+                            }
                         }
                     }
                 }
@@ -131,7 +140,7 @@ public class EraserWeapon extends AbstractWeapon {
         return null;
     }
 
-    private void eraseInPhysics(float xEraser, float yEraser, float eWidth, float eHeight) {
+    private void updateInPhysics(float xEraser, float yEraser, float eWidth, float eHeight) {
         BitMask mapBitmask = currentMap.getMapCollider().getPixels();
         
         int xPhysics = (int) ((xEraser - 0.018) * 1024.0);
@@ -141,6 +150,11 @@ public class EraserWeapon extends AbstractWeapon {
         int heightPhysics = (int)(eHeight * 1024.0);
         
         BoundingBox bb = new BoundingBox(yPhysics, xPhysics, yPhysics + heightPhysics, xPhysics + widthPhysics);
-        BitMaskFactory.updateFromImageAlpha(erasingImage, mapBitmask, bb);
+        
+        if (eraser) {
+            BitMaskFactory.updateFromImageAlpha(pointImage, mapBitmask, bb, false);
+        } else {
+            BitMaskFactory.updateFromImageAlpha(pointImage, mapBitmask, bb, true);
+        }
     }
 }

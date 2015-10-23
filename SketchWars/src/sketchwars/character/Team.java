@@ -1,12 +1,10 @@
 package sketchwars.character;
 
-import sketchwars.character.SketchCharacter;
 import sketchwars.character.weapon.AbstractWeapon;
 import sketchwars.character.weapon.WeaponTypes;
 import sketchwars.input.*;
 
 import java.util.*;
-import static org.lwjgl.glfw.GLFW.*;
 
 /**
  *
@@ -83,6 +81,9 @@ public class Team
                 break;
             case SWITCH_4:
                 active.setWeapon(weapons.get(WeaponTypes.ERASER));
+                break;
+            case SWITCH_5:
+                active.setWeapon(weapons.get(WeaponTypes.PENCIL));
                 break;
             }
         
