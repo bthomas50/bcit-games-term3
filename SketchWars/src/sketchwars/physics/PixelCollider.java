@@ -13,7 +13,8 @@ public class PixelCollider extends BasicPhysicsObject implements Collider
     private BitMask bitMask;
     private List<CollisionListener> listeners;
     private float elasticity;
-
+    private GameObject attached;
+    
     public PixelCollider(BitMask bm)
     {
         bitMask = bm;
@@ -87,12 +88,16 @@ public class PixelCollider extends BasicPhysicsObject implements Collider
     @Override
     public boolean hasAttachedGameObject()
     {
-        return false;
+        return (attached != null);
     }
 
+    public void attachGameObject(GameObject obj) {
+        this.attached = obj;
+    }
+    
     @Override
     public GameObject getAttachedGameObject()
     {
-        return null;
+        return attached;
     }
 }

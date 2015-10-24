@@ -85,9 +85,10 @@ public class SketchWarsWorldFactory
             mapImageMask = BitMaskFactory.createFromImageAlpha(mapImage, physics.getBounds());
             
             PixelCollider mapCollider = new PixelCollider(mapImageMask);
-            mapCollider.setElasticity(1.0f);
+            mapCollider.setElasticity(0.5f);
             TestMap map = new TestMap(mapCollider, mapBGTexture, mapFGTexture, mapImage);
-
+            mapCollider.attachGameObject(map);
+            
             try {
                 gameScene.getLayer(GameLayers.MAP).addDrawableObject(map);
             } catch (SceneException ex) {
@@ -160,6 +161,7 @@ public class SketchWarsWorldFactory
             charCollider = new GamePixelCollider(character, BitMaskFactory.createRectangle(100, 120));
         }
         
+        charCollider.addCollisionListener(character);
         charCollider.setPosition(vPosition);
         charCollider.setMass(10);
         charCollider.setElasticity(0.0f);

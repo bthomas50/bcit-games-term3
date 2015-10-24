@@ -7,13 +7,15 @@ import sketchwars.physics.*;
 import sketchwars.character.weapon.AbstractWeapon;
 import sketchwars.graphics.*;
 import sketchwars.game.GameObject;
+import sketchwars.map.AbstractMap;
+import sketchwars.map.TestMap;
 import static sketchwars.physics.Vectors.create;
 
 /*
  *
  * @author Najash Najimudeen <najash.najm@gmail.com>
  */
-public class SketchCharacter implements GraphicsObject, GameObject {
+public class SketchCharacter implements GraphicsObject, GameObject, CollisionListener {
     public static final int DEFAULT_MAX_HEALTH = 100;
     
     private float posX;
@@ -39,6 +41,7 @@ public class SketchCharacter implements GraphicsObject, GameObject {
     private Texture reticleTexture;
     
     private AnimationSet<CharacterAnimations> animationSet;
+    private boolean canJump;
 
     public SketchCharacter() {
         this(DEFAULT_MAX_HEALTH, DEFAULT_MAX_HEALTH);
@@ -54,6 +57,8 @@ public class SketchCharacter implements GraphicsObject, GameObject {
         this.angle = 0.0f;
         this.isFacingLeft = false;//start facing right.
         reticleTexture = Texture.loadTexture("content/misc/reticle.png", false);
+        
+        this.canJump = true;
     }
     
     public void setCollider(Collider coll) {
@@ -248,11 +253,14 @@ public class SketchCharacter implements GraphicsObject, GameObject {
     
     void jump(double elapsedMillis)
     {
-        lastActionTime = System.currentTimeMillis();
-        animationSet.setCurrentAnimation(CharacterAnimations.JUMP);
-        long oldVector = coll.getVelocity();
-        float getX = (float)Vectors.xComp(oldVector);
-        coll.setVelocity(create(getX, 200));
+        if (canJump) {
+            lastActionTime = System.currentTimeMillis();
+            animationSet.setCurrentAnimation(CharacterAnimations.JUMP);
+            long oldVector = coll.getVelocity();
+            float getX = (float)Vectors.xComp(oldVector);
+            coll.setVelocity(create(getX, 200));
+            canJump = false;
+        } 
     }
 
     private float getActualFireAngle() {
@@ -281,6 +289,16 @@ public class SketchCharacter implements GraphicsObject, GameObject {
   
         if (diff > 200) {
             animationSet.setCurrentAnimation(CharacterAnimations.IDLE);
+        }
+    }
+
+    @Override
+    public void collided(Collider thisColl, Collider otherColl) {
+        if(otherColl.hasAttachedGameObject()) {
+            GameObject otherObj = otherColl.getAttachedGameObject();
+            if(otherObj instanceof AbstractMap) {
+                canJump = true;
+            }
         }
     }
 }
