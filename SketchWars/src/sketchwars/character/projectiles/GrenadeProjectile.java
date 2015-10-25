@@ -38,7 +38,7 @@ public class GrenadeProjectile extends AbstractProjectile {
         timer.update(elapsedMillis);
         if(hasExpired())
         {
-            factory.createExplosion(coll.getPosition(), EXPLOSION_RADIUS, EXPLOSION_DAMAGE, explosionAlpha);
+            factory.createExplosion(coll.getCenterOfMass(), EXPLOSION_RADIUS, EXPLOSION_DAMAGE, explosionAlpha);
         }
     }
 

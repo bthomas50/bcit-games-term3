@@ -13,6 +13,7 @@ import org.junit.runners.Suite;
   BasicPhysicsObjectTest.class,
   PixelColliderTest.class,
   CollisionsTest.class,
+  CollisionBehaviourTest.class,
   PhysicsTest.class
 })
 

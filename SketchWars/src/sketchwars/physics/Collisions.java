@@ -1,7 +1,7 @@
 package sketchwars.physics;
 
 import static sketchwars.physics.Vectors.*;
-
+import static sketchwars.physics.CollisionBehaviour.*;
 public class Collisions
 {
     private static class CollisionData
@@ -22,24 +22,34 @@ public class Collisions
     
     public static void handle(Collider coll1, Collider coll2)
     {
-        if(coll1.getMass() == 0.0 && coll2.getMass() == 0.0)
+        CollisionBehaviour behaviour = min(coll1.getCollisionBehaviour(coll2), coll2.getCollisionBehaviour(coll1));
+        if(behaviour == NONE)
         {
+            //nothing to do.
             return;
         }
         //we only have PixelColliders for now
         BitMask mask1 = ((PixelCollider) coll1).getPixels();
         BitMask mask2 = ((PixelCollider) coll2).getPixels();
-        BitMask collision = mask1.and(mask2);        
+        BitMask collision = mask1.and(mask2);
         if(!collision.isEmpty())
         {
-            long vNorm1 = Vectors.normalize(mask1.getAverageNormal(collision));
-            long vNorm2 = Vectors.normalize(mask2.getAverageNormal(collision));
-            clip(coll1, coll2, collision, vNorm1, vNorm2);
-
-            transferMomentum(coll1, coll2, vNorm1, vNorm2);
-            applyResults(coll1, coll2);
-            coll1.notify(coll2);
-            coll2.notify(coll1);
+            if(behaviour.includes(NOTIFY))
+            {
+                coll1.notify(coll2);
+                coll2.notify(coll1);
+            }
+            if(behaviour.includes(CLIP) && !(coll1.isStatic() && coll2.isStatic()))
+            {
+                long vNorm1 = Vectors.normalize(mask1.getAverageNormal(collision));
+                long vNorm2 = Vectors.normalize(mask2.getAverageNormal(collision));
+                clip(coll1, coll2, collision, vNorm1, vNorm2);
+                if(behaviour.includes(TRANSFER_MOMENTUM))
+                {
+                    transferMomentum(coll1, coll2, vNorm1, vNorm2);
+                    applyResults(coll1, coll2);
+                }
+            }
         }
     }
 

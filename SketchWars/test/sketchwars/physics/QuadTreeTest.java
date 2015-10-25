@@ -1,5 +1,7 @@
 package sketchwars.physics;
 
+import sketchwars.game.GameObject;
+
 import static org.junit.Assert.*;
 import org.junit.Test;
 import org.junit.Before;
@@ -60,6 +62,21 @@ public class QuadTreeTest
         public void removeCollisionListener(CollisionListener list)
         {
             throw new UnsupportedOperationException("this is a test object!");
+        }
+        @Override
+        public boolean hasAttachedGameObject()
+        {
+            return false;
+        }
+        @Override
+        public GameObject getAttachedGameObject()
+        {
+            throw new UnsupportedOperationException("this is a test object!");
+        }
+        @Override
+        public CollisionBehaviour getCollisionBehaviour(Collider o)
+        {
+            return CollisionBehaviour.NOTIFY;
         }
     }
     QuadTree qt;

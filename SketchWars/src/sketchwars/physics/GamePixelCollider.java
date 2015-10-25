@@ -17,6 +17,12 @@ public class GamePixelCollider extends PixelCollider
         attached = obj;
     }
 
+    public GamePixelCollider(GameObject obj, BitMask bm, CollisionBehaviour beh)
+    {
+        super(bm, beh);
+        attached = obj;
+    }
+
     @Override
     public boolean hasAttachedGameObject()
     {

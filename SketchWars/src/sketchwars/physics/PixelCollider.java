@@ -8,19 +8,23 @@ import java.util.ArrayList;
  * Class of physics objects that collides based on the intersection of pixel masks
  * @author Brian
  */
-public class PixelCollider extends BasicPhysicsObject implements Collider
+public class PixelCollider extends AbstractCollider
 {
     private BitMask bitMask;
-    private List<CollisionListener> listeners;
-    private float elasticity;
-    private GameObject attached;
     
     public PixelCollider(BitMask bm)
     {
         bitMask = bm;
-        listeners = new ArrayList<CollisionListener>();
         bm.trim();
 		this.vPosition = bm.getPosition();
+    }
+
+    public PixelCollider(BitMask bm, CollisionBehaviour behaviour)
+    {
+        super(behaviour);
+        bitMask = bm;
+        bm.trim();
+        this.vPosition = bm.getPosition();
     }
 
     public BitMask getPixels()
@@ -35,14 +39,6 @@ public class PixelCollider extends BasicPhysicsObject implements Collider
 		bitMask.setPosition(vPos);
 	}
 	
-    @Override
-    public void notify(Collider other)
-    {
-        for(CollisionListener list : listeners)
-        {
-            list.collided(this, other);
-        }
-    }
 
     @Override
     public BoundingBox getBounds()
@@ -54,50 +50,5 @@ public class PixelCollider extends BasicPhysicsObject implements Collider
     public long getCenterOfMass()
     {
         return bitMask.getCenterOfMass();
-    }
-
-    @Override
-    public float getElasticity()
-    {
-        return this.elasticity;
-    }
-    @Override
-    public void setElasticity(float ela)
-    {
-        this.elasticity = ela;
-    }
-
-    @Override
-    public boolean isStatic()
-    {
-        return mass == 0.0;
-    }
-
-    @Override
-    public void addCollisionListener(CollisionListener list)
-    {
-        listeners.add(list);
-    }
-
-    @Override
-    public void removeCollisionListener(CollisionListener list)
-    {
-        listeners.remove(list);
-    }
-
-    @Override
-    public boolean hasAttachedGameObject()
-    {
-        return (attached != null);
-    }
-
-    public void attachGameObject(GameObject obj) {
-        this.attached = obj;
-    }
-    
-    @Override
-    public GameObject getAttachedGameObject()
-    {
-        return attached;
     }
 }

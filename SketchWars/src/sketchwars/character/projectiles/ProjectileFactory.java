@@ -48,15 +48,15 @@ public class ProjectileFactory
     public AbstractProjectile createMelee(SketchCharacter owner, long vPosition, long vVelocity)
     {
         Texture texture = Texture.loadTexture("content/char/weapons/meleeBoxing.png", true);
-        MeleeProjectile proj = new MeleeProjectile(texture, owner);
+        MeleeProjectile proj = new MeleeProjectile(texture, owner, Vectors.ixComp(vVelocity));
         double ratio = texture.getTextureHeight()/texture.getTextureWidth();
-        int widthP = (int)(WeaponFactory.MELEE_SCALE * 1024.0f) ;
-        int heightP = (int)(widthP * ratio) ;
+        int widthP = (int)(WeaponFactory.MELEE_SCALE * 1024.0f);
+        int heightP = (int)(widthP * ratio);
         
-        Collider coll = new GamePixelCollider(proj, BitMaskFactory.createRectangle(widthP, heightP));
+        Collider coll = new GamePixelCollider(proj, BitMaskFactory.createRectangle(widthP, heightP), CollisionBehaviour.NOTIFY);
         proj.setCollider(coll);
 
-        setColliderProperties(coll, vPosition, vVelocity, 0.0f, 1.0f);
+        setColliderProperties(coll, vPosition, Vectors.V_ZERO, 0.0f, 1.0f);
 
         addProjectile(proj);
         return proj;
@@ -77,11 +77,11 @@ public class ProjectileFactory
         return proj;
     }
 
-    public AnimatedProjectile createExplosion(long vPosition, double radius, int damage, BufferedImage explosionAlpha) {
+    public AnimatedProjectile createExplosion(long vCenter, double radius, int damage, BufferedImage explosionAlpha) {
         try {
             Explosion explosion = new Explosion();
-            float posX = (float)Vectors.xComp(vPosition)/1024.0f;
-            float posY = (float)Vectors.yComp(vPosition)/1024.0f;
+            float posX = (float)Vectors.xComp(vCenter)/1024.0f;
+            float posY = (float)Vectors.yComp(vCenter)/1024.0f;
             float width = (float) (radius / 1024.0f);
             float height = (float) ((radius / 1024.0f) * 1.4);
             
@@ -89,9 +89,9 @@ public class ProjectileFactory
             explosion.setDimension(new Vector2d(width, height));
             
             AnimatedProjectile proj = new AnimatedProjectile(explosion, damage);
-            Collider coll = new GamePixelCollider(proj, BitMaskFactory.createCircle(radius));
+            Collider coll = new GamePixelCollider(proj, BitMaskFactory.createCircle(radius), CollisionBehaviour.NOTIFY);
             proj.setCollider(coll);
-            coll.setPosition(vPosition);
+            coll.setPosition(Vectors.subtract(vCenter, Vectors.create(radius, radius)));
             world.addGameObject(proj);
             physics.addCollider(coll);
             projectileLayer.addDrawableObject(proj);

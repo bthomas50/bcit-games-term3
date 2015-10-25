@@ -16,4 +16,6 @@ public interface Collider extends PhysicsObject
 
     boolean hasAttachedGameObject();
     GameObject getAttachedGameObject();
+
+    CollisionBehaviour getCollisionBehaviour(Collider other);
 }

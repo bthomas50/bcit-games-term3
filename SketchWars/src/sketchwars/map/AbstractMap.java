@@ -7,10 +7,7 @@ import sketchwars.OpenGL;
 import sketchwars.graphics.GraphicsObject;
 import sketchwars.game.GameObject;
 import sketchwars.graphics.Texture;
-import sketchwars.physics.BitMask;
-import sketchwars.physics.BitMaskFactory;
-import sketchwars.physics.BoundingBox;
-import sketchwars.physics.PixelCollider;
+import sketchwars.physics.*;
 
 /**
  *
@@ -106,8 +103,10 @@ public abstract class AbstractMap implements GraphicsObject, GameObject {
                     }
                 }
             }
-            BufferedImage replacedRegion = foregroundImage.getSubimage(xImage, yImage, subNewWidth, subNewHeight);
-            return foreground.setSubTexture(replacedRegion, xImage, yImage, replacedRegion.getWidth(), replacedRegion.getHeight());
+            // Causes crash due to my computer not having opengl 4.5 compatible drivers
+            // BufferedImage replacedRegion = foregroundImage.getSubimage(xImage, yImage, subNewWidth, subNewHeight);
+            // return foreground.setSubTexture(replacedRegion, xImage, yImage, replacedRegion.getWidth(), replacedRegion.getHeight());
+            return true;
         }
         return false;
     }

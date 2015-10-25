@@ -6,11 +6,11 @@ import java.util.HashSet;
 
 public class Physics
 {
-    public static final long V_GRAVITY  = Vectors.create(0, -392);
 	public static final double MAX_SPEED = 1000.0f;
 	private List<PhysicsObject> allPhysicsObjects;
     private List<Collider> allColliders;
     private QuadTree collidersTree;
+    private long vGravity = Vectors.create(0, -392);
 	
 	private class ColliderPair
 	{
@@ -81,7 +81,7 @@ public class Physics
 	{
         if(obj.getMass() != 0.0)
         {
-            obj.accelerate(V_GRAVITY, elapsedMillis);
+            obj.accelerate(vGravity, elapsedMillis);
         }
 	}
 	
@@ -165,6 +165,11 @@ public class Physics
     public List<PhysicsObject> getPhysicsObjects()
     {
         return allPhysicsObjects;
+    }
+
+    public void setGravity(long vGravity)
+    {
+        this.vGravity = vGravity;
     }
 
     private void removeExpiredObjects()

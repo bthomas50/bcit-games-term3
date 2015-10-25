@@ -127,13 +127,13 @@ public abstract class AbstractWeapon implements Updateable, Drawable {
     }
    
     
-    public boolean tryToFire(SketchCharacter owner, float power, long direction) {
+    public boolean tryToFire(SketchCharacter owner, float power, long vAimDirection) {
         double timeFired = elapsed;
         double timeSinceLastFired = timeFired - lastTimeFired;
         float rateOfFireInMilli = 1000/rateOfFire;
                             
         if (timeSinceLastFired > rateOfFireInMilli) {
-            fire(owner, power, direction);
+            fire(owner, power, vAimDirection);
             lastTimeFired = timeFired;
             return true;
         } else {
@@ -141,17 +141,20 @@ public abstract class AbstractWeapon implements Updateable, Drawable {
         }
     }
 
-    private void fire(SketchCharacter owner, float power, long direction) {
-        long normalDir = Vectors.normalize(direction);
+    private void fire(SketchCharacter owner, float power, long vAimDirection) {
+        long normalDir = Vectors.normalize(vAimDirection);
         long vVelocity = Vectors.scalarMultiply(getProjectileSpeed(power), normalDir);
         long vPosition = Vectors.add(owner.getCollider().getPosition(), Vectors.scaleToLength(normalDir, 100.0));
-        System.out.println("velocity: " + Vectors.toString(vVelocity));
         AbstractProjectile projectile = createProjectile(owner, vPosition, vVelocity);
     }
 
     protected abstract AbstractProjectile createProjectile(SketchCharacter owner, long vPosition, long vVelocity);
 
     protected abstract double getProjectileSpeed(float power);
+
+    protected long getFireDirection(long vAimDirection) {
+        return vAimDirection;
+    }
 
     public float getRateOfFire() {
         return rateOfFire;
