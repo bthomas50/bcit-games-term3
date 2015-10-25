@@ -103,10 +103,8 @@ public abstract class AbstractMap implements GraphicsObject, GameObject {
                     }
                 }
             }
-            // Causes crash due to my computer not having opengl 4.5 compatible drivers
-            // BufferedImage replacedRegion = foregroundImage.getSubimage(xImage, yImage, subNewWidth, subNewHeight);
-            // return foreground.setSubTexture(replacedRegion, xImage, yImage, replacedRegion.getWidth(), replacedRegion.getHeight());
-            return true;
+            BufferedImage replacedRegion = foregroundImage.getSubimage(xImage, yImage, subNewWidth, subNewHeight);
+            return foreground.setSubTexture(replacedRegion, xImage, yImage, replacedRegion.getWidth(), replacedRegion.getHeight());
         }
         return false;
     }
