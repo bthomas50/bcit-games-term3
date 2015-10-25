@@ -1,18 +1,20 @@
 package sketchwars;
 
-import sketchwars.exceptions.SceneManagerException;
-import sketchwars.graphics.Texture;
-import sketchwars.physics.*;
-import sketchwars.scenes.*;
-import sketchwars.input.*;
-import sketchwars.game.*;
-import sketchwars.sound.SoundPlayer;
-import static sketchwars.util.Config.*;
-
-
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import sketchwars.exceptions.SceneManagerException;
+import sketchwars.game.SketchWarsWorld;
+import sketchwars.game.SketchWarsWorldFactory;
+import sketchwars.graphics.Texture;
+import sketchwars.input.Input;
+import sketchwars.physics.BoundingBox;
+import sketchwars.physics.Physics;
+import sketchwars.scenes.Scene;
+import sketchwars.scenes.SceneManager;
+import sketchwars.sound.SoundPlayer;
 import sketchwars.ui.menu.MainMenu;
+import sketchwars.ui.menu.OptionMenu;
+import static sketchwars.util.Config.appendToLibraryPath;
 
 /**
  * The SketchWars main class
@@ -46,10 +48,12 @@ public class SketchWars {
 
         Scene gameScene = new Scene();
         MainMenu mainMenuScene = new MainMenu(sceneManager);
+        OptionMenu optionMenuScene = new OptionMenu(sceneManager);
         
         try {
             sceneManager.addScene(Scenes.GAME, gameScene);
             sceneManager.addScene(Scenes.MAIN_MENU, mainMenuScene);
+            sceneManager.addScene(Scenes.SUB_MENU, optionMenuScene);
             
             sceneManager.setCurrentScene(Scenes.MAIN_MENU);
         } catch (SceneManagerException ex) {

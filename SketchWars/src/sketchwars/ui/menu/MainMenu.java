@@ -14,13 +14,10 @@ import sketchwars.Scenes;
 import sketchwars.exceptions.SceneException;
 import sketchwars.exceptions.SceneManagerException;
 import sketchwars.graphics.GraphicElement;
-import sketchwars.graphics.GraphicsObject;
 import sketchwars.graphics.Texture;
 import sketchwars.input.Command;
-
 import sketchwars.input.MouseHandler;
 import sketchwars.input.MouseState;
-import sketchwars.physics.BoundingBox;
 import sketchwars.scenes.Layer;
 import sketchwars.scenes.Scene;
 import sketchwars.scenes.SceneManager;
@@ -35,10 +32,15 @@ public class MainMenu extends Scene {
     
     
     private Texture playBtn;
+    private Texture playBtnPress;
     private Texture createBtn;
+    private Texture createBtnPress;
     private Texture optionsBtn;
+    private Texture optionsBtnPress;
     private Texture exitBtn;
+    private Texture exitBtnPress;
     private Texture backgroundImage;
+    private Button<Command> createButton;
     private ArrayList<Button> buttonList = new ArrayList<Button>();
     
     public MainMenu(SceneManager<Scenes> sceneManager) {
@@ -69,31 +71,35 @@ public class MainMenu extends Scene {
     }
 
     private void createButtons() {
-        //bakc to game sceneManager.setCurrentScene(Scenes.GAME);
+        //Loading textures
         playBtn = Texture.loadTexture("content/menu/play.png", true);
+        playBtnPress = Texture.loadTexture("content/menu/play_press.png", true);
         createBtn = Texture.loadTexture("content/menu/create.png", true);
+        createBtnPress = Texture.loadTexture("content/menu/create_press.png", true);
         optionsBtn = Texture.loadTexture("content/menu/options.png", true);
+        optionsBtnPress = Texture.loadTexture("content/menu/options_press.png", true);
         exitBtn = Texture.loadTexture("content/menu/exit.png", true);
+        exitBtnPress = Texture.loadTexture("content/menu/exit_press.png", true);
         
-        Vector2d size = new Vector2d(0.5f,0.20f);
+        Vector2d size = new Vector2d(0.3f,0.12f);
 
         try {
             Layer btnLayer = getLayer(MenuLayers.BUTTONS);
             
             //play 
-            Button<Command> playButton = new Button(new Vector2d(0, 0.6),size,playBtn,playBtn,Command.MAIN_MENU_PLAY);
+            Button<Command> playButton = new Button(new Vector2d(0.03, -0.30),size,playBtn,playBtnPress,Command.MAIN_MENU_PLAY);
             btnLayer.addDrawableObject(playButton);
             
             //create
-            Button<Command> createButton = new Button(new Vector2d(0, 0.4),size,createBtn,createBtn,Command.MAIN_MENU_CREATE);
+            createButton = new Button(new Vector2d(0.03, -0.45),size,createBtn,createBtnPress,Command.MAIN_MENU_CREATE);
             btnLayer.addDrawableObject(createButton);            
 
             //create
-            Button<Command> optionsButton = new Button(new Vector2d(0, 0.2),size,optionsBtn,optionsBtn,Command.MAIN_MENU_OPTIONS);
+            Button<Command> optionsButton = new Button(new Vector2d(0.03, -0.60),size,optionsBtn,optionsBtnPress,Command.MAIN_MENU_OPTIONS);
             btnLayer.addDrawableObject(optionsButton);     
             
             //create
-            Button<Command> exitButton = new Button(new Vector2d(0, 0.0),size,exitBtn,exitBtn,Command.MAIN_MENU_EXIT);
+            Button<Command> exitButton = new Button(new Vector2d(0.03, -0.75),size,exitBtn,exitBtnPress,Command.MAIN_MENU_EXIT);
             btnLayer.addDrawableObject(exitButton);     
             
             buttonList.add(playButton);
@@ -117,12 +123,68 @@ public class MainMenu extends Scene {
               {
                   if(temp.getCommand().equals(Command.MAIN_MENU_PLAY))
                   {
-                      try {
-                          sceneManager.setCurrentScene(Scenes.GAME);
-                          OpenGL.hideMousePointer();
-                      } catch (SceneManagerException ex) {
-                          Logger.getLogger(MainMenu.class.getName()).log(Level.SEVERE, null, ex);
-                      }
+                    if(temp.isOnPress())
+                    {
+                        temp.setOnPress(false);
+                    }
+                    else
+                    {
+                        temp.setOnPress(true);
+                    }
+                    try {
+                        sceneManager.setCurrentScene(Scenes.GAME);
+                        OpenGL.hideMousePointer();
+                    } catch (SceneManagerException ex) {
+                        Logger.getLogger(MainMenu.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                  }
+                  else if(temp.getCommand().equals(Command.MAIN_MENU_CREATE))
+                  {
+                    if(temp.isOnPress())
+                    {
+                        temp.setOnPress(false);
+                    }
+                    else
+                    {
+                        temp.setOnPress(true);
+                    }
+                    try {
+                        sceneManager.setCurrentScene(Scenes.GAME);
+                        OpenGL.hideMousePointer();
+                    } catch (SceneManagerException ex) {
+                        Logger.getLogger(MainMenu.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                      
+                  }
+                  else if(temp.getCommand().equals(Command.MAIN_MENU_OPTIONS))
+                  {
+                    if(temp.isOnPress())
+                    {
+                        temp.setOnPress(false);
+                    }
+                    else
+                    {
+                        temp.setOnPress(true);
+                    }
+                    try {
+                        sceneManager.setCurrentScene(Scenes.SUB_MENU);
+                    } catch (SceneManagerException ex) {
+                        Logger.getLogger(MainMenu.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                      
+                  }
+                  else if(temp.getCommand().equals(Command.MAIN_MENU_EXIT))
+                  {
+                    if(temp.isOnPress())
+                    {
+                        temp.setOnPress(false);
+                    }
+                    else
+                    {
+                        temp.setOnPress(true);
+                    }
+                    // kill game
+                    System.exit(0);
                   }
 
               }

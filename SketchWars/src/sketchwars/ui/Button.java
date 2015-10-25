@@ -1,7 +1,8 @@
 package sketchwars.ui;
 
 import org.joml.Vector2d;
-import sketchwars.graphics.*;
+import sketchwars.graphics.GraphicsObject;
+import sketchwars.graphics.Texture;
 
 
 //a generic button that generates a command of type T
@@ -13,6 +14,15 @@ public class Button<T> implements GraphicsObject
     private Texture normalTexture;
     private Texture pressedTexture;
     private T command;
+    private boolean onPress = false;
+
+    public boolean isOnPress() {
+        return onPress;
+    }
+
+    public void setOnPress(boolean onPress) {
+        this.onPress = onPress;
+    }
 
     public Button(Vector2d position,Vector2d size, Texture normal, Texture pressed, T commandToGenerate)
     {
@@ -37,7 +47,15 @@ public class Button<T> implements GraphicsObject
     @Override
     public void render()
     {
-        normalTexture.draw(null, (float)position.x, (float)position.y, (float)size.x, (float)size.y);
+        if(onPress)
+        {
+            pressedTexture.draw(null, (float)position.x, (float)position.y, (float)size.x, (float)size.y);
+        }
+        else
+        {
+            normalTexture.draw(null, (float)position.x, (float)position.y, (float)size.x, (float)size.y);
+        }
+        
     }
 
     @Override
