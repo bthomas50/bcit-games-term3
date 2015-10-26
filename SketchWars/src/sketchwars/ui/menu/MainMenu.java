@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.joml.Vector2d;
+import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
 import sketchwars.OpenGL;
 import sketchwars.Scenes;
 import sketchwars.exceptions.SceneException;
@@ -43,6 +44,8 @@ public class MainMenu extends Scene {
     private Button<Command> createButton;
     private ArrayList<Button> buttonList = new ArrayList<Button>();
     
+    private MouseState lastState;
+    
     public MainMenu(SceneManager<Scenes> sceneManager) {
         this.sceneManager = sceneManager;
 
@@ -68,6 +71,8 @@ public class MainMenu extends Scene {
         
         addLayer(MenuLayers.BACKGROUND, bglayer);
         addLayer(MenuLayers.BUTTONS, btnLayer); 
+        
+        lastState = MouseHandler.state;
     }
 
     private void createButtons() {
@@ -112,96 +117,75 @@ public class MainMenu extends Scene {
         }
 
     }
-    private void handleInput()
+    private void handleInput(float x, float y)
     {
-        float x = MouseHandler.getNormalizedX();
-          float y = MouseHandler.getNormalizedY();
-
           for(Button temp : buttonList)
           {
               if(temp.contains(x, y))
               {
-                  if(temp.getCommand().equals(Command.MAIN_MENU_PLAY))
-                  {
-                    if(temp.isOnPress())
-                    {
-                        temp.setOnPress(false);
-                    }
-                    else
-                    {
-                        temp.setOnPress(true);
-                    }
-                    try {
-                        sceneManager.setCurrentScene(Scenes.GAME);
-                        OpenGL.hideMousePointer();
-                    } catch (SceneManagerException ex) {
-                        Logger.getLogger(MainMenu.class.getName()).log(Level.SEVERE, null, ex);
-                    }
+                if(temp.getCommand().equals(Command.MAIN_MENU_PLAY))
+                {
+                  try {
+                      sceneManager.setCurrentScene(Scenes.GAME);
+                      OpenGL.hideMousePointer();
+                  } catch (SceneManagerException ex) {
+                      Logger.getLogger(MainMenu.class.getName()).log(Level.SEVERE, null, ex);
                   }
-                  else if(temp.getCommand().equals(Command.MAIN_MENU_CREATE))
-                  {
-                    if(temp.isOnPress())
-                    {
-                        temp.setOnPress(false);
-                    }
-                    else
-                    {
-                        temp.setOnPress(true);
-                    }
-                    try {
-                        sceneManager.setCurrentScene(Scenes.GAME);
-                        OpenGL.hideMousePointer();
-                    } catch (SceneManagerException ex) {
-                        Logger.getLogger(MainMenu.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                      
-                  }
-                  else if(temp.getCommand().equals(Command.MAIN_MENU_OPTIONS))
-                  {
-                    if(temp.isOnPress())
-                    {
-                        temp.setOnPress(false);
-                    }
-                    else
-                    {
-                        temp.setOnPress(true);
-                    }
-                    try {
-                        sceneManager.setCurrentScene(Scenes.SUB_MENU);
-                    } catch (SceneManagerException ex) {
-                        Logger.getLogger(MainMenu.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                      
-                  }
-                  else if(temp.getCommand().equals(Command.MAIN_MENU_EXIT))
-                  {
-                    if(temp.isOnPress())
-                    {
-                        temp.setOnPress(false);
-                    }
-                    else
-                    {
-                        temp.setOnPress(true);
-                    }
-                    // kill game
-                    System.exit(0);
+                }
+                else if(temp.getCommand().equals(Command.MAIN_MENU_CREATE))
+                {
+                  try {
+                      sceneManager.setCurrentScene(Scenes.GAME);
+                      OpenGL.hideMousePointer();
+                  } catch (SceneManagerException ex) {
+                      Logger.getLogger(MainMenu.class.getName()).log(Level.SEVERE, null, ex);
                   }
 
+                }
+                else if(temp.getCommand().equals(Command.MAIN_MENU_OPTIONS))
+                {
+                  try {
+                      sceneManager.setCurrentScene(Scenes.SUB_MENU);
+                  } catch (SceneManagerException ex) {
+                      Logger.getLogger(MainMenu.class.getName()).log(Level.SEVERE, null, ex);
+                  }
+
+                }
+                else if(temp.getCommand().equals(Command.MAIN_MENU_EXIT))
+                {
+                  // kill game
+                  System.exit(0);
+                }
+            } else {
+                  temp.setOnPress(false);
               }
-          }
+        }
+          
+        
     }
     
 
     @Override
     public void update(double delta) {
+        float x = MouseHandler.getNormalizedX();
+        float y = MouseHandler.getNormalizedY();
         
-       // System.out.println(MouseHandler.y + "|x;"+ MouseHandler.x);
-        if(MouseHandler.state.equals(MouseState.DOWN))
-        {
-           handleInput();
+        MouseState currentState = MouseHandler.state;
+    
+        if (currentState.equals(MouseState.UP) && lastState.equals(MouseState.RISING)) {
+            handleInput(x, y);
+        } else if (currentState.equals(MouseState.DOWN)) {
+            for(Button temp : buttonList) {
+                if(temp.contains(x, y)) {
+                    temp.setOnPress(true);
+                } else {
+                    temp.setOnPress(false);
+                }
+            }
         }
-        super.update(delta); 
         
+        super.update(delta); 
+        lastState = MouseHandler.state;
     }
     
 
