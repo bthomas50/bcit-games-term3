@@ -24,6 +24,7 @@ public class SketchCharacter implements GraphicsObject, GameObject, CollisionLis
     private float height;
         
     private Texture texture;
+    
     private AbstractWeapon weapon;
     private Collider coll;
     private int maxHealth;
@@ -35,7 +36,7 @@ public class SketchCharacter implements GraphicsObject, GameObject, CollisionLis
     private float angle;
 
     private long vReticleOffset;
-            
+    private long vHealthBarOffset;
     private float lastActionTime; //last time input recieved
     
     private Texture reticleTexture;
@@ -102,7 +103,6 @@ public class SketchCharacter implements GraphicsObject, GameObject, CollisionLis
         long vCenter = bounds.getCenterVector();
         posX = (float)Vectors.xComp(vCenter) / 1024.0f;
         posY = (float)Vectors.yComp(vCenter) / 1024.0f;
-        
         width = (float) bounds.getWidth() / 1024.0f;
         height = (float) bounds.getHeight() / 1024.0f;
     }

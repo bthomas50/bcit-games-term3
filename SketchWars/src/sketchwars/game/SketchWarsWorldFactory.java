@@ -187,7 +187,6 @@ public class SketchWarsWorldFactory
             Animation idle = new Animation(idleSpriteSheet, 12, 12, 1, 5000, true);
             idle.start(rng.nextInt(750));
             animationSet.addAnimation(CharacterAnimations.IDLE, idle);
-            
             Texture jumpSpriteSheet = Texture.loadTexture("content/animation/characters/default/charSheet_jump.png", true);
             Animation jump = new Animation(jumpSpriteSheet, 36, 6, 6, 1000, true);
             jump.start();
