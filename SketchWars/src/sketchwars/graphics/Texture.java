@@ -16,7 +16,6 @@ import org.joml.Vector3d;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL30;
-import org.lwjgl.opengl.GL45;
 
 /**
  * Texture class is capable of loading and rendering images
@@ -366,7 +365,8 @@ public class Texture {
         } else if (subImage == null) {
             System.err.println("Texture::setSubTexture: Given ByteBuffer cannot be null.");
         } else {
-            GL45.glTextureSubImage2D(textureID, 0, xOffset, yOffset, width, height, GL_RGBA, GL_UNSIGNED_BYTE, subImage);
+            glBindTexture(GL_TEXTURE_2D, textureID);
+            glTexSubImage2D(GL_TEXTURE_2D, 0, xOffset, yOffset, width, height, GL_RGBA, GL_UNSIGNED_BYTE, subImage);
             return true;
         }
         
