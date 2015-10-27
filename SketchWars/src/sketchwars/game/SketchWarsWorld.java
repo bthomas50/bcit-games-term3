@@ -4,7 +4,6 @@ import sketchwars.character.SketchCharacter;
 import sketchwars.map.AbstractMap;
 import sketchwars.character.Team;
 import sketchwars.input.*;
-import sketchwars.game.*;
 
 import java.util.ArrayList;
 
@@ -49,7 +48,7 @@ public class SketchWarsWorld extends World {
         updateTurn(deltaMillis);
         removeExpiredObjects();
     }
-
+    
     protected void handleInput(double elapsedMillis) {
         for(Team t : teams) {
             t.handleInput(Input.currentInput, elapsedMillis);

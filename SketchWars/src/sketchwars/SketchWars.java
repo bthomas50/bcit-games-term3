@@ -42,10 +42,15 @@ public class SketchWars {
         sceneManager = new SceneManager<>();
         
         openGL = new OpenGL();
-        openGL.init(false);
+        openGL.init(true);
 
         SoundPlayer.loadSound();
 
+        physics = new Physics(new BoundingBox(-1024, -1024, 1024, 1024));
+        world = new SketchWarsWorld();
+
+        SketchWarsWorldFactory fact = new SketchWarsWorldFactory(world, physics, sceneManager);
+        
         Scene gameScene = new Scene();
         MainMenu mainMenuScene = new MainMenu(sceneManager);
         OptionMenu optionMenuScene = new OptionMenu(sceneManager);
@@ -60,10 +65,6 @@ public class SketchWars {
             Logger.getLogger(SketchWars.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        physics = new Physics(new BoundingBox(-1024, -1024, 1024, 1024));
-        world = new SketchWarsWorld();
-
-        SketchWarsWorldFactory fact = new SketchWarsWorldFactory(world, physics, sceneManager);
         fact.startGame();
     }
     
@@ -80,14 +81,17 @@ public class SketchWars {
                 double time = System.nanoTime(); //calculate frame length in milliseconds
                 double delta = (time - lastTime) / MILLION;
 
-                if (sceneManager != null) {
+                Scenes current = sceneManager.getCurrentSceneType();
+                if (sceneManager != null && current != null) {
                     sceneManager.render();//call the main graphics renderer
                     sceneManager.update(delta);
+                    
+                    if (current == Scenes.GAME) {
+                        world.update(delta);
+                        physics.update(delta);
+                    }
                 }
                 
-                world.update(delta);
-                physics.update(delta);
-
                 lastTime = time;
 
                 openGL.endUpdate();
