@@ -30,6 +30,7 @@ import sketchwars.ui.Button;
  */
 public class MainMenu extends Scene {
     private final SceneManager<Scenes> sceneManager;
+    private final SketchWars sketchWars;
     
     private Texture playBtn;
     private Texture playBtnPress;
@@ -45,8 +46,9 @@ public class MainMenu extends Scene {
     
     private MouseState lastState;
     
-    public MainMenu(SceneManager<Scenes> sceneManager) {
+    public MainMenu(SceneManager<Scenes> sceneManager, SketchWars sketchWars) {
         this.sceneManager = sceneManager;
+        this.sketchWars = sketchWars;
         
         createLayers();
         createButtons();
@@ -117,12 +119,11 @@ public class MainMenu extends Scene {
               {
                 if(temp.getCommand().equals(Command.MAIN_MENU_PLAY))
                 {
-                  try {
-                      sceneManager.setCurrentScene(Scenes.GAME);
-                      OpenGL.hideMousePointer();
-                  } catch (SceneManagerException ex) {
-                      Logger.getLogger(MainMenu.class.getName()).log(Level.SEVERE, null, ex);
-                  }
+                    if (sketchWars != null) {
+                        sketchWars.startGame();
+                    } else {
+                        System.err.println("Sketchwars instance in the main menu is a null pointer.");
+                    }
                 }
                 else if(temp.getCommand().equals(Command.MAIN_MENU_CREATE))
                 {
