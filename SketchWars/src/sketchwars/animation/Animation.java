@@ -74,7 +74,7 @@ public class Animation implements GraphicsObject, GameObject {
         spriteWidth = spriteSheet.getTextureWidth()/xTotalSprites;
         spriteHeight = spriteSheet.getTextureHeight()/yTotalSprites;
         
-        transform = new Matrix3d();
+        transform = null;
     }
     
     @Override
@@ -97,12 +97,11 @@ public class Animation implements GraphicsObject, GameObject {
                 textCoords[2] = new Vector2d(xTexCoordEnd, yTexCoordEnd);
                 textCoords[3] = new Vector2d(xTexCoordEnd, yTexCoordStart);
                 
-                Matrix3d trans = new Matrix3d();
-                trans.translation(position.x, position.y);
-                trans.mul(transform);
-                trans.scale(dimension.x, dimension.y, 1);
-                
-                spriteSheet.draw(textCoords, trans);
+                if (transform == null) {
+                    spriteSheet.draw(textCoords, (float)position.x, (float)position.y, (float)dimension.x, (float)dimension.y);
+                } else {
+                    spriteSheet.draw(textCoords, transform);
+                }
             }
         }
     }
