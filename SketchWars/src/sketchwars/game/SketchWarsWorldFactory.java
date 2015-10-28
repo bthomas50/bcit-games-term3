@@ -84,7 +84,7 @@ public class SketchWarsWorldFactory
             BufferedImage mapImage = Texture.loadImageFile("content/map/map.png");
             mapImageMask = BitMaskFactory.createFromImageAlpha(mapImage, physics.getBounds());
             
-            PixelCollider mapCollider = new PixelCollider(mapImageMask);
+            MapCollider mapCollider = new MapCollider(mapImageMask);
             mapCollider.setElasticity(0.5f);
             TestMap map = new TestMap(mapCollider, mapBGTexture, mapFGTexture, mapImage);
             mapCollider.attachGameObject(map);
@@ -143,7 +143,7 @@ public class SketchWarsWorldFactory
     private SketchCharacter createCharacter(long vPosition, Random rng)
     {
         SketchCharacter character = new SketchCharacter();
-        AnimationSet<CharacterAnimations> animationSet = createCharacterAniamtions(rng);
+        AnimationSet<CharacterAnimations> animationSet = createCharacterAnimations(rng);
         
         character.setAnimationSet(animationSet);
         
@@ -179,7 +179,7 @@ public class SketchWarsWorldFactory
         return character;
     }
 
-    private AnimationSet<CharacterAnimations> createCharacterAniamtions(Random rng) {
+    private AnimationSet<CharacterAnimations> createCharacterAnimations(Random rng) {
         AnimationSet<CharacterAnimations> animationSet = new AnimationSet<>();
         
         try {

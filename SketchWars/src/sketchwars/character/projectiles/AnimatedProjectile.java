@@ -60,15 +60,10 @@ public class AnimatedProjectile implements GameObject, GraphicsObject
         if(!pushedObjects.contains(c))
         {
             long vCenter = coll.getBounds().getCenterVector();
-            System.out.println("Explosion Center: " + Vectors.toString(vCenter));
             long vExplosionForceCenter = Vectors.add(vCenter, Vectors.create(0, -coll.getBounds().getHeight() / 3.0f));
-            System.out.println("Force Center: " + Vectors.toString(vExplosionForceCenter));
             long vOtherCenter = c.getBounds().getCenterVector();
-            System.out.println("Other Center: " + Vectors.toString(vOtherCenter));
             long vDelta = Vectors.subtract(vOtherCenter, vExplosionForceCenter);
-            System.out.println("DeltaForce: " + Vectors.toString(vDelta));
             long vDeltaCenter = Vectors.subtract(vOtherCenter, vCenter);
-            System.out.println("DeltaPosition: " + Vectors.toString(vDeltaCenter));
             double power = 8000.0 - 20.0 * Vectors.length(vDeltaCenter);
             if(power < 0) power = 0.0;
             c.applyForce(Vectors.scaleToLength(vDelta, power), 1000.0);

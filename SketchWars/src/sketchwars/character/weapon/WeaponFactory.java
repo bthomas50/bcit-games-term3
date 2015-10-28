@@ -1,6 +1,8 @@
 package sketchwars.character.weapon;
 
 import java.awt.image.BufferedImage;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
 import java.io.IOException;
 import sketchwars.graphics.*;
 import sketchwars.character.projectiles.ProjectileFactory;
@@ -71,7 +73,7 @@ public class WeaponFactory
         Texture eraserImgTex = Texture.loadTexture("content/char/weapons/pencileraserArea.png", true);
         BufferedImage eraserImage = null;
         try {
-            eraserImage = Texture.loadImageFile("content/char/weapons/pencileraserArea.png");
+            eraserImage = scaleImage(Texture.loadImageFile("content/char/weapons/pencileraserArea.png"), 64, 64);
         } catch (IOException ex) {
             System.err.println(ex.getMessage());
         }
@@ -90,21 +92,31 @@ public class WeaponFactory
     private static AbstractWeapon createPencil(ProjectileFactory fact, SketchWarsWorld world) {
         Texture texture = Texture.loadTexture("content/char/weapons/pencil.png", true);
         Texture pencilImgTex = Texture.loadTexture("content/char/weapons/pencilpointArea.png", true);
-        BufferedImage pencilpointImage = null;
-        try {
-            pencilpointImage = Texture.loadImageFile("content/char/weapons/pencilpointArea.png");
-        } catch (IOException ex) {
-            System.err.println(ex.getMessage());
-        }
-        
         float ratio = texture.getTextureHeight()/texture.getTextureWidth();
         float width = PENCIL_SCALE;
         float height = width * ratio;
+        BufferedImage pencilpointImage = null;
+        try {
+            pencilpointImage = scaleImage(Texture.loadImageFile("content/char/weapons/pencilpointArea.png"), 64, 64);
+        } catch (IOException ex) {
+            System.err.println(ex.getMessage());
+        }
         
         PencilWeapon pencil = new PencilWeapon(texture, pencilImgTex, pencilpointImage, width, height, fact, false);
         pencil.setAmmo(AbstractWeapon.INFINITE_AMMO);
         pencil.setMap(world.getMap());
         return pencil;
+    }
+
+    private static BufferedImage scaleImage(BufferedImage input, float newWidth, float newHeight) {
+        int w = input.getWidth();
+        int h = input.getHeight();
+        BufferedImage output = new BufferedImage((int)Math.ceil(newWidth), (int)Math.ceil(newHeight), input.getType());
+        AffineTransform at = new AffineTransform();
+        at.scale(newWidth / w, newHeight / h);
+        AffineTransformOp scaleOp = new AffineTransformOp(at, AffineTransformOp.TYPE_BILINEAR);
+        scaleOp.filter(input, output);
+        return output;
     }
 
     private WeaponFactory() {}

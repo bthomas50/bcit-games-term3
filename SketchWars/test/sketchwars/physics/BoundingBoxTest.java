@@ -78,6 +78,14 @@ public class BoundingBoxTest
     }
 
     @Test
+    public void testIntersectionDisjoint()
+    {
+        BoundingBox bb1 = new BoundingBox(0, 0, 2, 2);
+        BoundingBox bb2 = new BoundingBox(3, 3, 4, 5);
+        assertTrue(BoundingBox.EMPTY == bb1.intersection(bb2));
+    }
+
+    @Test
     public void testGetWidth()
     {
         assertEquals(new BoundingBox(0, 0, 99, 3).getWidth(), 4);

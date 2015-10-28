@@ -55,7 +55,7 @@ public class BoundingBox
     {
         if(!intersects(other))
         {
-            return null;
+            return EMPTY;
         }
         else
         {

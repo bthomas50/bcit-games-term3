@@ -2,7 +2,7 @@ package sketchwars.map;
 
 import java.awt.image.BufferedImage;
 import sketchwars.graphics.Texture;
-import sketchwars.physics.PixelCollider;
+import sketchwars.physics.MapCollider;
 
 /**
  *
@@ -10,9 +10,8 @@ import sketchwars.physics.PixelCollider;
  * @author Brian
  */
 public class TestMap extends AbstractMap {
-
-    public TestMap(PixelCollider mapCollider, Texture background, Texture foreground, BufferedImage foregroundImage) {
+    
+    public TestMap(MapCollider mapCollider, Texture background, Texture foreground, BufferedImage foregroundImage) {
         super(mapCollider, background, foreground, foregroundImage);
     }
-   
 }

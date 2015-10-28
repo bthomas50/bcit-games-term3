@@ -82,8 +82,8 @@ public class ProjectileFactory
             Explosion explosion = new Explosion();
             float posX = (float)Vectors.xComp(vCenter)/1024.0f;
             float posY = (float)Vectors.yComp(vCenter)/1024.0f;
-            float width = (float) (radius / 1024.0f);
-            float height = (float) ((radius / 1024.0f) * 1.4);
+            float width = (float) (2.0f*radius / 1024.0f);
+            float height = (float) ((2.0f*radius / 1024.0f) * 1.4);
             
             explosion.setPosition(new Vector2d(posX, posY));
             explosion.setDimension(new Vector2d(width, height));
@@ -98,8 +98,8 @@ public class ProjectileFactory
             
             //destroy terrain
             AbstractMap map = world.getMap();
-            if (map.updateTexture(explosionAlpha, true, posX, posY, width, height)) {
-                map.updateInPhysics(explosionAlpha, true, posX, posY, width, height);
+            if (map.updateTexture(explosionAlpha, true, vCenter)) {
+                map.updateInPhysics(explosionAlpha, true, vCenter);
             }
             
             return proj;
@@ -123,6 +123,5 @@ public class ProjectileFactory
         physics.addCollider(proj.getCollider());
         projectileLayer.addDrawableObject(proj); //so it can be rendered
     }
-
 
 }

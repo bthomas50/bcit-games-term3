@@ -217,9 +217,9 @@ public class BitMask
 
     public BoundingBox getBounds()
     {
-		if(bounds == null)
+		if(isEmpty())
 		{
-			return null;	
+			return BoundingBox.EMPTY;
 		}
         return bounds.getTranslatedBox(vOffset);
     }
@@ -232,7 +232,7 @@ public class BitMask
     public BitMask and(BitMask other)
     {
         BoundingBox intersection = getBounds().intersection(other.getBounds());
-        if(intersection == null)
+        if(intersection == BoundingBox.EMPTY)
         {
             return new BitMask();
         }
@@ -482,7 +482,7 @@ public class BitMask
             if(isColInBounds(jLongIdx))
             {
                 final int jBitIdx = dataJ % BITS_PER_LONG;
-                data[dataI][jLongIdx] &= LONG_MASKS[jBitIdx];
+                data[dataI][jLongIdx] &= ~LONG_MASKS[jBitIdx];
             }
         }
     }

@@ -30,4 +30,4 @@ esac
 
 CLASS_PATH="build/"$PATH_SEPARATOR"build/test/"$PATH_SEPARATOR$(find lib/* | grep .jar | tr '\n' $PATH_SEPARATOR)
 echo "CLASSPATH = $CLASS_PATH"
-java -cp $CLASS_PATH org.junit.runner.JUnitCore sketchwars.physics.PhysicsSuite
+java -cp $CLASS_PATH org.junit.runner.JUnitCore sketchwars.MainSuite

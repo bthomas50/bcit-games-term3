@@ -13,7 +13,7 @@ import sketchwars.physics.*;
  */
 public class GrenadeProjectile extends AbstractProjectile {
     private static final int EXPLOSION_DAMAGE = 25;
-    public static final double EXPLOSION_RADIUS = 250.0;
+    public static final double EXPLOSION_RADIUS = 125.0;
     
     private static final double LIFESPAN_MILLIS = 5000;
     private final ProjectileFactory factory;
@@ -27,9 +27,9 @@ public class GrenadeProjectile extends AbstractProjectile {
         timer.start();
         
         int radius = (int)EXPLOSION_RADIUS;
-        explosionAlpha = new BufferedImage(radius, radius, BufferedImage.TYPE_INT_ARGB);
+        explosionAlpha = new BufferedImage(radius*2, radius*2, BufferedImage.TYPE_INT_ARGB);
         Graphics g = explosionAlpha.getGraphics();
-        g.fillOval(0, 0, radius, radius);
+        g.fillOval(0, 0, radius*2, radius*2);
     }
 
     @Override

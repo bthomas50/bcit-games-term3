@@ -10,7 +10,7 @@ import java.util.ArrayList;
  */
 public class PixelCollider extends AbstractCollider
 {
-    private BitMask bitMask;
+    protected BitMask bitMask;
     
     public PixelCollider(BitMask bm)
     {
