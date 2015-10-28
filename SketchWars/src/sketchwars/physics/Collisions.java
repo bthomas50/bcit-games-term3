@@ -12,11 +12,7 @@ public class Collisions
     private static CollisionData collisionDataHolder = new Collisions.CollisionData();
 
     public static boolean hasCollided(Collider coll1, Collider coll2) {
-        BitMask mask1 = ((PixelCollider) coll1).getPixels();
-        BitMask mask2 = ((PixelCollider) coll2).getPixels();
-        BitMask collision = mask1.and(mask2);  
-        
-        return (!collision.isEmpty());
+        return (!getCollision(coll1, coll2).isEmpty());
     }
             
     
@@ -28,10 +24,9 @@ public class Collisions
             //nothing to do.
             return;
         }
-        //we only have PixelColliders for now
-        BitMask mask1 = ((PixelCollider) coll1).getPixels();
-        BitMask mask2 = ((PixelCollider) coll2).getPixels();
-        BitMask collision = mask1.and(mask2);
+        BitMask mask1 = ((PixelCollider)coll1).getPixels();
+        BitMask mask2 = ((PixelCollider)coll2).getPixels();
+        BitMask collision = getCollision(coll1, coll2);
         if(!collision.isEmpty())
         {
             if(behaviour.includes(NOTIFY))
@@ -47,28 +42,58 @@ public class Collisions
                 if(behaviour.includes(TRANSFER_MOMENTUM))
                 {
                     transferMomentum(coll1, coll2, vNorm1, vNorm2);
-                    applyResults(coll1, coll2);
                 }
+                applyResults(coll1, coll2);
             }
         }
     }
 
+    public static BitMask getCollision(Collider coll1, Collider coll2) {
+        BitMask mask1 = ((PixelCollider) coll1).getPixels();
+        BitMask mask2 = ((PixelCollider) coll2).getPixels();
+        return mask1.and(mask2);
+    }
+
     public static void clip(Collider coll1, Collider coll2, BitMask collision, long vNorm1, long vNorm2)
     {
-        double clipDistance1 = collision.getProjectedLength(vNorm1);
-        double clipDistance2 = collision.getProjectedLength(vNorm2);
         if(coll1.isStatic())
         {
+            double clipDistance1 = findSmallestAcceptableClipDistance(coll1, coll2, collision, vNorm1);
+            double clipDistance2 = findSmallestAcceptableClipDistance(coll1, coll2, collision, reverse(vNorm2));
+            if(clipDistance1 > 50)
+            {
+                System.out.println(clipDistance1 + ", " + clipDistance2);
+                System.out.println(collision.getBounds());
+                System.out.println(Vectors.toString(vNorm1) + "__" + Vectors.toString(vNorm2));
+            }
             collisionDataHolder.vTranslation1 = 0;
-            collisionDataHolder.vTranslation2 = scalarMultiply(clipDistance1, vNorm1);
+            if(clipDistance1 < clipDistance2)
+            {
+                collisionDataHolder.vTranslation2 = scalarMultiply(clipDistance1, vNorm1);
+            }
+            else
+            {
+                collisionDataHolder.vTranslation2 = scalarMultiply(clipDistance2, reverse(vNorm2));
+            }
         }
         else if(coll2.isStatic())
         {
+            double clipDistance1 = findSmallestAcceptableClipDistance(coll2, coll1, collision, reverse(vNorm1));
+            double clipDistance2 = findSmallestAcceptableClipDistance(coll2, coll1, collision, vNorm2);
             collisionDataHolder.vTranslation2 = 0;
-            collisionDataHolder.vTranslation1 = scalarMultiply(clipDistance2, vNorm2);
+            if(clipDistance1 < clipDistance2)
+            {
+                collisionDataHolder.vTranslation1 = scalarMultiply(clipDistance1, reverse(vNorm1));
+            }
+            else
+            {
+                collisionDataHolder.vTranslation1 = scalarMultiply(clipDistance2, vNorm2);
+            }
         }
         else
         {
+            double clipDistance1 = collision.getProjectedLength(vNorm1) + 0.5;
+            double clipDistance2 = collision.getProjectedLength(vNorm2) + 0.5;
             double massFraction1 = coll1.getMass() / (coll1.getMass() + coll2.getMass());
             double massFraction2 = coll2.getMass() / (coll1.getMass() + coll2.getMass());
             if(clipDistance1 < clipDistance2)
@@ -82,6 +107,24 @@ public class Collisions
                 collisionDataHolder.vTranslation2 = scalarMultiply(clipDistance2 * -massFraction1, vNorm2);
             }
         }
+    }
+
+    private static double findSmallestAcceptableClipDistance(Collider staticColl, Collider dynamicColl, BitMask collision, long vDirection) 
+    {
+        long vSavedPos = dynamicColl.getPosition();
+        double maxClip = collision.getProjectedLength(vDirection) + 0.5;
+        for(double test = 1.0; test <= maxClip - 1; test += 1.0)
+        {
+            long vTranslation = scalarMultiply(test, vDirection);
+            dynamicColl.setPosition(add(vSavedPos, vTranslation));
+            if(!hasCollided(staticColl, dynamicColl))
+            {
+                dynamicColl.setPosition(vSavedPos);
+                return test + 0.5;
+            }
+        }
+        dynamicColl.setPosition(vSavedPos);
+        return maxClip;
     }
 
     public static void transferMomentum(Collider coll1, Collider coll2, long vNorm1, long vNorm2)
