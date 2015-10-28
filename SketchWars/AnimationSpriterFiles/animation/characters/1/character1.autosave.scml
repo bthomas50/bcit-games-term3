@@ -224,7 +224,7 @@
                 </key>
             </timeline>
         </animation>
-        <animation id="2" name="walk_left" length="200" interval="100">
+        <animation id="2" name="walk_left" length="200" interval="200">
             <mainline>
                 <key id="0">
                     <bone_ref id="0" timeline="6" key="0"/>
@@ -281,12 +281,12 @@
             </timeline>
             <timeline id="2" name="l_feet">
                 <key id="0" spin="0">
-                    <object folder="0" file="2" x="-1.488666" y="-20.659384" angle="90.850023" scale_x="0.63606" scale_y="1"/>
+                    <object folder="0" file="2" x="-1.488666" y="-20.659384" angle="90.850023" scale_x="0.63606"/>
                 </key>
             </timeline>
             <timeline id="3" name="r_feet">
                 <key id="0" spin="0">
-                    <object folder="0" file="2" x="-4.186671" y="-13.878014" angle="80.545177" scale_x="0.508834" scale_y="1"/>
+                    <object folder="0" file="2" x="-4.186671" y="-13.878014" angle="80.545177" scale_x="0.508834"/>
                 </key>
             </timeline>
             <timeline id="4" name="l_leg">
@@ -339,13 +339,13 @@
             </timeline>
             <timeline id="10" obj="1" name="r_feet_bone" object_type="bone">
                 <key id="0">
-                    <bone x="81.639073" y="0.040732" angle="16.939235" scale_x="0.995557" scale_y="1"/>
+                    <bone x="81.639073" y="0.040732" angle="16.939235" scale_x="0.995557"/>
                 </key>
                 <key id="1" time="67" spin="-1">
-                    <bone x="81.639073" y="0.040732" angle="25.47177" scale_x="0.995557" scale_y="1"/>
+                    <bone x="81.639073" y="0.040732" angle="25.47177" scale_x="0.995557"/>
                 </key>
                 <key id="2" time="134">
-                    <bone x="81.639073" y="0.040732" angle="4.559166" scale_x="0.995557" scale_y="1"/>
+                    <bone x="81.639073" y="0.040732" angle="4.559166" scale_x="0.995557"/>
                 </key>
             </timeline>
             <timeline id="11" obj="0" name="head_bone" object_type="bone">

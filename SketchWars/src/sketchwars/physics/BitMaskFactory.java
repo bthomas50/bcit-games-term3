@@ -51,33 +51,26 @@ public class BitMaskFactory
         return ret;
     }
     
-    public static void updateFromImageAlpha(BufferedImage im, BitMask bitmask, long vPosition, boolean set) 
-    {
-        BitMask toSubtract = createFromImageAlpha(im, new BoundingBox(0, 0, im.getHeight() - 1, im.getWidth() - 1));
-        toSubtract.setPosition(vPosition);
-        BoundingBox origBounds = bitmask.getBounds();
-        BoundingBox toSubtractBounds = toSubtract.getBounds();
-        BoundingBox intersection = toSubtractBounds.intersection(origBounds);
-        if(intersection == BoundingBox.EMPTY)
+    public static void updateFromImageAlpha(BufferedImage im, BitMask bitmask, BoundingBox bounds, boolean set) {
+        float width = (float)bounds.getWidth();
+        float height = (float)bounds.getHeight();
+        float widthRatio = (float) im.getWidth() / width;
+        float heightRatio = (float) im.getHeight() / height;
+        for(int i = bounds.getTop(); i <= bounds.getBottom(); i++)
         {
-            return;
-        }
-        for(int x = intersection.getLeft(); x <= intersection.getRight(); x++)
-        {
-            int imageX = x - Vectors.ixComp(vPosition);
-            for(int y = intersection.getTop(); y <= intersection.getBottom(); y++)
+            float relativeI = (float)(i - bounds.getTop());
+            for(int j = bounds.getLeft(); j <= bounds.getRight(); j++)
             {
-                int imageY = y - Vectors.iyComp(vPosition);
-                int alpha = im.getRGB(imageX, imageY) >> 24;
+                float relativeJ = (float)(j - bounds.getLeft());
+                int imageI = im.getHeight() - 1 - (int) ((float)relativeI * heightRatio);
+                int imageJ = (int) ((float)relativeJ * widthRatio);
+                int alpha = im.getRGB(imageJ, imageI) >> 24;
                 if(alpha != 0)
                 {
-                    if(set)
-                    {
-                        bitmask.setBit(y, x);
-                    }
-                    else
-                    {
-                        bitmask.unsetBit(y, x);
+                    if (set) {
+                        bitmask.setBit(i, j);
+                    } else {
+                        bitmask.unsetBit(i, j);
                     }
                 }
             }

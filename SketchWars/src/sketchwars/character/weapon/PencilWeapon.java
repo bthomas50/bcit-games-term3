@@ -80,8 +80,8 @@ public class PencilWeapon extends AbstractWeapon {
             
             point.draw(null, xEraser, yEraser, eWidth, eHeight);
             
-            if (currentMap.updateTexture(pointImage, eraser, Vectors.scalarMultiply(Vectors.create(xEraser, yEraser), 1024.0))) {
-                currentMap.updateInPhysics(pointImage, eraser, Vectors.scalarMultiply(Vectors.create(xEraser, yEraser), 1024.0));
+            if (currentMap.updateTexture(pointImage, eraser, xEraser, yEraser, eWidth, eHeight)) {
+                currentMap.updateInPhysics(pointImage, eraser, xEraser, yEraser, eWidth, eHeight);
             }
         }
     }
