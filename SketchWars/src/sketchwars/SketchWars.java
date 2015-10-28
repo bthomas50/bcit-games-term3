@@ -106,7 +106,6 @@ public class SketchWars {
                 }
                 
                 lastTime = time;
-
                 openGL.endUpdate();
             }
         } finally {

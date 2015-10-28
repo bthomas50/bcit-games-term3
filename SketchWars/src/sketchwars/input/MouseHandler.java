@@ -10,6 +10,9 @@ public class MouseHandler
 {
     public static int x;
     public static int y;
+    public static float xNormalized;
+    public static float yNormalized;
+    
     public static MouseState state = MouseState.UP;
 
     private static int curEvent = GLFW_RELEASE;
@@ -34,8 +37,9 @@ public class MouseHandler
             state = MouseState.DOWN;
         }
         lastEvent = curEvent;
+        
+        normalizeMousePosition();
     }
-
 
     public static class ButtonCallback extends GLFWMouseButtonCallback
     {
@@ -59,13 +63,9 @@ public class MouseHandler
         }
     }
     
-    public static float getNormalizedX() {
+    private static void normalizeMousePosition() {
         Vector2d screenSize = OpenGL.getDisplaySize();
-        return -1 + (float)((2/screenSize.x) * x);
-    }
-    
-    public static float getNormalizedY() {
-        Vector2d screenSize = OpenGL.getDisplaySize();
-        return 1 - (float)((2/screenSize.y) * y);
+        xNormalized = -1 + (float)((2/screenSize.x) * x);
+        yNormalized = 1 - (float)((2/screenSize.y) * y);
     }
 }

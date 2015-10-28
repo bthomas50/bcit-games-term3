@@ -379,6 +379,7 @@ public class Texture {
             
             if (getTotalReferences() == 0) {
                 glDeleteTextures(textureID);
+                textureID = -1;
             }
         }
     }

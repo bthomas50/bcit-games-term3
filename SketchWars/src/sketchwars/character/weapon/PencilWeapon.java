@@ -43,8 +43,8 @@ public class PencilWeapon extends AbstractWeapon {
 
     @Override
     public void update(double elapsed) {
-        posX = MouseHandler.getNormalizedX();
-        posY = MouseHandler.getNormalizedY();
+        posX = MouseHandler.xNormalized;
+        posY = MouseHandler.yNormalized;
         
         handleErasing();
         

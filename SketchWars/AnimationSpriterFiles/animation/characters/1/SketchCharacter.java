@@ -7,24 +7,21 @@ import sketchwars.physics.*;
 import sketchwars.character.weapon.AbstractWeapon;
 import sketchwars.graphics.*;
 import sketchwars.game.GameObject;
-import sketchwars.map.AbstractMap;
-import sketchwars.map.TestMap;
 import static sketchwars.physics.Vectors.create;
 
 /*
  *
  * @author Najash Najimudeen <najash.najm@gmail.com>
  */
-public class SketchCharacter implements GraphicsObject, GameObject, CollisionListener {
+public class SketchCharacter implements GraphicsObject, GameObject {
     public static final int DEFAULT_MAX_HEALTH = 100;
     
-    private float posX;
-    private float posY;
-    private float width;
-    private float height;
+    private double posX;
+    private double posY;
+    private double width;
+    private double height;
         
     private Texture texture;
-    
     private AbstractWeapon weapon;
     private Collider coll;
     private int maxHealth;
@@ -33,16 +30,13 @@ public class SketchCharacter implements GraphicsObject, GameObject, CollisionLis
     
     private boolean hasFired;
     private boolean isFacingLeft;
-    private float angle;
+    private double angle;
 
-    private long vReticleOffset;
-    private long vHealthBarOffset;
-    private int lastActionTime; //last time input recieved
+    private double lastActionTime; //last time input recieved
     
     private Texture reticleTexture;
     
     private AnimationSet<CharacterAnimations> animationSet;
-    private boolean canJump;
 
     public SketchCharacter() {
         this(DEFAULT_MAX_HEALTH, DEFAULT_MAX_HEALTH);
@@ -55,11 +49,9 @@ public class SketchCharacter implements GraphicsObject, GameObject, CollisionLis
         this.health = health;
         this.isDead = false;
         this.hasFired = false;
-        this.angle = 0.0f;
+        this.angle = 0.0;
         this.isFacingLeft = false;//start facing right.
         reticleTexture = Texture.loadTexture("content/misc/reticle.png", false);
-        
-        this.canJump = true;
     }
     
     public void setCollider(Collider coll) {
@@ -82,10 +74,7 @@ public class SketchCharacter implements GraphicsObject, GameObject, CollisionLis
         }
         
         if (weapon != null) {
-            float fireAngle = getActualFireAngle();
-            weapon.setAngle(fireAngle);
-            weapon.setPosition(posX, posY);
-            vReticleOffset = Vectors.createRTheta(0.1, fireAngle);
+            weapon.setPosition(posX + 0.01, posY - 0.01);
             weapon.update(delta);
         }
         
@@ -93,18 +82,14 @@ public class SketchCharacter implements GraphicsObject, GameObject, CollisionLis
             isDead = true;
     }
 
-    @Override
-    public boolean hasExpired() {
-        return isDead();
-    }
-
     private void updateCharacterInfo() {
         BoundingBox bounds = coll.getBounds();
         long vCenter = bounds.getCenterVector();
-        posX = (float)Vectors.xComp(vCenter) / 1024.0f;
-        posY = (float)Vectors.yComp(vCenter) / 1024.0f;
-        width = (float) bounds.getWidth() / 1024.0f;
-        height = (float) bounds.getHeight() / 1024.0f;
+        posX = Vectors.xComp(vCenter) / 1024.0;
+        posY = Vectors.yComp(vCenter) / 1024.0;
+        
+        width = (double) bounds.getWidth() / 2048.0;
+        height = (double) bounds.getHeight() / 2048.0;
     }
 
     @Override
@@ -115,7 +100,8 @@ public class SketchCharacter implements GraphicsObject, GameObject, CollisionLis
         
         if (weapon != null) {
             weapon.render();
-            reticleTexture.draw(null, posX + (float)Vectors.xComp(vReticleOffset), posY + (float)Vectors.yComp(vReticleOffset), 0.05f, 0.05f);
+            long vReticleOffset = Vectors.createRTheta(0.1, getActualFireAngle());
+            reticleTexture.drawNormalized(null, posX + Vectors.xComp(vReticleOffset), posY + Vectors.yComp(vReticleOffset), 0.05, 0.05);
         }
         
     }
@@ -170,24 +156,24 @@ public class SketchCharacter implements GraphicsObject, GameObject, CollisionLis
         return isDead;
     }
     
-    public float getPosX() {
+    public double getPosX() {
         return posX;
     }
 
-    public float getPosY() {
+    public double getPosY() {
         return posY;
     }
 
-    public void setPosition(float posX, float posY) {
+    public void setPosition(double posX, double posY) {
         this.posX = posX;
         this.posY = posY;
     }
 
-    public float getWidth() {
+    public double getWidth() {
         return width;
     }
 
-    public float getHeight() {
+    public double getHeight() {
         return height;
     }
 
@@ -211,7 +197,7 @@ public class SketchCharacter implements GraphicsObject, GameObject, CollisionLis
         return hasFired;
     }
 
-    public void fireCurrentWeapon(float power) {
+    public void fireCurrentWeapon(double power) {
         if(weapon != null) {
             hasFired = weapon.tryToFire(this, (float)power, Vectors.createRTheta(1.0f, getActualFireAngle()));
         }
@@ -220,52 +206,49 @@ public class SketchCharacter implements GraphicsObject, GameObject, CollisionLis
     public void aimUp(double elapsedMillis) {
         angle += Math.PI * elapsedMillis / 1000.0;
         //make sure not to aim higher than straight up
-        angle = (float)Math.min(angle, Math.PI / 2.0);
-        //System.out.println("angle: " + angle);
+        angle = Math.min(angle, Math.PI / 2.0);
+        System.out.println("angle: " + angle);
     }
 
     public void aimDown(double elapsedMillis) {
         angle -= Math.PI * elapsedMillis / 1000.0;
         //make sure not to aim lower than straight down
-        angle = (float)Math.max(angle, -Math.PI / 2.0);
-        //System.out.println("angle: " + angle);
+        angle = Math.max(angle, -Math.PI / 2.0);
+        System.out.println("angle: " + angle);
     }
 
     void moveLeft(double elapsedMillis) 
     {
-        lastActionTime = (int) System.currentTimeMillis();
+        lastActionTime = System.currentTimeMillis();
         animationSet.setCurrentAnimation(CharacterAnimations.WALK_LEFT);
         long oldVector = coll.getVelocity();
         this.isFacingLeft = true;
-        float getY = (float)Vectors.yComp(oldVector);
+        double getY = Vectors.yComp(oldVector);
         coll.setVelocity(create(-100, getY));
     }
 
     void moveRight(double elapsedMillis)
     {
-        lastActionTime = (int) System.currentTimeMillis();
+        lastActionTime = System.currentTimeMillis();
         animationSet.setCurrentAnimation(CharacterAnimations.WALK_RIGHT);
         long oldVector = coll.getVelocity();
         this.isFacingLeft = false;
-        float getY = (float)Vectors.yComp(oldVector);
+        double getY = Vectors.yComp(oldVector);
         coll.setVelocity(create(100, getY));
     }
     
     void jump(double elapsedMillis)
     {
-        if (canJump) {
-            lastActionTime = (int) System.currentTimeMillis();
-            animationSet.setCurrentAnimation(CharacterAnimations.JUMP);
-            long oldVector = coll.getVelocity();
-            float getX = (float)Vectors.xComp(oldVector);
-            coll.setVelocity(create(getX, 200));
-            canJump = false;
-        } 
+        lastActionTime = System.currentTimeMillis();
+        animationSet.setCurrentAnimation(CharacterAnimations.JUMP);
+        long oldVector = coll.getVelocity();
+        double getX = Vectors.xComp(oldVector);
+        coll.setVelocity(create(getX, 200));
     }
 
-    private float getActualFireAngle() {
+    private double getActualFireAngle() {
         if(isFacingLeft) {
-            return (float)(Math.PI - angle);
+            return Math.PI - angle;
         } else {
             return angle;
         }
@@ -284,21 +267,11 @@ public class SketchCharacter implements GraphicsObject, GameObject, CollisionLis
     }
 
     private void handleAnimationInput() {
-        int current = (int) System.currentTimeMillis();
-        int diff = current - lastActionTime;
+        double current = System.currentTimeMillis();
+        double diff = current - lastActionTime;
   
         if (diff > 200) {
             animationSet.setCurrentAnimation(CharacterAnimations.IDLE);
-        }
-    }
-
-    @Override
-    public void collided(Collider thisColl, Collider otherColl) {
-        if(otherColl.hasAttachedGameObject()) {
-            GameObject otherObj = otherColl.getAttachedGameObject();
-            if(otherObj instanceof AbstractMap) {
-                canJump = true;
-            }
         }
     }
 }

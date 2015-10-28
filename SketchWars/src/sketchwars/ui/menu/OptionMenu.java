@@ -5,7 +5,6 @@
  */
 package sketchwars.ui.menu;
 
-import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.joml.Vector2d;
@@ -14,29 +13,30 @@ import sketchwars.exceptions.SceneException;
 import sketchwars.exceptions.SceneManagerException;
 import sketchwars.graphics.GraphicElement;
 import sketchwars.graphics.Texture;
-import sketchwars.input.Command;
-import sketchwars.input.MouseHandler;
-import sketchwars.input.MouseState;
 import sketchwars.scenes.Layer;
 import sketchwars.scenes.Scene;
 import sketchwars.scenes.SceneManager;
 import sketchwars.sound.SoundPlayer;
 import sketchwars.ui.Button;
+import sketchwars.ui.UIActionListener;
+import sketchwars.ui.UIComponent;
 
 /**
  *
  * @author Lightcan
  */
-public class OptionMenu extends Scene {
+public class OptionMenu extends Scene implements UIActionListener {
     
     private SceneManager<Scenes> sceneManager;
-    private ArrayList<Button> buttonList = new ArrayList<Button>();
     
     private Texture backgroundImage;
     private Texture backBtn;
     private Texture backBtnPress;
     private Texture musicBtn;
     private Texture musicBtnPress;
+    
+    private Button backButton;
+    private Button musicButton;
     
     public OptionMenu(SceneManager<Scenes> sceneManager) {
         this.sceneManager = sceneManager;
@@ -66,40 +66,24 @@ public class OptionMenu extends Scene {
         musicBtn = Texture.loadTexture("content/menu/music.png", true);
         musicBtnPress = Texture.loadTexture("content/menu/music_press.png", true);
 
-        
         Vector2d size = new Vector2d(0.3f,0.12f);
 
         try {
             Layer btnLayer = getLayer(MenuLayers.BUTTONS);
 
             //play 
-            Button<Command> backButton = new Button(new Vector2d(0.03, -0.30),size,backBtn,backBtnPress,Command.OPTION_MENU_BACK);
+            backButton = new Button(new Vector2d(0.03, -0.30), size, backBtn, backBtnPress, null);
             btnLayer.addDrawableObject(backButton);
+            backButton.addActionListener(this);
             
             //create
-            Button<Command> musicButton = new Button(new Vector2d(0.03, -0.45),size,musicBtn,musicBtnPress,Command.OPTION_MENU_MUSIC);
+            musicButton = new Button(new Vector2d(0.03, -0.45), size, musicBtn, musicBtnPress, null);
             btnLayer.addDrawableObject(musicButton);            
-
-            buttonList.add(backButton);
-            buttonList.add(musicButton);
-
-            
+            musicButton.addActionListener(this);
         } catch (SceneException ex) {
             Logger.getLogger(MainMenu.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-    }
-    
-    @Override
-    public void update(double delta) {
-        
-       // System.out.println(MouseHandler.y + "|x;"+ MouseHandler.x);
-        if(MouseHandler.state.equals(MouseState.DOWN))
-        {
-           handleInput();
-        }
-        super.update(delta); 
-        
     }
     
     private void createBackground() {
@@ -115,52 +99,18 @@ public class OptionMenu extends Scene {
         } catch (SceneException ex) {
             Logger.getLogger(MainMenu.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
     }
     
-    private void handleInput()
-    {
-        float x = MouseHandler.getNormalizedX();
-          float y = MouseHandler.getNormalizedY();
-
-          for(Button temp : buttonList)
-          {
-              if(temp.contains(x, y))
-              {
-                if(temp.getCommand().equals(Command.OPTION_MENU_BACK))
-                {
-                    try 
-                    {
-                        
-                        sceneManager.setCurrentScene(Scenes.MAIN_MENU);
-                        //OpenGL.hideMousePointer();
-                    } catch (SceneManagerException ex) {
-                        Logger.getLogger(MainMenu.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                    if(temp.isOnPress())
-                    {
-                        temp.setOnPress(false);
-                    }
-                    else
-                    {
-                        temp.setOnPress(true);
-                    }
-                }
-                  else if(temp.getCommand().equals(Command.OPTION_MENU_MUSIC))
-                  {
-                    SoundPlayer.pause(0);
-                    if(temp.isOnPress())
-                    {
-                        temp.setOnPress(false);
-                    }
-                    else
-                    {
-                        temp.setOnPress(true);
-                    }
-                    
-                      
-                  }
-              }
-          }
+    @Override
+    public void action(UIComponent component) {
+        if (component.equals(backButton)) {
+            try {
+                sceneManager.setCurrentScene(Scenes.MAIN_MENU);
+            } catch (SceneManagerException ex) {
+                Logger.getLogger(OptionMenu.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } else if (component.equals(backButton)) {
+            SoundPlayer.pause(0);
+        }
     }
 }

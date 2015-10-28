@@ -16,19 +16,20 @@ import sketchwars.exceptions.SceneException;
 import sketchwars.exceptions.SceneManagerException;
 import sketchwars.graphics.GraphicElement;
 import sketchwars.graphics.Texture;
-import sketchwars.input.Command;
 import sketchwars.input.MouseHandler;
 import sketchwars.input.MouseState;
 import sketchwars.scenes.Layer;
 import sketchwars.scenes.Scene;
 import sketchwars.scenes.SceneManager;
 import sketchwars.ui.Button;
+import sketchwars.ui.UIActionListener;
+import sketchwars.ui.UIComponent;
 
 /**
  *
  * @author A00807688
  */
-public class MainMenu extends Scene {
+public class MainMenu extends Scene implements UIActionListener {
     private final SceneManager<Scenes> sceneManager;
     private final SketchWars sketchWars;
     
@@ -41,10 +42,11 @@ public class MainMenu extends Scene {
     private Texture exitBtn;
     private Texture exitBtnPress;
     private Texture backgroundImage;
-    private Button<Command> createButton;
-    private ArrayList<Button> buttonList = new ArrayList<Button>();
-    
-    private MouseState lastState;
+      
+    private Button buttonPlay;
+    private Button buttonCreate;
+    private Button buttonOptions;
+    private Button buttonExit;
     
     public MainMenu(SceneManager<Scenes> sceneManager, SketchWars sketchWars) {
         this.sceneManager = sceneManager;
@@ -65,8 +67,6 @@ public class MainMenu extends Scene {
         
         addLayer(MenuLayers.BACKGROUND, bglayer);
         addLayer(MenuLayers.BUTTONS, btnLayer); 
-        
-        lastState = MouseHandler.state;
     }
 
     private void createButtons() {
@@ -86,102 +86,28 @@ public class MainMenu extends Scene {
             Layer btnLayer = getLayer(MenuLayers.BUTTONS);
             
             //play 
-            Button<Command> playButton = new Button(new Vector2d(0.03, -0.30),size,playBtn,playBtnPress,Command.MAIN_MENU_PLAY);
-            btnLayer.addDrawableObject(playButton);
+            buttonPlay = new Button(new Vector2d(0.03, -0.30), size, playBtn, playBtnPress, null);
+            btnLayer.addDrawableObject(buttonPlay);
+            buttonPlay.addActionListener(this);
+                    
+            //create
+            buttonCreate = new Button(new Vector2d(0.03, -0.45), size, createBtn, createBtnPress, null);
+            btnLayer.addDrawableObject(buttonCreate);            
+            buttonCreate.addActionListener(this);
             
             //create
-            createButton = new Button(new Vector2d(0.03, -0.45),size,createBtn,createBtnPress,Command.MAIN_MENU_CREATE);
-            btnLayer.addDrawableObject(createButton);            
-
-            //create
-            Button<Command> optionsButton = new Button(new Vector2d(0.03, -0.60),size,optionsBtn,optionsBtnPress,Command.MAIN_MENU_OPTIONS);
-            btnLayer.addDrawableObject(optionsButton);     
+            buttonOptions = new Button(new Vector2d(0.03, -0.60), size, optionsBtn, optionsBtnPress, null);
+            btnLayer.addDrawableObject(buttonOptions);     
+            buttonOptions.addActionListener(this);
             
             //create
-            Button<Command> exitButton = new Button(new Vector2d(0.03, -0.75),size,exitBtn,exitBtnPress,Command.MAIN_MENU_EXIT);
-            btnLayer.addDrawableObject(exitButton);     
-            
-            buttonList.add(playButton);
-            buttonList.add(createButton);
-            buttonList.add(optionsButton);
-            buttonList.add(exitButton);
-            
+            buttonExit = new Button(new Vector2d(0.03, -0.75), size, exitBtn, exitBtnPress, null);
+            btnLayer.addDrawableObject(buttonExit);
+            buttonExit.addActionListener(this);
         } catch (SceneException ex) {
             Logger.getLogger(MainMenu.class.getName()).log(Level.SEVERE, null, ex);
         }
-
     }
-    private void handleInput(float x, float y)
-    {
-          for(Button temp : buttonList)
-          {
-              if(temp.contains(x, y))
-              {
-                if(temp.getCommand().equals(Command.MAIN_MENU_PLAY))
-                {
-                    if (sketchWars != null) {
-                        sketchWars.startGame();
-                    } else {
-                        System.err.println("Sketchwars instance in the main menu is a null pointer.");
-                    }
-                }
-                else if(temp.getCommand().equals(Command.MAIN_MENU_CREATE))
-                {
-                  try {
-                      sceneManager.setCurrentScene(Scenes.GAME);
-                      OpenGL.hideMousePointer();
-                  } catch (SceneManagerException ex) {
-                      Logger.getLogger(MainMenu.class.getName()).log(Level.SEVERE, null, ex);
-                  }
-
-                }
-                else if(temp.getCommand().equals(Command.MAIN_MENU_OPTIONS))
-                {
-                  try {
-                      sceneManager.setCurrentScene(Scenes.SUB_MENU);
-                  } catch (SceneManagerException ex) {
-                      Logger.getLogger(MainMenu.class.getName()).log(Level.SEVERE, null, ex);
-                  }
-
-                }
-                else if(temp.getCommand().equals(Command.MAIN_MENU_EXIT))
-                {
-                  // kill game
-                  System.exit(0);
-                }
-            } else {
-                  temp.setOnPress(false);
-              }
-        }
-          
-        
-    }
-    
-
-    @Override
-    public void update(double delta) {
-        float x = MouseHandler.getNormalizedX();
-        float y = MouseHandler.getNormalizedY();
-        
-        MouseState currentState = MouseHandler.state;
-    
-        if (currentState.equals(MouseState.UP) && lastState.equals(MouseState.RISING)) {
-            handleInput(x, y);
-        } else if (currentState.equals(MouseState.DOWN)) {
-            for(Button temp : buttonList) {
-                if(temp.contains(x, y)) {
-                    temp.setOnPress(true);
-                } else {
-                    temp.setOnPress(false);
-                }
-            }
-        }
-        
-        super.update(delta); 
-        lastState = MouseHandler.state;
-    }
-    
-
     
     private void createBackground() {
         
@@ -198,5 +124,30 @@ public class MainMenu extends Scene {
         }
         
     }
-    
+
+    @Override
+    public void action(UIComponent component) {
+        if (component.equals(buttonCreate)) {
+            try {
+                sceneManager.setCurrentScene(Scenes.GAME);
+                OpenGL.hideMousePointer();
+            } catch (SceneManagerException ex) {
+                Logger.getLogger(MainMenu.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } else if (component.equals(buttonPlay)) {
+            if (sketchWars != null) {
+                sketchWars.startGame();
+            } else {
+                System.err.println("Sketchwars instance in the main menu is a null pointer.");
+            }
+        }  else if (component.equals(buttonOptions)) {
+            try {
+                sceneManager.setCurrentScene(Scenes.SUB_MENU);
+            } catch (SceneManagerException ex) {
+                Logger.getLogger(MainMenu.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }  else if (component.equals(buttonExit)) {
+            System.exit(0);
+        } 
+    }
 }

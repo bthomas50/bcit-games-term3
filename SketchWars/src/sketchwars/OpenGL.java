@@ -18,6 +18,9 @@ public class OpenGL {
     private static final int WIDTH = 800;
     private static final int HEIGHT = 600;
 
+    private static int currentScreenWidth;
+    private static int currentScreenHeight;
+    
     // We need to strongly reference callback instances.
     private GLFWErrorCallback errorCallback;
     
@@ -68,11 +71,15 @@ public class OpenGL {
         // Get the resolution of the primary monitor
         long primaryMonitor = glfwGetPrimaryMonitor();
         ByteBuffer vidmode = glfwGetVideoMode(primaryMonitor);
-         
+        
         // Create the window
         if (fullscreen) {
-            window = glfwCreateWindow(GLFWvidmode.width(vidmode), GLFWvidmode.height(vidmode), "Sketch Wars!", primaryMonitor, NULL);
+            currentScreenWidth = GLFWvidmode.width(vidmode);
+            currentScreenHeight = GLFWvidmode.height(vidmode);
+            window = glfwCreateWindow(currentScreenWidth, currentScreenHeight, "Sketch Wars!", primaryMonitor, NULL);
         } else {
+            currentScreenWidth = WIDTH;
+            currentScreenHeight = HEIGHT;
             window = glfwCreateWindow(WIDTH, HEIGHT, "Sketch Wars!", NULL, NULL);
         }
         
@@ -151,15 +158,7 @@ public class OpenGL {
     }
 
     public static Vector2d getDisplaySize() {
-        if (fullscreen) {
-            // Get the resolution of the primary monitor
-            long primaryMonitor = glfwGetPrimaryMonitor();
-            ByteBuffer vidmode = glfwGetVideoMode(primaryMonitor);
-
-            return new Vector2d(GLFWvidmode.width(vidmode), GLFWvidmode.height(vidmode));
-        } else {
-            return new Vector2d(WIDTH, HEIGHT);
-        }
+        return new Vector2d(currentScreenWidth, currentScreenHeight);
     }
     
     public static void hideMousePointer() {
