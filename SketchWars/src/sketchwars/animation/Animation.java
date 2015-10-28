@@ -1,5 +1,6 @@
 package sketchwars.animation;
 
+import org.joml.Matrix3d;
 import org.joml.Vector2d;
 import sketchwars.exceptions.AnimationException;
 import sketchwars.game.GameObject;
@@ -31,6 +32,8 @@ public class Animation implements GraphicsObject, GameObject {
     protected float elapsed;
     protected float startAfter;
     protected boolean loop;
+    
+    private Matrix3d transform;
     
     /**
      * Load an animation 
@@ -70,6 +73,8 @@ public class Animation implements GraphicsObject, GameObject {
         
         spriteWidth = spriteSheet.getTextureWidth()/xTotalSprites;
         spriteHeight = spriteSheet.getTextureHeight()/yTotalSprites;
+        
+        transform = new Matrix3d();
     }
     
     @Override
@@ -92,10 +97,18 @@ public class Animation implements GraphicsObject, GameObject {
                 textCoords[2] = new Vector2d(xTexCoordEnd, yTexCoordEnd);
                 textCoords[3] = new Vector2d(xTexCoordEnd, yTexCoordStart);
                 
+                Matrix3d trans = new Matrix3d();
+                trans.translation(position.x, position.y);
+                trans.mul(transform);
+                trans.scale(dimension.x, dimension.y, 1);
                 
-                spriteSheet.draw(textCoords, (float)position.x, (float)position.y, (float)dimension.x, (float)dimension.y);
+                spriteSheet.draw(textCoords, trans);
             }
         }
+    }
+
+    public void setTransform(Matrix3d transform) {
+        this.transform = transform;
     }
 
     public void setPosition(Vector2d position) {

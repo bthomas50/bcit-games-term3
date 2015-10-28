@@ -59,7 +59,7 @@ public abstract class AbstractWeapon implements Updateable, Drawable {
             matrix.translation(new Vector2d(posX + (float)Vectors.xComp(vReticleOffset), 
                     posY + (float)Vectors.yComp(vReticleOffset)));
             
-            matrix.rotateZ(angle);
+            matrix.rotate(angle, 0, 0, 1);
             
             if (angle >= Math.PI/2.0f) {
                 matrix.scale(width, -height, 1);
