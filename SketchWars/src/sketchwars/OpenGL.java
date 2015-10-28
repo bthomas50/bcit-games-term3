@@ -128,15 +128,15 @@ public class OpenGL {
         // enable alpha blending
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-         
         GL11.glMatrixMode(GL11.GL_PROJECTION);
         GL11.glPushMatrix();
         GL11.glLoadIdentity();
         GL11.glOrtho(-1.0, 1.0, -1.0, 1.0, -1.0, 1.0);
-        GL11.glViewport(-1, 1, -1, 1);
         GL11.glMatrixMode(GL11.GL_MODELVIEW);
         GL11.glPushMatrix();
         GL11.glLoadIdentity();
+        // GL11.glTranslated(-0.5, 0, 0);
+        // GL11.glScaled(0.5, 0.5, 0.0);
         GL11.glDisable(GL11.GL_LIGHTING);
         GL11.glEnable(GL11.GL_TEXTURE_2D);
     }
