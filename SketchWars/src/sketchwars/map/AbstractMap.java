@@ -109,8 +109,8 @@ public abstract class AbstractMap implements GraphicsObject, GameObject {
                 }
             }
         }
-        BufferedImage replacedRegion = foregroundImage.getSubimage(intersection.getLeft(), intersection.getTop(), intersection.getWidth(), intersection.getHeight());
-        return foreground.setSubTexture(replacedRegion, intersection.getLeft(), intersection.getTop(), intersection.getWidth(), intersection.getHeight());
+        BufferedImage replacedRegion = foregroundImage.getSubimage(intersection.getLeft(), intersection.getTop(), intersection.getWidth() - 1, intersection.getHeight() - 1);
+        return foreground.setSubTexture(replacedRegion, intersection.getLeft(), intersection.getTop(), intersection.getWidth() - 1, intersection.getHeight() - 1);
     }
 
     private static boolean isXInBounds(BufferedImage image, int x) {
@@ -128,6 +128,5 @@ public abstract class AbstractMap implements GraphicsObject, GameObject {
         int left = Vectors.ixComp(vCenter) - (subImage.getWidth() / 2);
         
         BitMaskFactory.updateFromImageAlpha(subImage, mapBitmask, Vectors.create(left, top), !erase);
-        //mapCollider.setPixels(BitMaskFactory.createFromImageAlpha(foregroundImage, mapCollider.getBounds()));
     }
 }
