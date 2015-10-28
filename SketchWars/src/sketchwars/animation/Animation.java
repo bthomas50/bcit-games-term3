@@ -34,6 +34,7 @@ public class Animation implements GraphicsObject, GameObject {
     protected boolean loop;
     
     private Matrix3d transform;
+    private boolean exclusive;
     
     /**
      * Load an animation 
@@ -74,7 +75,8 @@ public class Animation implements GraphicsObject, GameObject {
         spriteWidth = spriteSheet.getTextureWidth()/xTotalSprites;
         spriteHeight = spriteSheet.getTextureHeight()/yTotalSprites;
         
-        transform = null;
+        exclusive = false;
+        transform = new Matrix3d();
     }
     
     @Override
@@ -97,17 +99,32 @@ public class Animation implements GraphicsObject, GameObject {
                 textCoords[2] = new Vector2d(xTexCoordEnd, yTexCoordEnd);
                 textCoords[3] = new Vector2d(xTexCoordEnd, yTexCoordStart);
                 
-                if (transform == null) {
-                    spriteSheet.draw(textCoords, (float)position.x, (float)position.y, (float)dimension.x, (float)dimension.y);
-                } else {
+                if (exclusive) {
                     spriteSheet.draw(textCoords, transform);
+                } else {
+                    Matrix3d trans = new Matrix3d();
+                    trans.translation(position);
+                    trans.mul(transform);
+                    trans.scale(dimension.x, dimension.y, 1);
+                    
+                    spriteSheet.draw(textCoords, (float)position.x, (float)position.y, (float)dimension.x, (float)dimension.y);
                 }
             }
         }
     }
 
-    public void setTransform(Matrix3d transform) {
-        this.transform = transform;
+    /**
+     * 
+     * @param transform
+     * @param exclusive Use this matrix exclusively(no translation or scaling will be applied)
+     */
+    public void setTransform(Matrix3d transform, boolean exclusive) {
+        if (transform != null) {
+            this.exclusive = exclusive;
+            this.transform = transform;
+        } else {
+            System.err.println("Animation:setTransform(): Tranformation matrix cannot be null.");
+        }
     }
 
     public void setPosition(Vector2d position) {
