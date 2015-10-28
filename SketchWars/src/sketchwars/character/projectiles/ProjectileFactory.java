@@ -11,6 +11,7 @@ import sketchwars.animation.*;
 import sketchwars.exceptions.*;
 
 import org.joml.Vector2d;
+import sketchwars.OpenGL;
 import sketchwars.map.AbstractMap;
 
 public class ProjectileFactory
@@ -28,12 +29,13 @@ public class ProjectileFactory
 
     public AbstractProjectile createGrenade(SketchCharacter owner, long vPosition, long vVelocity)
     {
-        Texture texture = Texture.loadTexture("content/char/weapons/grenade.png", true);
+        Texture texture = Texture.loadTexture("content/char/weapons/grenade.png", false);
         GrenadeProjectile proj = new GrenadeProjectile(texture, this);
         
         double ratio = texture.getTextureHeight()/texture.getTextureWidth();
+        float screenAspectRatio = OpenGL.getAspectRatio();
         int widthP = (int)(WeaponFactory.GRENADE_SCALE * 1024.0f) ;
-        int heightP = (int)(widthP * ratio) ;
+        int heightP = (int)(widthP * ratio * screenAspectRatio) ;
         Collider coll = new GamePixelCollider(proj, BitMaskFactory.createRectangle(widthP, heightP));
         
         proj.setCollider(coll);
@@ -47,11 +49,12 @@ public class ProjectileFactory
 
     public AbstractProjectile createMelee(SketchCharacter owner, long vPosition, long vVelocity)
     {
-        Texture texture = Texture.loadTexture("content/char/weapons/meleeBoxing.png", true);
+        Texture texture = Texture.loadTexture("content/char/weapons/meleeBoxing.png", false);
         MeleeProjectile proj = new MeleeProjectile(texture, owner, Vectors.ixComp(vVelocity));
         double ratio = texture.getTextureHeight()/texture.getTextureWidth();
+        float screenAspectRatio = OpenGL.getAspectRatio();
         int widthP = (int)(WeaponFactory.MELEE_SCALE * 1024.0f);
-        int heightP = (int)(widthP * ratio);
+        int heightP = (int)(widthP * ratio * screenAspectRatio);
         
         Collider coll = new GamePixelCollider(proj, BitMaskFactory.createRectangle(widthP, heightP), CollisionBehaviour.NOTIFY);
         proj.setCollider(coll);
@@ -64,7 +67,7 @@ public class ProjectileFactory
 
     public AbstractProjectile createRanged(SketchCharacter owner, long vPosition, long vVelocity)
     {
-        Texture texture = Texture.loadTexture("content/char/weapons/bullet1.png", true);
+        Texture texture = Texture.loadTexture("content/char/weapons/bullet1.png", false);
         RangedProjectile proj = new RangedProjectile(texture, owner);
         BitMask bm = BitMaskFactory.createLine(vPosition, vVelocity, RangedProjectile.RANGE);
         bm.trim();
@@ -79,14 +82,16 @@ public class ProjectileFactory
 
     public AnimatedProjectile createExplosion(long vCenter, double radius, int damage, BufferedImage explosionAlpha) {
         try {
+            float screenAspectRatio = OpenGL.getAspectRatio();
+            
             Explosion explosion = new Explosion();
             float posX = (float)Vectors.xComp(vCenter)/1024.0f;
             float posY = (float)Vectors.yComp(vCenter)/1024.0f;
-            float width = (float) (2.0f*radius / 1024.0f);
-            float height = (float) ((2.0f*radius / 1024.0f) * 1.4);
+            float width = (float) (radius * 2 / 1024.0f);
+            float height = (float) ((radius * 2 / 1024.0f)) * screenAspectRatio;
             
             explosion.setPosition(new Vector2d(posX, posY));
-            explosion.setDimension(new Vector2d(width, height));
+            explosion.setDimension(new Vector2d(width * 0.8f, height * 0.8f));
             
             AnimatedProjectile proj = new AnimatedProjectile(explosion, damage);
             Collider coll = new GamePixelCollider(proj, BitMaskFactory.createCircle(radius), CollisionBehaviour.NOTIFY);

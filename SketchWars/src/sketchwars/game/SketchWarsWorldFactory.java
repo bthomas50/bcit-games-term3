@@ -153,8 +153,9 @@ public class SketchWarsWorldFactory
         
         if (idle != null) {
             double ratio = idle.getSpriteHeight()/idle.getSpriteWidth();
+            float screenAspectRatio = OpenGL.getAspectRatio();
             int widthP = (int)(CHARACTER_SCALE * 1024.0f);
-            int heightP = (int)(widthP * ratio);
+            int heightP = (int)(widthP * ratio * screenAspectRatio);
             
             charCollider = new GamePixelCollider(character, BitMaskFactory.createRectangle(widthP, heightP));
         } else {

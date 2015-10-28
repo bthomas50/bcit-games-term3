@@ -9,9 +9,9 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.joml.Vector2d;
-import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
 import sketchwars.OpenGL;
 import sketchwars.Scenes;
+import sketchwars.SketchWars;
 import sketchwars.exceptions.SceneException;
 import sketchwars.exceptions.SceneManagerException;
 import sketchwars.graphics.GraphicElement;
@@ -29,8 +29,8 @@ import sketchwars.ui.Button;
  * @author A00807688
  */
 public class MainMenu extends Scene {
-    private SceneManager<Scenes> sceneManager;
-    
+    private final SceneManager<Scenes> sceneManager;
+    private final SketchWars sketchWars;
     
     private Texture playBtn;
     private Texture playBtnPress;
@@ -46,20 +46,14 @@ public class MainMenu extends Scene {
     
     private MouseState lastState;
     
-    public MainMenu(SceneManager<Scenes> sceneManager) {
+    public MainMenu(SceneManager<Scenes> sceneManager, SketchWars sketchWars) {
         this.sceneManager = sceneManager;
-
+        this.sketchWars = sketchWars;
+        
         createLayers();
         createButtons();
         createBackground();
     }
-    /*
-    background
-    Play
-    Create
-    Options
-    Exit
-    */
     
     private void createLayers()
     {
@@ -125,12 +119,11 @@ public class MainMenu extends Scene {
               {
                 if(temp.getCommand().equals(Command.MAIN_MENU_PLAY))
                 {
-                  try {
-                      sceneManager.setCurrentScene(Scenes.GAME);
-                      OpenGL.hideMousePointer();
-                  } catch (SceneManagerException ex) {
-                      Logger.getLogger(MainMenu.class.getName()).log(Level.SEVERE, null, ex);
-                  }
+                    if (sketchWars != null) {
+                        sketchWars.startGame();
+                    } else {
+                        System.err.println("Sketchwars instance in the main menu is a null pointer.");
+                    }
                 }
                 else if(temp.getCommand().equals(Command.MAIN_MENU_CREATE))
                 {

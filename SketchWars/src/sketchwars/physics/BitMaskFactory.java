@@ -82,7 +82,6 @@ public class BitMaskFactory
                 }
             }
         }
-        
     }
 
 	public static BitMask createLine(final long vPt1, final long vPt2)
