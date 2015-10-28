@@ -1,9 +1,6 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package main;
+
+import network.DiscoveryClient;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -22,93 +19,9 @@ public class LobbyClient {
  
     public static void main(String args[]) throws Exception {  
  
-        //find host
-        DatagramSocket udpClientSocket = new DatagramSocket();
-        udpClientSocket.setBroadcast(true);
         
-        //our special message
-        byte[] sendData = "DISCOVER_FUIFSERVER_REQUEST".getBytes();
-        
-        //first try broadcast ip
-        DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, InetAddress.getByName("255.255.255.255"), 8888);
-        udpClientSocket.send(sendPacket);
-        System.out.println( ">>> Request packet sent to: 255.255.255.255 (DEFAULT)");
-
-        //next try other network interface
-        // All all network interface to interface Enum
-        Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
-
-        while (interfaces.hasMoreElements()) 
-        {
-                NetworkInterface networkInterface = interfaces.nextElement();
-
-                if (networkInterface.isLoopback() || !networkInterface.isUp()) 
-                {
-                        continue; // Don't want to broadcast to the loopback interface
-                }
-
-                for (InterfaceAddress interfaceAddress: networkInterface.getInterfaceAddresses()) 
-                {
-
-                        InetAddress broadcast = interfaceAddress.getBroadcast();
-                        if (broadcast == null) {
-                                continue;
-                        }
-
-                        // Broadcast the message over each network interfaces in enum
-                        try {
-                                DatagramPacket sendPacket2 = new DatagramPacket(sendData, sendData.length, broadcast, 8888);
-                                udpClientSocket.send(sendPacket2);
-
-                        } catch (Exception e) {
-
-                        }
-                        System.out.println(">>> Request packet sent to: " + broadcast.getHostAddress() + "; Interface: " + networkInterface.getDisplayName());
-                }
-        }
-        //Now waiting for a response
-        byte[] recvBuf = new byte[15000];
-        DatagramPacket receivePacket = new DatagramPacket(recvBuf, recvBuf.length);
-        udpClientSocket.receive(receivePacket);
-        
-        //We have a response
-        System.out.println(">>> Broadcast response from server: " + receivePacket.getAddress().getHostAddress());
-        
-        
-        //Check if the message is correct
-        String message = new String(receivePacket.getData()).trim();
-        if (message.equals("DISCOVER_FUIFSERVER_RESPONSE")) {
-            //DO SOMETHING WITH THE SERVER'S IP (for example, store it in your controller)
-            //setServerIp(receivePacket.getAddress());
-            //Server IP
-        }
-        
-
-        
-        
-        // The default port     
-        int clientport = 7777;
-        /*
-        InetAddress host = localhost;
- 
-        if (args.length < 1) {
-           System.out.println("Usage: UDPClient " + "Now using host = " + host + ", Port# = " + clientport);
-        } 
-        // Get the port number to use from the command line
-        else {      
-           //host = args[0];
-           clientport = Integer.valueOf(args[0]).intValue();
-           System.out.println("Usage: UDPClient " + "Now using host = " + host + ", Port# = " + clientport);
-        }
-        */
- 
-        // Get the IP address of the local machine - we will use this as the address to send the data to
-        InetAddress ia = receivePacket.getAddress();
- 
-        SenderThread sender = new SenderThread(ia, clientport);
-        sender.start();
-        ReceiverThread receiver = new ReceiverThread(sender.getSocket());
-        receiver.start();
+        DiscoveryClient client = new DiscoveryClient();
+        client.start();
     }
 }      
  

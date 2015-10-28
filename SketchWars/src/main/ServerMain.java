@@ -19,7 +19,7 @@ public class ServerMain
         
         Server server = new Server(port);
         new Thread(server).start();
-
+        new DiscoveryServer().start();
         System.out.println("Enter username: ");
         String username = in.next();
 

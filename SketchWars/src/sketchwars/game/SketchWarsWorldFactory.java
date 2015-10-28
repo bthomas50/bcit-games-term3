@@ -185,27 +185,30 @@ public class SketchWarsWorldFactory
         AnimationSet<CharacterAnimations> animationSet = new AnimationSet<>();
         
         try {
-            Texture idleSpriteSheet = Texture.loadTexture("content/animation/characters/default/charSheet_idle.png", true);
+            //Texture idleSpriteSheet = Texture.loadTexture("content/animation/characters/default/charSheet_idle.png", true);
+            Texture idleSpriteSheet = Texture.loadTexture("content/animation/characters/stickman/idle.png", true);
             Animation idle = new Animation(idleSpriteSheet, 36, 6, 6, 5000, true);
             idle.start(rng.nextInt(750));
             animationSet.addAnimation(CharacterAnimations.IDLE, idle);
-            Texture jumpSpriteSheet = Texture.loadTexture("content/animation/characters/default/charSheet_jump.png", true);
+            //Texture jumpSpriteSheet = Texture.loadTexture("content/animation/characters/default/charSheet_jump.png", true);
+            Texture jumpSpriteSheet = Texture.loadTexture("content/animation/characters/stickman/jump.png", true);
             Animation jump = new Animation(jumpSpriteSheet, 36, 6, 6, 1000, true);
             jump.start();
             animationSet.addAnimation(CharacterAnimations.JUMP, jump);
             
-            Texture walkLeftSpriteSheet = Texture.loadTexture("content/animation/characters/default/charSheet_walk_left.png", true);
+            //Texture walkLeftSpriteSheet = Texture.loadTexture("content/animation/characters/default/charSheet_walk_left.png", true);
+            Texture walkLeftSpriteSheet = Texture.loadTexture("content/animation/characters/stickman/run.png", true);
             
             Animation walkLeft = new Animation(walkLeftSpriteSheet, 36, 6, 6, 2000, true);
             walkLeft.start();
-            animationSet.addAnimation(CharacterAnimations.WALK_LEFT, walkLeft);
+            animationSet.addAnimation(CharacterAnimations.WALK_RIGHT, walkLeft);
             
             Animation walkRight = new Animation(walkLeftSpriteSheet, 36, 6, 6, 2000, true);
             Matrix3d trans = new Matrix3d();
             trans.scale(-1, 1, 1); //flip horizontal
             walkRight.setTransform(trans, false);
             walkRight.start();
-            animationSet.addAnimation(CharacterAnimations.WALK_RIGHT, walkRight);
+            animationSet.addAnimation(CharacterAnimations.WALK_LEFT, walkRight);
             
             animationSet.setCurrentAnimation(CharacterAnimations.IDLE);
         } catch (AnimationException ex) {
