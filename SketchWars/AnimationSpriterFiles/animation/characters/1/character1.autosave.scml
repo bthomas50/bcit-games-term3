@@ -224,7 +224,7 @@
                 </key>
             </timeline>
         </animation>
-        <animation id="2" name="walk_left" length="200" interval="200">
+        <animation id="2" name="walk_right" length="200" interval="200">
             <mainline>
                 <key id="0">
                     <bone_ref id="0" timeline="6" key="0"/>

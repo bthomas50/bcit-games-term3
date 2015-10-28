@@ -107,7 +107,7 @@ public class Animation implements GraphicsObject, GameObject {
                     trans.mul(transform);
                     trans.scale(dimension.x, dimension.y, 1);
                     
-                    spriteSheet.draw(textCoords, (float)position.x, (float)position.y, (float)dimension.x, (float)dimension.y);
+                    spriteSheet.draw(textCoords, trans);
                 }
             }
         }

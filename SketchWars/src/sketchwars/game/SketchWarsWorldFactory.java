@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Random;
+import org.joml.Matrix3d;
 import sketchwars.animation.Animation;
 import sketchwars.animation.AnimationSet;
 import sketchwars.animation.CharacterAnimations;
@@ -184,8 +185,8 @@ public class SketchWarsWorldFactory
         AnimationSet<CharacterAnimations> animationSet = new AnimationSet<>();
         
         try {
-            Texture idleSpriteSheet = Texture.loadTexture("content/animation/characters/default/charSheet.png", true);
-            Animation idle = new Animation(idleSpriteSheet, 12, 12, 1, 5000, true);
+            Texture idleSpriteSheet = Texture.loadTexture("content/animation/characters/default/charSheet_idle.png", true);
+            Animation idle = new Animation(idleSpriteSheet, 36, 6, 6, 5000, true);
             idle.start(rng.nextInt(750));
             animationSet.addAnimation(CharacterAnimations.IDLE, idle);
             Texture jumpSpriteSheet = Texture.loadTexture("content/animation/characters/default/charSheet_jump.png", true);
@@ -193,13 +194,16 @@ public class SketchWarsWorldFactory
             jump.start();
             animationSet.addAnimation(CharacterAnimations.JUMP, jump);
             
-            Texture walkLeftSpriteSheet = Texture.loadTexture("content/animation/characters/default/charSheet_walkleft.png", true);
-            Animation walkLeft = new Animation(walkLeftSpriteSheet, 12, 12, 1, 2000, true);
+            Texture walkLeftSpriteSheet = Texture.loadTexture("content/animation/characters/default/charSheet_walk_left.png", true);
+            
+            Animation walkLeft = new Animation(walkLeftSpriteSheet, 36, 6, 6, 2000, true);
             walkLeft.start();
             animationSet.addAnimation(CharacterAnimations.WALK_LEFT, walkLeft);
             
-            Texture walkRightSpriteSheet = Texture.loadTexture("content/animation/characters/default/charSheet_walkright.png", true);
-            Animation walkRight = new Animation(walkRightSpriteSheet, 12, 12, 1, 2000, true);
+            Animation walkRight = new Animation(walkLeftSpriteSheet, 36, 6, 6, 2000, true);
+            Matrix3d trans = new Matrix3d();
+            trans.scale(-1, 1, 1); //flip horizontal
+            walkRight.setTransform(trans, false);
             walkRight.start();
             animationSet.addAnimation(CharacterAnimations.WALK_RIGHT, walkRight);
             
