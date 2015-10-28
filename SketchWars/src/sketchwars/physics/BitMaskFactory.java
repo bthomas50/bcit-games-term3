@@ -52,7 +52,7 @@ public class BitMaskFactory
     }
     
     public static void updateFromImageAlpha(BufferedImage im, BitMask bitmask, BoundingBox bounds, boolean set) {
-        /*float width = (float)bounds.getWidth();
+        float width = (float)bounds.getWidth();
         float height = (float)bounds.getHeight();
         float widthRatio = (float) im.getWidth() / width;
         float heightRatio = (float) im.getHeight() / height;
@@ -74,8 +74,8 @@ public class BitMaskFactory
                     }
                 }
             }
-        }*/
-        int subWidth = im.getWidth();
+        }
+      /*  int subWidth = im.getWidth();
         int subHeight = im.getHeight();
 
         int xImage = bounds.getLeft();
@@ -105,7 +105,7 @@ public class BitMaskFactory
                     }
                 }
             }
-        }
+        }*/
     }
 
 	public static BitMask createLine(final long vPt1, final long vPt2)

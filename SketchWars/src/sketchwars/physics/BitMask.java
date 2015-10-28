@@ -482,7 +482,7 @@ public class BitMask
             if(isColInBounds(jLongIdx))
             {
                 final int jBitIdx = dataJ % BITS_PER_LONG;
-                data[dataI][jLongIdx] &= LONG_MASKS[jBitIdx];
+                data[dataI][jLongIdx] = 0;
             }
         }
     }

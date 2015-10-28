@@ -52,7 +52,6 @@ public abstract class AbstractWeapon implements Updateable, Drawable {
     @Override
     public void render() {
         if (texture != null) {
-            float xOffset = width/2;
             long vReticleOffset = Vectors.createRTheta(0.03, angle);
             
             Matrix3d matrix = new Matrix3d();

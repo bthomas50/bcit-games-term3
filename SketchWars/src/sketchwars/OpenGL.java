@@ -17,7 +17,7 @@ import sketchwars.input.*;
 public class OpenGL {    
     private static final int WIDTH = 800;
     private static final int HEIGHT = 600;
-    
+
     // We need to strongly reference callback instances.
     private GLFWErrorCallback errorCallback;
     
@@ -173,4 +173,10 @@ public class OpenGL {
             glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL); 
         }
     }
+    
+    public static float getAspectRatio() {
+        Vector2d screen = getDisplaySize();
+        return (float) (screen.x/screen.y);
+    }
+    
 }

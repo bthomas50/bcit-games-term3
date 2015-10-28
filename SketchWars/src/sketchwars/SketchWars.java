@@ -45,7 +45,7 @@ public class SketchWars {
 
     private void initOpenGL() {
         openGL = new OpenGL();
-        openGL.init(true);
+        openGL.init(false);
     }
     
     private void initScenes() {

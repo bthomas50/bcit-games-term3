@@ -6,6 +6,7 @@ import sketchwars.graphics.*;
 import sketchwars.character.projectiles.ProjectileFactory;
 
 import java.util.HashMap;
+import sketchwars.OpenGL;
 import sketchwars.game.SketchWarsWorld;
 
 public class WeaponFactory
@@ -29,11 +30,12 @@ public class WeaponFactory
 
     public static AbstractWeapon createGrenade(ProjectileFactory fact)
     {
-        Texture texture = Texture.loadTexture("content/char/weapons/grenade.png", true);
+        Texture texture = Texture.loadTexture("content/char/weapons/grenade.png", false);
         
         float ratio = texture.getTextureHeight()/texture.getTextureWidth();
+        float screenAspectRatio = OpenGL.getAspectRatio();
         float width = GRENADE_SCALE;
-        float height = width * ratio;
+        float height = width * ratio * screenAspectRatio;
         
         AbstractWeapon weapon = new GrenadeWeapon(texture, width, height, fact);
         weapon.setAmmo(AbstractWeapon.INFINITE_AMMO);
@@ -42,11 +44,12 @@ public class WeaponFactory
 
     public static AbstractWeapon createBoxingGlove(ProjectileFactory fact)
     {
-        Texture texture = Texture.loadTexture("content/char/weapons/meleeBoxing.png", true);
+        Texture texture = Texture.loadTexture("content/char/weapons/meleeBoxing.png", false);
         
         float ratio = texture.getTextureHeight()/texture.getTextureWidth();
+        float screenAspectRatio = OpenGL.getAspectRatio();
         float width = MELEE_SCALE;
-        float height = width * ratio;
+        float height = width * ratio * screenAspectRatio;
         
         AbstractWeapon weapon = new MeleeWeapon(texture, width, height, fact);
         weapon.setAmmo(AbstractWeapon.INFINITE_AMMO);
@@ -55,11 +58,12 @@ public class WeaponFactory
 
     public static AbstractWeapon createRifle(ProjectileFactory fact)
     {
-        Texture texture = Texture.loadTexture("content/char/weapons/rifle1.png", true);
+        Texture texture = Texture.loadTexture("content/char/weapons/rifle1.png", false);
         
         float ratio = texture.getTextureHeight()/texture.getTextureWidth();
+        float screenAspectRatio = OpenGL.getAspectRatio();
         float width = RIFLE_SCALE;
-        float height = width * ratio;
+        float height = width * ratio * screenAspectRatio;
         
         AbstractWeapon weapon = new RangedWeapon(texture, width, height, fact);
         weapon.setAmmo(AbstractWeapon.INFINITE_AMMO);
@@ -67,8 +71,8 @@ public class WeaponFactory
     }
 
     private static AbstractWeapon createEraser(ProjectileFactory fact, SketchWarsWorld world) {
-        Texture texture = Texture.loadTexture("content/char/weapons/pencileraser.png", true);
-        Texture eraserImgTex = Texture.loadTexture("content/char/weapons/pencileraserArea.png", true);
+        Texture texture = Texture.loadTexture("content/char/weapons/pencileraser.png", false);
+        Texture eraserImgTex = Texture.loadTexture("content/char/weapons/pencileraserArea.png", false);
         BufferedImage eraserImage = null;
         try {
             eraserImage = Texture.loadImageFile("content/char/weapons/pencileraserArea.png");
@@ -77,8 +81,9 @@ public class WeaponFactory
         }
         
         float ratio = texture.getTextureHeight()/texture.getTextureWidth();
+        float screenAspectRatio = OpenGL.getAspectRatio();
         float width = ERASER_SCALE;
-        float height = width * ratio;
+        float height = width * ratio * screenAspectRatio;
         
         PencilWeapon eraser = new PencilWeapon(texture, eraserImgTex, eraserImage, width, height, fact, true);
         eraser.setAmmo(AbstractWeapon.INFINITE_AMMO);
@@ -88,8 +93,8 @@ public class WeaponFactory
     }
 
     private static AbstractWeapon createPencil(ProjectileFactory fact, SketchWarsWorld world) {
-        Texture texture = Texture.loadTexture("content/char/weapons/pencil.png", true);
-        Texture pencilImgTex = Texture.loadTexture("content/char/weapons/pencilpointArea.png", true);
+        Texture texture = Texture.loadTexture("content/char/weapons/pencil.png", false);
+        Texture pencilImgTex = Texture.loadTexture("content/char/weapons/pencilpointArea.png", false);
         BufferedImage pencilpointImage = null;
         try {
             pencilpointImage = Texture.loadImageFile("content/char/weapons/pencilpointArea.png");
@@ -98,8 +103,9 @@ public class WeaponFactory
         }
         
         float ratio = texture.getTextureHeight()/texture.getTextureWidth();
+        float screenAspectRatio = OpenGL.getAspectRatio();
         float width = PENCIL_SCALE;
-        float height = width * ratio;
+        float height = width * ratio * screenAspectRatio;
         
         PencilWeapon pencil = new PencilWeapon(texture, pencilImgTex, pencilpointImage, width, height, fact, false);
         pencil.setAmmo(AbstractWeapon.INFINITE_AMMO);
