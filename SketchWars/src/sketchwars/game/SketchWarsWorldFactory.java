@@ -22,6 +22,7 @@ import org.joml.Matrix3d;
 import sketchwars.animation.Animation;
 import sketchwars.animation.AnimationSet;
 import sketchwars.animation.CharacterAnimations;
+import sketchwars.physics.colliders.CharacterCollider;
 
 public class SketchWarsWorldFactory
 {
@@ -158,7 +159,7 @@ public class SketchWarsWorldFactory
         
         Animation idle = animationSet.getAnimation(CharacterAnimations.IDLE);
         
-        Collider charCollider;
+        CharacterCollider charCollider;
         
         if (idle != null) {
             double ratio = idle.getSpriteHeight()/idle.getSpriteWidth();
@@ -166,9 +167,9 @@ public class SketchWarsWorldFactory
             int widthP = (int)(CHARACTER_SCALE * 1024.0f);
             int heightP = (int)(widthP * ratio * screenAspectRatio);
             
-            charCollider = new GamePixelCollider(character, BitMaskFactory.createRectangle(widthP, heightP));
+            charCollider = new CharacterCollider(character, BitMaskFactory.createRectangle(widthP, heightP));
         } else {
-            charCollider = new GamePixelCollider(character, BitMaskFactory.createRectangle(100, 120));
+            charCollider = new CharacterCollider(character, BitMaskFactory.createRectangle(100, 120));
         }
         
         charCollider.addCollisionListener(character);

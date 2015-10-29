@@ -23,7 +23,7 @@ import static sketchwars.util.Config.appendToLibraryPath;
  */
 public class SketchWars {
     private static final double MILLION = 1000000;//used in calculating frame length
-        
+    private static final double MAX_FRAME_DELTA = 33;
     private OpenGL openGL;
     private SketchWarsWorld world;
     private Physics physics;
@@ -92,8 +92,8 @@ public class SketchWars {
                 Input.update();
                 openGL.beginUpdate();
                 double time = System.nanoTime(); //calculate frame length in milliseconds
-                double delta = (time - lastTime) / MILLION;
-
+                double delta = Math.min((time - lastTime) / MILLION, MAX_FRAME_DELTA);
+                
                 Scenes current = sceneManager.getCurrentSceneType();
                 if (sceneManager != null && current != null) {
                     sceneManager.render();//call the main graphics renderer

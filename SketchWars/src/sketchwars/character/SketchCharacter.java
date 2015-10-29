@@ -10,6 +10,7 @@ import sketchwars.game.GameObject;
 import sketchwars.map.AbstractMap;
 import sketchwars.HUD.HealthBar;
 import static sketchwars.physics.Vectors.create;
+import sketchwars.physics.colliders.CharacterCollider;
 
 /*
  *
@@ -17,8 +18,6 @@ import static sketchwars.physics.Vectors.create;
  */
 public class SketchCharacter implements GraphicsObject, GameObject, CollisionListener {
     public static final int DEFAULT_MAX_HEALTH = 100;
-    private static final int MAX_RUN_SPEED = 200;
-    private static final float MAX_RUN_ACCELERATION = 4000;
     private float posX;
     private float posY;
     private float width;
@@ -27,7 +26,7 @@ public class SketchCharacter implements GraphicsObject, GameObject, CollisionLis
     private Texture texture;
     
     private AbstractWeapon weapon;
-    private Collider coll;
+    private CharacterCollider coll;
     private int maxHealth;
     private int health;
     private boolean isDead;
@@ -51,8 +50,6 @@ public class SketchCharacter implements GraphicsObject, GameObject, CollisionLis
     }
     
     public SketchCharacter(int maxHealth, int health) {
-        coll = new PixelCollider(BitMaskFactory.createRectangle(1, 1));
-        
         this.maxHealth = maxHealth;
         this.health = health;
         this.isDead = false;
@@ -64,7 +61,7 @@ public class SketchCharacter implements GraphicsObject, GameObject, CollisionLis
         this.canJump = true;
     }
     
-    public void setCollider(Collider coll) {
+    public void setCollider(CharacterCollider coll) {
         this.coll = coll;
     }
     
@@ -255,40 +252,22 @@ public class SketchCharacter implements GraphicsObject, GameObject, CollisionLis
 
     void moveLeft(double elapsedMillis) 
     {
-        long vVelocity = coll.getVelocity();
         this.isFacingLeft = true;
-        double velX = Vectors.xComp(vVelocity);
-        double desiredVelX = -MAX_RUN_SPEED;
-        double deltaX = desiredVelX - velX;
-        if(Math.abs(deltaX) > MAX_RUN_ACCELERATION)
-        {
-            deltaX = MAX_RUN_ACCELERATION * Math.signum(deltaX);
-        }
-        coll.accelerate(Vectors.create(deltaX, 0), elapsedMillis);
+        coll.moveLeft(elapsedMillis);
     }
 
     void moveRight(double elapsedMillis)
     {
-        long vVelocity = coll.getVelocity();
         this.isFacingLeft = false;
-        double velX = Vectors.xComp(vVelocity);
-        double desiredVelX = MAX_RUN_SPEED;
-        double deltaX = desiredVelX - velX;
-        if(Math.abs(deltaX) > MAX_RUN_ACCELERATION)
-        {
-            deltaX = MAX_RUN_ACCELERATION * Math.signum(deltaX);
-        }
-        coll.accelerate(Vectors.create(deltaX, 0), elapsedMillis);
+        coll.moveRight(elapsedMillis);
     }
     
     void jump(double elapsedMillis)
     {
         if (canJump) {
             lastActionTime = (int) System.currentTimeMillis();
+            coll.jump(elapsedMillis);
             animationSet.setCurrentAnimation(CharacterAnimations.JUMP);
-            long oldVector = coll.getVelocity();
-            float getX = (float)Vectors.xComp(oldVector);
-            coll.setVelocity(create(getX, 200));
             canJump = false;
         } 
     }
