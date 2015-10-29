@@ -14,7 +14,8 @@ import static sketchwars.physics.Vectors.create;
  */
 public class SketchCharacter implements GraphicsObject, GameObject {
     public static final int DEFAULT_MAX_HEALTH = 100;
-    
+    private static final int MAX_RUN_SPEED = 200;
+    private static final float MAX_RUN_ACCELERATION = 4000;
     private double posX;
     private double posY;
     private double width;
@@ -205,18 +206,30 @@ public class SketchCharacter implements GraphicsObject, GameObject {
 
     void moveLeft(double elapsedMillis) 
     {
-        long oldVector = coll.getVelocity();
+        long vVelocity = coll.getVelocity();
         this.isFacingLeft = true;
-        double getY = Vectors.yComp(oldVector);
-        coll.setVelocity(create(-100, getY));
+        double velX = Vectors.xComp(vVelocity);
+        double desiredVelX = -MAX_RUN_SPEED;
+        double deltaX = desiredVelX - velX;
+        if(Math.abs(deltaX) > MAX_RUN_ACCELERATION)
+        {
+            deltaX = MAX_RUN_ACCELERATION * Math.signum(deltaX);
+        }
+        coll.accelerate(Vectors.create(deltaX, 0), elapsedMillis);
     }
 
     void moveRight(double elapsedMillis)
     {
-        long oldVector = coll.getVelocity();
+        long vVelocity = coll.getVelocity();
         this.isFacingLeft = false;
-        double getY = Vectors.yComp(oldVector);
-        coll.setVelocity(create(100, getY));
+        double velX = Vectors.xComp(vVelocity);
+        double desiredVelX = MAX_RUN_SPEED;
+        double deltaX = desiredVelX - velX;
+        if(Math.abs(deltaX) > MAX_RUN_ACCELERATION)
+        {
+            deltaX = MAX_RUN_ACCELERATION * Math.signum(deltaX);
+        }
+        coll.accelerate(Vectors.create(deltaX, 0), elapsedMillis);
     }
     
     void jump(double elapsedMillis)
