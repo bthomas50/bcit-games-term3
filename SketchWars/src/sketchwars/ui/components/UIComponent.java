@@ -15,6 +15,7 @@ import org.joml.Vector2d;
 import sketchwars.OpenGL;
 import sketchwars.graphics.GraphicsObject;
 import sketchwars.graphics.Texture;
+import sketchwars.input.KeyState;
 import sketchwars.input.MouseHandler;
 
 /**
@@ -149,13 +150,19 @@ public abstract class UIComponent implements GraphicsObject {
         }
     }
         
-    abstract void update();
+    public void update() {
+        
+    }
     
     private void handleInput() {
         float xMouse = MouseHandler.xNormalized;
         float yMouse = MouseHandler.yNormalized;
         
         mouseInComponent = contains(xMouse, yMouse);
+        
+        if (mouseInComponent && MouseHandler.state == KeyState.RISING) {
+            notifyListeners();
+        }
     }
     
     public BufferedImage createLabelImage(String text, Font font, Color fontColor) {

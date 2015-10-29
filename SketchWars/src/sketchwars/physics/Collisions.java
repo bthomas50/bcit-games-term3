@@ -78,9 +78,9 @@ public class Collisions
             double clipDistance2 = findSmallestAcceptableClipDistance(coll1, coll2, collision, reverse(vNorm2));
             if(clipDistance1 > 50)
             {
-                System.out.println(clipDistance1 + ", " + clipDistance2);
-                System.out.println(collision.getBounds());
-                System.out.println(Vectors.toString(vNorm1) + "__" + Vectors.toString(vNorm2));
+                //System.out.println(clipDistance1 + ", " + clipDistance2);
+                //System.out.println(collision.getBounds());
+                //System.out.println(Vectors.toString(vNorm1) + "__" + Vectors.toString(vNorm2));
             }
             if(clipDistance1 < clipDistance2)
             {
@@ -182,7 +182,7 @@ public class Collisions
         ret.impulse = dot(vRelative, ret.vTangent) / (invMass1 + invMass2);
         if(Math.abs(ret.impulse) >= Math.abs(momImpulse) * 0.1)
         {
-            System.out.println(ret.impulse + ", " + momImpulse);
+            //System.out.println(ret.impulse + ", " + momImpulse);
             ret.impulse = Math.abs(momImpulse) * Math.signum(ret.impulse) * 0.03;
         }
         ret.vAcceleration1 = scalarMultiply(ret.vTangent, invMass1 * ret.impulse);

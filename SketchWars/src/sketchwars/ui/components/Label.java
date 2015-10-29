@@ -47,9 +47,6 @@ public class Label extends UIComponent {
         }
     }
 
-    @Override
-    void update() {}
-
     private void createLabel() {
         if (text != null) {
             BufferedImage labelImg = createLabelImage(text, font, fontColor);
