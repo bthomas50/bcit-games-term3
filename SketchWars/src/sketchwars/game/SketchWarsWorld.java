@@ -4,7 +4,6 @@ import sketchwars.character.SketchCharacter;
 import sketchwars.map.AbstractMap;
 import sketchwars.character.Team;
 import sketchwars.input.*;
-import sketchwars.game.*;
 
 import java.util.ArrayList;
 
@@ -18,17 +17,11 @@ public class SketchWarsWorld extends World {
     protected ArrayList<SketchCharacter> characters;
     protected ArrayList<Team> teams;
     protected Turn currentTurn;
-
-    private WeaponLogic weaponLogic;
     
     public SketchWarsWorld() {
         characters = new ArrayList<>();
         teams = new ArrayList<>();
         currentTurn = Turn.createDefaultTurn();
-    }
-
-    public void setWeaponLogic(WeaponLogic weaponLogic) {
-        this.weaponLogic = weaponLogic;
     }
     
     public void setMap(AbstractMap map) {
@@ -47,14 +40,16 @@ public class SketchWarsWorld extends World {
 
     @Override
     public void update(double deltaMillis) {
+        Input.handleGameInput();
+        addPendingObjects();
         handleInput(deltaMillis);
         handleCharacterDrowning();
         checkTeamStatus();
         updateObjects(deltaMillis);
-        updateGameLogic(deltaMillis);
         updateTurn(deltaMillis);
+        removeExpiredObjects();
     }
-
+    
     protected void handleInput(double elapsedMillis) {
         for(Team t : teams) {
             t.handleInput(Input.currentInput, elapsedMillis);
@@ -88,12 +83,6 @@ public class SketchWarsWorld extends World {
         }
     }
 
-    private void updateGameLogic(double deltaMillis) {
-        if (weaponLogic != null) {
-            weaponLogic.update(deltaMillis);
-        }
-    }
-
     private void updateTurn(double elapsedMillis) {
         currentTurn.update(elapsedMillis);
         if(currentTurn.isCompleted())
@@ -110,11 +99,11 @@ public class SketchWarsWorld extends World {
         }
     }
 
-    public WeaponLogic getWeaponLogic() {
-        return weaponLogic;
-    }
-
     public ArrayList<SketchCharacter> getCharacters() {
         return characters;
+    }
+
+    public AbstractMap getMap() {
+        return map;
     }
 }

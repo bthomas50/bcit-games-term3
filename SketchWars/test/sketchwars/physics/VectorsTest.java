@@ -79,6 +79,13 @@ public class VectorsTest
         assertEquals(Vectors.yComp(Vectors.reverse(v)), 2.0, Vectors.EPSILON);
     }
     @Test
+    public void testPerp()
+    {
+        long v = Vectors.create(1.0, -2.0);
+        assertEquals(2.0, Vectors.xComp(Vectors.perpendicular(v)), Vectors.EPSILON);
+        assertEquals(1.0, Vectors.yComp(Vectors.perpendicular(v)), Vectors.EPSILON);
+    }
+    @Test
     public void testDot()
     {
         long v1 = Vectors.create(1.0, 3.0);

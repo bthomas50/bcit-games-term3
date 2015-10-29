@@ -1,6 +1,8 @@
 package sketchwars.physics;
 
-public interface PhysicsObject
+import sketchwars.Expires;
+
+public interface PhysicsObject extends Expires
 {
     void setPosition(long vPos);
     long getPosition();

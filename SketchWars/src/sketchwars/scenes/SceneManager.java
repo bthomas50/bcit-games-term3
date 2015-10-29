@@ -16,6 +16,7 @@ import sketchwars.exceptions.SceneManagerException;
 public class SceneManager <T> {            
     private final HashMap<T, Scene> scenes;
     private Scene currentScene;
+    private T currentSceneType;
     
     public SceneManager() {
         scenes = new HashMap<>();
@@ -41,6 +42,7 @@ public class SceneManager <T> {
     public void setCurrentScene(T key) throws SceneManagerException  {
         if (scenes.containsKey(key)) {
             currentScene = scenes.get(key);
+            currentSceneType = key;
         } else {
             throw new SceneManagerException("Given scene key does not exist.");
         }
@@ -48,6 +50,10 @@ public class SceneManager <T> {
     
     public Scene getCurrentScene() {
         return currentScene;
+    }
+    
+    public T getCurrentSceneType() {
+        return currentSceneType;
     }
     
     public void render() {

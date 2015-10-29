@@ -52,6 +52,7 @@ public class PhysicsTest
         irregCollider.addCollisionListener(list);
         wideCollider.addCollisionListener(list);
 		physics = new Physics(new BoundingBox(-256, -256, 256, 256));
+        physics.setGravity(Vectors.create(0, -98));
 	}
 	
 	@Test

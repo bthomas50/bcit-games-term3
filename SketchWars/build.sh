@@ -1,15 +1,28 @@
 SOURCE_DIR="src"
 BUILD_DIR="build"
-case "$OS" in
-  MAC)
-	PATH_SEPARATOR=':'
-  ;;
-  WINDOWS)
-	PATH_SEPARATOR=';'
-  ;;
-  LINUX)
-	PATH_SEPARATOR=':'
-  ;;
+case "$(uname -s)" in
+
+   Darwin)
+     echo 'Mac OS X'
+     export OS=MAC
+     PATH_SEPARATOR=':'
+     ;;
+
+   Linux)
+     echo 'Linux'
+     export OS=LINUX
+     PATH_SEPARATOR=':'
+     ;;
+
+   CYGWIN*|MINGW32*|MSYS*|MINGW64*)
+     echo 'MS Windows'
+     export OS=WINDOWS
+     PATH_SEPARATOR=';'
+     ;;
+
+   *)
+     echo 'other OS (or missing cases for above OSs)' 
+     ;;
 esac
 echo "PATH_SEPARATOR = $PATH_SEPARATOR"
 set -e

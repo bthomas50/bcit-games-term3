@@ -1,8 +1,10 @@
 package sketchwars.character.weapon;
 
-import sketchwars.game.GameObject;
+import org.joml.Matrix3d;
+import org.joml.Vector2d;
+import sketchwars.Updateable;
 import sketchwars.character.projectiles.*;
-import sketchwars.graphics.GraphicsObject;
+import sketchwars.graphics.Drawable;
 import sketchwars.graphics.Texture;
 import sketchwars.character.SketchCharacter;
 import sketchwars.physics.Vectors;
@@ -12,37 +14,60 @@ import sketchwars.physics.Vectors;
  * @author Najash Najimudeen <najash.najm@gmail.com>
  */
 
-public abstract class AbstractWeapon implements GameObject, GraphicsObject {
+public abstract class AbstractWeapon implements Updateable, Drawable {
     public static final int INFINITE_AMMO = -1;
     
     private float rateOfFire; //per second
     private double lastTimeFired;
     private double elapsed;
             
-    protected double posX;
-    protected double posY;
-    protected double scale;
+    protected float posX;
+    protected float posY;
+    protected float width;
+    protected float height;
     protected Texture texture;
     
     protected int ammo;
     protected ProjectileFactory projectileFactory;
 
-    public AbstractWeapon(Texture texture, double scale, ProjectileFactory projectileFactory) {
+    private float angle;
+    /**
+     * 
+     * @param texture
+     * @param width percentage of screen width
+     * @param height percentage of screen height
+     * @param projectileFactory 
+     */
+    public AbstractWeapon(Texture texture, float width, float height, ProjectileFactory projectileFactory) {
         this.texture = texture;
-        this.scale = scale;
         this.projectileFactory = projectileFactory;
         
         rateOfFire = 1;
         ammo = INFINITE_AMMO;
         elapsed = Integer.MAX_VALUE;
+        this.width = width;
+        this.height = height;
     }
-    
-    
     
     @Override
     public void render() {
         if (texture != null) {
-            texture.drawNormalized(posX, posY, scale);
+            long vReticleOffset = Vectors.createRTheta(0.03, angle);
+            
+            Matrix3d matrix = new Matrix3d();
+            
+            matrix.translation(new Vector2d(posX + (float)Vectors.xComp(vReticleOffset), 
+                    posY + (float)Vectors.yComp(vReticleOffset)));
+            
+            matrix.rotate(angle, 0, 0, 1);
+            
+            if (angle >= Math.PI/2.0f) {
+                matrix.scale(width, -height, 1);
+            } else {
+                matrix.scale(width, height, 1);
+            }
+            
+            texture.draw(matrix);
         }
     }
     
@@ -73,26 +98,41 @@ public abstract class AbstractWeapon implements GameObject, GraphicsObject {
         return posY;
     }
 
-    public void setPosition(double posX, double posY) {
+    public void setAngle(float angle) {
+        this.angle = angle;
+    }
+    
+    public void setPosition(float posX, float posY) {
         this.posX = posX;
         this.posY = posY;
     }
 
-    public double getScale() {
-        return scale;
+    public double getWidth() {
+        return width;
     }
 
-    public void setScale(double scale) {
-        this.scale = scale;
+    /**
+     * 
+     * @param width percentage of screen width
+     * @param height percentage of screen height
+     */
+    public void setDimension(float width, float height) {
+        this.width = width;
+        this.height = height;
     }
 
-    public boolean tryToFire(SketchCharacter owner, float power, long direction) {
+    public double getHeight() {
+        return height;
+    }
+   
+    
+    public boolean tryToFire(SketchCharacter owner, float power, long vAimDirection) {
         double timeFired = elapsed;
         double timeSinceLastFired = timeFired - lastTimeFired;
         float rateOfFireInMilli = 1000/rateOfFire;
                             
         if (timeSinceLastFired > rateOfFireInMilli) {
-            fire(owner, power, direction);
+            fire(owner, power, vAimDirection);
             lastTimeFired = timeFired;
             return true;
         } else {
@@ -100,20 +140,20 @@ public abstract class AbstractWeapon implements GameObject, GraphicsObject {
         }
     }
 
-    private void fire(SketchCharacter owner, float power, long direction) {
-        long normalDir = Vectors.normalize(direction);
+    private void fire(SketchCharacter owner, float power, long vAimDirection) {
+        long normalDir = Vectors.normalize(vAimDirection);
         long vVelocity = Vectors.scalarMultiply(getProjectileSpeed(power), normalDir);
         long vPosition = Vectors.add(owner.getCollider().getPosition(), Vectors.scaleToLength(normalDir, 100.0));
-        System.out.println("velocity: " + Vectors.toString(vVelocity));
-        BasicProjectile projectile = createProjectile(owner, vPosition, vVelocity);
-
-        projectile.setPower(power);
-        projectile.setDirection(direction);
+        AbstractProjectile projectile = createProjectile(owner, vPosition, vVelocity);
     }
 
-    protected abstract BasicProjectile createProjectile(SketchCharacter owner, long vPosition, long vVelocity);
+    protected abstract AbstractProjectile createProjectile(SketchCharacter owner, long vPosition, long vVelocity);
 
     protected abstract double getProjectileSpeed(float power);
+
+    protected long getFireDirection(long vAimDirection) {
+        return vAimDirection;
+    }
 
     public float getRateOfFire() {
         return rateOfFire;

@@ -1,43 +1,56 @@
 package sketchwars.character.projectiles;
 
+import java.awt.Graphics;
+import java.awt.image.BufferedImage;
 import sketchwars.graphics.Texture;
+import sketchwars.character.*;
+import sketchwars.util.Timer;
+import sketchwars.physics.*;
+
 /**
  *
  * @author Najash Najimudeen <najash.najm@gmail.com>
  */
-public class GrenadeProjectile extends BasicProjectile {
-    private static final int DAMAGE = 25;
-    private static final double COLLIDER_RADIUS = 32.0;
-    private static final double EXPLOSION_RADIUS = 256.0;
+public class GrenadeProjectile extends AbstractProjectile {
+    private static final int EXPLOSION_DAMAGE = 25;
+    public static final double EXPLOSION_RADIUS = 150.0;
     
-    private static final double LIFESPAN = 5000;
-    
-    private double colliderRadius;
-    private double explosionRadius;
-    
-    public GrenadeProjectile(Texture texture) {
-        super(texture);
+    private static final double LIFESPAN_MILLIS = 5000;
+    private final ProjectileFactory factory;
+    private final Timer timer;
+    private BufferedImage explosionAlpha;
+       
+    public GrenadeProjectile(Texture texture, ProjectileFactory factory) {
+        super(texture, null, 0);
+        this.factory = factory;
+        timer = new Timer(LIFESPAN_MILLIS);
+        timer.start();
         
-        setLifespan(LIFESPAN);
-        
-        colliderRadius = COLLIDER_RADIUS;
-        explosionRadius = EXPLOSION_RADIUS;
-        setDamage(DAMAGE);
+        int radius = (int)EXPLOSION_RADIUS;
+        explosionAlpha = new BufferedImage(radius*2, radius*2, BufferedImage.TYPE_INT_ARGB);
+        Graphics g = explosionAlpha.getGraphics();
+        g.fillOval(0, 0, radius*2, radius*2);
     }
 
-    public double getColliderRadius() {
-        return colliderRadius;
+    @Override
+    public void update(double elapsedMillis)
+    {
+        timer.update(elapsedMillis);
+        if(hasExpired())
+        {
+            factory.createExplosion(coll.getCenterOfMass(), EXPLOSION_RADIUS, EXPLOSION_DAMAGE, explosionAlpha);
+        }
     }
 
-    public void setColliderRadius(double colliderRadius) {
-        this.colliderRadius = colliderRadius;
+    @Override 
+    public boolean hasExpired()
+    {
+        return timer.hasElapsed();
     }
-
-    public double getExplosionRadius() {
-        return explosionRadius;
-    }
-
-    public void setExplosionRadius(double explosionRadius) {
-        this.explosionRadius = explosionRadius;
-    }
+    //Grenade doesn't do anything special
+    @Override
+    protected void handleCollisionWithCharacter(SketchCharacter ch) {}
+    //Grenade doesn't do anything special
+    @Override
+    protected void handleCollision(Collider c) {}
 }

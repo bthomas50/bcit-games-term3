@@ -8,15 +8,21 @@ import java.lang.Math;
 public class Vectors
 {
     //Number of decimal places we can represent.
-    public static final long POINT = 6L;
+    public static final long POINT = 8L;
     //The precision of these values.
-    public static final double EPSILON = 1.0 / 64.0;
+    public static final double EPSILON = Math.pow(2.0, -POINT);
     //For unpacking.
     private static final long INT_MASK = 0xFFFFFFFFL;
     //For multiplying to/from fixed-point doubles
-    private static final long FACTOR = 64L;
+    private static final long FACTOR = (long) Math.pow(2.0, POINT);
 
     private static final long INT_OFFSET = 32L;
+
+    //useful constants!
+    public static final long V_ZERO = create(0,0);
+    public static final long V_UNIT_X = create(1,0);
+    public static final long V_UNIT_Y = create(0,1);
+
     
     public static long create(double x, double y)
     {
@@ -66,6 +72,11 @@ public class Vectors
     public static long reverse(long v)
     {
         return pack(-left(v), -right(v));
+    }
+    //rotate 90 degrees CCW
+    public static long perpendicular(long v)
+    {
+        return pack(-right(v), left(v));
     }
 
     //get the dot product as a double

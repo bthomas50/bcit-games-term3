@@ -1,5 +1,7 @@
 package sketchwars.physics;
 
+import sketchwars.game.GameObject;
+
 public interface Collider extends PhysicsObject
 {
     BoundingBox getBounds();
@@ -11,4 +13,9 @@ public interface Collider extends PhysicsObject
     void notify(Collider other);
     void addCollisionListener(CollisionListener list);
     void removeCollisionListener(CollisionListener list);
+
+    boolean hasAttachedGameObject();
+    GameObject getAttachedGameObject();
+
+    CollisionBehaviour getCollisionBehaviour(Collider other);
 }

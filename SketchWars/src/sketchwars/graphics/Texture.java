@@ -1,5 +1,6 @@
 package sketchwars.graphics;
 
+import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import org.lwjgl.BufferUtils;
 import java.io.File;
@@ -8,14 +9,13 @@ import static org.lwjgl.opengl.GL11.*;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import org.joml.Matrix3d;
+import org.joml.Vector2d;
 import org.joml.Vector3d;
+import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL30;
-import sketchwars.OpenGL;
 
 /**
  * Texture class is capable of loading and rendering images
@@ -33,6 +33,26 @@ public class Texture {
         tWidth = 0;
         tHeight = 0;
     }
+
+    /**
+     * Load texture from buffered image
+     * warning: the texture will not be part of the reference counter
+     *          so the same image can be loaded multiple times
+     * @param image 
+     * @param disableMipMap 
+     */
+    public Texture(BufferedImage image, boolean disableMipMap) {
+        if (image == null) {
+            System.err.println("Given image is a null pointer");
+        }
+        
+        Texture texture = loadTextureFromImage(image, disableMipMap);
+        textureID = texture.getTextureID();
+        tWidth = texture.getTextureWidth();
+        tHeight = texture.getTextureHeight();
+    }
+    
+    
     
     public float getTextureWidth() {
         return tWidth;
@@ -49,15 +69,16 @@ public class Texture {
     /**
      * Load a texture into vram
      * @param file texture path
+     * @param disableMipMap
      * @return returns the texture ID (negative value indicates error loading texture)
      */
-    public static Texture loadTexture(final String file) {
+    public static Texture loadTexture(final String file, boolean disableMipMap) {
         Texture texture;
         if (textureList.containsKey(file)) {
             texture = textureList.get(file);
             System.out.println("Texture file '" + file + "' previously loaded, using existing texture reference.");
         } else {
-            texture = loadTextureFromFile(file);
+            texture = loadTextureFromFile(file, disableMipMap);
             
             if (texture != null) {
                 System.out.println("Texture file '" + file + "' loaded.");
@@ -115,7 +136,7 @@ public class Texture {
         return ImageIO.read(imageFile);
     }
 
-    private static Texture loadTextureFromImage(final BufferedImage image) {
+    private static Texture loadTextureFromImage(final BufferedImage image, boolean disableMipMap) {
         if (image != null) {
             Texture texture = new Texture();
              
@@ -137,6 +158,13 @@ public class Texture {
             // Upload the texture data and generate mip maps (for scaling)
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, 
                 GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+            
+            if (disableMipMap) {
+                GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
+            } else {
+                GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_NEAREST_MIPMAP_LINEAR, GL11.GL_NEAREST);
+            }
+            
             GL30.glGenerateMipmap(GL_TEXTURE_2D);
             
             return texture;
@@ -144,12 +172,12 @@ public class Texture {
         return null;
     }
 
-    private static Texture loadTextureFromFile(final String file) {
+    private static Texture loadTextureFromFile(final String file, boolean disableMipMap) {
         try {
             BufferedImage im = loadImageFile(file);
-            return loadTextureFromImage(im);
+            return loadTextureFromImage(im, disableMipMap);
         } catch (IOException ex) {
-            Logger.getLogger(Texture.class.getName()).log(Level.SEVERE, null, ex);
+            System.err.println(file + " : " + ex.getMessage());
         }
         
         return null;
@@ -174,102 +202,30 @@ public class Texture {
         buffer.flip();
         return buffer;
     }
-    
-    
-    /**
-     * Draw the texture - coordinates (0, 0) is the middle of the screen
-     * @param x X-axis coordinates
-     * @param y Y-axis coordinates
-     * @param width 'draw width' in pixels
-     * @param height 'draw height' in pixels
-     */
-    public void draw(int x, int y, int width, int height) {
-        //convert the position to make sure (0, 0) is the center
-        int newX = x + OpenGL.WIDTH/2;
-        int newY = y + OpenGL.HEIGHT/2;
-        
-        draw(newX, newX, newX + width, newX + width,
-             newY, newY - height, newY - height, newY);
-    }
-    
-    /**
-     * Draw the texture centered - coordinates (0, 0) is the middle of the screen
-     * @param x X-axis coordinates
-     * @param y Y-axis coordinates
-     * @param width 'draw width' in pixels
-     * @param height 'draw height' in pixels
-     */
-    public void drawTextureCentered(int x, int y, int width, int height) {
-        //convert the position to make sure (0, 0) is the center
-        int newX = x + OpenGL.WIDTH/2 - width/2;
-        int newY = y + OpenGL.HEIGHT/2 + height/2;
-        
-        draw(newX, newX, newX + width, newX + width,
-             newY, newY - height, newY - height, newY);
-    }
-    
-    /**
-     * Draw the texture centered - coordinates (0, 0) is the middle of the screen
-     * @param xP X-axis coordinates (-1 to 1)
-     * @param yP Y-axis coordinates (1 to -1)
-     * @param widthP 'draw width' percentage of screen width (0 to 1)
-     * @param heightP 'draw height' percentage of screen height (0 to 1)
-     */
-    public void drawNormalized(double xP, double yP, double widthP, double heightP) {
-        int width = (int)(OpenGL.WIDTH * widthP);
-        int height = (int)(OpenGL.HEIGHT * heightP);
 
-        int x = (int)((OpenGL.WIDTH/2) * xP);
-        int y = (int)((OpenGL.HEIGHT/2) * yP);
-        
-        //convert the position to make sure (0, 0) is the center
-        int newX = x + OpenGL.WIDTH/2 - width/2;
-        int newY = y + OpenGL.HEIGHT/2 + height/2;
-        
-        draw(newX, newX, newX + width, newX + width,
-             newY, newY - height, newY - height, newY);
-    }
-    
     /**
      * Draw the texture centered - coordinates (0, 0) is the middle of the screen
-     * @param xP X-axis coordinates (-1 to 1)
-     * @param yP Y-axis coordinates (1 to -1)
-     * @param scale value by which to scale the original texture
+     * @param textureCoord texture coordinates to use. pass in null to use default.
+     * @param x X-axis coordinates (-1 to 1)
+     * @param y Y-axis coordinates (1 to -1)
+     * @param width 'draw width' percentage of screen width (0 to 2)
+     * @param height 'draw height' percentage of screen height (0 to 2)
      */
-    public void drawNormalized(double xP, double yP, double scale) {
-        int width = (int)(tWidth * scale);
-        int height = (int)(tHeight * scale);
+    public void draw(Vector2d textureCoord[], float x, float y, float width, float height) {
+        float newX = x - width/2;
+        float newY = y + height/2;
+        
+        if (textureCoord != null) {
+            draw((float)textureCoord[0].x, (float)textureCoord[1].x, (float)textureCoord[2].x, (float)textureCoord[3].x, 
+                 (float)textureCoord[0].y, (float)textureCoord[1].y, (float)textureCoord[2].y, (float)textureCoord[3].y,
+                 newX, newX, newX + width, newX + width,
+                 newY, newY - height, newY - height, newY);
+        } else {
+            draw(newX, newX, newX + width, newX + width,
+                 newY, newY - height, newY - height, newY);
+        }
+    }
 
-        int x = (int)((OpenGL.WIDTH/2) * xP);
-        int y = (int)((OpenGL.HEIGHT/2) * yP);
-        
-        //convert the position to make sure (0, 0) is the center
-        int newX = x + OpenGL.WIDTH/2 - width/2;
-        int newY = y + OpenGL.HEIGHT/2 + height/2;
-        
-        draw(newX, newX, newX + width, newX + width,
-             newY, newY - height, newY - height, newY);
-    }
-    
-    /**
-     * Draw the texture centered - coordinates (0, 0) is the middle of the screen
-     * @param xP X-axis coordinates (-1 to 1)
-     * @param yP Y-axis coordinates (1 to -1)
-     * @param width 'draw width' in pixels
-     * @param height 'draw height' in pixels
-     */
-    public void drawNormalizedPosition(double xP, double yP, int width, int height) {
-        int x = (int)((OpenGL.WIDTH/2) * xP);
-        int y = (int)((OpenGL.HEIGHT/2) * yP);
-        
-        //convert the position to make sure (0, 0) is the center
-        int newX = x + OpenGL.WIDTH/2 - width/2;
-        int newY = y + OpenGL.HEIGHT/2 + height/2;
-        
-        draw(newX, newX, newX + width, newX + width,
-             newY, newY - height, newY - height, newY);
-    }
-    
     /**
      * draw the texture using a transformation matrix 
      * @param matrix transformation matrix 
@@ -277,30 +233,63 @@ public class Texture {
     public void draw(Matrix3d matrix) {   
         glPushMatrix();
         
-        //translate so (0, 0) is center of window
-        int xCenterOffet = (int)(OpenGL.WIDTH/2);
-        int yCenterOffet = (int)(OpenGL.HEIGHT/2);
-        glTranslated(xCenterOffet, yCenterOffet, 0);
+        Vector3d points[] = getTransformedQuad(matrix);
+        Texture.this.draw(points);
+        
+        glPopMatrix();
+    }
+    
+    /**
+     * draw the texture using a transformation matrix 
+     * @param textureCoord texture coordinates
+     * @param matrix transformation matrix 
+     */
+    public void draw(Vector2d[] textureCoord, Matrix3d matrix) {   
+        glPushMatrix();
+        
+        Vector3d points[] = getTransformedQuad(matrix);
+        Texture.this.draw(textureCoord, points);
+        
+        glPopMatrix();
+    }
+    
+    private Vector3d[] getTransformedQuad(Matrix3d matrix) {
+        Vector3d tQuad[] = new Vector3d[4];
         
         //quad
         Vector3d point1 = new Vector3d(-0.5, 0.5, 1);
-        Vector3d point2 = new Vector3d(0.5, 0.5, 1);
+        Vector3d point2 = new Vector3d(-0.5, -0.5, 1);
         Vector3d point3 = new Vector3d(0.5, -0.5, 1);
-        Vector3d point4 = new Vector3d(-0.5, -0.5, 1);
-        
+        Vector3d point4 = new Vector3d(0.5, 0.5, 1);
+                
         //tranform quad using the matrix
         point1.mul(matrix);
         point2.mul(matrix);
         point3.mul(matrix);
         point4.mul(matrix);
         
-        draw((int)point1.x, (int)point2.x, (int)point3.x, (int)point4.x, 
-             (int)point1.y, (int)point2.y, (int)point3.y, (int)point4.y);
-        glPopMatrix();
+        tQuad[0] = point1;
+        tQuad[1] = point2;
+        tQuad[2] = point3;
+        tQuad[3] = point4;
+        
+        return tQuad;
+    }
+
+    private void draw(Vector3d[] points) {
+        Texture.this.draw((float)points[0].x, (float)points[1].x, (float)points[2].x, (float)points[3].x, 
+             (float)points[0].y, (float)points[1].y, (float)points[2].y, (float)points[3].y);
     }
     
-    private void draw(int x1, int x2, int x3, int x4,
-                      int y1, int y2, int y3, int y4) {        
+    private void draw(Vector2d[] textureCoord, Vector3d[] points) {
+        Texture.this.draw((float)textureCoord[0].x, (float)textureCoord[1].x, (float)textureCoord[2].x, (float)textureCoord[3].x, 
+             (float)textureCoord[0].y, (float)textureCoord[1].y, (float)textureCoord[2].y, (float)textureCoord[3].y,
+             (float)points[0].x, (float)points[1].x, (float)points[2].x, (float)points[3].x, 
+             (float)points[0].y, (float)points[1].y, (float)points[2].y, (float)points[3].y);
+    }
+    
+    private void draw(float x1, float x2, float x3, float x4,
+                      float y1, float y2, float y3, float y4) {        
         glBindTexture(GL_TEXTURE_2D, textureID);
 
         // Draw a textured quad
@@ -312,12 +301,85 @@ public class Texture {
         glEnd();
     }
     
+    private void draw(float tx1, float tx2, float tx3, float tx4,
+                      float ty1, float ty2, float ty3, float ty4,
+                      float x1, float x2, float x3, float x4,
+                      float y1, float y2, float y3, float y4) {        
+        glBindTexture(GL_TEXTURE_2D, textureID);
+
+        // Draw a textured quad
+        glBegin(GL_QUADS);
+        glTexCoord2f(tx1, ty1); glVertex3f(x1, y1, 0);
+        glTexCoord2f(tx2, ty2); glVertex3f(x2, y2, 0);
+        glTexCoord2f(tx3, ty3); glVertex3f(x3, y3, 0);
+        glTexCoord2f(tx4, ty4); glVertex3f(x4, y4, 0);
+        glEnd();
+    }
+    
+    /**
+     * replace a sub-texture area with the given image
+     * @param subImage given image
+     * @param xOffset sub texture start point 
+     * @param yOffset sub texture start point 
+     * @param width sub texture width
+     * @param height sub texture height
+     * @return true if successful
+     */
+    public boolean setSubTexture(BufferedImage subImage, int xOffset, int yOffset, int width, int height) {
+        if (xOffset < 0 || yOffset < 0) {
+            System.err.println("Texture::setSubTexture: Given sub texture offset cannot be less than 0.");
+        } else if ((xOffset + width) >= tWidth || (yOffset + height) >= tHeight) {
+            System.err.println("Texture::setSubTexture: Given sub texture offset cannot be greater than texture size.");
+        } else if (subImage == null) {
+            System.err.println("Texture::setSubTexture: Given image cannot be null.");
+        } else {
+            ByteBuffer data;
+            
+            if (subImage.getWidth() != width || subImage.getHeight() != height) {
+                BufferedImage resizedImage = resizeImage(subImage, width, height);
+                data = convertToByteBuffer(resizedImage);
+            } else {
+                data = convertToByteBuffer(subImage);
+            }
+            
+            return setSubTexture(data, xOffset, yOffset, width, height);
+        }
+        
+        return false;
+    }
+    
+    /**
+     * replace a sub-texture area with the given image
+     * @param subImage given image in ByteBuffer
+     * @param xOffset sub texture start point 
+     * @param yOffset sub texture start point 
+     * @param width sub texture width
+     * @param height sub texture height
+     * @return true if successful
+     */
+    public boolean setSubTexture(ByteBuffer subImage, int xOffset, int yOffset, int width, int height) {
+        if (xOffset < 0 || yOffset < 0) {
+            System.err.println("Texture::setSubTexture: Given sub texture offset cannot be less than 0.");
+        } else if ((xOffset + width) >= tWidth || (yOffset + height) >= tHeight) {
+            System.err.println("Texture::setSubTexture: Given sub texture offset cannot be greater than texture size.");
+        } else if (subImage == null) {
+            System.err.println("Texture::setSubTexture: Given ByteBuffer cannot be null.");
+        } else {
+            glBindTexture(GL_TEXTURE_2D, textureID);
+            glTexSubImage2D(GL_TEXTURE_2D, 0, xOffset, yOffset, width, height, GL_RGBA, GL_UNSIGNED_BYTE, subImage);
+            return true;
+        }
+        
+        return false;
+    }
+    
     public void dispose() {
         if (textureID != -1 && getTotalReferences() > 0) {
             decrementReference(textureID);
             
             if (getTotalReferences() == 0) {
                 glDeleteTextures(textureID);
+                textureID = -1;
             }
         }
     }
@@ -334,7 +396,6 @@ public class Texture {
         textureList.clear();
     }
     
-    
     @Override
     protected void finalize() throws Throwable {
         super.finalize();
@@ -342,5 +403,12 @@ public class Texture {
         if (textureID != -1) {
             dispose();
         }
+    }    
+
+    public static BufferedImage resizeImage(BufferedImage image, int width, int height) {
+        BufferedImage newImage = new BufferedImage(width, height, image.getType());
+        Graphics g = newImage.getGraphics();
+        g.drawImage(image, 0, 0, width, height, null);
+        return newImage;
     }
 }

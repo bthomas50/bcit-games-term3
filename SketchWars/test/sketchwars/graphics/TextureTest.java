@@ -25,7 +25,7 @@ public class TextureTest {
             
     @BeforeClass
     public static void setupTest() throws IOException {
-        opengl.init();
+        opengl.init(false);
                 
         BufferedImage image = new BufferedImage(TEST_WIDTH, TEST_HEIGHT, BufferedImage.TYPE_INT_ARGB);
         File outputfile = new File(testImage);
@@ -34,7 +34,7 @@ public class TextureTest {
    
     @Test
     public void testTextureCreation() {
-        Texture texture = Texture.loadTexture(testImage);
+        Texture texture = Texture.loadTexture(testImage, false);
         
         int textureID = texture.getTextureID();
         
@@ -53,13 +53,13 @@ public class TextureTest {
     
     @Test
     public void testTextureReferenceCounter() {
-        Texture texture1 = Texture.loadTexture(testImage);
-        Texture texture2 = Texture.loadTexture(testImage);
+        Texture texture1 = Texture.loadTexture(testImage, false);
+        Texture texture2 = Texture.loadTexture(testImage, false);
     
         assertEquals(2, texture1.getTotalReferences());
         assertEquals(2, Texture.getTotalReferences(texture2.getTextureID()));
         
-        Texture texture3 = Texture.loadTexture(testImage);
+        Texture texture3 = Texture.loadTexture(testImage, false);
         assertEquals(3, texture3.getTotalReferences());
         assertEquals(3, Texture.getTotalReferences(texture1.getTextureID()));
         

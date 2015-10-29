@@ -1,32 +1,43 @@
 package sketchwars;
 
 import java.nio.ByteBuffer;
+import org.joml.Vector2d;
 import static org.lwjgl.glfw.Callbacks.errorCallbackPrint;
 import static org.lwjgl.glfw.GLFW.*;
-import org.lwjgl.glfw.GLFWErrorCallback;
-import org.lwjgl.glfw.GLFWvidmode;
+import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GLContext;
 import static org.lwjgl.system.MemoryUtil.NULL;
-import sketchwars.input.KeyboardHandler;
+import sketchwars.input.*;
+import sketchwars.physics.BoundingBox;
 /**
  *
  * @author Najash Najimudeen <najash.najm@gmail.com>
  */
 public class OpenGL {
-    public static final int WIDTH = 800;
-    public static final int HEIGHT = 600;
-    
+    public static final BoundingBox GRAPHICS_BOUNDS = new BoundingBox(1, -1, -1, 1);
+    private static final int WIDTH = 800;
+    private static final int HEIGHT = 600;
+
+    private static int currentScreenWidth;
+    private static int currentScreenHeight;
+
     // We need to strongly reference callback instances.
     private GLFWErrorCallback errorCallback;
-    private KeyboardHandler   keyboardHandler;
- 
+    
+    private final KeyboardHandler   keyboardHandler;
+    private final GLFWMouseButtonCallback mouseButtonCallback;
+    private final GLFWCursorPosCallback mousePosCallback;
     // The window handle
-    private long window;
+    private static long window;
+    
+    private static boolean fullscreen;
     
     public OpenGL() {
-        this.keyboardHandler = new KeyboardHandler();
+        keyboardHandler = new KeyboardHandler();
+        mouseButtonCallback = new MouseHandler.ButtonCallback();
+        mousePosCallback = new MouseHandler.PositionCallback();
     }
     
     public void dispose() {
@@ -34,7 +45,8 @@ public class OpenGL {
             // Release window and window callbacks
             glfwDestroyWindow(window);
             keyboardHandler.release();
-            
+            mouseButtonCallback.release();
+            mousePosCallback.release();
             
         } finally { 
             // Terminate GLFW and release the GLFWerrorfun
@@ -43,7 +55,8 @@ public class OpenGL {
         }
     }
     
-    public void init() {
+    public void init(boolean fullscreen) {
+        OpenGL.fullscreen = fullscreen;
         // Setup an error callback. The default implementation
         // will print the error message in System.err.
         glfwSetErrorCallback(errorCallback = errorCallbackPrint(System.err));
@@ -56,24 +69,39 @@ public class OpenGL {
         glfwDefaultWindowHints(); // optional, the current window hints are already the default
         glfwWindowHint(GLFW_VISIBLE, GL11.GL_FALSE); // the window will stay hidden after creation
         glfwWindowHint(GLFW_RESIZABLE, GL11.GL_FALSE); // the window will be resizable
-  
+         
+        // Get the resolution of the primary monitor
+        long primaryMonitor = glfwGetPrimaryMonitor();
+        ByteBuffer vidmode = glfwGetVideoMode(primaryMonitor);
+        
         // Create the window
-        window = glfwCreateWindow(WIDTH, HEIGHT, "Sketch Wars!", NULL, NULL);
+        if (fullscreen) {
+            currentScreenWidth = GLFWvidmode.width(vidmode);
+            currentScreenHeight = GLFWvidmode.height(vidmode);
+            window = glfwCreateWindow(currentScreenWidth, currentScreenHeight, "Sketch Wars!", primaryMonitor, NULL);
+        } else {
+            currentScreenWidth = WIDTH;
+            currentScreenHeight = HEIGHT;
+            window = glfwCreateWindow(WIDTH, HEIGHT, "Sketch Wars!", NULL, NULL);
+        }
+        
         if ( window == NULL )
-            throw new RuntimeException("Failed to create the GLFW window");
- 
+                   throw new RuntimeException("Failed to create the GLFW window");
+        
+        if (!fullscreen) {
+            // Center our window
+            glfwSetWindowPos(
+                window,
+                (GLFWvidmode.width(vidmode) - WIDTH) / 2,
+                (GLFWvidmode.height(vidmode) - HEIGHT) / 2
+            );
+        }
+                
         // Setup a key callback. It will be called every time a key is pressed, repeated or released.
         glfwSetKeyCallback(window, keyboardHandler);
- 
-        // Get the resolution of the primary monitor
-        ByteBuffer vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-        // Center our window
-        glfwSetWindowPos(
-            window,
-            (GLFWvidmode.width(vidmode) - WIDTH) / 2,
-            (GLFWvidmode.height(vidmode) - HEIGHT) / 2
-        );
- 
+        glfwSetCursorPosCallback(window, mousePosCallback);
+        glfwSetMouseButtonCallback(window, mouseButtonCallback);
+            
         // Make the OpenGL context current
         glfwMakeContextCurrent(window);
         // Enable v-sync
@@ -81,7 +109,7 @@ public class OpenGL {
  
         // Make the window visible
         glfwShowWindow(window);
-        
+       
         GLContext.createFromCurrent();
         
         initCamera();
@@ -102,14 +130,16 @@ public class OpenGL {
         // enable alpha blending
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-         
         GL11.glMatrixMode(GL11.GL_PROJECTION);
         GL11.glPushMatrix();
         GL11.glLoadIdentity();
-        GL11.glOrtho(0.0, WIDTH, 0.0, HEIGHT, -1.0, 1.0);
+        GL11.glOrtho(GRAPHICS_BOUNDS.getLeft(), GRAPHICS_BOUNDS.getRight(), 
+                GRAPHICS_BOUNDS.getTop(), GRAPHICS_BOUNDS.getBottom(), -1.0, 1.0);
         GL11.glMatrixMode(GL11.GL_MODELVIEW);
         GL11.glPushMatrix();
         GL11.glLoadIdentity();
+        // GL11.glTranslated(-0.5, 0, 0);
+        // GL11.glScaled(0.5, 0.5, 0.0);
         GL11.glDisable(GL11.GL_LIGHTING);
         GL11.glEnable(GL11.GL_TEXTURE_2D);
     }
@@ -128,5 +158,26 @@ public class OpenGL {
         // Poll for window events. The key callback above will only be
         // invoked during this call.
         glfwPollEvents();
+    }
+
+    public static Vector2d getDisplaySize() {
+        return new Vector2d(currentScreenWidth, currentScreenHeight);
+    }
+    
+    public static void hideMousePointer() {
+        if (window != NULL) {
+            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN); 
+        }
+    }
+    
+    public static void showMousePointer() {
+        if (window != NULL) {
+            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL); 
+        }
+    }
+    
+    public static float getAspectRatio() {
+        Vector2d screen = getDisplaySize();
+        return (float) (screen.x/screen.y);
     }
 }

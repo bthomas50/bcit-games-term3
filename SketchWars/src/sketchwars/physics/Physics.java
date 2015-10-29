@@ -6,11 +6,11 @@ import java.util.HashSet;
 
 public class Physics
 {
-    public static final long V_GRAVITY  = Vectors.create(0, -98);
 	public static final double MAX_SPEED = 1000.0f;
 	private List<PhysicsObject> allPhysicsObjects;
     private List<Collider> allColliders;
     private QuadTree collidersTree;
+    private long vGravity = Vectors.create(0, -600);
 	
 	private class ColliderPair
 	{
@@ -61,6 +61,7 @@ public class Physics
         updateKinematics(elapsedMillis);
         updateBounds();
 		handleCollisions();
+        removeExpiredObjects();
     }
 	
 	private void updateKinematics(double elapsedMillis)
@@ -80,7 +81,7 @@ public class Physics
 	{
         if(obj.getMass() != 0.0)
         {
-            obj.accelerate(V_GRAVITY, elapsedMillis);
+            obj.accelerate(vGravity, elapsedMillis);
         }
 	}
 	
@@ -164,6 +165,32 @@ public class Physics
     public List<PhysicsObject> getPhysicsObjects()
     {
         return allPhysicsObjects;
+    }
+
+    public void setGravity(long vGravity)
+    {
+        this.vGravity = vGravity;
+    }
+
+    private void removeExpiredObjects()
+    {
+        ArrayList<PhysicsObject> toDelete = new ArrayList<>();
+        for(PhysicsObject obj : allPhysicsObjects)
+        {
+            if(obj.hasExpired())
+            {
+                toDelete.add(obj);
+            }
+        }
+        for(PhysicsObject deleting : toDelete)
+        {
+            allPhysicsObjects.remove(deleting);
+            if(allColliders.contains(deleting))
+            {
+                allColliders.remove((Collider) deleting);
+                collidersTree.remove((Collider) deleting);
+            }
+        }
     }
 
 }

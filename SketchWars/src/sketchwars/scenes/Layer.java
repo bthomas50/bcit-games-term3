@@ -1,26 +1,29 @@
 package sketchwars.scenes;
 
 import java.util.ArrayList;
-import sketchwars.game.GameObject;
+import sketchwars.Updateable;
 import sketchwars.animation.Animation;
-import sketchwars.animation.Explosion;
-import sketchwars.graphics.GraphicsObject;
+import sketchwars.graphics.*;
 
 /**
  * Used in the scene as a layer of graphics objects
  * @author Najash Najimudeen <najash.najm@gmail.com>
  */
-public class Layer implements GraphicsObject, GameObject, Comparable<Layer> {
+public class Layer implements Drawable, Updateable, Comparable<Layer> {
     private final ArrayList<GraphicsObject> drawableObjs;
     private final ArrayList<Animation> animations;
     private int zOrder;
     
     public Layer() {
+        this(0);
+    }
+
+    public Layer(int z) {
         drawableObjs = new ArrayList<>();
         animations = new ArrayList<>();
     }
     
-    public void addAnimation(Explosion animation) {
+    public void addAnimation(Animation animation) {
         animations.add(animation);
         addDrawableObject(animation);
     }
@@ -28,6 +31,18 @@ public class Layer implements GraphicsObject, GameObject, Comparable<Layer> {
     private void updateAnimations(double delta) {
         for (Animation a: animations) {
             a.update(delta);
+        }
+    }
+
+    private void removeExpiredObjects() {
+        ArrayList<GraphicsObject> toDelete = new ArrayList<>();
+        for(GraphicsObject obj : drawableObjs) {
+            if(obj.hasExpired()) {
+                toDelete.add(obj);
+            }
+        }
+        for(GraphicsObject deleting : toDelete) {
+            drawableObjs.remove(deleting);
         }
     }
 
@@ -66,12 +81,19 @@ public class Layer implements GraphicsObject, GameObject, Comparable<Layer> {
     public void update(double delta) {
         updateAnimations(delta);
         removeExpiredAnimations();
+        removeExpiredObjects();
     }
 
     public int getZOrder() {
         return zOrder;
     }
 
+    /**
+     * Set z-order before adding a layer to a scene
+     * (Note: Use Scene class setZOrder method to change 
+     * z-order after adding a layer to the scene)
+     * @param zOrder new z-order
+     */
     public void setZOrder(int zOrder) {
         this.zOrder = zOrder;
     }

@@ -1,13 +1,10 @@
 package sketchwars.game;
 
+import sketchwars.*;
+
 /**
  *
  * @author Najash Najimudeen <najash.najm@gmail.com>
+ * @author Brian <bthomas50@my.bcit.ca>
  */
-public interface GameObject {
-    /**
-     * Game object update that provides the frame length in milliseconds
-     * @param delta frame length in milliseconds
-     */
-    void update(double delta);
-}
+public interface GameObject extends Updateable, Expires {}

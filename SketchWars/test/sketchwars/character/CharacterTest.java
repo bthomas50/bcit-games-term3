@@ -7,7 +7,6 @@ package sketchwars.character;
 
 import static org.junit.Assert.*;
 import org.junit.Test;
-import sketchwars.graphics.Texture;
 
 /**
  *
@@ -16,14 +15,13 @@ import sketchwars.graphics.Texture;
 public class CharacterTest {
     @Test
     public void testCreation() {
-        Texture t = new Texture();
-        SketchCharacter character1 = new SketchCharacter(t);
+        SketchCharacter character1 = new SketchCharacter();
         assertEquals(SketchCharacter.DEFAULT_MAX_HEALTH, character1.getHealth());
         assertEquals(SketchCharacter.DEFAULT_MAX_HEALTH, character1.getMaxHealth());
         
         int maxHealth = 200;
         int startHealth = 100;
-        SketchCharacter character2 = new SketchCharacter(t, maxHealth, startHealth);
+        SketchCharacter character2 = new SketchCharacter(maxHealth, startHealth);
         
         assertEquals(startHealth, character2.getHealth());
         assertEquals(maxHealth, character2.getMaxHealth());
@@ -32,8 +30,7 @@ public class CharacterTest {
     
     @Test
     public void testDamageTaking() {
-        Texture t = new Texture();
-        SketchCharacter character1 = new SketchCharacter(t, 200, 100);
+        SketchCharacter character1 = new SketchCharacter(200, 100);
         
         character1.takeDamage(50);
         assertEquals(50, character1.getHealth());
@@ -45,10 +42,9 @@ public class CharacterTest {
     
     @Test
     public void testHealing() {
-        Texture t = new Texture();
         int maxHealth = 300;
         int startHealth = 100;
-        SketchCharacter character1 = new SketchCharacter(t, maxHealth, startHealth);
+        SketchCharacter character1 = new SketchCharacter(maxHealth, startHealth);
          
         character1.heal(50);
         assertEquals(startHealth + 50, character1.getHealth());
