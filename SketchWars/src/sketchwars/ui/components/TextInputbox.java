@@ -5,6 +5,7 @@
  */
 package sketchwars.ui.components;
 
+import java.awt.image.BufferedImage;
 import org.joml.Vector2d;
 import sketchwars.graphics.Texture;
 import sketchwars.input.KeyState;
@@ -19,12 +20,10 @@ public class TextInputbox extends UIComponent {
     public static int STANDARD_KEY_START = 32;
     public static int STANDARD_KEY_END = 126;
     
-    //private Texture label;
+    private Texture label;
     private String text;
     private int caretPos;
-    
-    private Label label;
-    
+        
     private long lastKeyPressTime;
     
     public TextInputbox(Vector2d position, Vector2d size, Texture background) {
@@ -34,9 +33,8 @@ public class TextInputbox extends UIComponent {
             setBackground(Texture.loadTexture("content/uicomponents/textbox.png", false));
         }
         
-        label = new Label(text, font, position, size, background);
-        
         text = "";
+        updateLabel(text);
     }
 
     public String getText() {
@@ -59,10 +57,9 @@ public class TextInputbox extends UIComponent {
     public void render() {
         super.render();
         
-        label.render();
-        /*if (label != null) {
-            label.draw(null, (int)position.x, (int)position.y, (int)size.x, (int)size.y);
-        }*/
+        if (label != null) {
+            label.draw(null, (float)position.x, (float)position.y, (float)size.x, (float)size.y);
+        }
     }
     
     private void handleInput() {
@@ -85,14 +82,14 @@ public class TextInputbox extends UIComponent {
     }
     
     private void updateLabel(String text) {
-        label.setText(text);
-        
-       /* BufferedImage img = createLabelImage(text, font, fontColor);
-        
-        if (img != null) {
-            label = new Texture(img, false);
-        } else {
-            System.err.println("TextInputBox:updateLabel(): Error craeting label");
-        }*/
+        if (text != null) {
+            BufferedImage labelImg = createLabelImage(text, font, fontColor);
+            
+            if (labelImg != null) {
+                label = new Texture(labelImg, false);
+            } else {
+                System.err.println("Label:createLabel(): Error craeting label");
+            }
+        }
     }
 }

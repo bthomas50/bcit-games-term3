@@ -7,7 +7,7 @@ package sketchwars.ui.menu;
 
 /**
  *
- * @author A00807688
+ * @author Najash Najimudeen <najash.najm@gmail.com>
  */
 public enum MenuLayers {
     BACKGROUND, BUTTONS;
