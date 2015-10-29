@@ -10,7 +10,7 @@ public class Physics
 	private List<PhysicsObject> allPhysicsObjects;
     private List<Collider> allColliders;
     private QuadTree collidersTree;
-    private long vGravity = Vectors.create(0, -392);
+    private long vGravity = Vectors.create(0, -600);
 	
 	private class ColliderPair
 	{

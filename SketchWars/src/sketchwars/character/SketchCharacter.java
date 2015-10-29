@@ -8,6 +8,7 @@ import sketchwars.character.weapon.AbstractWeapon;
 import sketchwars.graphics.*;
 import sketchwars.game.GameObject;
 import sketchwars.map.AbstractMap;
+import sketchwars.HUD.HealthBar;
 import static sketchwars.physics.Vectors.create;
 
 /*
@@ -39,6 +40,7 @@ public class SketchCharacter implements GraphicsObject, GameObject, CollisionLis
     private int lastActionTime; //last time input recieved
     
     private Texture reticleTexture;
+    private HealthBar healthBar;
     
     private AnimationSet<CharacterAnimations> animationSet;
     private boolean canJump;
@@ -57,7 +59,7 @@ public class SketchCharacter implements GraphicsObject, GameObject, CollisionLis
         this.angle = 0.0f;
         this.isFacingLeft = false;//start facing right.
         reticleTexture = Texture.loadTexture("content/misc/reticle.png", false);
-        
+        vHealthBarOffset = Vectors.create(0, 0.1);
         this.canJump = true;
     }
     
@@ -67,6 +69,13 @@ public class SketchCharacter implements GraphicsObject, GameObject, CollisionLis
     
     public void setWeapon(AbstractWeapon weapon) {
         this.weapon = weapon;
+    }
+    
+    public void setHealthBar(HealthBar healthbar)
+    {
+        this.healthBar = healthbar;
+        healthBar.setHealth(health);
+        healthBar.setMaxHealth(maxHealth);
     }
     
     @Override
@@ -88,6 +97,14 @@ public class SketchCharacter implements GraphicsObject, GameObject, CollisionLis
             weapon.update(delta);
         }
         
+        if (healthBar != null)
+        {
+            healthBar.setPosition((float)posX + (float)Vectors.xComp(vHealthBarOffset),
+                                  (float)posY + (float)Vectors.yComp(vHealthBarOffset));
+            healthBar.setHealth(health);
+            healthBar.update(delta);
+        }
+        
         if(health <= 0)
             isDead = true;
     }
@@ -105,7 +122,7 @@ public class SketchCharacter implements GraphicsObject, GameObject, CollisionLis
         width = (float) bounds.getWidth() / 1024.0f;
         height = (float) bounds.getHeight() / 1024.0f;
     }
-
+    
     @Override
     public void render() {
         if (animationSet != null) {
@@ -115,6 +132,11 @@ public class SketchCharacter implements GraphicsObject, GameObject, CollisionLis
         if (weapon != null) {
             weapon.render();
             reticleTexture.draw(null, posX + (float)Vectors.xComp(vReticleOffset), posY + (float)Vectors.yComp(vReticleOffset), 0.05f, 0.05f);
+        }
+        
+        if(healthBar != null)
+        {
+            healthBar.render();
         }
         
     }
