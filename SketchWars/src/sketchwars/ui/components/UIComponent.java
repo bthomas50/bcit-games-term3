@@ -9,6 +9,8 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import org.joml.Vector2d;
@@ -135,23 +137,24 @@ public abstract class UIComponent implements GraphicsObject {
         return false; //UI components dont expire
     }
 
-    @Override
-    public void render() {
+    protected void renderBackground() {
         if (background != null) {
             background.draw(null, (float)position.x, (float)position.y, (float)size.x, (float)size.y);
         }
+    }
+    
+    @Override
+    public void render() {
+        renderBackground();
+        update();
+    }
         
+    public void update() {
         if (enabled) {
-            update();
-
             if (handleInput) {
                 handleInput();
             }
         }
-    }
-        
-    public void update() {
-        
     }
     
     private void handleInput() {
@@ -169,20 +172,18 @@ public abstract class UIComponent implements GraphicsObject {
         if (text != null) {
             Vector2d screenSize = OpenGL.getDisplaySize();
             
-            float graphicsWidth = OpenGL.GRAPHICS_BOUNDS.getWidth();
-            float graphicsHeight = OpenGL.GRAPHICS_BOUNDS.getHeight();
-            int width = (int) Math.abs(size.x/graphicsWidth * screenSize.x);
-            int height = (int) Math.abs(size.y/graphicsHeight * screenSize.y);
+            int width = (int) Math.abs(size.x * screenSize.x);
+            int height = (int) Math.abs(size.y * screenSize.y);
             
             BufferedImage buttonImg = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-            Graphics g = buttonImg.getGraphics();
+            Graphics2D g = (Graphics2D) buttonImg.getGraphics();
          
+            int fontSize = (int)(width * 0.16f);
+            
             if (font == null) {
-                int fontSize = (int)(width * 0.2f);
-                Font newFont = new Font("Arial", Font.BOLD, fontSize);
-                g.setFont(newFont);
+                g.setFont(new Font("Arial", Font.BOLD, fontSize));
             } else {
-                g.setFont(font);
+                g.setFont(font.deriveFont(Font.BOLD, fontSize));
             }
             
             if (fontColor == null) {
@@ -190,6 +191,10 @@ public abstract class UIComponent implements GraphicsObject {
             } else {
                 g.setColor(fontColor);
             }
+            
+            RenderingHints rh = new RenderingHints(RenderingHints.KEY_TEXT_ANTIALIASING,
+                                                   RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+            g.setRenderingHints(rh);
             
             FontMetrics fontMetrics = g.getFontMetrics();
             int textWidth = fontMetrics.stringWidth(text);

@@ -6,7 +6,10 @@ import sketchwars.input.MouseHandler;
 import sketchwars.input.KeyState;
 
 
-//a generic button that generates a command of type T
+/**
+ *
+ * @author Najash Najimudeen <najash.najm@gmail.com>
+ */
 public class Button extends UIComponent {
     private final Texture normalTexture;
     private final Texture pressedTexture;

@@ -27,6 +27,7 @@ import sketchwars.scenes.Layer;
 import sketchwars.scenes.Scene;
 import sketchwars.scenes.SceneManager;
 import sketchwars.ui.components.Button;
+import sketchwars.ui.components.ListBox;
 import sketchwars.ui.components.TextButton;
 import sketchwars.ui.components.TextInputbox;
 import sketchwars.ui.components.UIActionListener;
@@ -112,9 +113,14 @@ public class MainMenu extends Scene implements UIActionListener {
             buttonExit.addActionListener(this);  
             
             
-            //TextInputbox ti = new TextInputbox(new Vector2d(), new Vector2d(0.4, 0.2), null);
-            //ti.setSelected(true);
-            //btnLayer.addDrawableObject(ti);
+           /* ListBox lb = new ListBox(new Vector2d(), new Vector2d(0.3, 0.5),  0.1f, null);
+            lb.addItem("Item 1");
+            lb.addItem("Item 2");
+            lb.addItem("Item 3");
+            lb.addItem("Item 4");
+            lb.addItem("Item 5");
+            lb.addActionListener(this);
+            btnLayer.addDrawableObject(lb);*/
         } catch (SceneException ex) {
             Logger.getLogger(MainMenu.class.getName()).log(Level.SEVERE, null, ex);
         }

@@ -60,19 +60,19 @@ public class SketchWars {
         OptionMenu optionMenuScene = new OptionMenu(sceneManager);
         
         
-        //start listening
+       /* //start listening
         Server server = new Server(6969);
         new Thread(server).start();
         new DiscoveryServer().start();
         ServerMain.tryToRunClient(server.localAddress, 6969, "Host");
-        
+       
         CreateOption createMenuScene = new CreateOption(sceneManager, server);
-        
+         */
         try {
             sceneManager.addScene(Scenes.GAME, gameScene);
             sceneManager.addScene(Scenes.MAIN_MENU, mainMenuScene);
             sceneManager.addScene(Scenes.SUB_MENU, optionMenuScene);
-            sceneManager.addScene(Scenes.CREATE_MENU, createMenuScene);
+            //sceneManager.addScene(Scenes.CREATE_MENU, createMenuScene);
             
             sceneManager.setCurrentScene(Scenes.MAIN_MENU);
         } catch (SceneManagerException ex) {
