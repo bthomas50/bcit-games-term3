@@ -10,17 +10,19 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GLContext;
 import static org.lwjgl.system.MemoryUtil.NULL;
 import sketchwars.input.*;
+import sketchwars.physics.BoundingBox;
 /**
  *
  * @author Najash Najimudeen <najash.najm@gmail.com>
  */
-public class OpenGL {    
+public class OpenGL {
+    public static final BoundingBox GRAPHICS_BOUNDS = new BoundingBox(1, -1, -1, 1);
     private static final int WIDTH = 800;
     private static final int HEIGHT = 600;
 
     private static int currentScreenWidth;
     private static int currentScreenHeight;
-    
+
     // We need to strongly reference callback instances.
     private GLFWErrorCallback errorCallback;
     
@@ -131,7 +133,8 @@ public class OpenGL {
         GL11.glMatrixMode(GL11.GL_PROJECTION);
         GL11.glPushMatrix();
         GL11.glLoadIdentity();
-        GL11.glOrtho(-1.0, 1.0, -1.0, 1.0, -1.0, 1.0);
+        GL11.glOrtho(GRAPHICS_BOUNDS.getLeft(), GRAPHICS_BOUNDS.getRight(), 
+                GRAPHICS_BOUNDS.getTop(), GRAPHICS_BOUNDS.getBottom(), -1.0, 1.0);
         GL11.glMatrixMode(GL11.GL_MODELVIEW);
         GL11.glPushMatrix();
         GL11.glLoadIdentity();
@@ -177,5 +180,4 @@ public class OpenGL {
         Vector2d screen = getDisplaySize();
         return (float) (screen.x/screen.y);
     }
-    
 }

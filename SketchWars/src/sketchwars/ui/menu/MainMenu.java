@@ -102,7 +102,12 @@ public class MainMenu extends Scene implements UIActionListener {
             //create
             buttonExit = new Button(new Vector2d(0.03, -0.75), size, exitBtn, exitBtnPress, null);
             btnLayer.addDrawableObject(buttonExit);
-            buttonExit.addActionListener(this);            
+            buttonExit.addActionListener(this);  
+            
+            
+            TextInputbox ti = new TextInputbox(new Vector2d(), new Vector2d(0.4, 0.2), null);
+            ti.setSelected(true);
+            btnLayer.addDrawableObject(ti);
         } catch (SceneException ex) {
             Logger.getLogger(MainMenu.class.getName()).log(Level.SEVERE, null, ex);
         }

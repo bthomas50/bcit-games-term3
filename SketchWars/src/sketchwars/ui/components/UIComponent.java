@@ -16,6 +16,7 @@ import sketchwars.OpenGL;
 import sketchwars.graphics.GraphicsObject;
 import sketchwars.graphics.Texture;
 import sketchwars.input.MouseHandler;
+import sketchwars.physics.BoundingBox;
 
 /**
  *
@@ -161,8 +162,11 @@ public abstract class UIComponent implements GraphicsObject {
     public BufferedImage createLabelImage(String text, Font font, Color fontColor) {
         if (text != null) {
             Vector2d screenSize = OpenGL.getDisplaySize();
-            int width = (int) Math.abs(size.x * screenSize.x);
-            int height = (int) Math.abs(size.y * screenSize.y);
+            
+            float graphicsWidth = OpenGL.GRAPHICS_BOUNDS.getWidth();
+            float graphicsHeight = OpenGL.GRAPHICS_BOUNDS.getHeight();
+            int width = (int) Math.abs(size.x/graphicsWidth * screenSize.x);
+            int height = (int) Math.abs(size.y/graphicsHeight * screenSize.y);
             
             BufferedImage buttonImg = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
             Graphics g = buttonImg.getGraphics();
