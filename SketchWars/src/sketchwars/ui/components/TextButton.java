@@ -5,7 +5,6 @@
  */
 package sketchwars.ui.components;
 
-import java.awt.Color;
 import java.awt.Font;
 import org.joml.Vector2d;
 import sketchwars.graphics.Texture;
@@ -34,10 +33,6 @@ public class TextButton extends Button {
         label = new Label(text, font, position, size, null);
     }
 
-    public void setFontColor(Color fontColor) {
-        label.setFontColor(fontColor);
-    }
-    
     @Override
     public void render() {
         super.render();

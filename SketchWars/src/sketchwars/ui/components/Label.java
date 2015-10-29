@@ -8,9 +8,6 @@ package sketchwars.ui.components;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import javax.imageio.ImageIO;
 import org.joml.Vector2d;
 import sketchwars.graphics.Texture;
 
@@ -20,9 +17,7 @@ import sketchwars.graphics.Texture;
  */
 public class Label extends UIComponent {
     private String text; 
-    private Font font;
     private Texture label;
-    private Color fontColor;
     
     public Label(String text, Font font, Vector2d position, Vector2d size, Texture background) {
         super(position, size, background, false);
@@ -30,11 +25,7 @@ public class Label extends UIComponent {
         this.text = text;
         this.font = font;
         
-        createLabel();
-    }
-
-    public void setFontColor(Color fontColor) {
-        this.fontColor = fontColor;
+        fontColor = Color.BLACK;
         createLabel();
     }
 
@@ -47,15 +38,6 @@ public class Label extends UIComponent {
         createLabel();
     }
 
-    public void setBackground(Texture background) {
-        this.background = background;
-    }
-
-    public void setFont(Font font) {
-        this.font = font;
-        createLabel();
-    }
-    
     @Override
     public void render() {
         super.render();
@@ -69,19 +51,14 @@ public class Label extends UIComponent {
     void update() {}
 
     private void createLabel() {
-        if (text != null && !text.isEmpty()) {
+        if (text != null) {
             BufferedImage labelImg = createLabelImage(text, font, fontColor);
-            label = new Texture(labelImg, false);
             
-            try {
-                // retrieve image
-                File outputfile = new File("f:/saved.png");
-                ImageIO.write(labelImg, "png", outputfile);
-            } catch (IOException e) {
-                
+            if (labelImg != null) {
+                label = new Texture(labelImg, false);
+            } else {
+                System.err.println("Label:createLabel(): Error craeting label");
             }
-        } else {
-            System.err.println("Error creating label texture.");
         }
     }
 }

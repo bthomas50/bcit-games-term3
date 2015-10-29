@@ -8,7 +8,6 @@ import sketchwars.character.weapon.AbstractWeapon;
 import sketchwars.graphics.*;
 import sketchwars.game.GameObject;
 import sketchwars.map.AbstractMap;
-import sketchwars.map.TestMap;
 import static sketchwars.physics.Vectors.create;
 
 /*

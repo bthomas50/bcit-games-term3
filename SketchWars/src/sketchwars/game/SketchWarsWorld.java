@@ -47,6 +47,8 @@ public class SketchWarsWorld extends World {
         updateObjects(deltaMillis);
         updateTurn(deltaMillis);
         removeExpiredObjects();
+        
+        Input.handleGameInput();
     }
     
     protected void handleInput(double elapsedMillis) {

@@ -30,6 +30,10 @@ public abstract class UIComponent implements GraphicsObject {
     
     protected boolean handleInput;
     protected boolean enabled;
+    protected boolean selected;
+    
+    protected Color fontColor;
+    protected Font font;
     
     public UIComponent(Vector2d position, Vector2d size, Texture background, boolean handleInput) {
         this.position = position;
@@ -50,6 +54,22 @@ public abstract class UIComponent implements GraphicsObject {
             listeners.remove(listener);
         }
     }
+
+    public Color getFontColor() {
+        return fontColor;
+    }
+
+    public void setFontColor(Color fontColor) {
+        this.fontColor = fontColor;
+    }
+
+    public Font getFont() {
+        return font;
+    }
+
+    public void setFont(Font font) {
+        this.font = font;
+    }
     
     protected void notifyListeners() {
         if (enabled) {
@@ -57,6 +77,14 @@ public abstract class UIComponent implements GraphicsObject {
                 listener.action(this);
             }
         }
+    }
+
+    public void setSelected(boolean selected) {
+        this.selected = selected;
+    }
+
+    public boolean isSelected() {
+        return selected;
     }
 
     public Vector2d getPosition() {
@@ -131,7 +159,7 @@ public abstract class UIComponent implements GraphicsObject {
     }
     
     public BufferedImage createLabelImage(String text, Font font, Color fontColor) {
-        if (text != null && !text.isEmpty()) {
+        if (text != null) {
             Vector2d screenSize = OpenGL.getDisplaySize();
             int width = (int) Math.abs(size.x * screenSize.x);
             int height = (int) Math.abs(size.y * screenSize.y);
@@ -158,7 +186,7 @@ public abstract class UIComponent implements GraphicsObject {
             int textHeight = fontMetrics.getHeight();
             
             int x = (int)((width - textWidth)/2.0f);
-            int y = height - (int)((height - textHeight)/2.0f) - textHeight/4;
+            int y = height - (int)(((height - textHeight)/2.0f)) - (int)(textHeight/5f);
             g.drawString(text, x, y);
             return buttonImg;
         } else {

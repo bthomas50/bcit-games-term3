@@ -13,7 +13,7 @@ public class MouseHandler
     public static float xNormalized;
     public static float yNormalized;
     
-    public static MouseState state = MouseState.UP;
+    public static KeyState state = KeyState.UP;
 
     private static int curEvent = GLFW_RELEASE;
     private static int lastEvent = GLFW_RELEASE;
@@ -22,19 +22,19 @@ public class MouseHandler
     {
         if(curEvent == GLFW_RELEASE && lastEvent == GLFW_RELEASE)
         {
-            state = MouseState.UP;
+            state = KeyState.UP;
         }
         else if(curEvent == GLFW_RELEASE && lastEvent == GLFW_PRESS)
         {
-            state = MouseState.RISING;
+            state = KeyState.RISING;
         }
         else if(curEvent == GLFW_PRESS && lastEvent == GLFW_RELEASE)
         {
-            state = MouseState.FALLING;
+            state = KeyState.FALLING;
         }
         else//(curEvent == GLFW_RELEASE && lastEvent == GLFW_RELEASE)
         {
-            state = MouseState.DOWN;
+            state = KeyState.DOWN;
         }
         lastEvent = curEvent;
         

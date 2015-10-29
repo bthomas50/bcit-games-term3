@@ -12,6 +12,10 @@ public class Input
 
     public static void update() {
         MouseHandler.update();
+        KeyboardHandler.update();
+    }
+    
+    public static void handleGameInput() {
         currentInput = new Input();
 
         if(KeyboardHandler.isKeyDown(GLFW_KEY_W)){

@@ -11,7 +11,7 @@ import sketchwars.character.projectiles.AbstractProjectile;
 import sketchwars.character.projectiles.ProjectileFactory;
 import sketchwars.graphics.Texture;
 import sketchwars.input.MouseHandler;
-import sketchwars.input.MouseState;
+import sketchwars.input.KeyState;
 import sketchwars.map.AbstractMap;
 import sketchwars.physics.Vectors;
 
@@ -74,7 +74,7 @@ public class PencilWeapon extends AbstractWeapon {
 
     private void handleErasing() {
         if (point != null && currentMap != null && pointImage != null &&
-                MouseHandler.state == MouseState.DOWN) {
+                MouseHandler.state == KeyState.DOWN) {
             float xEraser = posX - 0.04f;
             float yEraser = posY - 0.08f;
             

@@ -30,7 +30,7 @@ public class SketchWars {
     
     private SceneManager<Scenes> sceneManager;
     private double lastTime;
-    
+        
     public static void main(String[] args) {
         appendToLibraryPath("lib/native/");
         SketchWars sketchWars = new SketchWars();

@@ -67,7 +67,7 @@ public class MultiplayerSketchWars {
             // Run the rendering loop until the user has attempted to close
         // the window or has pressed the ESCAPE key.
             while (!openGL.windowsIsClosing()) {
-                Input.update();
+                Input.handleGameInput();
                 //do network stuff.
                 network.broadcastInput(frameNum);
                 Map<Integer, Input> allInputs = network.getInputs(frameNum);

@@ -5,8 +5,6 @@
  */
 package sketchwars.ui.menu;
 
-import java.awt.Font;
-import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.joml.Vector2d;
@@ -17,14 +15,12 @@ import sketchwars.exceptions.SceneException;
 import sketchwars.exceptions.SceneManagerException;
 import sketchwars.graphics.GraphicElement;
 import sketchwars.graphics.Texture;
-import sketchwars.input.MouseHandler;
-import sketchwars.input.MouseState;
 import sketchwars.scenes.Layer;
 import sketchwars.scenes.Scene;
 import sketchwars.scenes.SceneManager;
 import sketchwars.ui.components.Button;
 import sketchwars.ui.components.Label;
-import sketchwars.ui.components.TextButton;
+import sketchwars.ui.components.TextInputbox;
 import sketchwars.ui.components.UIActionListener;
 import sketchwars.ui.components.UIComponent;
 
@@ -106,7 +102,7 @@ public class MainMenu extends Scene implements UIActionListener {
             //create
             buttonExit = new Button(new Vector2d(0.03, -0.75), size, exitBtn, exitBtnPress, null);
             btnLayer.addDrawableObject(buttonExit);
-            buttonExit.addActionListener(this);
+            buttonExit.addActionListener(this);            
         } catch (SceneException ex) {
             Logger.getLogger(MainMenu.class.getName()).log(Level.SEVERE, null, ex);
         }

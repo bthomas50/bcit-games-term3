@@ -1,4 +1,4 @@
 package sketchwars.input;
 
-public enum MouseState
+public enum KeyState
 {UP, DOWN, RISING, FALLING}

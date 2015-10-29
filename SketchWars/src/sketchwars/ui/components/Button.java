@@ -3,7 +3,7 @@ package sketchwars.ui.components;
 import org.joml.Vector2d;
 import sketchwars.graphics.Texture;
 import sketchwars.input.MouseHandler;
-import sketchwars.input.MouseState;
+import sketchwars.input.KeyState;
 
 
 //a generic button that generates a command of type T
@@ -36,7 +36,7 @@ public class Button extends UIComponent {
         super.render();
         
         if (mouseInComponent) {
-            if(pressedTexture != null && MouseHandler.state == MouseState.DOWN) {
+            if(pressedTexture != null && MouseHandler.state == KeyState.DOWN) {
                 pressedTexture.draw(null, (float)position.x, (float)position.y, (float)size.x, (float)size.y);
             } else if (highlightTexture != null) {
                 highlightTexture.draw(null, (float)position.x, (float)position.y, (float)size.x, (float)size.y);
@@ -50,7 +50,7 @@ public class Button extends UIComponent {
     
     @Override
     void update() {
-        if (mouseInComponent && MouseHandler.state == MouseState.RISING) {
+        if (mouseInComponent && MouseHandler.state == KeyState.RISING) {
             notifyListeners();
         }
     }
