@@ -24,8 +24,6 @@ public class TextInputbox extends UIComponent {
     private String text;
     private int caretPos;
         
-    private long lastKeyPressTime;
-    
     public TextInputbox(Vector2d position, Vector2d size, Texture background) {
         super(position, size, background, true);
         
@@ -47,7 +45,9 @@ public class TextInputbox extends UIComponent {
     }
 
     @Override
-    void update() {
+    public void update() {
+        super.update();
+        
         if (selected) {
             handleInput();
         }

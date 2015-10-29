@@ -11,6 +11,7 @@ import sketchwars.graphics.Texture;
 import sketchwars.character.Team;
 import sketchwars.sound.SoundPlayer;
 import sketchwars.*;
+import sketchwars.HUD.HealthBar;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,6 +22,7 @@ import org.joml.Matrix3d;
 import sketchwars.animation.Animation;
 import sketchwars.animation.AnimationSet;
 import sketchwars.animation.CharacterAnimations;
+import sketchwars.physics.colliders.CharacterCollider;
 
 public class SketchWarsWorldFactory
 {
@@ -120,6 +122,8 @@ public class SketchWarsWorldFactory
     {
         ArrayList<SketchCharacter> characters = new ArrayList<>(CHARS_PER_TEAM);
         HashMap<WeaponTypes, AbstractWeapon> weapons = new HashMap<>();
+        HealthBar charLifeBar;
+        
         try
         {
             weapons = WeaponFactory.createDefaultWeaponSet(new ProjectileFactory(world, physics, gameScene), world);
@@ -136,6 +140,11 @@ public class SketchWarsWorldFactory
             double r = ((double)c * 1500.0 / CHARS_PER_TEAM) - 800.0 + teamNum * 100;
             SketchCharacter character = createCharacter(Vectors.create(r, 800.0), rng);
             character.setWeapon(weapons.get(WeaponTypes.MELEE_WEAPON));
+            //character.setMaxHealth(100);
+            charLifeBar = new HealthBar(HealthBar.lifeBars[teamNum*2], 
+                                        HealthBar.lifeBars[teamNum*2+1], 
+                                        Vectors.create(character.getPosX(), character.getPosY()));
+            character.setHealthBar(charLifeBar);
             characters.add(character);
         }
         return new Team(characters, weapons);
@@ -150,7 +159,7 @@ public class SketchWarsWorldFactory
         
         Animation idle = animationSet.getAnimation(CharacterAnimations.IDLE);
         
-        Collider charCollider;
+        CharacterCollider charCollider;
         
         if (idle != null) {
             double ratio = idle.getSpriteHeight()/idle.getSpriteWidth();
@@ -158,9 +167,9 @@ public class SketchWarsWorldFactory
             int widthP = (int)(CHARACTER_SCALE * 1024.0f);
             int heightP = (int)(widthP * ratio * screenAspectRatio);
             
-            charCollider = new GamePixelCollider(character, BitMaskFactory.createRectangle(widthP, heightP));
+            charCollider = new CharacterCollider(character, BitMaskFactory.createRectangle(widthP, heightP));
         } else {
-            charCollider = new GamePixelCollider(character, BitMaskFactory.createRectangle(100, 120));
+            charCollider = new CharacterCollider(character, BitMaskFactory.createRectangle(100, 120));
         }
         
         charCollider.addCollisionListener(character);
@@ -168,7 +177,7 @@ public class SketchWarsWorldFactory
         charCollider.setMass(10);
         charCollider.setElasticity(0.0f);
         character.setCollider(charCollider);
-        
+
         physics.addCollider(charCollider);
         
         try {
@@ -220,5 +229,6 @@ public class SketchWarsWorldFactory
 
     private void preloadTextures() {
         Texture.loadTexture("content/animation/explosions/explosion.png", false);
+        HealthBar.loadTextures();
     }
 }

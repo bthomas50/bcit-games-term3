@@ -47,11 +47,4 @@ public class Button extends UIComponent {
             }
         }
     }
-    
-    @Override
-    void update() {
-        if (mouseInComponent && MouseHandler.state == KeyState.RISING) {
-            notifyListeners();
-        }
-    }
 };

@@ -8,7 +8,9 @@ import sketchwars.character.weapon.AbstractWeapon;
 import sketchwars.graphics.*;
 import sketchwars.game.GameObject;
 import sketchwars.map.AbstractMap;
+import sketchwars.HUD.HealthBar;
 import static sketchwars.physics.Vectors.create;
+import sketchwars.physics.colliders.CharacterCollider;
 
 /*
  *
@@ -16,7 +18,6 @@ import static sketchwars.physics.Vectors.create;
  */
 public class SketchCharacter implements GraphicsObject, GameObject, CollisionListener {
     public static final int DEFAULT_MAX_HEALTH = 100;
-    
     private float posX;
     private float posY;
     private float width;
@@ -25,7 +26,7 @@ public class SketchCharacter implements GraphicsObject, GameObject, CollisionLis
     private Texture texture;
     
     private AbstractWeapon weapon;
-    private Collider coll;
+    private CharacterCollider coll;
     private int maxHealth;
     private int health;
     private boolean isDead;
@@ -39,6 +40,7 @@ public class SketchCharacter implements GraphicsObject, GameObject, CollisionLis
     private int lastActionTime; //last time input recieved
     
     private Texture reticleTexture;
+    private HealthBar healthBar;
     
     private AnimationSet<CharacterAnimations> animationSet;
     private boolean canJump;
@@ -48,8 +50,6 @@ public class SketchCharacter implements GraphicsObject, GameObject, CollisionLis
     }
     
     public SketchCharacter(int maxHealth, int health) {
-        coll = new PixelCollider(BitMaskFactory.createRectangle(1, 1));
-        
         this.maxHealth = maxHealth;
         this.health = health;
         this.isDead = false;
@@ -57,16 +57,23 @@ public class SketchCharacter implements GraphicsObject, GameObject, CollisionLis
         this.angle = 0.0f;
         this.isFacingLeft = false;//start facing right.
         reticleTexture = Texture.loadTexture("content/misc/reticle.png", false);
-        
+        vHealthBarOffset = Vectors.create(0, 0.1);
         this.canJump = true;
     }
     
-    public void setCollider(Collider coll) {
+    public void setCollider(CharacterCollider coll) {
         this.coll = coll;
     }
     
     public void setWeapon(AbstractWeapon weapon) {
         this.weapon = weapon;
+    }
+    
+    public void setHealthBar(HealthBar healthbar)
+    {
+        this.healthBar = healthbar;
+        healthBar.setHealth(health);
+        healthBar.setMaxHealth(maxHealth);
     }
     
     @Override
@@ -88,6 +95,14 @@ public class SketchCharacter implements GraphicsObject, GameObject, CollisionLis
             weapon.update(delta);
         }
         
+        if (healthBar != null)
+        {
+            healthBar.setPosition((float)posX + (float)Vectors.xComp(vHealthBarOffset),
+                                  (float)posY + (float)Vectors.yComp(vHealthBarOffset));
+            healthBar.setHealth(health);
+            healthBar.update(delta);
+        }
+        
         if(health <= 0)
             isDead = true;
     }
@@ -105,7 +120,7 @@ public class SketchCharacter implements GraphicsObject, GameObject, CollisionLis
         width = (float) bounds.getWidth() / 1024.0f;
         height = (float) bounds.getHeight() / 1024.0f;
     }
-
+    
     @Override
     public void render() {
         if (animationSet != null) {
@@ -115,6 +130,11 @@ public class SketchCharacter implements GraphicsObject, GameObject, CollisionLis
         if (weapon != null) {
             weapon.render();
             reticleTexture.draw(null, posX + (float)Vectors.xComp(vReticleOffset), posY + (float)Vectors.yComp(vReticleOffset), 0.05f, 0.05f);
+        }
+        
+        if(healthBar != null)
+        {
+            healthBar.render();
         }
         
     }
@@ -232,32 +252,22 @@ public class SketchCharacter implements GraphicsObject, GameObject, CollisionLis
 
     void moveLeft(double elapsedMillis) 
     {
-        lastActionTime = (int) System.currentTimeMillis();
-        animationSet.setCurrentAnimation(CharacterAnimations.WALK_LEFT);
-        long oldVector = coll.getVelocity();
         this.isFacingLeft = true;
-        float getY = (float)Vectors.yComp(oldVector);
-        coll.setVelocity(create(-100, getY));
+        coll.moveLeft(elapsedMillis);
     }
 
     void moveRight(double elapsedMillis)
     {
-        lastActionTime = (int) System.currentTimeMillis();
-        animationSet.setCurrentAnimation(CharacterAnimations.WALK_RIGHT);
-        long oldVector = coll.getVelocity();
         this.isFacingLeft = false;
-        float getY = (float)Vectors.yComp(oldVector);
-        coll.setVelocity(create(100, getY));
+        coll.moveRight(elapsedMillis);
     }
     
     void jump(double elapsedMillis)
     {
         if (canJump) {
             lastActionTime = (int) System.currentTimeMillis();
+            coll.jump(elapsedMillis);
             animationSet.setCurrentAnimation(CharacterAnimations.JUMP);
-            long oldVector = coll.getVelocity();
-            float getX = (float)Vectors.xComp(oldVector);
-            coll.setVelocity(create(getX, 200));
             canJump = false;
         } 
     }
