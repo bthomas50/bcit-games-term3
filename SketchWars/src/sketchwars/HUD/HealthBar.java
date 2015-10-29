@@ -13,10 +13,10 @@ import sketchwars.physics.Vectors;
 public class HealthBar implements GraphicsObject, GameObject {
     private Texture filledBar;
     private Texture emptyBar;
-    private long position;
     private float drawPosX, drawPosY;
     private int currentHealth;
     private int maxHealth;
+    private float scaleX, scaleY;
     public static Texture[] lifeBars = new Texture[8];
     
     public HealthBar()
@@ -27,8 +27,20 @@ public class HealthBar implements GraphicsObject, GameObject {
     {
         filledBar = filled;
         emptyBar = empty;
-        position = pos;
-        
+        drawPosX = (float)Vectors.xComp(pos);
+        drawPosY = (float)Vectors.yComp(pos);
+        scaleX = 0;
+        scaleY = 0;
+    }
+    
+    public HealthBar(Texture empty, Texture filled, long pos, float s_X, float s_Y)
+    {
+        filledBar = filled;
+        emptyBar = empty;
+        drawPosX = (float)Vectors.xComp(pos);
+        drawPosY = (float)Vectors.yComp(pos);
+        scaleX = s_X;
+        scaleY = s_Y;
     }
     @Override
     public void update(double delta)
@@ -42,14 +54,14 @@ public class HealthBar implements GraphicsObject, GameObject {
         emptyBar.draw(null,
                      drawPosX, 
                      drawPosY, 
-                     0.1f, 
-                     0.025f);
+                     0.1f + scaleX, 
+                     0.025f + scaleY);
         
         filledBar.draw(null,
                       drawPosX, 
                       drawPosY, 
-                      (float)currentHealth / (float)maxHealth * 0.1f, 
-                      0.025f);
+                      (float)currentHealth / (float)maxHealth * (0.1f + scaleX), 
+                      0.025f + scaleY);
     }
     
     private double getHealthRatio()
@@ -57,6 +69,10 @@ public class HealthBar implements GraphicsObject, GameObject {
         return (double)currentHealth / (double)maxHealth; 
     }
     
+    public int getMaxHealth()
+    {
+        return maxHealth;
+    }
     public void setHealth (int health)
     {
         currentHealth = health;

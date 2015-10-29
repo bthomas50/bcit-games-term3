@@ -1,5 +1,5 @@
 package sketchwars.game;
 
 public enum GameLayers {
-    MAP, CHARACTER, PROJECTILE;
+    MAP, CHARACTER, PROJECTILE, HUD;
 }

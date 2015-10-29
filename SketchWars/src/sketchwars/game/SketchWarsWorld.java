@@ -46,6 +46,7 @@ public class SketchWarsWorld extends World {
         handleCharacterDrowning();
         checkTeamStatus();
         updateObjects(deltaMillis);
+        updateTeamBars();
         updateTurn(deltaMillis);
         removeExpiredObjects();
     }
@@ -53,6 +54,14 @@ public class SketchWarsWorld extends World {
     protected void handleInput(double elapsedMillis) {
         for(Team t : teams) {
             t.handleInput(Input.currentInput, elapsedMillis);
+        }
+    }
+    
+    private void updateTeamBars()
+    {
+        for (Team t: teams)
+        {
+            t.updateTotalHealth();
         }
     }
 

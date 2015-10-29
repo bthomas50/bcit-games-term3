@@ -3,7 +3,7 @@ package sketchwars.character;
 import sketchwars.character.weapon.AbstractWeapon;
 import sketchwars.character.weapon.WeaponTypes;
 import sketchwars.input.*;
-
+import sketchwars.HUD.HealthBar;
 import java.util.*;
 
 /**
@@ -15,30 +15,37 @@ public class Team
     private ArrayList<SketchCharacter> characters;
     private HashMap<WeaponTypes, AbstractWeapon> weapons;
     private SketchCharacter active;
+    private HealthBar healthBar;
     
     public Team(ArrayList<SketchCharacter> characters, HashMap<WeaponTypes, AbstractWeapon> weapons)
     {
         this.characters = characters;
         this.weapons = weapons;
-        
+        healthBar = new HealthBar();
         if(this.characters.size() > 0)
         {
             setActiveCharacter(this.characters.get(0));
         }
     }
-
+    
+    public void setHealthBar (HealthBar healthbar)
+    {
+        healthBar = healthbar;
+    }
     public void changeAmmo(WeaponTypes weaponType, int num)
     {
         weapons.get(weaponType).setAmmo(num);
     }
     
-    public int getTotalHealth()
+    public void updateTotalHealth()
     {
         int total = 0;
-        for (int i = 0; i < size(); i++)
+        for (int i = 0; i < characters.size(); i++)
             total += characters.get(i).getHealth();
         
-        return total;
+        healthBar.setHealth(total);
+        
+        System.out.println(Integer.toString(total) + " " + Integer.toString(healthBar.getMaxHealth()));
     }
 
     public void handleInput(Input input, double elapsedMillis)

@@ -66,14 +66,17 @@ public class SketchWarsWorldFactory
         Layer mapLayer = new Layer();
         Layer characterLayer = new Layer();
         Layer projectileLayer = new Layer();
+        Layer hudLayer = new Layer();
         
         mapLayer.setZOrder(-1);
         characterLayer.setZOrder(0);
         projectileLayer.setZOrder(1);
+        hudLayer.setZOrder(2);
         
         gameScene.addLayer(GameLayers.MAP, mapLayer);
         gameScene.addLayer(GameLayers.CHARACTER, characterLayer);
         gameScene.addLayer(GameLayers.PROJECTILE, projectileLayer);
+        gameScene.addLayer(GameLayers.HUD, hudLayer);
     }
 
     private void createMap()
@@ -122,7 +125,7 @@ public class SketchWarsWorldFactory
     {
         ArrayList<SketchCharacter> characters = new ArrayList<>(CHARS_PER_TEAM);
         HashMap<WeaponTypes, AbstractWeapon> weapons = new HashMap<>();
-        HealthBar charLifeBar;
+        HealthBar charHealthBar, teamHealthBar;
         
         try
         {
@@ -141,13 +144,31 @@ public class SketchWarsWorldFactory
             SketchCharacter character = createCharacter(Vectors.create(r, 800.0), rng);
             character.setWeapon(weapons.get(WeaponTypes.MELEE_WEAPON));
             //character.setMaxHealth(100);
-            charLifeBar = new HealthBar(HealthBar.lifeBars[teamNum*2], 
+            charHealthBar = new HealthBar(HealthBar.lifeBars[teamNum*2], 
                                         HealthBar.lifeBars[teamNum*2+1], 
                                         Vectors.create(character.getPosX(), character.getPosY()));
-            character.setHealthBar(charLifeBar);
+            character.setHealthBar(charHealthBar);
             characters.add(character);
         }
-        return new Team(characters, weapons);
+        
+        teamHealthBar = new HealthBar(HealthBar.lifeBars[teamNum*2],
+                                      HealthBar.lifeBars[teamNum*2+1],
+                                      Vectors.create(-1.0f, -0.7f + (-0.1f * teamNum)),
+                                      -0.5f,
+                                      0.05f);
+        
+        teamHealthBar.setMaxHealth(characters.get(0).getMaxHealth() * characters.size());
+        teamHealthBar.setHealth(characters.get(0).getHealth() * characters.size());
+        
+        try{
+            gameScene.getLayer(GameLayers.HUD).addDrawableObject(teamHealthBar);
+        } catch (SceneException ex) {
+            System.err.println(ex.getMessage());
+        }
+        
+        Team team = new Team(characters, weapons);
+        team.setHealthBar(teamHealthBar);
+        return team;
     }
 
     private SketchCharacter createCharacter(long vPosition, Random rng)
