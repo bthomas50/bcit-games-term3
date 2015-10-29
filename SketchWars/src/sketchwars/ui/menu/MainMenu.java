@@ -19,14 +19,13 @@ import sketchwars.scenes.Layer;
 import sketchwars.scenes.Scene;
 import sketchwars.scenes.SceneManager;
 import sketchwars.ui.components.Button;
-import sketchwars.ui.components.Label;
 import sketchwars.ui.components.TextInputbox;
 import sketchwars.ui.components.UIActionListener;
 import sketchwars.ui.components.UIComponent;
 
 /**
  *
- * @author A00807688
+ * @author Najash Najimudeen <najash.najm@gmail.com>
  */
 public class MainMenu extends Scene implements UIActionListener {
     private final SceneManager<Scenes> sceneManager;

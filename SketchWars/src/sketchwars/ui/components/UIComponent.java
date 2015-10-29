@@ -16,7 +16,6 @@ import sketchwars.OpenGL;
 import sketchwars.graphics.GraphicsObject;
 import sketchwars.graphics.Texture;
 import sketchwars.input.MouseHandler;
-import sketchwars.physics.BoundingBox;
 
 /**
  *
