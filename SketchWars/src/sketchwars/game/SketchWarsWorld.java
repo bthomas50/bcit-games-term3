@@ -40,6 +40,7 @@ public class SketchWarsWorld extends World {
 
     @Override
     public void update(double deltaMillis) {
+        Input.handleGameInput();
         addPendingObjects();
         handleInput(deltaMillis);
         handleCharacterDrowning();
@@ -47,8 +48,6 @@ public class SketchWarsWorld extends World {
         updateObjects(deltaMillis);
         updateTurn(deltaMillis);
         removeExpiredObjects();
-        
-        Input.handleGameInput();
     }
     
     protected void handleInput(double elapsedMillis) {
