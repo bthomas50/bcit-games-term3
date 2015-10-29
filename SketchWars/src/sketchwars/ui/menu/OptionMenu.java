@@ -17,9 +17,9 @@ import sketchwars.scenes.Layer;
 import sketchwars.scenes.Scene;
 import sketchwars.scenes.SceneManager;
 import sketchwars.sound.SoundPlayer;
-import sketchwars.ui.Button;
-import sketchwars.ui.UIActionListener;
-import sketchwars.ui.UIComponent;
+import sketchwars.ui.components.Button;
+import sketchwars.ui.components.UIActionListener;
+import sketchwars.ui.components.UIComponent;
 
 /**
  *

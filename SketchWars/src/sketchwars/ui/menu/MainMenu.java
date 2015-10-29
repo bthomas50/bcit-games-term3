@@ -5,6 +5,7 @@
  */
 package sketchwars.ui.menu;
 
+import java.awt.Font;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -21,9 +22,11 @@ import sketchwars.input.MouseState;
 import sketchwars.scenes.Layer;
 import sketchwars.scenes.Scene;
 import sketchwars.scenes.SceneManager;
-import sketchwars.ui.Button;
-import sketchwars.ui.UIActionListener;
-import sketchwars.ui.UIComponent;
+import sketchwars.ui.components.Button;
+import sketchwars.ui.components.Label;
+import sketchwars.ui.components.TextButton;
+import sketchwars.ui.components.UIActionListener;
+import sketchwars.ui.components.UIComponent;
 
 /**
  *

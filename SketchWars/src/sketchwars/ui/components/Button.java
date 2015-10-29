@@ -1,4 +1,4 @@
-package sketchwars.ui;
+package sketchwars.ui.components;
 
 import org.joml.Vector2d;
 import sketchwars.graphics.Texture;
@@ -13,7 +13,7 @@ public class Button extends UIComponent {
     private final Texture highlightTexture;
 
     public Button(Vector2d position, Vector2d size, Texture normal, Texture pressed, Texture highlight) {
-        super(position, size);
+        super(position, size, null, true);
         
         normalTexture = normal;
         
