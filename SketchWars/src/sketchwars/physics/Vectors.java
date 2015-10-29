@@ -73,6 +73,11 @@ public class Vectors
     {
         return pack(-left(v), -right(v));
     }
+    //rotate 90 degrees CCW
+    public static long perpendicular(long v)
+    {
+        return pack(-right(v), left(v));
+    }
 
     //get the dot product as a double
     public static double dot(long u, long v)

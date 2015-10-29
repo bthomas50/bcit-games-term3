@@ -11,8 +11,9 @@ public class Collisions
 
     private static CollisionData collisionDataHolder = new Collisions.CollisionData();
 
-    public static boolean hasCollided(Collider coll1, Collider coll2) {
-        return (!getCollision(coll1, coll2).isEmpty());
+    public static boolean hasCollided(Collider coll1, Collider coll2) 
+    {
+        return !getCollision(coll1, coll2).isEmpty();
     }
             
     
@@ -29,6 +30,7 @@ public class Collisions
         BitMask collision = getCollision(coll1, coll2);
         if(!collision.isEmpty())
         {
+            resetData();
             if(behaviour.includes(NOTIFY))
             {
                 coll1.notify(coll2);
@@ -41,17 +43,31 @@ public class Collisions
                 clip(coll1, coll2, collision, vNorm1, vNorm2);
                 if(behaviour.includes(TRANSFER_MOMENTUM))
                 {
-                    transferMomentum(coll1, coll2, vNorm1, vNorm2);
+                    MomentumTransferResult result = transferMomentum(coll1, coll2, vNorm1, vNorm2);
+                    collisionDataHolder.vAcceleration1 = result.vAcceleration1;
+                    collisionDataHolder.vAcceleration2 = result.vAcceleration2;
+                    FrictionResult fResult = applyFriction(coll1, coll2, result.vNormal, result.impulse);
+                    collisionDataHolder.vAcceleration1 = add(collisionDataHolder.vAcceleration1, fResult.vAcceleration1);
+                    collisionDataHolder.vAcceleration2 = add(collisionDataHolder.vAcceleration2, fResult.vAcceleration2);
                 }
                 applyResults(coll1, coll2);
             }
         }
     }
 
-    public static BitMask getCollision(Collider coll1, Collider coll2) {
+    public static BitMask getCollision(Collider coll1, Collider coll2) 
+    {
         BitMask mask1 = ((PixelCollider) coll1).getPixels();
         BitMask mask2 = ((PixelCollider) coll2).getPixels();
         return mask1.and(mask2);
+    }
+
+    private static void resetData()
+    {
+        collisionDataHolder.vTranslation1 = 0;
+        collisionDataHolder.vTranslation2 = 0;
+        collisionDataHolder.vAcceleration1 = 0;
+        collisionDataHolder.vAcceleration2 = 0;
     }
 
     public static void clip(Collider coll1, Collider coll2, BitMask collision, long vNorm1, long vNorm2)
@@ -66,7 +82,6 @@ public class Collisions
                 System.out.println(collision.getBounds());
                 System.out.println(Vectors.toString(vNorm1) + "__" + Vectors.toString(vNorm2));
             }
-            collisionDataHolder.vTranslation1 = 0;
             if(clipDistance1 < clipDistance2)
             {
                 collisionDataHolder.vTranslation2 = scalarMultiply(clipDistance1, vNorm1);
@@ -80,7 +95,6 @@ public class Collisions
         {
             double clipDistance1 = findSmallestAcceptableClipDistance(coll2, coll1, collision, reverse(vNorm1));
             double clipDistance2 = findSmallestAcceptableClipDistance(coll2, coll1, collision, vNorm2);
-            collisionDataHolder.vTranslation2 = 0;
             if(clipDistance1 < clipDistance2)
             {
                 collisionDataHolder.vTranslation1 = scalarMultiply(clipDistance1, reverse(vNorm1));
@@ -125,45 +139,55 @@ public class Collisions
         }
         dynamicColl.setPosition(vSavedPos);
         return maxClip;
-    }
+    }   
 
-    public static void transferMomentum(Collider coll1, Collider coll2, long vNorm1, long vNorm2)
+    public static MomentumTransferResult transferMomentum(Collider coll1, Collider coll2, long vNorm1, long vNorm2)
     {
-        long vVel1 = coll1.getVelocity();
-        long vVel2 = coll2.getVelocity();
-        long vTransfer1To2 = projection(vVel1, vNorm1);
-        if(dot(vVel1, vNorm1) < 0.0)
+        MomentumTransferResult ret = new MomentumTransferResult();
+        long vRelative = subtract(coll2.getVelocity(), coll1.getVelocity());
+        ret.vNormal = normalize(subtract(vNorm1, vNorm2));
+        double normalVelocity = dot(vRelative, ret.vNormal);
+        if(normalVelocity > 0)
         {
-            vTransfer1To2 = 0;
-        }
-        long vTransfer2To1 = projection(vVel2, vNorm2);
-        if(dot(vVel2, vNorm2) < 0.0)
-        {
-            vTransfer2To1 = 0;
+            return ret;
         }
         double elasticityCoeff = coll1.getElasticity() * coll2.getElasticity() + 1.0;
+        double invMass1 = getInvMass(coll1);
+        double invMass2 = getInvMass(coll2);
+        ret.impulse = -normalVelocity * elasticityCoeff / (invMass1 + invMass2);
+        ret.vAcceleration1 = scalarMultiply(ret.vNormal, -invMass1 * ret.impulse);
+        ret.vAcceleration2 = scalarMultiply(ret.vNormal, invMass2 * ret.impulse);
+        return ret;
+    }
 
-        if(coll1.isStatic())
+    private static double getInvMass(Collider coll) 
+    {
+        if(coll.isStatic())
         {
-            collisionDataHolder.vAcceleration1 = 0;
-            collisionDataHolder.vAcceleration2 = scalarMultiply(vTransfer2To1, -elasticityCoeff);
-        }
-        else if(coll2.isStatic())
-        {
-            collisionDataHolder.vAcceleration2 = 0;
-            collisionDataHolder.vAcceleration1 = scalarMultiply(vTransfer1To2, -elasticityCoeff);
+            return 0;
         }
         else
         {
-            double massFraction1 = coll1.getMass() / (coll1.getMass() + coll2.getMass());
-            double massFraction2 = coll2.getMass() / (coll1.getMass() + coll2.getMass());
-            collisionDataHolder.vAcceleration1 = 0;
-            collisionDataHolder.vAcceleration2 = 0;
-            collisionDataHolder.vAcceleration1 = add(collisionDataHolder.vAcceleration1, scalarMultiply(vTransfer1To2, -elasticityCoeff * massFraction2));
-            collisionDataHolder.vAcceleration2 = add(collisionDataHolder.vAcceleration2, scalarMultiply(vTransfer1To2, elasticityCoeff * massFraction1));
-            collisionDataHolder.vAcceleration1 = add(collisionDataHolder.vAcceleration1, scalarMultiply(vTransfer2To1, elasticityCoeff * massFraction2));
-            collisionDataHolder.vAcceleration2 = add(collisionDataHolder.vAcceleration2, scalarMultiply(vTransfer2To1, -elasticityCoeff * massFraction1));
+            return 1.0 / coll.getMass();
         }
+    }
+
+    public static FrictionResult applyFriction(Collider coll1, Collider coll2, long vNormal, double momImpulse)
+    {
+        FrictionResult ret = new FrictionResult();
+        long vRelative = subtract(coll2.getVelocity(), coll1.getVelocity());
+        ret.vTangent = perpendicular(vNormal);
+        double invMass1 = getInvMass(coll1);
+        double invMass2 = getInvMass(coll2);
+        ret.impulse = dot(vRelative, ret.vTangent) / (invMass1 + invMass2);
+        if(Math.abs(ret.impulse) >= Math.abs(momImpulse) * 0.1)
+        {
+            System.out.println(ret.impulse + ", " + momImpulse);
+            ret.impulse = Math.abs(momImpulse) * Math.signum(ret.impulse) * 0.03;
+        }
+        ret.vAcceleration1 = scalarMultiply(ret.vTangent, invMass1 * ret.impulse);
+        ret.vAcceleration2 = scalarMultiply(ret.vTangent, -invMass2 * ret.impulse);
+        return ret;
     }
 
     public static void applyResults(Collider coll1, Collider coll2)
