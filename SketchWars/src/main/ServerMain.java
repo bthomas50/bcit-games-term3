@@ -25,8 +25,14 @@ public class ServerMain
 
         tryToRunClient(server.localAddress, port, username);
     }
+    
+    public static void startServer(int port, String username)
+    {
 
-    private static void tryToRunClient(InetAddress addr, int port, String username) {
+        
+    }
+
+    public static void tryToRunClient(InetAddress addr, int port, String username) {
         try {
             Client client = new Client(addr, port, username);
             client.run();

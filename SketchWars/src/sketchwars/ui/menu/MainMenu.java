@@ -5,8 +5,16 @@
  */
 package sketchwars.ui.menu;
 
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontFormatException;
+import java.io.File;
+import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import main.ServerMain;
+import network.DiscoveryServer;
+import network.Server;
 import org.joml.Vector2d;
 import sketchwars.OpenGL;
 import sketchwars.Scenes;
@@ -19,6 +27,7 @@ import sketchwars.scenes.Layer;
 import sketchwars.scenes.Scene;
 import sketchwars.scenes.SceneManager;
 import sketchwars.ui.components.Button;
+import sketchwars.ui.components.TextButton;
 import sketchwars.ui.components.TextInputbox;
 import sketchwars.ui.components.UIActionListener;
 import sketchwars.ui.components.UIComponent;
@@ -31,28 +40,30 @@ public class MainMenu extends Scene implements UIActionListener {
     private final SceneManager<Scenes> sceneManager;
     private final SketchWars sketchWars;
     
-    private Texture playBtn;
-    private Texture playBtnPress;
-    private Texture createBtn;
-    private Texture createBtnPress;
-    private Texture optionsBtn;
-    private Texture optionsBtnPress;
-    private Texture exitBtn;
-    private Texture exitBtnPress;
+    private Texture normalBtn;
+    private Texture hoverBtn;
+    private Texture pressBtn;
     private Texture backgroundImage;
       
-    private Button buttonPlay;
-    private Button buttonCreate;
-    private Button buttonOptions;
-    private Button buttonExit;
+    private TextButton buttonJoin;
+    private TextButton buttonCreate;
+    private TextButton buttonOptions;
+    private TextButton buttonExit;
+    private Font font;
     
     public MainMenu(SceneManager<Scenes> sceneManager, SketchWars sketchWars) {
         this.sceneManager = sceneManager;
         this.sketchWars = sketchWars;
         
+        
+        font = new Font("Comic Sans MS", Font.ITALIC, 12);
+        
         createLayers();
         createButtons();
         createBackground();
+        
+        
+                
     }
     
     private void createLayers()
@@ -69,44 +80,41 @@ public class MainMenu extends Scene implements UIActionListener {
 
     private void createButtons() {
         //Loading textures
-        playBtn = Texture.loadTexture("content/menu/play.png", true);
-        playBtnPress = Texture.loadTexture("content/menu/play_press.png", true);
-        createBtn = Texture.loadTexture("content/menu/create.png", true);
-        createBtnPress = Texture.loadTexture("content/menu/create_press.png", true);
-        optionsBtn = Texture.loadTexture("content/menu/options.png", true);
-        optionsBtnPress = Texture.loadTexture("content/menu/options_press.png", true);
-        exitBtn = Texture.loadTexture("content/menu/exit.png", true);
-        exitBtnPress = Texture.loadTexture("content/menu/exit_press.png", true);
+        normalBtn = Texture.loadTexture("content/menu/normal_btns.png", true);
+        hoverBtn = Texture.loadTexture("content/menu/hover_btns.png", true);
+        pressBtn = Texture.loadTexture("content/menu/click_btns.png", true);
+
         
         Vector2d size = new Vector2d(0.3f,0.12f);
 
         try {
             Layer btnLayer = getLayer(MenuLayers.BUTTONS);
             
-            //play 
-            buttonPlay = new Button(new Vector2d(0.03, -0.30), size, playBtn, playBtnPress, null);
-            btnLayer.addDrawableObject(buttonPlay);
-            buttonPlay.addActionListener(this);
+            
+            //Join 
+            buttonJoin = new TextButton("JOIN",font,new Vector2d(0.03, -0.30), size,normalBtn,hoverBtn,pressBtn);
+            btnLayer.addDrawableObject(buttonJoin);
+            buttonJoin.addActionListener(this);
                     
             //create
-            buttonCreate = new Button(new Vector2d(0.03, -0.45), size, createBtn, createBtnPress, null);
+            buttonCreate = new TextButton("CREATE",font,new Vector2d(0.03, -0.45), size,normalBtn,hoverBtn,pressBtn);
             btnLayer.addDrawableObject(buttonCreate);            
             buttonCreate.addActionListener(this);
             
-            //create
-            buttonOptions = new Button(new Vector2d(0.03, -0.60), size, optionsBtn, optionsBtnPress, null);
+            //Options
+            buttonOptions = new TextButton("OPTIONS",font,new Vector2d(0.03, -0.60), size,normalBtn,hoverBtn,pressBtn);
             btnLayer.addDrawableObject(buttonOptions);     
             buttonOptions.addActionListener(this);
             
-            //create
-            buttonExit = new Button(new Vector2d(0.03, -0.75), size, exitBtn, exitBtnPress, null);
+            //Exit
+            buttonExit = new TextButton("EXIT",font,new Vector2d(0.03, -0.75), size,normalBtn,hoverBtn,pressBtn);
             btnLayer.addDrawableObject(buttonExit);
             buttonExit.addActionListener(this);  
             
             
-            TextInputbox ti = new TextInputbox(new Vector2d(), new Vector2d(0.4, 0.2), null);
-            ti.setSelected(true);
-            btnLayer.addDrawableObject(ti);
+            //TextInputbox ti = new TextInputbox(new Vector2d(), new Vector2d(0.4, 0.2), null);
+            //ti.setSelected(true);
+            //btnLayer.addDrawableObject(ti);
         } catch (SceneException ex) {
             Logger.getLogger(MainMenu.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -132,12 +140,18 @@ public class MainMenu extends Scene implements UIActionListener {
     public void action(UIComponent component) {
         if (component.equals(buttonCreate)) {
             try {
-                sceneManager.setCurrentScene(Scenes.GAME);
-                OpenGL.hideMousePointer();
+
+
+                
+                
+                sceneManager.setCurrentScene(Scenes.CREATE_MENU);
+                
+                
+                //OpenGL.hideMousePointer();
             } catch (SceneManagerException ex) {
                 Logger.getLogger(MainMenu.class.getName()).log(Level.SEVERE, null, ex);
             }
-        } else if (component.equals(buttonPlay)) {
+        } else if (component.equals(buttonJoin)) {
             if (sketchWars != null) {
                 sketchWars.startGame();
             } else {

@@ -88,7 +88,7 @@ class SenderThread extends Thread {
         }
     }
 }   
- 
+
 class ReceiverThread extends Thread {
  
     private DatagramSocket udpClientSocket;
