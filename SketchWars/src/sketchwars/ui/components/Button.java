@@ -50,4 +50,7 @@ public class Button extends UIComponent {
             }
         }
     }
+
+    @Override
+    public void redraw() { }
 };

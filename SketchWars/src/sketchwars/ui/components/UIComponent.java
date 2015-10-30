@@ -23,7 +23,9 @@ import sketchwars.input.MouseHandler;
  *
  * @author Najash Najimudeen <najash.najm@gmail.com>
  */
-public abstract class UIComponent implements GraphicsObject {    
+public abstract class UIComponent implements GraphicsObject { 
+    private static final float DEFAULT_SIZE = 0.25f;
+    
     private final ArrayList<UIActionListener> listeners;
     protected Vector2d position;
     protected Vector2d size;
@@ -38,8 +40,18 @@ public abstract class UIComponent implements GraphicsObject {
     protected Font font;
     
     public UIComponent(Vector2d position, Vector2d size, Texture background, boolean handleInput) {
-        this.position = position;
-        this.size = size;
+        if (position == null) {
+            this.position = new Vector2d();
+        } else {
+            this.position = position;
+        }
+        
+        if (position == null) {
+            this.size = new Vector2d(DEFAULT_SIZE, DEFAULT_SIZE/2.0);
+        } else {
+            this.size = size;
+        }
+        
         this.background = background;
         this.handleInput = handleInput;
         enabled = true;
@@ -85,7 +97,9 @@ public abstract class UIComponent implements GraphicsObject {
     }
     
     public void addActionListener(UIActionListener listener) {
-        listeners.add(listener);
+        if (listener != null) {
+            listeners.add(listener);
+        }
     }
     
     public void removeActionListener(UIActionListener listener) {
@@ -100,6 +114,7 @@ public abstract class UIComponent implements GraphicsObject {
 
     public void setFontColor(Color fontColor) {
         this.fontColor = fontColor;
+        redraw();
     }
 
     public Font getFont() {
@@ -108,6 +123,7 @@ public abstract class UIComponent implements GraphicsObject {
 
     public void setFont(Font font) {
         this.font = font;
+        redraw();
     }
     
     protected void notifyListeners(float x, float y) {
@@ -193,6 +209,8 @@ public abstract class UIComponent implements GraphicsObject {
         }
     }
     
+    public abstract void redraw();
+    
     private boolean handleInput() {
         float xMouse = MouseHandler.xNormalized;
         float yMouse = MouseHandler.yNormalized;
@@ -207,8 +225,8 @@ public abstract class UIComponent implements GraphicsObject {
         return false;
     }
     
-    public BufferedImage createLabelImage(String text, Font font, Color fontColor) {
-        if (text != null) {
+    public BufferedImage createLabelImage(String gText, Font gFont, Color gFontColor) {
+        if (gText != null) {
             Vector2d screenSize = OpenGL.getDisplaySize();
             
             int width = (int) Math.abs(size.x * screenSize.x);
@@ -219,16 +237,17 @@ public abstract class UIComponent implements GraphicsObject {
          
             int fontSize = (int)(width * 0.16f);
             
-            if (font == null) {
-                g.setFont(new Font("Arial", Font.BOLD, fontSize));
-            } else {
-                g.setFont(font.deriveFont(Font.BOLD, fontSize));
-            }
-            
-            if (fontColor == null) {
+            System.out.println(gFontColor);
+            if (gFontColor == null) {
                 g.setColor(Color.BLACK);
             } else {
-                g.setColor(fontColor);
+                g.setColor(gFontColor);
+            }
+            
+            if (gFont == null) {
+                g.setFont(new Font("Arial", Font.BOLD, fontSize));
+            } else {
+                g.setFont(gFont.deriveFont(Font.BOLD, fontSize));
             }
             
             RenderingHints rh = new RenderingHints(RenderingHints.KEY_TEXT_ANTIALIASING,
@@ -236,17 +255,26 @@ public abstract class UIComponent implements GraphicsObject {
             g.setRenderingHints(rh);
             
             FontMetrics fontMetrics = g.getFontMetrics();
-            int textWidth = fontMetrics.stringWidth(text);
+            int textWidth = fontMetrics.stringWidth(gText);
             int textHeight = fontMetrics.getHeight();
             
             int x = (int)((width - textWidth)/2.0f);
             int y = height - (int)(((height - textHeight)/2.0f)) - (int)(textHeight/5f);
-            g.drawString(text, x, y);
+            g.drawString(gText, x, y);
             return buttonImg;
         } else {
             System.err.println("Error creating label image.");
         }
         
         return null;
+    }
+    
+    public void setBackgroundFromColor(Color color) {
+        if (color != null) {
+            Texture bg = Texture.createTextureFromColor(color, size.x, size.y, false);
+            if (bg != null) {
+                background = bg;
+            }
+        }
     }
 }

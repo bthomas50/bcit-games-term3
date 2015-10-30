@@ -39,7 +39,7 @@ public class Label extends UIComponent {
 
     public void setText(String text) {
         this.text = text;
-        createLabel();
+        redraw();
     }
 
     @Override
@@ -61,5 +61,10 @@ public class Label extends UIComponent {
                 System.err.println("Label:createLabel(): Error craeting label");
             }
         }
+    }
+
+    @Override
+    public void redraw() {
+        createLabel();
     }
 }

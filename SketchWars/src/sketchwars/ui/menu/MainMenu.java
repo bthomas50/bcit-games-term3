@@ -33,6 +33,7 @@ import sketchwars.ui.components.TextButton;
 import sketchwars.ui.components.TextInputbox;
 import sketchwars.ui.components.UIActionListener;
 import sketchwars.ui.components.UIComponent;
+import sketchwars.ui.components.UIGroup;
 
 /**
  *
@@ -110,15 +111,34 @@ public class MainMenu extends Scene implements UIActionListener {
             btnLayer.addDrawableObject(buttonExit);
             buttonExit.addActionListener(this);  
             
-            
-            ListBox lb = new ListBox(new Vector2d(), new Vector2d(0.3, 0.3),  0.1f, null);
+            ////////////////////test code to show how to use components////////////////////////////////////
+            UIGroup group = new UIGroup(null, null);
+            ListBox lb = new ListBox(new Vector2d(0.5, 0), new Vector2d(0.4, 0.4),  0.1f, null);
+            lb.setFontColor(Color.yellow);
+            lb.setSelectionBackgroundColor(Color.RED);
+            lb.setBackgroundFromColor(Color.BLACK);
             lb.addItem("Item 1");
             lb.addItem("Item 2");
             lb.addItem("Item 3");
             lb.addItem("Item 4");
             lb.addItem("Item 5");
+            lb.addItem("Item 6");
+            lb.addItem("Item 7");
+            lb.addItem("Item 8");
+            lb.addItem("Item 9");
             lb.addActionListener(this);
-            btnLayer.addDrawableObject(lb);
+            
+            Vector2d size1 = new Vector2d(0.4, 0.1);
+            TextInputbox b1 = new TextInputbox(new Vector2d(-0.5, 0), size1, null);
+            TextInputbox b2 = new TextInputbox(new Vector2d(-0.5, 0.2), size1, null);
+            TextInputbox b3 = new TextInputbox(new Vector2d(-0.5, 0.4), size1, null);
+            b2.setText("input box");
+            b2.setFontColor(Color.BLUE);
+            group.addUIComponent(lb);
+            group.addUIComponent(b1);
+            group.addUIComponent(b2);
+            group.addUIComponent(b3);
+            btnLayer.addDrawableObject(group);
         } catch (SceneException ex) {
             Logger.getLogger(MainMenu.class.getName()).log(Level.SEVERE, null, ex);
         }

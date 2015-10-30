@@ -1,5 +1,6 @@
 package sketchwars.graphics;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import org.lwjgl.BufferUtils;
@@ -16,6 +17,7 @@ import org.joml.Vector3d;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL30;
+import sketchwars.OpenGL;
 
 /**
  * Texture class is capable of loading and rendering images
@@ -427,5 +429,24 @@ public class Texture {
         Graphics g = newImage.getGraphics();
         g.drawImage(image, 0, 0, width, height, null);
         return newImage;
+    }
+    
+    public static Texture createTextureFromColor(Color color, double x, double y, boolean disableMipMap) {
+        Vector2d screenSize = OpenGL.getDisplaySize();
+        int width = (int) (screenSize.x * x);
+        int height = (int) (screenSize.x * y);
+        return createTextureFromColor(color, width, height, disableMipMap);
+    }
+
+    public static Texture createTextureFromColor(Color color, int width, int height, boolean disableMipMap) {
+        if (color != null) {
+            BufferedImage bgImg = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+            Graphics g = bgImg.getGraphics();
+            g.setColor(color);
+            g.fillRect(0, 0, width, height);
+            return new Texture(bgImg, disableMipMap);
+        }
+        
+        return null;
     }
 }

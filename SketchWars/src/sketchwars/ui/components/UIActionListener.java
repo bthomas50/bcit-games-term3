@@ -5,8 +5,6 @@
  */
 package sketchwars.ui.components;
 
-import sketchwars.ui.components.UIComponent;
-
 /**
  *
  * @author Najash Najimudeen <najash.najm@gmail.com>

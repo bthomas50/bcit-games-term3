@@ -5,6 +5,7 @@
  */
 package sketchwars.ui.components;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import org.joml.Vector2d;
 import sketchwars.graphics.Texture;
@@ -29,7 +30,7 @@ public class ListBox extends UIComponent implements UIActionListener {
     
     private float itemHeight;
     private Label selection;
-    private final Texture selectionBG;
+    private Texture selectionBG;
       
     private float scrollPosition;
     private final Button scrollDown;
@@ -58,7 +59,7 @@ public class ListBox extends UIComponent implements UIActionListener {
         scrollDown.addActionListener((ListBox)this);
         scrollUp.addActionListener((ListBox)this);
     }
-    
+
     public Button getScrollUpButton() {
         return scrollUp;
     }
@@ -91,6 +92,8 @@ public class ListBox extends UIComponent implements UIActionListener {
             label.addActionListener(this);
                     
             setLabelPosition(label, items.size());
+            label.setFont(font);
+            label.setFontColor(fontColor);
             items.add(label);
         }
     }
@@ -137,6 +140,24 @@ public class ListBox extends UIComponent implements UIActionListener {
         renderButtons();
         
         update();
+    }
+    
+    public void setSelectionBackground(Texture texture) {
+        if (texture != null && texture.getTextureID() != -1) {
+            this.selectionBG = texture;
+        }
+    }
+    
+    public void setSelectionBackgroundColor(Color color) {
+        if (color != null) {
+            int bgWidth = (int) selectionBG.getTextureWidth();
+            int bgHeight = (int) selectionBG.getTextureHeight();
+            Texture newSelectionBG = Texture.createTextureFromColor(color, bgWidth, bgHeight, false);
+            
+            if (newSelectionBG != null) {
+                this.selectionBG = newSelectionBG;
+            }
+        }
     }
 
     @Override
@@ -211,10 +232,6 @@ public class ListBox extends UIComponent implements UIActionListener {
         label.update();
     }
 
-    private void setLabelPosition(int i) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
     private void setLabelPosition(Label label, int index) {
         double top = position.y + size.y/2.0;
         double yCenter = (top - (itemHeight * index)) - itemHeight/2.0 - 0.02;
@@ -287,5 +304,13 @@ public class ListBox extends UIComponent implements UIActionListener {
         
         scrollUp.render();
         scrollDown.render();
+    }
+
+    @Override
+    public void redraw() {
+        for (Label lbl: items) {
+            lbl.setFont(font);
+            lbl.setFontColor(fontColor);
+        }
     }
 }

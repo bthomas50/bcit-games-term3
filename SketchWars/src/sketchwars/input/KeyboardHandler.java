@@ -27,6 +27,10 @@ public class KeyboardHandler extends GLFWKeyCallback {
         CharCallback.addCharListener(listener);
     }
     
+    public static void removeCharListener(KeyCharListener listener) {
+        CharCallback.removeCharListener(listener);
+    }
+    
     public static class CharCallback extends GLFWCharCallback {
         private static final ArrayList<KeyCharListener> listeners = new ArrayList<>();
         @Override
@@ -39,6 +43,12 @@ public class KeyboardHandler extends GLFWKeyCallback {
         public static void addCharListener(KeyCharListener listener) {
             if (listener != null) {
                 listeners.add(listener);
+            }
+        }
+        
+        public static void removeCharListener(KeyCharListener listener) {
+            if (listener != null) {
+                listeners.remove(listener);
             }
         }
     }

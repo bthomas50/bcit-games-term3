@@ -25,17 +25,18 @@ public class TextInputbox extends UIComponent implements KeyCharListener {
     
     private long lastKeyPressTime;
     
+    private final Texture borderNotSelected;
+    private final Texture borderSelected;
+    
     public TextInputbox(Vector2d position, Vector2d size, Texture background) {
         super(position, size, background, true);
         
-        if (background == null) {
-            setBackground(Texture.loadTexture("content/uicomponents/textbox.png", false));
-        }
+        borderNotSelected = Texture.loadTexture("content/uicomponents/textbox.png", false);
+        borderSelected = Texture.loadTexture("content/uicomponents/textboxSelected.png", false);
         
         text = "";
-        updateLabel(text);
+        updateLabel();
         
-        KeyboardHandler.addCharListener((TextInputbox)this);
         lastKeyPressTime = System.currentTimeMillis();
     }
 
@@ -44,13 +45,22 @@ public class TextInputbox extends UIComponent implements KeyCharListener {
     }
 
     public void setText(String text) {
-        this.text = text;
-        updateLabel(text);
+        if (text != null) {
+            this.text = text;
+            caretPos = text.length();
+            redraw();
+        }
     }
 
     @Override
     public void render() {
         super.render();
+        
+        if (selected && borderSelected != null) {
+            borderSelected.draw(null, (float)position.x, (float)position.y, (float)size.x, (float)size.y);
+        } else if (borderNotSelected != null) {
+            borderNotSelected.draw(null, (float)position.x, (float)position.y, (float)size.x, (float)size.y);
+        }
         
         if (label != null) {
             label.draw(null, (float)position.x, (float)position.y, (float)size.x, (float)size.y);
@@ -61,10 +71,12 @@ public class TextInputbox extends UIComponent implements KeyCharListener {
     public void update() {
         super.update(); 
         
-        handleInput();
+        if (selected) {
+            handleInput();
+        }
     }
     
-    private void updateLabel(String text) {
+    private void updateLabel() {
         if (text != null) {
             BufferedImage labelImg = createLabelImage(text, font, fontColor);
             
@@ -80,7 +92,7 @@ public class TextInputbox extends UIComponent implements KeyCharListener {
     public void charTyped(int key) {
         if (selected) {
             text += (char)key;
-            updateLabel(text);
+            redraw();
             caretPos++;
         }
     }
@@ -95,10 +107,15 @@ public class TextInputbox extends UIComponent implements KeyCharListener {
             if (caretPos > 0 && caretPos <= length) {
                 caretPos--;
                 text = text.substring(0, caretPos) + text.substring(caretPos + 1);
-                updateLabel(text);
+                redraw();
             }
             
             lastKeyPressTime = pressTime;
         }
+    }
+
+    @Override
+    public void redraw() {
+        updateLabel();
     }
 }
