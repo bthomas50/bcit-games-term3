@@ -18,9 +18,7 @@ import sketchwars.scenes.Layer;
 import sketchwars.scenes.Scene;
 import sketchwars.scenes.SceneManager;
 import sketchwars.sound.SoundPlayer;
-import sketchwars.ui.components.Button;
 import sketchwars.ui.components.TextButton;
-import sketchwars.ui.components.TextInputbox;
 import sketchwars.ui.components.UIActionListener;
 import sketchwars.ui.components.UIComponent;
 
@@ -100,7 +98,7 @@ public class OptionMenu extends Scene implements UIActionListener {
     }
     
     @Override
-    public void action(UIComponent component) {
+    public void action(UIComponent component, float x, float y) {
         if (component.equals(backButton)) {
             try {
                 sceneManager.setCurrentScene(Scenes.MAIN_MENU);

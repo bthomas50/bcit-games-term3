@@ -119,7 +119,7 @@ public class CreateOption extends Scene implements UIActionListener{
     }
     
     @Override
-    public void action(UIComponent component) {
+    public void action(UIComponent component, float x, float y) {
         if (component.equals(backButton)) {
             try {
                 sceneManager.setCurrentScene(Scenes.MAIN_MENU);

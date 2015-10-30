@@ -12,5 +12,5 @@ import sketchwars.ui.components.UIComponent;
  * @author Najash Najimudeen <najash.najm@gmail.com>
  */
 public interface UIActionListener {
-    void action(UIComponent component);
+    void action(UIComponent component, float x, float y);
 }

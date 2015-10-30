@@ -111,18 +111,14 @@ public class MainMenu extends Scene implements UIActionListener {
             buttonExit.addActionListener(this);  
             
             
-           /* ListBox lb = new ListBox(new Vector2d(), new Vector2d(0.3, 0.5),  0.1f, null);
+            ListBox lb = new ListBox(new Vector2d(), new Vector2d(0.3, 0.3),  0.1f, null);
             lb.addItem("Item 1");
             lb.addItem("Item 2");
             lb.addItem("Item 3");
             lb.addItem("Item 4");
             lb.addItem("Item 5");
             lb.addActionListener(this);
-            btnLayer.addDrawableObject(lb);*/
-            
-            TextInputbox b = new TextInputbox(new Vector2d(), new Vector2d(0.4, 0.1), null);
-            b.setSelected(true);
-            btnLayer.addDrawableObject(b);
+            btnLayer.addDrawableObject(lb);
         } catch (SceneException ex) {
             Logger.getLogger(MainMenu.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -145,7 +141,7 @@ public class MainMenu extends Scene implements UIActionListener {
     }
 
     @Override
-    public void action(UIComponent component) {
+    public void action(UIComponent component, float x, float y) {
         if (component.equals(buttonCreate)) {
             try {
 

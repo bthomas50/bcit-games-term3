@@ -8,7 +8,6 @@ package sketchwars.ui.components;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
@@ -48,6 +47,43 @@ public abstract class UIComponent implements GraphicsObject {
         listeners = new ArrayList<>();
     }
     
+    public double getLeft() {
+        return position.x - size.x/2;
+    }
+    
+    public double getRight() {
+        return position.x + size.x/2;
+    }
+    
+    public double getTop() {
+        return position.y + size.y/2;
+    }
+    
+    public double getBottom() {
+        return position.y - size.y/2;
+    }
+    
+    public boolean contains(UIComponent other)
+    {
+        return (other.getTop() <= getTop()) && 
+               (other.getLeft() >= getLeft()) && 
+               (other.getBottom() >= getBottom()) && 
+               (other.getRight() <= getRight());
+    }
+    
+    public boolean containsSomeParts(UIComponent other)
+    {
+        Vector2d topLeft = new Vector2d(other.getLeft(), other.getTop());
+        Vector2d topRight = new Vector2d(other.getRight(), other.getTop());
+        Vector2d bottomLeft = new Vector2d(other.getLeft(), other.getBottom());
+        Vector2d bottomRight = new Vector2d(other.getRight(), other.getBottom());
+        
+        return (contains((float)topLeft.x, (float)topLeft.y)) || 
+                contains((float)topRight.x, (float)topRight.y) || 
+                contains((float)bottomLeft.x, (float)bottomLeft.y) ||
+                contains((float)bottomRight.x, (float)bottomRight.y);
+    }
+    
     public void addActionListener(UIActionListener listener) {
         listeners.add(listener);
     }
@@ -74,10 +110,10 @@ public abstract class UIComponent implements GraphicsObject {
         this.font = font;
     }
     
-    protected void notifyListeners() {
+    protected void notifyListeners(float x, float y) {
         if (enabled) {
             for (UIActionListener listener: listeners) {
-                listener.action(this);
+                listener.action(this,x , y);
             }
         }
     }
@@ -128,8 +164,8 @@ public abstract class UIComponent implements GraphicsObject {
     
     public boolean contains(float x, float y) 
     {
-        return x > position.x - size.x/2 && x < position.x + size.x/2 && 
-               y < position.y + size.y/2 && y > position.y - size.y/2;
+        return x >= getLeft() && x <= getRight() && 
+               y <= getTop() && y >= getBottom();
     }
 
     @Override
@@ -157,15 +193,18 @@ public abstract class UIComponent implements GraphicsObject {
         }
     }
     
-    private void handleInput() {
+    private boolean handleInput() {
         float xMouse = MouseHandler.xNormalized;
         float yMouse = MouseHandler.yNormalized;
         
         mouseInComponent = contains(xMouse, yMouse);
         
         if (mouseInComponent && MouseHandler.state == KeyState.RISING) {
-            notifyListeners();
+            notifyListeners(xMouse, yMouse);
+            return true;
         }
+        
+        return false;
     }
     
     public BufferedImage createLabelImage(String text, Font font, Color fontColor) {

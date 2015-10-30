@@ -32,6 +32,10 @@ public class Label extends UIComponent {
     public String getText() {
         return text;
     }
+    
+    public Texture getLabel() {
+        return label;
+    }
 
     public void setText(String text) {
         this.text = text;

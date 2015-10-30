@@ -288,6 +288,23 @@ public class Texture {
              (float)points[0].y, (float)points[1].y, (float)points[2].y, (float)points[3].y);
     }
     
+    /**
+     * 0 - top left
+     * 1 - bottom left
+     * 2 - bottom right
+     * 3 - top right
+     * @return 
+     */
+    public static Vector2d[] generateTextureCoordinates() {
+        Vector2d textCoords[] = new Vector2d[4];
+        textCoords[0] = new Vector2d(0, 0); //top left
+        textCoords[1] = new Vector2d(0, 1); //bottom left
+        textCoords[2] = new Vector2d(1, 1); //bottom right
+        textCoords[3] = new Vector2d(1, 0); //top right
+        
+        return textCoords;
+    }
+
     private void draw(float x1, float x2, float x3, float x4,
                       float y1, float y2, float y3, float y4) {        
         glBindTexture(GL_TEXTURE_2D, textureID);
