@@ -1,6 +1,8 @@
 package sketchwars.character.projectiles;
 
 import java.awt.image.BufferedImage;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import sketchwars.game.*;
 import sketchwars.physics.*;
 import sketchwars.graphics.*;
@@ -16,9 +18,9 @@ import sketchwars.map.AbstractMap;
 
 public class ProjectileFactory
 {
-    private SketchWarsWorld world;
-    private Physics physics;
-    private Layer projectileLayer;
+    private final SketchWarsWorld world;
+    private final Physics physics;
+    private final Layer projectileLayer;
 
     public ProjectileFactory(SketchWarsWorld world, Physics physics, Scene<GameLayers> scene) throws SceneException
     {
@@ -129,4 +131,32 @@ public class ProjectileFactory
         projectileLayer.addDrawableObject(proj); //so it can be rendered
     }
 
+    public AbstractProjectile createMine(SketchCharacter owner, long vPosition, long vVelocity)
+    {
+        Texture activated = Texture.loadTexture("content/animation/weapons/mine.png", false);
+        Animation acitvatedAnim = null;
+        try {
+            acitvatedAnim = new Animation(activated, 2, 2, 1, 1000, true);
+            acitvatedAnim.start();
+        } catch (AnimationException ex) {
+            System.err.println(ex.getMessage());
+        }
+        
+        Texture texture = Texture.loadTexture("content/char/weapons/mine.png", false);
+        MineProjectile proj = new MineProjectile(texture, acitvatedAnim, this);
+        
+        double ratio = texture.getTextureHeight()/texture.getTextureWidth();
+        float screenAspectRatio = OpenGL.getAspectRatio();
+        int widthP = (int)(WeaponFactory.MINE_SCALE * 1024.0f) ;
+        int heightP = (int)(widthP * ratio * screenAspectRatio) ;
+        Collider coll = new GamePixelCollider(proj, BitMaskFactory.createRectangle(widthP, heightP));
+        
+        proj.setCollider(coll);
+
+        setColliderProperties(coll, vPosition, vVelocity, 1.0f, 0.2f);
+
+        addProjectile(proj);
+        
+        return proj;
+    }
 }

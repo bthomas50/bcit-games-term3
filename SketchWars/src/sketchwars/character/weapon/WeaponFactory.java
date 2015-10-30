@@ -18,6 +18,7 @@ public class WeaponFactory
     public static final float RIFLE_SCALE = 0.1f;
     public static final float ERASER_SCALE = 0.1f;
     public static final float PENCIL_SCALE = 0.1f;
+    public static final float MINE_SCALE = 0.04f;
     
     public static HashMap<WeaponTypes, AbstractWeapon> createDefaultWeaponSet(ProjectileFactory fact, SketchWarsWorld world) 
     {
@@ -27,6 +28,7 @@ public class WeaponFactory
         ret.put(WeaponTypes.RANGED_WEAPON, createRifle(fact));
         ret.put(WeaponTypes.ERASER, createEraser(fact, world));
         ret.put(WeaponTypes.PENCIL, createPencil(fact, world));
+        ret.put(WeaponTypes.MINE, createMine(fact));
         return ret;
     }
 
@@ -126,5 +128,16 @@ public class WeaponFactory
         return output;
     }
 
-    private WeaponFactory() {}
+    private static AbstractWeapon createMine(ProjectileFactory fact) {
+        Texture texture = Texture.loadTexture("content/char/weapons/mine.png", false);
+        
+        float ratio = texture.getTextureHeight()/texture.getTextureWidth();
+        float screenAspectRatio = OpenGL.getAspectRatio();
+        float width = MINE_SCALE;
+        float height = width * ratio * screenAspectRatio;
+        
+        AbstractWeapon weapon = new MineWeapon(texture, width, height, fact);
+        weapon.setAmmo(AbstractWeapon.INFINITE_AMMO);
+        return weapon;
+    }
 }

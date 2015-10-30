@@ -9,5 +9,8 @@ public enum WeaponTypes {
     RANGED_WEAPON,
     BASIC_GRENADE,
     ERASER,
-    PENCIL
+    PENCIL,
+    MINE,
+    CLUSTER_BOMB,
+    BAZOOKA
 }

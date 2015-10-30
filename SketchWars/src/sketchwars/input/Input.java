@@ -60,6 +60,19 @@ public class Input
             currentInput.commands.add(Command.SWITCH_5);
         }
         
+        if(KeyboardHandler.isKeyDown(GLFW_KEY_6)){
+            currentInput.commands.add(Command.SWITCH_6);
+        }
+        
+        if(KeyboardHandler.isKeyDown(GLFW_KEY_7)){
+            currentInput.commands.add(Command.SWITCH_7);
+        }
+        
+        if(KeyboardHandler.isKeyDown(GLFW_KEY_8)){
+            currentInput.commands.add(Command.SWITCH_8);
+        }
+        
+        
         if(KeyboardHandler.isKeyDown(GLFW_KEY_T)){
             //currentInput.commands.add(Command.HIGHER_BGM);
             SoundPlayer.pause(0);

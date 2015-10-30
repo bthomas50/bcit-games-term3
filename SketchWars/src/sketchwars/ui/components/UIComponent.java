@@ -237,7 +237,6 @@ public abstract class UIComponent implements GraphicsObject {
          
             int fontSize = (int)(width * 0.16f);
             
-            System.out.println(gFontColor);
             if (gFontColor == null) {
                 g.setColor(Color.BLACK);
             } else {

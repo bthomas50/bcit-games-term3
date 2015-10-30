@@ -44,8 +44,6 @@ public class Team
             total += characters.get(i).getHealth();
         
         healthBar.setHealth(total);
-        
-        System.out.println(Integer.toString(total) + " " + Integer.toString(healthBar.getMaxHealth()));
     }
 
     public void handleInput(Input input, double elapsedMillis)
@@ -87,9 +85,12 @@ public class Team
                 active.setWeapon(weapons.get(WeaponTypes.BASIC_GRENADE));
                 break;
             case SWITCH_4:
-                active.setWeapon(weapons.get(WeaponTypes.ERASER));
+                active.setWeapon(weapons.get(WeaponTypes.MINE));
                 break;
             case SWITCH_5:
+                active.setWeapon(weapons.get(WeaponTypes.ERASER));
+                break;
+            case SWITCH_6:
                 active.setWeapon(weapons.get(WeaponTypes.PENCIL));
                 break;
             }

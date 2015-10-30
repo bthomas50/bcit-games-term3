@@ -80,7 +80,6 @@ public class UIGroup extends UIComponent implements UIActionListener {
 
     @Override
     public void redraw() { 
-        System.out.println("here");
         for (UIComponent uic: components) {
             uic.setFont(font);
             uic.setFontColor(fontColor);

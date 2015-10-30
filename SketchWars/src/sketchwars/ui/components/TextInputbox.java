@@ -5,6 +5,7 @@
  */
 package sketchwars.ui.components;
 
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 import org.joml.Vector2d;
 import sketchwars.graphics.Texture;
@@ -36,6 +37,7 @@ public class TextInputbox extends UIComponent implements KeyCharListener {
         
         text = "";
         updateLabel();
+        setBackgroundFromColor(Color.LIGHT_GRAY);
         
         lastKeyPressTime = System.currentTimeMillis();
     }
