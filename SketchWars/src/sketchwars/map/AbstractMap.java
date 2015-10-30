@@ -8,9 +8,6 @@ import sketchwars.graphics.GraphicsObject;
 import sketchwars.game.GameObject;
 import sketchwars.graphics.Texture;
 import sketchwars.physics.*;
-import sketchwars.util.PhysicsToImage;
-import static java.lang.Math.min;
-import static java.lang.Math.max;
 
 /**
  *
@@ -85,15 +82,31 @@ public abstract class AbstractMap implements GraphicsObject, GameObject {
         float widthRatio = (float) subWidth / subNewWidth;
         float heightRatio = (float) subHeight / subNewHeight;
         
-        if (xImage >= 0 && yImage >= 0 && (xImage + subNewWidth) < widthFG && (yImage + subNewHeight) < heightFG) {
-            for (int i = 0; i < subNewWidth; i++) {
-                for (int j = 0; j < subNewHeight; j++) {
-                    int imageI = (int) ((float)i * widthRatio);
-                    int imageJ = (int) ((float)j * heightRatio);
-                
-                    int xSet = xImage + i;
-                    int ySet = yImage + j;
-                    
+        BoundingBox subImageBounds = new BoundingBox(yImage, xImage, 
+                yImage + subNewHeight - 1, xImage + subNewWidth - 1);
+        
+        BoundingBox fgBounds = new BoundingBox(0, 0, foregroundImage.getHeight() - 1, foregroundImage.getWidth() - 1);
+        BoundingBox intersection = fgBounds.intersection(subImageBounds);
+        //no part of the foreground image will be affected.
+        if(intersection == BoundingBox.EMPTY) {
+            return false;
+        }
+        
+        xImage = intersection.getLeft();
+        yImage = intersection.getTop();
+
+        subNewWidth = intersection.getRight() - intersection.getLeft();
+        subNewHeight = intersection.getBottom() - intersection.getTop();
+        
+        for (int i = 0; i < subNewWidth; i++) {
+            for (int j = 0; j < subNewHeight; j++) {
+                int imageI = (int) ((float)i * widthRatio);
+                int imageJ = (int) ((float)j * heightRatio);
+
+                int xSet = xImage + i;
+                int ySet = yImage + j;
+
+                if (isInImage(subImage, imageI, imageJ) && isInImage(foregroundImage, xSet, ySet)) {
                     int color = subImage.getRGB(imageI, imageJ);
                     int alpha = color >> 24;
 
@@ -106,10 +119,9 @@ public abstract class AbstractMap implements GraphicsObject, GameObject {
                     }
                 }
             }
-            BufferedImage replacedRegion = foregroundImage.getSubimage(xImage, yImage, subNewWidth, subNewHeight);
-            return foreground.setSubTexture(replacedRegion, xImage, yImage, replacedRegion.getWidth(), replacedRegion.getHeight());
         }
-        return false;
+        BufferedImage replacedRegion = foregroundImage.getSubimage(xImage, yImage, subNewWidth, subNewHeight);
+        return foreground.setSubTexture(replacedRegion, xImage, yImage, replacedRegion.getWidth(), replacedRegion.getHeight());
     }
 
     private static boolean isXInBounds(BufferedImage image, int x) {
@@ -136,5 +148,9 @@ public abstract class AbstractMap implements GraphicsObject, GameObject {
         } else {
             BitMaskFactory.updateFromImageAlpha(subImage, mapBitmask, bb, true);
         }
+    }
+
+    private boolean isInImage(BufferedImage subImage, int x, int y) {
+        return x >= 0 && y >= 0 && x < subImage.getWidth() && y < subImage.getHeight();
     }
 }

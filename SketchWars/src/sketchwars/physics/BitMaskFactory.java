@@ -4,6 +4,7 @@ import static sketchwars.physics.BitMask.*;
 import static sketchwars.physics.Vectors.*;
 
 import java.awt.image.BufferedImage;
+import sketchwars.util.PhysicsToImage;
 /**
  * Static factory methods for creating BitMasks
  * @author brian <bthomas50@my.bcit.ca>
@@ -56,12 +57,21 @@ public class BitMaskFactory
         float height = (float)bounds.getHeight();
         float widthRatio = (float) im.getWidth() / width;
         float heightRatio = (float) im.getHeight() / height;
-        for(int i = bounds.getTop(); i <= bounds.getBottom(); i++)
+        
+        BoundingBox physicsBounds =  new BoundingBox(-1024, -1024, 1024, 1024);
+        BoundingBox intersection = physicsBounds.intersection(bounds);
+        
+        //no part of the bitmap will be affected.
+        if(intersection == BoundingBox.EMPTY) {
+            return;
+        }
+        
+        for(int i = intersection.getTop(); i <= intersection.getBottom(); i++)
         {
-            float relativeI = (float)(i - bounds.getTop());
-            for(int j = bounds.getLeft(); j <= bounds.getRight(); j++)
+            float relativeI = (float)(i - intersection.getTop());
+            for(int j = intersection.getLeft(); j <= intersection.getRight(); j++)
             {
-                float relativeJ = (float)(j - bounds.getLeft());
+                float relativeJ = (float)(j - intersection.getLeft());
                 int imageI = im.getHeight() - 1 - (int) ((float)relativeI * heightRatio);
                 int imageJ = (int) ((float)relativeJ * widthRatio);
                 int alpha = im.getRGB(imageJ, imageI) >> 24;
