@@ -59,6 +59,14 @@ public class ListBox extends UIComponent implements UIActionListener {
         scrollUp.addActionListener((ListBox)this);
     }
     
+    public Button getScrollUpButton() {
+        return scrollUp;
+    }
+    
+    public Button getScrollDownButton() {
+        return scrollDown;
+    }
+    
     public void setItemHeight(float itemHeight) {
         if (itemHeight > 0) {
             this.itemHeight = itemHeight;
