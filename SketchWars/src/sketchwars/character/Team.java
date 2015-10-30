@@ -88,9 +88,12 @@ public class Team
                 active.setWeapon(weapons.get(WeaponTypes.MINE));
                 break;
             case SWITCH_5:
-                active.setWeapon(weapons.get(WeaponTypes.ERASER));
+                active.setWeapon(weapons.get(WeaponTypes.CLUSTER_BOMB));
                 break;
             case SWITCH_6:
+                active.setWeapon(weapons.get(WeaponTypes.ERASER));
+                break;
+            case SWITCH_7:
                 active.setWeapon(weapons.get(WeaponTypes.PENCIL));
                 break;
             }

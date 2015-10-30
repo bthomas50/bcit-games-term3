@@ -1,8 +1,8 @@
 package sketchwars.character.projectiles;
 
 import java.awt.image.BufferedImage;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.Random;
+import org.joml.Matrix3d;
 import sketchwars.game.*;
 import sketchwars.physics.*;
 import sketchwars.graphics.*;
@@ -13,11 +13,14 @@ import sketchwars.animation.*;
 import sketchwars.exceptions.*;
 
 import org.joml.Vector2d;
+import org.joml.Vector3d;
 import sketchwars.OpenGL;
 import sketchwars.map.AbstractMap;
 
 public class ProjectileFactory
 {
+    private static final float CLUSTER_SCALE = 0.02f;
+    
     private final SketchWarsWorld world;
     private final Physics physics;
     private final Layer projectileLayer;
@@ -158,5 +161,54 @@ public class ProjectileFactory
         addProjectile(proj);
         
         return proj;
+    }
+
+    public AbstractProjectile createClusterBomb(SketchCharacter owner, long vPosition, long vVelocity) {
+        Texture texture = Texture.loadTexture("content/char/weapons/clusterBomb.png", false);
+        ClusterBombProjectile proj = new ClusterBombProjectile(texture, this);
+        
+        double ratio = texture.getTextureHeight()/texture.getTextureWidth();
+        float screenAspectRatio = OpenGL.getAspectRatio();
+        int widthP = (int)(WeaponFactory.CLUSTER_BOMB_SCALE * 1024.0f) ;
+        int heightP = (int)(widthP * ratio * screenAspectRatio) ;
+        Collider coll = new GamePixelCollider(proj, BitMaskFactory.createRectangle(widthP, heightP));
+        
+        proj.setCollider(coll);
+
+        setColliderProperties(coll, vPosition, vVelocity, 1.0f, 0.2f);
+
+        addProjectile(proj);
+        
+        return proj;
+    }
+
+    public void createClusterMunitions(SketchCharacter owner, int power, long vPosition, int count) {
+        Texture texture = Texture.loadTexture("content/char/weapons/clusterBomb.png", false);
+        
+        double ratio = texture.getTextureHeight()/texture.getTextureWidth();
+        float screenAspectRatio = OpenGL.getAspectRatio();
+        int widthP = (int)(CLUSTER_SCALE * 1024.0f) ;
+        int heightP = (int)(widthP * ratio * screenAspectRatio) ;
+        
+        Random rnd = new Random();
+        float angle = (float)((Math.PI * 2)/(float)count);
+        Vector3d velocity = new Vector3d((rnd.nextFloat() * 2) - 1, rnd.nextFloat() + 1, 0);
+        Matrix3d matrix = new Matrix3d();
+        matrix.rotate(angle, 0, 0, 1);
+        
+        for (int i = 0; i < count; i++) {
+            ImpactProjectile proj = new ImpactProjectile(texture, this);
+            Collider coll = new GamePixelCollider(proj, BitMaskFactory.createRectangle(widthP, heightP));
+            proj.setCollider(coll);
+                      
+            matrix.transform(velocity);
+            Vector2d vel = new Vector2d(velocity.x, velocity.y);
+            vel.normalize();
+           
+            setColliderProperties(coll, vPosition, Vectors.create(vel.x * power, vel.y * power), 1.0f, 0.2f);
+
+            addProjectile(proj);
+        }
+        
     }
 }

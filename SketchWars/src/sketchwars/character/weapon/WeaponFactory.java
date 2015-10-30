@@ -19,6 +19,7 @@ public class WeaponFactory
     public static final float ERASER_SCALE = 0.1f;
     public static final float PENCIL_SCALE = 0.1f;
     public static final float MINE_SCALE = 0.04f;
+    public static final float CLUSTER_BOMB_SCALE = 0.04f;
     
     public static HashMap<WeaponTypes, AbstractWeapon> createDefaultWeaponSet(ProjectileFactory fact, SketchWarsWorld world) 
     {
@@ -29,6 +30,7 @@ public class WeaponFactory
         ret.put(WeaponTypes.ERASER, createEraser(fact, world));
         ret.put(WeaponTypes.PENCIL, createPencil(fact, world));
         ret.put(WeaponTypes.MINE, createMine(fact));
+        ret.put(WeaponTypes.CLUSTER_BOMB, createClusterBomb(fact));
         return ret;
     }
 
@@ -137,6 +139,19 @@ public class WeaponFactory
         float height = width * ratio * screenAspectRatio;
         
         AbstractWeapon weapon = new MineWeapon(texture, width, height, fact);
+        weapon.setAmmo(AbstractWeapon.INFINITE_AMMO);
+        return weapon;
+    }
+
+    private static AbstractWeapon createClusterBomb(ProjectileFactory fact) {
+        Texture texture = Texture.loadTexture("content/char/weapons/clusterBomb.png", false);
+        
+        float ratio = texture.getTextureHeight()/texture.getTextureWidth();
+        float screenAspectRatio = OpenGL.getAspectRatio();
+        float width = CLUSTER_BOMB_SCALE;
+        float height = width * ratio * screenAspectRatio;
+        
+        AbstractWeapon weapon = new ClusterBombWeapon(texture, width, height, fact);
         weapon.setAmmo(AbstractWeapon.INFINITE_AMMO);
         return weapon;
     }
