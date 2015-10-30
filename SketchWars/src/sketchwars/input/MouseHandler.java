@@ -3,7 +3,9 @@ package sketchwars.input;
 import org.joml.Vector2d;
 import org.lwjgl.glfw.GLFWMouseButtonCallback;
 import org.lwjgl.glfw.GLFWCursorPosCallback;
+import org.lwjgl.glfw.GLFWScrollCallback;
 import static org.lwjgl.glfw.GLFW.*;
+import org.lwjgl.glfw.GLFWCharCallback;
 import sketchwars.OpenGL;
 
 public class MouseHandler 
@@ -14,7 +16,8 @@ public class MouseHandler
     public static float yNormalized;
     
     public static KeyState state = KeyState.UP;
-
+    public static DWheelState dwheelState = DWheelState.NONE;
+    
     private static int curEvent = GLFW_RELEASE;
     private static int lastEvent = GLFW_RELEASE;
 
@@ -32,7 +35,7 @@ public class MouseHandler
         {
             state = KeyState.FALLING;
         }
-        else//(curEvent == GLFW_RELEASE && lastEvent == GLFW_RELEASE)
+        else
         {
             state = KeyState.DOWN;
         }
@@ -53,6 +56,20 @@ public class MouseHandler
         }
     }
 
+    public static class ScrollWheelCallback extends GLFWScrollCallback
+    {
+        @Override
+        public void invoke(long window, double xoffset, double yoffset) {
+            if (yoffset > 0) {
+                dwheelState = DWheelState.SCROLL_UP;
+            } else if (yoffset < 0) {
+                dwheelState = DWheelState.SCROLL_DOWN;
+            } else {
+                dwheelState = DWheelState.NONE;
+            }
+        }
+    }
+    
     public static class PositionCallback extends GLFWCursorPosCallback
     {
         @Override

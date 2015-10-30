@@ -23,6 +23,7 @@ import sketchwars.exceptions.SceneException;
 import sketchwars.exceptions.SceneManagerException;
 import sketchwars.graphics.GraphicElement;
 import sketchwars.graphics.Texture;
+import sketchwars.input.KeyboardHandler;
 import sketchwars.scenes.Layer;
 import sketchwars.scenes.Scene;
 import sketchwars.scenes.SceneManager;
@@ -62,9 +63,6 @@ public class MainMenu extends Scene implements UIActionListener {
         createLayers();
         createButtons();
         createBackground();
-        
-        
-                
     }
     
     private void createLayers()
@@ -121,6 +119,10 @@ public class MainMenu extends Scene implements UIActionListener {
             lb.addItem("Item 5");
             lb.addActionListener(this);
             btnLayer.addDrawableObject(lb);*/
+            
+            TextInputbox b = new TextInputbox(new Vector2d(), new Vector2d(0.4, 0.1), null);
+            b.setSelected(true);
+            btnLayer.addDrawableObject(b);
         } catch (SceneException ex) {
             Logger.getLogger(MainMenu.class.getName()).log(Level.SEVERE, null, ex);
         }

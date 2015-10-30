@@ -29,6 +29,9 @@ public class OpenGL {
     private final KeyboardHandler   keyboardHandler;
     private final GLFWMouseButtonCallback mouseButtonCallback;
     private final GLFWCursorPosCallback mousePosCallback;
+    private final GLFWScrollCallback scrollCallback;
+    private final GLFWCharCallback charCallback;
+    
     // The window handle
     private static long window;
     
@@ -38,6 +41,8 @@ public class OpenGL {
         keyboardHandler = new KeyboardHandler();
         mouseButtonCallback = new MouseHandler.ButtonCallback();
         mousePosCallback = new MouseHandler.PositionCallback();
+        scrollCallback = new MouseHandler.ScrollWheelCallback();
+        charCallback = new KeyboardHandler.CharCallback();
     }
     
     public void dispose() {
@@ -47,6 +52,7 @@ public class OpenGL {
             keyboardHandler.release();
             mouseButtonCallback.release();
             mousePosCallback.release();
+            scrollCallback.release();
             
         } finally { 
             // Terminate GLFW and release the GLFWerrorfun
@@ -101,7 +107,9 @@ public class OpenGL {
         glfwSetKeyCallback(window, keyboardHandler);
         glfwSetCursorPosCallback(window, mousePosCallback);
         glfwSetMouseButtonCallback(window, mouseButtonCallback);
-            
+        glfwSetScrollCallback(window, scrollCallback);
+        glfwSetCharCallback(window, charCallback);
+        
         // Make the OpenGL context current
         glfwMakeContextCurrent(window);
         // Enable v-sync

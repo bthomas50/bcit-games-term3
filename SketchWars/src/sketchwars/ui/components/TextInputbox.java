@@ -8,22 +8,23 @@ package sketchwars.ui.components;
 import java.awt.image.BufferedImage;
 import org.joml.Vector2d;
 import sketchwars.graphics.Texture;
-import sketchwars.input.KeyState;
-import sketchwars.input.KeyboardHandler;
 import static org.lwjgl.glfw.GLFW.*;
+import sketchwars.input.KeyCharListener;
+import sketchwars.input.KeyboardHandler;
 
 /**
  *
  * @author Najash Najimudeen <najash.najm@gmail.com>
  */
-public class TextInputbox extends UIComponent {
-    public static int STANDARD_KEY_START = 32;
-    public static int STANDARD_KEY_END = 126;
+public class TextInputbox extends UIComponent implements KeyCharListener {
+    private static final int PRESS_RATE = 160;
     
     private Texture label;
     private String text;
     private int caretPos;
-        
+    
+    private long lastKeyPressTime;
+    
     public TextInputbox(Vector2d position, Vector2d size, Texture background) {
         super(position, size, background, true);
         
@@ -33,6 +34,9 @@ public class TextInputbox extends UIComponent {
         
         text = "";
         updateLabel(text);
+        
+        KeyboardHandler.addCharListener((TextInputbox)this);
+        lastKeyPressTime = System.currentTimeMillis();
     }
 
     public String getText() {
@@ -45,15 +49,6 @@ public class TextInputbox extends UIComponent {
     }
 
     @Override
-    public void update() {
-        super.update();
-        
-        if (selected) {
-            handleInput();
-        }
-    }
-    
-    @Override
     public void render() {
         super.render();
         
@@ -61,24 +56,12 @@ public class TextInputbox extends UIComponent {
             label.draw(null, (float)position.x, (float)position.y, (float)size.x, (float)size.y);
         }
     }
-    
-    private void handleInput() {
-        if (KeyboardHandler.state == KeyState.FALLING) {
-            int key = KeyboardHandler.key;
-            if (key >= STANDARD_KEY_START && key <= STANDARD_KEY_END) {
-                text += (char)key;
-                updateLabel(text);
-                caretPos++;
-            } else if (key == GLFW_KEY_BACKSPACE) {
-                int length = text.length();
 
-                if (caretPos > 0 && caretPos <= length) {
-                    caretPos--;
-                    text = text.substring(0, caretPos) + text.substring(caretPos + 1);
-                    updateLabel(text);
-                }
-            }
-        }
+    @Override
+    public void update() {
+        super.update(); 
+        
+        handleInput();
     }
     
     private void updateLabel(String text) {
@@ -90,6 +73,32 @@ public class TextInputbox extends UIComponent {
             } else {
                 System.err.println("Label:createLabel(): Error craeting label");
             }
+        }
+    }
+
+    @Override
+    public void charTyped(int key) {
+        if (selected) {
+            text += (char)key;
+            updateLabel(text);
+            caretPos++;
+        }
+    }
+
+    private void handleInput() {
+        long pressTime = System.currentTimeMillis();
+        int delta = (int) (pressTime - lastKeyPressTime);
+        
+        if (KeyboardHandler.isKeyDown(GLFW_KEY_BACKSPACE) && delta > PRESS_RATE) {
+            int length = text.length();
+
+            if (caretPos > 0 && caretPos <= length) {
+                caretPos--;
+                text = text.substring(0, caretPos) + text.substring(caretPos + 1);
+                updateLabel(text);
+            }
+            
+            lastKeyPressTime = pressTime;
         }
     }
 }
