@@ -10,5 +10,5 @@ package sketchwars.animation;
  * @author Najash Najimudeen <najash.najm@gmail.com>
  */
 public enum CharacterAnimations {
-    IDLE, WALK_LEFT, WALK_RIGHT, JUMP;
+    IDLE_LEFT, WALK_LEFT, JUMP_LEFT, IDLE_RIGHT, WALK_RIGHT, JUMP_RIGHT;
 }

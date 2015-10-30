@@ -178,7 +178,7 @@ public class SketchWarsWorldFactory
         
         character.setAnimationSet(animationSet);
         
-        Animation idle = animationSet.getAnimation(CharacterAnimations.IDLE);
+        Animation idle = animationSet.getAnimation(CharacterAnimations.IDLE_RIGHT);
         
         CharacterCollider charCollider;
         
@@ -215,32 +215,40 @@ public class SketchWarsWorldFactory
         AnimationSet<CharacterAnimations> animationSet = new AnimationSet<>();
         
         try {
-            //Texture idleSpriteSheet = Texture.loadTexture("content/animation/characters/default/charSheet_idle.png", true);
-            Texture idleSpriteSheet = Texture.loadTexture("content/animation/characters/stickman/idle.png", true);
-            Animation idle = new Animation(idleSpriteSheet, 36, 6, 6, 5000, true);
-            idle.start(rng.nextInt(750));
-            animationSet.addAnimation(CharacterAnimations.IDLE, idle);
-            //Texture jumpSpriteSheet = Texture.loadTexture("content/animation/characters/default/charSheet_jump.png", true);
-            Texture jumpSpriteSheet = Texture.loadTexture("content/animation/characters/stickman/jump.png", true);
-            Animation jump = new Animation(jumpSpriteSheet, 36, 6, 6, 1000, true);
-            jump.start();
-            animationSet.addAnimation(CharacterAnimations.JUMP, jump);
-            
-            //Texture walkLeftSpriteSheet = Texture.loadTexture("content/animation/characters/default/charSheet_walk_left.png", true);
-            Texture walkLeftSpriteSheet = Texture.loadTexture("content/animation/characters/stickman/run.png", true);
-            
-            Animation walkLeft = new Animation(walkLeftSpriteSheet, 36, 6, 6, 2000, true);
-            walkLeft.start();
-            animationSet.addAnimation(CharacterAnimations.WALK_RIGHT, walkLeft);
-            
-            Animation walkRight = new Animation(walkLeftSpriteSheet, 36, 6, 6, 2000, true);
             Matrix3d trans = new Matrix3d();
             trans.scale(-1, 1, 1); //flip horizontal
-            walkRight.setTransform(trans, false);
-            walkRight.start();
-            animationSet.addAnimation(CharacterAnimations.WALK_LEFT, walkRight);
             
-            animationSet.setCurrentAnimation(CharacterAnimations.IDLE);
+            Texture idleSpriteSheet = Texture.loadTexture("content/animation/characters/stickman/idle.png", true);
+            Animation idleRight = new Animation(idleSpriteSheet, 36, 6, 6, 5000, true);
+            idleRight.start(rng.nextInt(750));
+            animationSet.addAnimation(CharacterAnimations.IDLE_RIGHT, idleRight);
+            
+            Animation idleLeft = new Animation(idleSpriteSheet, 36, 6, 6, 5000, true);
+            idleLeft.setTransform(trans, false);
+            idleRight.start();
+            animationSet.addAnimation(CharacterAnimations.IDLE_LEFT, idleLeft);
+            
+            Texture jumpSpriteSheet = Texture.loadTexture("content/animation/characters/stickman/jump.png", true);
+            Animation jumpRight = new Animation(jumpSpriteSheet, 36, 6, 6, 1000, true);
+            jumpRight.start();
+            animationSet.addAnimation(CharacterAnimations.JUMP_RIGHT, jumpRight);
+            
+            Animation jumpLeft = new Animation(jumpSpriteSheet, 36, 6, 6, 1000, true);
+            jumpLeft.setTransform(trans, false);
+            jumpLeft.start();
+            animationSet.addAnimation(CharacterAnimations.JUMP_LEFT, jumpLeft);
+            
+            Texture walkSpriteSheet = Texture.loadTexture("content/animation/characters/stickman/run.png", true);
+            Animation walkRight = new Animation(walkSpriteSheet, 36, 6, 6, 2000, true);
+            walkRight.start();
+            animationSet.addAnimation(CharacterAnimations.WALK_RIGHT, walkRight);
+            
+            Animation walkLeft = new Animation(walkSpriteSheet, 36, 6, 6, 2000, true);
+            walkLeft.setTransform(trans, false);
+            walkLeft.start();
+            animationSet.addAnimation(CharacterAnimations.WALK_LEFT, walkLeft);
+            
+            animationSet.setCurrentAnimation(CharacterAnimations.IDLE_RIGHT);
         } catch (AnimationException ex) {
             System.out.println(ex.getMessage());
         }

@@ -68,6 +68,10 @@ public class BazookaProjectile extends AbstractProjectile {
             factory.createExplosion(coll.getCenterOfMass(), EXPLOSION_RADIUS, EXPLOSION_DAMAGE, explosionAlpha);
             explodeCall++;
         }
+        
+        if (flame != null) {
+            flame.update(elapsedMillis);
+        }
     }
         
     @Override

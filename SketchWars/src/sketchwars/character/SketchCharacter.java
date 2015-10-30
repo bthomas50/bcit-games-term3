@@ -9,7 +9,6 @@ import sketchwars.graphics.*;
 import sketchwars.game.GameObject;
 import sketchwars.map.AbstractMap;
 import sketchwars.HUD.HealthBar;
-import static sketchwars.physics.Vectors.create;
 import sketchwars.physics.colliders.CharacterCollider;
 
 /*
@@ -254,20 +253,32 @@ public class SketchCharacter implements GraphicsObject, GameObject, CollisionLis
     {
         this.isFacingLeft = true;
         coll.moveLeft(elapsedMillis);
+        
+        lastActionTime = (int) System.currentTimeMillis();
+        animationSet.setCurrentAnimation(CharacterAnimations.WALK_LEFT);
     }
 
     void moveRight(double elapsedMillis)
     {
         this.isFacingLeft = false;
         coll.moveRight(elapsedMillis);
+        
+        lastActionTime = (int) System.currentTimeMillis();
+        animationSet.setCurrentAnimation(CharacterAnimations.WALK_RIGHT);
     }
     
     void jump(double elapsedMillis)
     {
         if (canJump) {
-            lastActionTime = (int) System.currentTimeMillis();
             coll.jump(elapsedMillis);
-            animationSet.setCurrentAnimation(CharacterAnimations.JUMP);
+            
+            lastActionTime = (int) System.currentTimeMillis();
+            if (isFacingLeft) {
+                animationSet.setCurrentAnimation(CharacterAnimations.JUMP_LEFT);
+            } else {
+                animationSet.setCurrentAnimation(CharacterAnimations.JUMP_RIGHT);
+            }
+            
             canJump = false;
         } 
     }
@@ -297,7 +308,11 @@ public class SketchCharacter implements GraphicsObject, GameObject, CollisionLis
         int diff = current - lastActionTime;
   
         if (diff > 200) {
-            animationSet.setCurrentAnimation(CharacterAnimations.IDLE);
+            if (isFacingLeft) {
+                animationSet.setCurrentAnimation(CharacterAnimations.IDLE_LEFT);
+            } else {
+                animationSet.setCurrentAnimation(CharacterAnimations.IDLE_RIGHT);
+            }
         }
     }
 
