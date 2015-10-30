@@ -20,6 +20,7 @@ public class WeaponFactory
     public static final float PENCIL_SCALE = 0.1f;
     public static final float MINE_SCALE = 0.04f;
     public static final float CLUSTER_BOMB_SCALE = 0.04f;
+    public static final float BAZOOKA_SCALE = 0.12f;
     
     public static HashMap<WeaponTypes, AbstractWeapon> createDefaultWeaponSet(ProjectileFactory fact, SketchWarsWorld world) 
     {
@@ -31,6 +32,7 @@ public class WeaponFactory
         ret.put(WeaponTypes.PENCIL, createPencil(fact, world));
         ret.put(WeaponTypes.MINE, createMine(fact));
         ret.put(WeaponTypes.CLUSTER_BOMB, createClusterBomb(fact));
+        ret.put(WeaponTypes.BAZOOKA, createBazooka(fact));
         return ret;
     }
 
@@ -152,6 +154,19 @@ public class WeaponFactory
         float height = width * ratio * screenAspectRatio;
         
         AbstractWeapon weapon = new ClusterBombWeapon(texture, width, height, fact);
+        weapon.setAmmo(AbstractWeapon.INFINITE_AMMO);
+        return weapon;
+    }
+
+    private static AbstractWeapon createBazooka(ProjectileFactory fact) {
+        Texture texture = Texture.loadTexture("content/char/weapons/bazooka.png", false);
+        
+        float ratio = texture.getTextureHeight()/texture.getTextureWidth();
+        float screenAspectRatio = OpenGL.getAspectRatio();
+        float width = BAZOOKA_SCALE;
+        float height = width * ratio * screenAspectRatio;
+        
+        AbstractWeapon weapon = new BazookaWeapon(texture, width, height, fact);
         weapon.setAmmo(AbstractWeapon.INFINITE_AMMO);
         return weapon;
     }

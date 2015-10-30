@@ -18,7 +18,7 @@ public class GrenadeProjectile extends AbstractProjectile {
     private static final double LIFESPAN_MILLIS = 5000;
     private final ProjectileFactory factory;
     private final Timer timer;
-    private BufferedImage explosionAlpha;
+    private final BufferedImage explosionAlpha;
        
     public GrenadeProjectile(Texture texture, ProjectileFactory factory) {
         super(texture, null, 0);

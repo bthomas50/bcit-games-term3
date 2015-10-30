@@ -1,5 +1,6 @@
 package sketchwars.character.projectiles;
 
+import org.joml.Matrix3d;
 import sketchwars.graphics.GraphicsObject;
 import sketchwars.graphics.Texture;
 import sketchwars.physics.*;
@@ -48,7 +49,19 @@ public abstract class AbstractProjectile implements GraphicsObject, GameObject{
         if (texture != null) {
             BoundingBox bounds = coll.getBounds();
             long vCenter = bounds.getCenterVector();
-            texture.draw(null, (float)Vectors.xComp(vCenter) / 1024.0f, (float)Vectors.yComp(vCenter) / 1024.0f, bounds.getWidth() / 1024.0f, bounds.getHeight() / 1024.0f);
+            Matrix3d matrix = new Matrix3d();
+            
+            matrix.translation(Vectors.xComp(vCenter) / 1024.0f, Vectors.yComp(vCenter) / 1024.0f);
+            
+            long velocity = coll.getVelocity();
+            
+            float angle = (float)Math.atan2(Vectors.yComp(velocity), Vectors.xComp(velocity));
+            
+            matrix.rotate(angle, 0, 0, 1);
+            
+            matrix.scale(bounds.getWidth() / 1024.0f, bounds.getHeight() / 1024.0f, 1);
+                        
+            texture.draw(matrix);
         }
     }
     

@@ -2,9 +2,6 @@ package sketchwars;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import main.ServerMain;
-import network.DiscoveryServer;
-import network.Server;
 import sketchwars.exceptions.SceneManagerException;
 import sketchwars.game.SketchWarsWorld;
 import sketchwars.game.SketchWarsWorldFactory;
@@ -15,7 +12,6 @@ import sketchwars.physics.Physics;
 import sketchwars.scenes.Scene;
 import sketchwars.scenes.SceneManager;
 import sketchwars.sound.SoundPlayer;
-import sketchwars.ui.menu.CreateOption;
 import sketchwars.ui.menu.MainMenu;
 import sketchwars.ui.menu.OptionMenu;
 import static sketchwars.util.Config.appendToLibraryPath;

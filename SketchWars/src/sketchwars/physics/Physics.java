@@ -60,7 +60,7 @@ public class Physics
     {
         updateKinematics(elapsedMillis);
         updateBounds();
-		handleCollisions();
+	handleCollisions();
         removeExpiredObjects();
     }
 	

@@ -9,9 +9,9 @@ import sketchwars.physics.*;
  * @author Najash Najimudeen <najash.najm@gmail.com>
  */
 public class RangedProjectile extends AbstractProjectile {
+    private static final float DRAW_SIZE = 0.0098f;
     public static final double RANGE = 100;
     private static final int DAMAGE = 35;
-    private static final float DRAW_SIZE = 10.0f / 1024.0f;
 
     public RangedProjectile(Texture texture, SketchCharacter owner) {
         super(texture, owner, DAMAGE);

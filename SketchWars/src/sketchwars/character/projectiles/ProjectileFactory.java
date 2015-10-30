@@ -20,6 +20,7 @@ import sketchwars.map.AbstractMap;
 public class ProjectileFactory
 {
     private static final float CLUSTER_SCALE = 0.02f;
+    private static final float BAZOOKA_ROCKET_SCALE = 0.04f;
     
     private final SketchWarsWorld world;
     private final Physics physics;
@@ -210,5 +211,36 @@ public class ProjectileFactory
             addProjectile(proj);
         }
         
+    }
+
+    public AbstractProjectile createBazookaRocket(SketchCharacter owner, long vPosition, long vVelocity) {
+        Texture activated = Texture.loadTexture("content/animation/weapons/flameSpriteSheet.png", false);
+        Animation flameAnim = null;
+        try {
+            flameAnim = new Animation(activated, 9, 3, 3, 200, true);
+            flameAnim.start();
+        } catch (AnimationException ex) {
+            System.err.println(ex.getMessage());
+        }
+        
+        Texture texture = Texture.loadTexture("content/char/weapons/bazookaRocket.png", false);
+        BazookaProjectile proj = new BazookaProjectile(texture, flameAnim, this);
+        
+        double ratio = texture.getTextureHeight()/texture.getTextureWidth();
+        float screenAspectRatio = OpenGL.getAspectRatio();
+        int widthP = (int)(BAZOOKA_ROCKET_SCALE * 1024.0f) ;
+        int heightP = (int)(widthP * ratio * screenAspectRatio) ;
+        Collider coll = new GamePixelCollider(proj, BitMaskFactory.createRectangle(widthP, heightP));
+        
+        proj.setCollider(coll);
+
+        double offset = 0.1 * 1024.0;
+        long distance = Vectors.scalarMultiply(offset, Vectors.normalize(vVelocity));
+        
+        setColliderProperties(coll, Vectors.add(vPosition, distance), vVelocity, 1.0f, 0.2f);
+
+        addProjectile(proj);
+        
+        return proj;
     }
 }
