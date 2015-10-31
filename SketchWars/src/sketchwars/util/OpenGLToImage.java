@@ -9,10 +9,10 @@ import sketchwars.OpenGL;
  */
 public class OpenGLToImage implements CoordinateTransform
 {
-    private static final float OPENGL_TOP = (float)OpenGL.GRAPHICS_BOUNDS.getMaxY();
-    private static final float OPENGL_LEFT = (float)OpenGL.GRAPHICS_BOUNDS.getMinX();
-    private static final float OPENGL_WIDTH = (float)OpenGL.GRAPHICS_BOUNDS.getWidth();
-    private static final float OPENGL_HEIGHT = (float)OpenGL.GRAPHICS_BOUNDS.getHeight();
+    private static final float OPENGL_TOP = OpenGL.OPENGL_TOP;
+    private static final float OPENGL_LEFT = OpenGL.OPENGL_LEFT;
+    private static final float OPENGL_WIDTH = OpenGL.OPENGL_WIDTH;
+    private static final float OPENGL_HEIGHT = OpenGL.OPENGL_HEIGHT;
 
     private final float widthRatio;
     private final float heightRatio;

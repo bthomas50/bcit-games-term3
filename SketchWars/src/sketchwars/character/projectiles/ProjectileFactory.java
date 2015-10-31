@@ -14,13 +14,12 @@ import sketchwars.exceptions.*;
 
 import org.joml.Vector2d;
 import org.joml.Vector3d;
-import sketchwars.OpenGL;
 import sketchwars.map.AbstractMap;
 
 public class ProjectileFactory
 {
-    private static final float CLUSTER_SCALE = 0.02f;
-    private static final float BAZOOKA_ROCKET_SCALE = 0.04f;
+    public static final float CLUSTER_SCALE = 0.02f;
+    public static final float BAZOOKA_ROCKET_SCALE = 0.02f;
     
     private final SketchWarsWorld world;
     private final Physics physics;

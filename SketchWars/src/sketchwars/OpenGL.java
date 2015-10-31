@@ -10,13 +10,16 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GLContext;
 import static org.lwjgl.system.MemoryUtil.NULL;
 import sketchwars.input.*;
-import javafx.geometry.BoundingBox;
 /**
  *
  * @author Najash Najimudeen <najash.najm@gmail.com>
  */
 public class OpenGL {
-    public static final BoundingBox GRAPHICS_BOUNDS = new BoundingBox(-1, -1, 2, 2);
+    public static final float OPENGL_TOP = 1;
+    public static final float OPENGL_LEFT = -1;
+    public static final float OPENGL_WIDTH = 2;
+    public static final float OPENGL_HEIGHT = 2;
+    
     private static final int WIDTH = 800;
     private static final int HEIGHT = 600;
 
@@ -142,8 +145,8 @@ public class OpenGL {
         GL11.glPushMatrix();
         GL11.glLoadIdentity();
         
-        GL11.glOrtho(GRAPHICS_BOUNDS.getMinX(), GRAPHICS_BOUNDS.getMaxX(), 
-                GRAPHICS_BOUNDS.getMinY(), GRAPHICS_BOUNDS.getMaxY(), -1.0, 1.0);
+        GL11.glOrtho(OPENGL_LEFT, OPENGL_TOP, 
+                OPENGL_TOP - OPENGL_HEIGHT, OPENGL_LEFT + OPENGL_WIDTH, -1.0, 1.0);
         GL11.glMatrixMode(GL11.GL_MODELVIEW);
         GL11.glPushMatrix();
         GL11.glLoadIdentity();

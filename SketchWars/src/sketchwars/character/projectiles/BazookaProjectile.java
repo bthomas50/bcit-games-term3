@@ -46,7 +46,7 @@ public class BazookaProjectile extends AbstractProjectile {
                 BoundingBox bounds = coll.getBounds();
                 long vCenter = bounds.getCenterVector();
                 long velocity = Vectors.normalize(coll.getVelocity());
-                double distance = 0.04 * 1024;
+                double distance = ProjectileFactory.BAZOOKA_ROCKET_SCALE * 1024;
                 long flamePos = Vectors.subtract(vCenter, Vectors.scalarMultiply(distance, velocity));
                 
                 transform.translation(Vectors.xComp(flamePos) / 1024.0f, (Vectors.yComp(flamePos) / 1024.0f) + Y_OFFSET);
