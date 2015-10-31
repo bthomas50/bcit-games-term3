@@ -56,7 +56,7 @@ public class ProjectileFactory
     public AbstractProjectile createMelee(SketchCharacter owner, long vPosition, long vVelocity)
     {
         Texture texture = Texture.loadTexture("content/char/weapons/meleeBoxing.png", false);
-        MeleeProjectile proj = new MeleeProjectile(texture, owner, Vectors.ixComp(vVelocity));
+        MeleeProjectile proj = new MeleeProjectile(texture, owner, vVelocity, Vectors.ixComp(vVelocity));
         double ratio = texture.getTextureHeight()/texture.getTextureWidth();
         float screenAspectRatio = OpenGL.getAspectRatio();
         int widthP = (int)(WeaponFactory.MELEE_SCALE * 1024.0f);

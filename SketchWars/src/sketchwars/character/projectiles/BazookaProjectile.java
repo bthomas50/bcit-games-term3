@@ -39,7 +39,9 @@ public class BazookaProjectile extends AbstractProjectile {
         super.render();
         
         if (flame != null) {
-                Matrix3d matrix = new Matrix3d();
+                Matrix3d transform = new Matrix3d();
+                Matrix3d rotate = new Matrix3d();
+                Matrix3d scale = new Matrix3d();
                 
                 BoundingBox bounds = coll.getBounds();
                 long vCenter = bounds.getCenterVector();
@@ -47,14 +49,17 @@ public class BazookaProjectile extends AbstractProjectile {
                 double distance = 0.04 * 1024;
                 long flamePos = Vectors.subtract(vCenter, Vectors.scalarMultiply(distance, velocity));
                 
-                matrix.translation(Vectors.xComp(flamePos) / 1024.0f, Vectors.yComp(flamePos) / 1024.0f);
+                transform.translation(Vectors.xComp(flamePos) / 1024.0f, Vectors.yComp(flamePos) / 1024.0f);
                 
                 float angle = (float)Math.atan2(Vectors.yComp(velocity), Vectors.xComp(velocity));
-                matrix.rotate(angle, 0, 0, 1);
+                rotate.rotate(angle, 0, 0, 1);
                 
-                matrix.scale(bounds.getWidth() / 1024.0f, bounds.getHeight() / 1024.0f, 1);
+                scale.scale(bounds.getWidth() / 1024.0f, bounds.getHeight() / 1024.0f, 1);
                 
-                flame.setTransform(matrix, true);
+                transform.mul(rotate);
+                transform.mul(scale);
+                
+                flame.setTransform(transform, true);
                 flame.render();
             }
     }

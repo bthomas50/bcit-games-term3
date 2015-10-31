@@ -33,6 +33,7 @@ public class MeleeWeapon extends AbstractWeapon {
         {
             System.err.println(e.getMessage());
         }
+        
         return projectileFactory.createMelee(owner, vPosition, vVelocity);
     }
 

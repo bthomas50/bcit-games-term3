@@ -49,19 +49,27 @@ public abstract class AbstractProjectile implements GraphicsObject, GameObject{
         if (texture != null) {
             BoundingBox bounds = coll.getBounds();
             long vCenter = bounds.getCenterVector();
-            Matrix3d matrix = new Matrix3d();
+            Matrix3d transform = new Matrix3d();
+            Matrix3d rotate = new Matrix3d();
+            Matrix3d scale = new Matrix3d();
             
-            matrix.translation(Vectors.xComp(vCenter) / 1024.0f, Vectors.yComp(vCenter) / 1024.0f);
+            transform.translation(Vectors.xComp(vCenter) / 1024.0f, Vectors.yComp(vCenter) / 1024.0f);
             
             long velocity = coll.getVelocity();
-            
             float angle = (float)Math.atan2(Vectors.yComp(velocity), Vectors.xComp(velocity));
             
-            matrix.rotate(angle, 0, 0, 1);
+            rotate.rotate(angle, 0, 0, 1);
             
-            matrix.scale(bounds.getWidth() / 1024.0f, bounds.getHeight() / 1024.0f, 1);
-                        
-            texture.draw(matrix);
+            if (angle >= Math.PI/2.0f) {
+                scale.scale(-bounds.getWidth() / 1024.0f, -bounds.getHeight() / 1024.0f, 1);
+            } else {
+                scale.scale(bounds.getWidth() / 1024.0f, bounds.getHeight() / 1024.0f, 1);
+            }
+            
+            transform.mul(rotate);
+            transform.mul(scale);
+            
+            texture.draw(transform);
         }
     }
     

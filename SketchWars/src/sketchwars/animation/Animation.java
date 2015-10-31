@@ -104,8 +104,12 @@ public class Animation implements GraphicsObject, GameObject {
                 } else {
                     Matrix3d trans = new Matrix3d();
                     trans.translation(position);
+                    
+                    Matrix3d scale = new Matrix3d();
+                    scale.scale(dimension.x, dimension.y, 1);
+                    
                     trans.mul(transform);
-                    trans.scale(dimension.x, dimension.y, 1);
+                    trans.mul(scale);
                     
                     spriteSheet.draw(textCoords, trans);
                 }

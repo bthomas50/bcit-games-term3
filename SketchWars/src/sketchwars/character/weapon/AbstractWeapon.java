@@ -54,20 +54,26 @@ public abstract class AbstractWeapon implements Updateable, Drawable {
         if (texture != null) {
             long vReticleOffset = Vectors.createRTheta(0.03, angle);
             
-            Matrix3d matrix = new Matrix3d();
+            Matrix3d transform = new Matrix3d();
+            Matrix3d rotate = new Matrix3d();
+            Matrix3d scale = new Matrix3d();
             
-            matrix.translation(new Vector2d(posX + (float)Vectors.xComp(vReticleOffset), 
+            rotate.rotate(angle, 0, 0, 1);
+            
+            transform.translation(new Vector2d(posX + (float)Vectors.xComp(vReticleOffset), 
                     posY + (float)Vectors.yComp(vReticleOffset)));
             
-            matrix.rotate(angle, 0, 0, 1);
             
             if (angle >= Math.PI/2.0f) {
-                matrix.scale(width, -height, 1);
+                scale.scale(width, -height, 1);
             } else {
-                matrix.scale(width, height, 1);
+                scale.scale(width, height, 1);
             }
             
-            texture.draw(matrix);
+            transform.mul(rotate);
+            transform.mul(scale);
+            
+            texture.draw(transform);
         }
     }
     
@@ -144,7 +150,7 @@ public abstract class AbstractWeapon implements Updateable, Drawable {
         long normalDir = Vectors.normalize(vAimDirection);
         long vVelocity = Vectors.scalarMultiply(getProjectileSpeed(power), normalDir);
         long vPosition = Vectors.add(owner.getCollider().getPosition(), Vectors.scaleToLength(normalDir, 100.0));
-        AbstractProjectile projectile = createProjectile(owner, vPosition, vVelocity);
+        createProjectile(owner, vPosition, vVelocity);
     }
 
     protected abstract AbstractProjectile createProjectile(SketchCharacter owner, long vPosition, long vVelocity);
