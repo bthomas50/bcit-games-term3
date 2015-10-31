@@ -362,8 +362,6 @@ public class SketchCharacter implements GraphicsObject, GameObject, CollisionLis
                     isFacingLeft = false;
                     animationSet.setCurrentAnimation(CharacterAnimations.WALK_RIGHT);
                 }
-            } else {
-                resetAnimationToIdle();
             }
 
             lastMouseX = mouseX;
