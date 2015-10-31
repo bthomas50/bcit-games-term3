@@ -42,6 +42,9 @@ public class SketchCharacter implements GraphicsObject, GameObject, CollisionLis
     private Texture reticleTexture;
     private HealthBar healthBar;
     
+    private float lastMouseX;
+    private boolean active;
+    
     private AnimationSet<CharacterAnimations> animationSet;
     private boolean canJump;
 
@@ -60,7 +63,15 @@ public class SketchCharacter implements GraphicsObject, GameObject, CollisionLis
         vHealthBarOffset = Vectors.create(0, 0.1);
         this.canJump = true;
     }
-    
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
     public void setCollider(CharacterCollider coll) {
         this.coll = coll;
     }
@@ -80,7 +91,7 @@ public class SketchCharacter implements GraphicsObject, GameObject, CollisionLis
     public void update(double delta) {
         updateCharacterInfo();
         computeAngleFromMouse();        
-        handleAnimationInput();
+        checkIfTimeToIdle();
         
         if (animationSet != null) {
             animationSet.setAnimationPosition(new Vector2d(posX, posY));
@@ -307,16 +318,20 @@ public class SketchCharacter implements GraphicsObject, GameObject, CollisionLis
         this.animationSet = animationSet;
     }
 
-    private void handleAnimationInput() {
+    private void checkIfTimeToIdle() {
         int current = (int) System.currentTimeMillis();
         int diff = current - lastActionTime;
   
         if (diff > 200) {
-            if (isFacingLeft) {
-                animationSet.setCurrentAnimation(CharacterAnimations.IDLE_LEFT);
-            } else {
-                animationSet.setCurrentAnimation(CharacterAnimations.IDLE_RIGHT);
-            }
+            resetAnimationToIdle();
+        }
+    }
+    
+    public void resetAnimationToIdle() {
+        if (isFacingLeft) {
+            animationSet.setCurrentAnimation(CharacterAnimations.IDLE_LEFT);
+        } else {
+            animationSet.setCurrentAnimation(CharacterAnimations.IDLE_RIGHT);
         }
     }
 
@@ -331,19 +346,27 @@ public class SketchCharacter implements GraphicsObject, GameObject, CollisionLis
     }
 
     private void computeAngleFromMouse() {
-        float mouseX = MouseHandler.xNormalized;
-        float mouseY = MouseHandler.yNormalized;
-        
-        Vector2d direction = new Vector2d(mouseX - posX, mouseY - posY);
-        direction.normalize();
-        angle = (float) Math.atan2(direction.y, direction.x);
-        
-        if (mouseX < posX) {
-            isFacingLeft = true;
-            animationSet.setCurrentAnimation(CharacterAnimations.WALK_LEFT);
-        } else {
-            isFacingLeft = false;
-            animationSet.setCurrentAnimation(CharacterAnimations.WALK_RIGHT);
+        if (active) {
+            float mouseX = MouseHandler.xNormalized;
+            float mouseY = MouseHandler.yNormalized;
+
+            Vector2d direction = new Vector2d(mouseX - posX, mouseY - posY);
+            direction.normalize();
+            angle = (float) Math.atan2(direction.y, direction.x);
+
+            if (lastMouseX != mouseX) {
+                if (mouseX < posX) {
+                    isFacingLeft = true;
+                    animationSet.setCurrentAnimation(CharacterAnimations.WALK_LEFT);
+                } else {
+                    isFacingLeft = false;
+                    animationSet.setCurrentAnimation(CharacterAnimations.WALK_RIGHT);
+                }
+            } else {
+                resetAnimationToIdle();
+            }
+
+            lastMouseX = mouseX;
         }
     }
 }

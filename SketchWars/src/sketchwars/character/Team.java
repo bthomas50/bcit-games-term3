@@ -131,8 +131,11 @@ public class Team
         int curIdx = startIdx;
         do
         {
+            SketchCharacter pervious = characters.get(curIdx);
+            pervious.setActive(false);
             curIdx = getNextIdx(curIdx);
             SketchCharacter trial = characters.get(curIdx);
+            trial.setActive(true);
             if(!trial.isDead())
             {
                 setActiveCharacter(trial);
