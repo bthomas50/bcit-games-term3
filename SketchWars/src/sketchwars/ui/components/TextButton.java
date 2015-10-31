@@ -35,10 +35,12 @@ public class TextButton extends Button {
 
     @Override
     public void render() {
-        super.render();
-        
-        if (label != null) {
-            label.render();
+        if (visible) {
+            super.render();
+
+            if (label != null) {
+                label.render();
+            }
         }
     }
 }

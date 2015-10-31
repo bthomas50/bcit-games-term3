@@ -56,16 +56,18 @@ public class TextInputbox extends UIComponent implements KeyCharListener {
 
     @Override
     public void render() {
-        super.render();
-        
-        if (selected && borderSelected != null) {
-            borderSelected.draw(null, (float)position.x, (float)position.y, (float)size.x, (float)size.y);
-        } else if (borderNotSelected != null) {
-            borderNotSelected.draw(null, (float)position.x, (float)position.y, (float)size.x, (float)size.y);
-        }
-        
-        if (label != null) {
-            label.draw(null, (float)position.x, (float)position.y, (float)size.x, (float)size.y);
+        if (visible) {
+            super.render();
+
+            if (selected && borderSelected != null) {
+                borderSelected.draw(null, (float)position.x, (float)position.y, (float)size.x, (float)size.y);
+            } else if (borderNotSelected != null) {
+                borderNotSelected.draw(null, (float)position.x, (float)position.y, (float)size.x, (float)size.y);
+            }
+
+            if (label != null) {
+                label.draw(null, (float)position.x, (float)position.y, (float)size.x, (float)size.y);
+            }
         }
     }
 

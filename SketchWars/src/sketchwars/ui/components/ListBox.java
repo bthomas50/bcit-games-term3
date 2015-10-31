@@ -98,6 +98,28 @@ public class ListBox extends UIComponent implements UIActionListener {
         }
     }
     
+    /**
+     * remove the first occurrence of the the given item
+     * @param item 
+     */
+    public void removeItem(String item) {
+        if (item != null) {
+            for (Label lbl: items) {
+                if (lbl.getText().equals(item)) {
+                    items.remove(lbl);
+                    break;
+                }
+            }
+        }
+    }
+    
+    /**
+     * remove all items
+     */
+    public void clearAll() {
+        items.clear();
+    }
+    
     public String getSelectedItem() {
         if (selection != null) {
             return selection.getText();
@@ -119,27 +141,29 @@ public class ListBox extends UIComponent implements UIActionListener {
 
     @Override
     public void render() {
-        renderBackground();
-        
-        int total = items.size();
-        for (int i = 0; i < total; i++) {
-            Label item = items.get(i);
+        if (visible) {
+            renderBackground();
 
-            if (item != null) {
-                if (contains(item)) {
-                    if (selection != null && selection.equals(item)) {
-                        selectionBG.draw(null, (float)item.position.x, (float)item.position.y, (float)size.x, itemHeight);
+            int total = items.size();
+            for (int i = 0; i < total; i++) {
+                Label item = items.get(i);
+
+                if (item != null) {
+                    if (contains(item)) {
+                        if (selection != null && selection.equals(item)) {
+                            selectionBG.draw(null, (float)item.position.x, (float)item.position.y, (float)size.x, itemHeight);
+                        }
+                        item.render();
+                    } else if (containsSomeParts(item)) {
+                        handlePartialLabelRender(item);
                     }
-                    item.render();
-                } else if (containsSomeParts(item)) {
-                    handlePartialLabelRender(item);
                 }
             }
+
+            renderButtons();
+
+            update();
         }
-        
-        renderButtons();
-        
-        update();
     }
     
     public void setSelectionBackground(Texture texture) {
@@ -164,25 +188,11 @@ public class ListBox extends UIComponent implements UIActionListener {
     public void update() {
         super.update();
         
-        handleInput();
-    }
-    
-    @Override
-    public void action(UIComponent component, float x, float y) {
-        if (component != null) {
-            if (component instanceof Label &&
-                !scrollDown.contains(x, y) && !scrollUp.contains(x, y)) {
-                deselectAll();
-                selection = (Label)component;
-            } else if (component instanceof Button) {
-                if (canScrollUp() && component.equals(scrollDown)) {
-                    scroll(SCROLL_RATE, SCROLL_RATE_BTN);
-                } else if (canScrollDown()&& component.equals(scrollUp)) {
-                    scroll(-SCROLL_RATE, SCROLL_RATE_BTN);
-                }
-            }
+        if (mouseInComponent) {
+            handleInput();
         }
     }
+    
 
     private void handlePartialLabelRender(Label label) {
         Texture lblTexure = label.getLabel();
@@ -248,19 +258,8 @@ public class ListBox extends UIComponent implements UIActionListener {
     }
 
     private void scroll(float rate, float scale) {
-        scrollPosition += (rate * scale);   
-        
-        int total = items.size();
-        for (int i = 0; i < total; i++) {
-            Label item = items.get(i);
-
-            if (item != null) {
-                double top = position.y + size.y/2.0;
-                double yCenter = (top - (itemHeight * i)) - itemHeight/2.0 + scrollPosition;
-                Vector2d itemPosition = new Vector2d(position.x, yCenter);
-                item.setPosition(itemPosition);
-            }
-        }
+        scrollPosition += (rate * scale); 
+        updateItemPositions();
     }
 
     private boolean canScrollUp() {
@@ -312,5 +311,50 @@ public class ListBox extends UIComponent implements UIActionListener {
             lbl.setFont(font);
             lbl.setFontColor(fontColor);
         }
+        
+        updateItemPositions();
+    }
+
+    private void updateItemPositions() {
+        int total = items.size();
+        for (int i = 0; i < total; i++) {
+            Label item = items.get(i);
+
+            if (item != null) {
+                double top = position.y + size.y/2.0;
+                double yCenter = (top - (itemHeight * i)) - itemHeight/2.0 + scrollPosition;
+                Vector2d itemPosition = new Vector2d(position.x, yCenter);
+                item.setPosition(itemPosition);
+            }
+        }
+    }
+
+    public boolean setSelection(int index) {
+        if (index >= 0 && index < items.size()) {
+            selection = items.get(index);
+            return true;
+        }
+        
+        return false;
+    }
+
+    @Override
+    public void action(UIComponent component, float x, float y) {
+        if (component != null) {
+            if (component instanceof Label && !isOnScrollButtons(x, y)) {
+                deselectAll();
+                selection = (Label)component;
+            } else if (component instanceof Button) {
+                if (canScrollUp() && component.equals(scrollDown)) {
+                    scroll(SCROLL_RATE, SCROLL_RATE_BTN);
+                } else if (canScrollDown()&& component.equals(scrollUp)) {
+                    scroll(-SCROLL_RATE, SCROLL_RATE_BTN);
+                }
+            }
+        }
+    }
+    
+    boolean isOnScrollButtons(float x, float y) {
+        return scrollDown.contains(x, y) || scrollUp.contains(x, y);
     }
 }

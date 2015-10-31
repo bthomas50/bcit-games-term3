@@ -28,6 +28,7 @@ import sketchwars.scenes.Layer;
 import sketchwars.scenes.Scene;
 import sketchwars.scenes.SceneManager;
 import sketchwars.ui.components.Button;
+import sketchwars.ui.components.ComboBox;
 import sketchwars.ui.components.ListBox;
 import sketchwars.ui.components.TextButton;
 import sketchwars.ui.components.TextInputbox;
@@ -139,6 +140,20 @@ public class MainMenu extends Scene implements UIActionListener {
             group.addUIComponent(b2);
             group.addUIComponent(b3);
             btnLayer.addDrawableObject(group);
+            
+            
+            ComboBox cbox = new ComboBox(new Vector2d(-0.5, 0.6), new Vector2d(0.4, 0.1), null);
+            cbox.setBackgroundFromColor(Color.ORANGE);
+            cbox.getListBox().setBackgroundFromColor(Color.ORANGE);
+            
+            cbox.addItem("test 1");
+            cbox.addItem("test 2");
+            cbox.addItem("test 3");
+            cbox.addItem("test 4");
+            cbox.addItem("test 5");
+            cbox.addItem("test 6");
+            cbox.setSelection(2);
+            btnLayer.addDrawableObject(cbox);
         } catch (SceneException ex) {
             Logger.getLogger(MainMenu.class.getName()).log(Level.SEVERE, null, ex);
         }

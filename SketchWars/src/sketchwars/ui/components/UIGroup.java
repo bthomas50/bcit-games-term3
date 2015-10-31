@@ -53,10 +53,12 @@ public class UIGroup extends UIComponent implements UIActionListener {
 
     @Override
     public void render() {
-        super.render();
-        
-        for (UIComponent uic: components) {
-            uic.render();
+        if (visible) {
+            super.render();
+
+            for (UIComponent uic: components) {
+                uic.render();
+            }
         }
     }
     

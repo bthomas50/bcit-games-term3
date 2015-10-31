@@ -44,10 +44,12 @@ public class Label extends UIComponent {
 
     @Override
     public void render() {
-        super.render();
-        
-        if (label != null) {
-            label.draw(null, (float)position.x, (float)position.y, (float)size.x, (float)size.y);
+        if (visible) {
+            super.render();
+
+            if (label != null) {
+                label.draw(null, (float)position.x, (float)position.y, (float)size.x, (float)size.y);
+            }
         }
     }
 

@@ -35,6 +35,7 @@ public abstract class UIComponent implements GraphicsObject {
     protected boolean handleInput;
     protected boolean enabled;
     protected boolean selected;
+    protected boolean visible;
     
     protected Color fontColor;
     protected Font font;
@@ -57,6 +58,7 @@ public abstract class UIComponent implements GraphicsObject {
         enabled = true;
         
         listeners = new ArrayList<>();
+        visible = true;
     }
     
     public double getLeft() {
@@ -73,6 +75,14 @@ public abstract class UIComponent implements GraphicsObject {
     
     public double getBottom() {
         return position.y - size.y/2;
+    }
+
+    public boolean isVisible() {
+        return visible;
+    }
+
+    public void setVisible(boolean visible) {
+        this.visible = visible;
     }
     
     public boolean contains(UIComponent other)
@@ -197,12 +207,14 @@ public abstract class UIComponent implements GraphicsObject {
     
     @Override
     public void render() {
-        renderBackground();
-        update();
+        if (visible) {
+            renderBackground();
+            update();
+        }
     }
         
     public void update() {
-        if (enabled) {
+        if (enabled && visible) {
             if (handleInput) {
                 handleInput();
             }
@@ -212,16 +224,17 @@ public abstract class UIComponent implements GraphicsObject {
     public abstract void redraw();
     
     private boolean handleInput() {
-        float xMouse = MouseHandler.xNormalized;
-        float yMouse = MouseHandler.yNormalized;
-        
-        mouseInComponent = contains(xMouse, yMouse);
-        
-        if (mouseInComponent && MouseHandler.state == KeyState.RISING) {
-            notifyListeners(xMouse, yMouse);
-            return true;
+        if (visible) {
+            float xMouse = MouseHandler.xNormalized;
+            float yMouse = MouseHandler.yNormalized;
+
+            mouseInComponent = contains(xMouse, yMouse);
+
+            if (mouseInComponent && MouseHandler.state == KeyState.RISING) {
+                notifyListeners(xMouse, yMouse);
+                return true;
+            }
         }
-        
         return false;
     }
     
