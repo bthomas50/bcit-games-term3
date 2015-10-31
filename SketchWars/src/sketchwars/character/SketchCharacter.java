@@ -9,6 +9,7 @@ import sketchwars.graphics.*;
 import sketchwars.game.GameObject;
 import sketchwars.map.AbstractMap;
 import sketchwars.HUD.HealthBar;
+import sketchwars.input.MouseHandler;
 import sketchwars.physics.colliders.CharacterCollider;
 
 /*
@@ -77,8 +78,9 @@ public class SketchCharacter implements GraphicsObject, GameObject, CollisionLis
     
     @Override
     public void update(double delta) {
-        handleAnimationInput();
         updateCharacterInfo();
+        computeAngleFromMouse();        
+        handleAnimationInput();
         
         if (animationSet != null) {
             animationSet.setAnimationPosition(new Vector2d(posX, posY));
@@ -236,17 +238,17 @@ public class SketchCharacter implements GraphicsObject, GameObject, CollisionLis
     }
 
     public void aimUp(double elapsedMillis) {
-        angle += Math.PI * elapsedMillis / 1000.0;
+        /*angle += Math.PI * elapsedMillis / 1000.0;
         //make sure not to aim higher than straight up
         angle = (float)Math.min(angle, Math.PI / 2.0);
-        //System.out.println("angle: " + angle);
+        //System.out.println("angle: " + angle);*/
     }
 
     public void aimDown(double elapsedMillis) {
-        angle -= Math.PI * elapsedMillis / 1000.0;
+        /*angle -= Math.PI * elapsedMillis / 1000.0;
         //make sure not to aim lower than straight down
         angle = (float)Math.max(angle, -Math.PI / 2.0);
-        //System.out.println("angle: " + angle);
+        //System.out.println("angle: " + angle);*/
     }
 
     void moveLeft(double elapsedMillis) 
@@ -284,11 +286,13 @@ public class SketchCharacter implements GraphicsObject, GameObject, CollisionLis
     }
 
     private float getActualFireAngle() {
-        if(isFacingLeft) {
+       /* if(isFacingLeft) {
             return (float)(Math.PI - angle);
         } else {
-            return angle;
-        }
+            
+        }*/
+        
+        return angle;
     }
 
     public Collider getCollider() {
@@ -323,6 +327,23 @@ public class SketchCharacter implements GraphicsObject, GameObject, CollisionLis
             if(otherObj instanceof AbstractMap) {
                 canJump = true;
             }
+        }
+    }
+
+    private void computeAngleFromMouse() {
+        float mouseX = MouseHandler.xNormalized;
+        float mouseY = MouseHandler.yNormalized;
+        
+        Vector2d direction = new Vector2d(mouseX - posX, mouseY - posY);
+        direction.normalize();
+        angle = (float) Math.atan2(direction.y, direction.x);
+        
+        if (mouseX < posX) {
+            isFacingLeft = true;
+            animationSet.setCurrentAnimation(CharacterAnimations.WALK_LEFT);
+        } else {
+            isFacingLeft = false;
+            animationSet.setCurrentAnimation(CharacterAnimations.WALK_RIGHT);
         }
     }
 }

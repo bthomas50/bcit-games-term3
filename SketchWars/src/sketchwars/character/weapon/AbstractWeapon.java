@@ -63,12 +63,12 @@ public abstract class AbstractWeapon implements Updateable, Drawable {
             rotate.rotate(angle, 0, 0, 1);
             transform.translation(new Vector2d(posX + offsetX, posY + offsetY));
             
-            if (angle >= Math.PI/2.0f) {
+            if (angle < -Math.PI/2.0f || angle > Math.PI/2.0f) {
                 scale.scale(width, -height, 1);
             } else {
                 scale.scale(width, height, 1);
             }
-            
+         
             transform.mul(rotate);
             transform.mul(scale);
             

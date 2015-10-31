@@ -34,6 +34,10 @@ public class Input
             currentInput.commands.add(Command.FIRE);
         }
         
+        if(MouseHandler.state == KeyState.FALLING){
+            currentInput.commands.add(Command.FIRE);
+        }
+                
         if(KeyboardHandler.isKeyDown(GLFW_KEY_UP) && !KeyboardHandler.isKeyDown(GLFW_KEY_DOWN)) {
             currentInput.commands.add(Command.AIM_UP);
         } else if(KeyboardHandler.isKeyDown(GLFW_KEY_DOWN) && !KeyboardHandler.isKeyDown(GLFW_KEY_UP)) {
