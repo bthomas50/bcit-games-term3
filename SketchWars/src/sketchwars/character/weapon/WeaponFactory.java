@@ -8,7 +8,6 @@ import sketchwars.graphics.*;
 import sketchwars.character.projectiles.ProjectileFactory;
 
 import java.util.HashMap;
-import sketchwars.OpenGL;
 import sketchwars.game.SketchWarsWorld;
 
 public class WeaponFactory
@@ -41,9 +40,8 @@ public class WeaponFactory
         Texture texture = Texture.loadTexture("content/char/weapons/grenade.png", false);
         
         float ratio = texture.getTextureHeight()/texture.getTextureWidth();
-        float screenAspectRatio = OpenGL.getAspectRatio();
         float width = GRENADE_SCALE;
-        float height = width * ratio * screenAspectRatio;
+        float height = width * ratio;
         
         AbstractWeapon weapon = new GrenadeWeapon(texture, width, height, fact);
         weapon.setAmmo(AbstractWeapon.INFINITE_AMMO);
@@ -54,10 +52,9 @@ public class WeaponFactory
     {
         Texture texture = Texture.loadTexture("content/char/weapons/meleeBoxing.png", false);
         
-        float ratio = texture.getTextureHeight()/texture.getTextureWidth();
-        float screenAspectRatio = OpenGL.getAspectRatio();
+        float ratio = texture.getTextureHeight()/texture.getTextureWidth();;
         float width = MELEE_SCALE;
-        float height = width * ratio * screenAspectRatio;
+        float height = width * ratio;
         
         AbstractWeapon weapon = new MeleeWeapon(texture, width, height, fact);
         weapon.setAmmo(AbstractWeapon.INFINITE_AMMO);
@@ -69,9 +66,8 @@ public class WeaponFactory
         Texture texture = Texture.loadTexture("content/char/weapons/rifle1.png", false);
         
         float ratio = texture.getTextureHeight()/texture.getTextureWidth();
-        float screenAspectRatio = OpenGL.getAspectRatio();
         float width = RIFLE_SCALE;
-        float height = width * ratio * screenAspectRatio;
+        float height = width * ratio;
         
         AbstractWeapon weapon = new RangedWeapon(texture, width, height, fact);
         weapon.setAmmo(AbstractWeapon.INFINITE_AMMO);
@@ -89,9 +85,8 @@ public class WeaponFactory
         }
         
         float ratio = texture.getTextureHeight()/texture.getTextureWidth();
-        float screenAspectRatio = OpenGL.getAspectRatio();
         float width = ERASER_SCALE;
-        float height = width * ratio * screenAspectRatio;
+        float height = width * ratio;
         
         PencilWeapon eraser = new PencilWeapon(texture, eraserImgTex, eraserImage, width, height, fact, true);
         eraser.setAmmo(AbstractWeapon.INFINITE_AMMO);
@@ -111,9 +106,8 @@ public class WeaponFactory
         }
         
         float ratio = texture.getTextureHeight()/texture.getTextureWidth();
-        float screenAspectRatio = OpenGL.getAspectRatio();
         float width = PENCIL_SCALE;
-        float height = width * ratio * screenAspectRatio;
+        float height = width * ratio;
         
         PencilWeapon pencil = new PencilWeapon(texture, pencilImgTex, pencilpointImage, width, height, fact, false);
         pencil.setAmmo(AbstractWeapon.INFINITE_AMMO);
@@ -136,9 +130,8 @@ public class WeaponFactory
         Texture texture = Texture.loadTexture("content/char/weapons/mine.png", false);
         
         float ratio = texture.getTextureHeight()/texture.getTextureWidth();
-        float screenAspectRatio = OpenGL.getAspectRatio();
         float width = MINE_SCALE;
-        float height = width * ratio * screenAspectRatio;
+        float height = width * ratio;
         
         AbstractWeapon weapon = new MineWeapon(texture, width, height, fact);
         weapon.setAmmo(AbstractWeapon.INFINITE_AMMO);
@@ -149,9 +142,8 @@ public class WeaponFactory
         Texture texture = Texture.loadTexture("content/char/weapons/clusterBomb.png", false);
         
         float ratio = texture.getTextureHeight()/texture.getTextureWidth();
-        float screenAspectRatio = OpenGL.getAspectRatio();
         float width = CLUSTER_BOMB_SCALE;
-        float height = width * ratio * screenAspectRatio;
+        float height = width * ratio;
         
         AbstractWeapon weapon = new ClusterBombWeapon(texture, width, height, fact);
         weapon.setAmmo(AbstractWeapon.INFINITE_AMMO);
@@ -162,9 +154,8 @@ public class WeaponFactory
         Texture texture = Texture.loadTexture("content/char/weapons/bazooka.png", false);
         
         float ratio = texture.getTextureHeight()/texture.getTextureWidth();
-        float screenAspectRatio = OpenGL.getAspectRatio();
         float width = BAZOOKA_SCALE;
-        float height = width * ratio * screenAspectRatio;
+        float height = width * ratio;
         
         AbstractWeapon weapon = new BazookaWeapon(texture, width, height, fact);
         weapon.setAmmo(AbstractWeapon.INFINITE_AMMO);
