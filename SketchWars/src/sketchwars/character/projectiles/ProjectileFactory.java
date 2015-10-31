@@ -40,7 +40,7 @@ public class ProjectileFactory
         
         double ratio = texture.getTextureHeight()/texture.getTextureWidth();
         int widthP = (int)(WeaponFactory.GRENADE_SCALE * 1024.0f) ;
-        int heightP = (int)(widthP * ratio) ;
+        int heightP = (int)(widthP) ;
         Collider coll = new GamePixelCollider(proj, BitMaskFactory.createRectangle(widthP, heightP));
         
         proj.setCollider(coll);
@@ -58,7 +58,7 @@ public class ProjectileFactory
         MeleeProjectile proj = new MeleeProjectile(texture, owner, vVelocity, Vectors.ixComp(vVelocity));
         double ratio = texture.getTextureHeight()/texture.getTextureWidth();
         int widthP = (int)(WeaponFactory.MELEE_SCALE * 1024.0f);
-        int heightP = (int)(widthP * ratio);
+        int heightP = (int)(widthP);
         
         Collider coll = new GamePixelCollider(proj, BitMaskFactory.createRectangle(widthP, heightP), CollisionBehaviour.NOTIFY);
         proj.setCollider(coll);
@@ -90,9 +90,8 @@ public class ProjectileFactory
             float posX = (float)Vectors.xComp(vCenter)/1024.0f;
             float posY = (float)Vectors.yComp(vCenter)/1024.0f;
             
-            float screenAspectRatio = OpenGL.getAspectRatio();
             float width = (float) ((radius * 2) / 1024.0f);
-            float height = (float) (((radius * 2) / 1024.0f) * screenAspectRatio);
+            float height = (float) (((radius * 2) / 1024.0f));
             
             explosion.setPosition(new Vector2d(posX, posY));
             explosion.setDimension(new Vector2d(width * 0.8f, height * 0.8f));
@@ -149,7 +148,7 @@ public class ProjectileFactory
         
         double ratio = texture.getTextureHeight()/texture.getTextureWidth();
         int widthP = (int)(WeaponFactory.MINE_SCALE * 1024.0f) ;
-        int heightP = (int)(widthP * ratio) ;
+        int heightP = (int)(widthP) ;
         Collider coll = new GamePixelCollider(proj, BitMaskFactory.createRectangle(widthP, heightP));
         
         proj.setCollider(coll);
@@ -167,7 +166,7 @@ public class ProjectileFactory
         
         double ratio = texture.getTextureHeight()/texture.getTextureWidth();
         int widthP = (int)(WeaponFactory.CLUSTER_BOMB_SCALE * 1024.0f) ;
-        int heightP = (int)(widthP * ratio) ;
+        int heightP = (int)(widthP) ;
         Collider coll = new GamePixelCollider(proj, BitMaskFactory.createRectangle(widthP, heightP));
         
         proj.setCollider(coll);
@@ -184,7 +183,7 @@ public class ProjectileFactory
         
         double ratio = texture.getTextureHeight()/texture.getTextureWidth();
         int widthP = (int)(CLUSTER_SCALE * 1024.0f) ;
-        int heightP = (int)(widthP * ratio) ;
+        int heightP = (int)(widthP) ;
         
         Random rnd = new Random();
         float angle = (float)((Math.PI * 2)/(float)count);
@@ -205,7 +204,6 @@ public class ProjectileFactory
 
             addProjectile(proj);
         }
-        
     }
 
     public AbstractProjectile createBazookaRocket(SketchCharacter owner, long vPosition, long vVelocity) {
@@ -223,7 +221,7 @@ public class ProjectileFactory
         
         double ratio = texture.getTextureHeight()/texture.getTextureWidth();
         int widthP = (int)(BAZOOKA_ROCKET_SCALE * 1024.0f) ;
-        int heightP = (int)(widthP * ratio) ;
+        int heightP = (int)(widthP) ;
         Collider coll = new GamePixelCollider(proj, BitMaskFactory.createRectangle(widthP, heightP));
         
         proj.setCollider(coll);

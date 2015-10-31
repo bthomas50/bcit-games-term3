@@ -10,13 +10,13 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GLContext;
 import static org.lwjgl.system.MemoryUtil.NULL;
 import sketchwars.input.*;
-import sketchwars.physics.BoundingBox;
+import javafx.geometry.BoundingBox;
 /**
  *
  * @author Najash Najimudeen <najash.najm@gmail.com>
  */
 public class OpenGL {
-    public static final BoundingBox GRAPHICS_BOUNDS = new BoundingBox(1, -1, -1, 1);
+    public static final BoundingBox GRAPHICS_BOUNDS = new BoundingBox(-1, -1, 2, 2);
     private static final int WIDTH = 800;
     private static final int HEIGHT = 600;
 
@@ -141,8 +141,9 @@ public class OpenGL {
         GL11.glMatrixMode(GL11.GL_PROJECTION);
         GL11.glPushMatrix();
         GL11.glLoadIdentity();
-        GL11.glOrtho(GRAPHICS_BOUNDS.getLeft(), GRAPHICS_BOUNDS.getRight(), 
-                GRAPHICS_BOUNDS.getTop(), GRAPHICS_BOUNDS.getBottom(), -1.0, 1.0);
+        
+        GL11.glOrtho(GRAPHICS_BOUNDS.getMinX(), GRAPHICS_BOUNDS.getMaxX(), 
+                GRAPHICS_BOUNDS.getMinY(), GRAPHICS_BOUNDS.getMaxY(), -1.0, 1.0);
         GL11.glMatrixMode(GL11.GL_MODELVIEW);
         GL11.glPushMatrix();
         GL11.glLoadIdentity();
@@ -184,8 +185,8 @@ public class OpenGL {
         }
     }
     
-    public static float getAspectRatio() {
+   /* public static float getAspectRatio() {
         Vector2d screen = getDisplaySize();
         return (float) (screen.x/screen.y);
-    }
+    }*/
 }

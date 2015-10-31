@@ -2,6 +2,8 @@ package sketchwars.graphics;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import org.lwjgl.BufferUtils;
 import java.io.File;
@@ -429,6 +431,17 @@ public class Texture {
         Graphics g = newImage.getGraphics();
         g.drawImage(image, 0, 0, width, height, null);
         return newImage;
+    }
+    
+    public static BufferedImage scaleImage(BufferedImage input, float newWidth, float newHeight) {
+        int w = input.getWidth();
+        int h = input.getHeight();
+        BufferedImage output = new BufferedImage((int)Math.ceil(newWidth), (int)Math.ceil(newHeight), input.getType());
+        AffineTransform at = new AffineTransform();
+        at.scale(newWidth / w, newHeight / h);
+        AffineTransformOp scaleOp = new AffineTransformOp(at, AffineTransformOp.TYPE_BILINEAR);
+        scaleOp.filter(input, output);
+        return output;
     }
     
     public static Texture createTextureFromColor(Color color, double x, double y, boolean disableMipMap) {

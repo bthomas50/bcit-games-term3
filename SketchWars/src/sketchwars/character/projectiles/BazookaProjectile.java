@@ -49,7 +49,7 @@ public class BazookaProjectile extends AbstractProjectile {
                 double distance = 0.04 * 1024;
                 long flamePos = Vectors.subtract(vCenter, Vectors.scalarMultiply(distance, velocity));
                 
-                transform.translation(Vectors.xComp(flamePos) / 1024.0f, Vectors.yComp(flamePos) / 1024.0f);
+                transform.translation(Vectors.xComp(flamePos) / 1024.0f, (Vectors.yComp(flamePos) / 1024.0f) + Y_OFFSET);
                 
                 float angle = (float)Math.atan2(Vectors.yComp(velocity), Vectors.xComp(velocity));
                 rotate.rotate(angle, 0, 0, 1);

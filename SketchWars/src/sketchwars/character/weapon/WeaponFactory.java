@@ -8,6 +8,9 @@ import sketchwars.graphics.*;
 import sketchwars.character.projectiles.ProjectileFactory;
 
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import sketchwars.OpenGL;
 import sketchwars.game.SketchWarsWorld;
 
 public class WeaponFactory
@@ -79,9 +82,9 @@ public class WeaponFactory
         Texture eraserImgTex = Texture.loadTexture("content/char/weapons/pencileraserArea.png", false);
         BufferedImage eraserImage = null;
         try {
-            eraserImage = scaleImage(Texture.loadImageFile("content/char/weapons/pencileraserArea.png"), 64, 64);
+            eraserImage = Texture.loadImageFile("content/char/weapons/pencileraserArea.png");
         } catch (IOException ex) {
-            System.err.println(ex.getMessage());
+            System.out.println(ex.getMessage());
         }
         
         float ratio = texture.getTextureHeight()/texture.getTextureWidth();
@@ -100,9 +103,9 @@ public class WeaponFactory
         Texture pencilImgTex = Texture.loadTexture("content/char/weapons/pencilpointArea.png", false);
         BufferedImage pencilpointImage = null;
         try {
-            pencilpointImage = scaleImage(Texture.loadImageFile("content/char/weapons/pencilpointArea.png"), 64, 64);
+            pencilpointImage = Texture.loadImageFile("content/char/weapons/pencileraserArea.png");
         } catch (IOException ex) {
-            System.err.println(ex.getMessage());
+            System.out.println(ex.getMessage());
         }
         
         float ratio = texture.getTextureHeight()/texture.getTextureWidth();
@@ -115,17 +118,7 @@ public class WeaponFactory
         return pencil;
     }
 
-    private static BufferedImage scaleImage(BufferedImage input, float newWidth, float newHeight) {
-        int w = input.getWidth();
-        int h = input.getHeight();
-        BufferedImage output = new BufferedImage((int)Math.ceil(newWidth), (int)Math.ceil(newHeight), input.getType());
-        AffineTransform at = new AffineTransform();
-        at.scale(newWidth / w, newHeight / h);
-        AffineTransformOp scaleOp = new AffineTransformOp(at, AffineTransformOp.TYPE_BILINEAR);
-        scaleOp.filter(input, output);
-        return output;
-    }
-
+    
     private static AbstractWeapon createMine(ProjectileFactory fact) {
         Texture texture = Texture.loadTexture("content/char/weapons/mine.png", false);
         

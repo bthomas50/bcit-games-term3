@@ -69,13 +69,12 @@ public class MeleeProjectile extends AbstractProjectile {
             Matrix3d scale = new Matrix3d();
             
             float xOffset = 0.02f;
-            float yOffset = 0.05f;
             
             if (attackLeft) {
-                tranform.translation(posX - xOffset + sizeX, posY + yOffset);
+                tranform.translation(posX - xOffset + sizeX, posY + Y_OFFSET);
                 scale.scaling(-sizeX, sizeY, 1);
             } else {
-                tranform.translation(posX - xOffset, posY + yOffset);
+                tranform.translation(posX - xOffset, posY + Y_OFFSET);
                 scale.scaling(sizeX, sizeY, 1);
             }
             

@@ -2,12 +2,11 @@ package sketchwars.map;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
-import org.joml.Vector2d;
-import sketchwars.OpenGL;
 import sketchwars.graphics.GraphicsObject;
 import sketchwars.game.GameObject;
 import sketchwars.graphics.Texture;
 import sketchwars.physics.*;
+import sketchwars.util.OpenGLToImage;
 
 /**
  *
@@ -63,38 +62,31 @@ public abstract class AbstractMap implements GraphicsObject, GameObject {
         foreground.dispose();
     }
 
-    public boolean updateTexture(BufferedImage subImage, boolean erase, float posX, float posY, float width, float height) {
-        int widthFG = foregroundImage.getWidth();
-        int heightFG = foregroundImage.getHeight();
-                
+    public boolean updateTexture(BufferedImage subImage, boolean erase, float posX, float posY, float width, float height) {  
+        //opengl coordinates to image coordinates
+        OpenGLToImage glToImg = new OpenGLToImage(foregroundImage);
+        int subNewWidth = (int)glToImg.transformWidth(width);
+        int subNewHeight = (int)glToImg.transformHeight(height);
+        int xImage = (int)(glToImg.transformX(posX) - subNewWidth/2);
+        int yImage = (int)(glToImg.transformY(posY) - subNewHeight/2);
+        
+        //get ratios to resize sub image
         int subWidth = subImage.getWidth();
         int subHeight = subImage.getHeight();
-
-        Vector2d screen = OpenGL.getDisplaySize();
-        float widthRatioFG = (float)(widthFG/screen.x);
-        float heightRatioFG = (float)(heightFG/screen.y);
-        
-        int subNewWidth = (int)(widthRatioFG * screen.x * width/2.0);
-        int subNewHeight = (int)(heightRatioFG * screen.y * height/2.0);
-        int xImage = (int)(widthRatioFG * (screen.x/2.0)*(posX + 1.0)) - subNewWidth/2;
-        int yImage = (int)(heightRatioFG * (screen.y/2.0)*(2.0 - (posY + 1.0))) - subNewHeight/2;
-        
         float widthRatio = (float) subWidth / subNewWidth;
         float heightRatio = (float) subHeight / subNewHeight;
         
-        BoundingBox subImageBounds = new BoundingBox(yImage, xImage, 
+        BoundingBox subImageBounds = new BoundingBox(yImage, xImage,
                 yImage + subNewHeight - 1, xImage + subNewWidth - 1);
         
         BoundingBox fgBounds = new BoundingBox(0, 0, foregroundImage.getHeight() - 1, foregroundImage.getWidth() - 1);
         BoundingBox intersection = fgBounds.intersection(subImageBounds);
         //no part of the foreground image will be affected.
-        if(intersection == BoundingBox.EMPTY) {
-            return false;
-        }
+        if(intersection == BoundingBox.EMPTY) { return false;}
         
+        //get new image coordinates
         xImage = intersection.getLeft();
         yImage = intersection.getTop();
-
         subNewWidth = intersection.getRight() - intersection.getLeft();
         subNewHeight = intersection.getBottom() - intersection.getTop();
         
@@ -106,30 +98,20 @@ public abstract class AbstractMap implements GraphicsObject, GameObject {
                 int xSet = xImage + i;
                 int ySet = yImage + j;
 
-                if (isInImage(subImage, imageI, imageJ) && isInImage(foregroundImage, xSet, ySet)) {
-                    int color = subImage.getRGB(imageI, imageJ);
-                    int alpha = color >> 24;
+                int color = subImage.getRGB(imageI, imageJ);
+                int alpha = color >> 24;
 
-                    if (alpha != 0) { 
-                        if (erase) {
-                            foregroundImage.setRGB(xSet, ySet, Color.TRANSLUCENT);
-                        } else {
-                            foregroundImage.setRGB(xSet, ySet, color);
-                        }
+                if (alpha != 0) { 
+                    if (erase) {
+                        foregroundImage.setRGB(xSet, ySet, Color.TRANSLUCENT);
+                    } else {
+                        foregroundImage.setRGB(xSet, ySet, color);
                     }
                 }
             }
         }
         BufferedImage replacedRegion = foregroundImage.getSubimage(xImage, yImage, subNewWidth, subNewHeight);
         return foreground.setSubTexture(replacedRegion, xImage, yImage, replacedRegion.getWidth(), replacedRegion.getHeight());
-    }
-
-    private static boolean isXInBounds(BufferedImage image, int x) {
-        return x >= 0 && x < image.getWidth();
-    }
-
-    private static boolean isYInBounds(BufferedImage image, int y) {
-        return y >= 0 && y < image.getHeight();
     }
 
     public void updateInPhysics(BufferedImage subImage, boolean erase, float xStart, float yStart, float width, float height) {
@@ -148,9 +130,5 @@ public abstract class AbstractMap implements GraphicsObject, GameObject {
         } else {
             BitMaskFactory.updateFromImageAlpha(subImage, mapBitmask, bb, true);
         }
-    }
-
-    private boolean isInImage(BufferedImage subImage, int x, int y) {
-        return x >= 0 && y >= 0 && x < subImage.getWidth() && y < subImage.getHeight();
     }
 }

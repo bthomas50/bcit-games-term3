@@ -12,6 +12,8 @@ import sketchwars.character.SketchCharacter;
  * @author Najash Najimudeen <najash.najm@gmail.com>
  */
 public abstract class AbstractProjectile implements GraphicsObject, GameObject{
+    protected static final float Y_OFFSET = 0.05f;
+    
     protected Collider coll;
     protected Texture texture;
     
@@ -53,7 +55,7 @@ public abstract class AbstractProjectile implements GraphicsObject, GameObject{
             Matrix3d rotate = new Matrix3d();
             Matrix3d scale = new Matrix3d();
             
-            transform.translation(Vectors.xComp(vCenter) / 1024.0f, Vectors.yComp(vCenter) / 1024.0f);
+            transform.translation(Vectors.xComp(vCenter) / 1024.0f, (Vectors.yComp(vCenter) / 1024.0f) + Y_OFFSET);
             
             long velocity = coll.getVelocity();
             float angle = (float)Math.atan2(Vectors.yComp(velocity), Vectors.xComp(velocity));
