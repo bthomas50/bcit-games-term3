@@ -52,17 +52,16 @@ public abstract class AbstractWeapon implements Updateable, Drawable {
     @Override
     public void render() {
         if (texture != null) {
-            long vReticleOffset = Vectors.createRTheta(0.03, angle);
+            long weaponOffset = Vectors.createRTheta(0.03, angle);
+            double offsetX = Vectors.xComp(weaponOffset);
+            double offsetY = Vectors.yComp(weaponOffset);
             
             Matrix3d transform = new Matrix3d();
             Matrix3d rotate = new Matrix3d();
             Matrix3d scale = new Matrix3d();
             
             rotate.rotate(angle, 0, 0, 1);
-            
-            transform.translation(new Vector2d(posX + (float)Vectors.xComp(vReticleOffset), 
-                    posY + (float)Vectors.yComp(vReticleOffset)));
-            
+            transform.translation(new Vector2d(posX + offsetX, posY + offsetY));
             
             if (angle >= Math.PI/2.0f) {
                 scale.scale(width, -height, 1);

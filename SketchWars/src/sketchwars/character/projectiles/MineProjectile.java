@@ -43,8 +43,9 @@ public class MineProjectile extends AbstractProjectile {
     @Override
     public void update(double elapsedMillis)
     {
-        if (hasExpired() && explodeCall == 1) {
+        if (hasExpired() && explodeCall == 0) {
             factory.createExplosion(coll.getCenterOfMass(), EXPLOSION_RADIUS, EXPLOSION_DAMAGE, explosionAlpha);
+            explodeCall++;
         }
         
         timer.update(elapsedMillis);
@@ -85,11 +86,16 @@ public class MineProjectile extends AbstractProjectile {
     @Override
     protected void handleCollisionWithCharacter(SketchCharacter ch) {
         if (ch != null && activated) {
-            explodeCall++;
             expired = true;
         }
     }
     
     @Override
-    protected void handleCollision(Collider c) { }
+    protected void handleCollision(Collider c) {
+        if (c != null && c.hasAttachedGameObject()) {
+            if (c.getAttachedGameObject() instanceof AbstractProjectile) {
+                expired = true;
+            }
+        }
+    }
 }
