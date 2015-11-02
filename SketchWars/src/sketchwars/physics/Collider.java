@@ -12,7 +12,6 @@ public interface Collider extends PhysicsObject
     void setStaticFriction(float staticFriction);
     float getDynamicFriction();
     void setDynamicFriction(float dynamicFriction);
-    boolean isStatic();
 
     void notify(Collider other);
     void addCollisionListener(CollisionListener list);

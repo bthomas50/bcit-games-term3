@@ -76,12 +76,6 @@ public abstract class AbstractCollider extends BasicPhysicsObject implements Col
     }
 
     @Override
-    public boolean isStatic()
-    {
-        return mass == 0.0;
-    }
-
-    @Override
     public void addCollisionListener(CollisionListener list)
     {
         listeners.add(list);

@@ -37,7 +37,6 @@ public class ProjectileFactory
         Texture texture = Texture.loadTexture("content/char/weapons/grenade.png", false);
         GrenadeProjectile proj = new GrenadeProjectile(texture, this);
         
-        double ratio = texture.getTextureHeight()/texture.getTextureWidth();
         int widthP = (int)(WeaponFactory.GRENADE_SCALE * 1024.0f) ;
         int heightP = (int)(widthP) ;
         Collider coll = new GamePixelCollider(proj, BitMaskFactory.createRectangle(widthP, heightP));
@@ -55,7 +54,6 @@ public class ProjectileFactory
     {
         Texture texture = Texture.loadTexture("content/char/weapons/meleeBoxing.png", false);
         MeleeProjectile proj = new MeleeProjectile(texture, owner, vVelocity);
-        double ratio = texture.getTextureHeight()/texture.getTextureWidth();
         int widthP = (int)(WeaponFactory.MELEE_SCALE * 1024.0f);
         int heightP = (int)(widthP);
         
@@ -74,10 +72,10 @@ public class ProjectileFactory
         RangedProjectile proj = new RangedProjectile(texture, owner);
         BitMask bm = BitMaskFactory.createLine(vPosition, vVelocity, RangedProjectile.RANGE);
         bm.trim();
-        Collider coll = new GamePixelCollider(proj, bm);
+        Collider coll = new GamePixelCollider(proj, bm, CollisionBehaviour.NOTIFY);
         proj.setCollider(coll);
-        
-        setColliderProperties(coll, vPosition, vVelocity, 0.1f, 0.5f);
+
+        setColliderProperties(coll, vPosition, vVelocity, 100.0f, 0.01f);
 
         addProjectile(proj);
         return proj;
@@ -145,14 +143,13 @@ public class ProjectileFactory
         Texture texture = Texture.loadTexture("content/char/weapons/mine.png", false);
         MineProjectile proj = new MineProjectile(texture, acitvatedAnim, this);
         
-        double ratio = texture.getTextureHeight()/texture.getTextureWidth();
         int widthP = (int)(WeaponFactory.MINE_SCALE * 1024.0f) ;
         int heightP = (int)(widthP) ;
         Collider coll = new GamePixelCollider(proj, BitMaskFactory.createRectangle(widthP, heightP));
         
         proj.setCollider(coll);
 
-        setColliderProperties(coll, vPosition, vVelocity, 1.0f, 0.2f);
+        setColliderProperties(coll, vPosition, vVelocity, 5.0f, 0.2f);
 
         addProjectile(proj);
         
@@ -163,14 +160,13 @@ public class ProjectileFactory
         Texture texture = Texture.loadTexture("content/char/weapons/clusterBomb.png", false);
         ClusterBombProjectile proj = new ClusterBombProjectile(texture, this);
         
-        double ratio = texture.getTextureHeight()/texture.getTextureWidth();
         int widthP = (int)(WeaponFactory.CLUSTER_BOMB_SCALE * 1024.0f) ;
         int heightP = (int)(widthP) ;
         Collider coll = new GamePixelCollider(proj, BitMaskFactory.createRectangle(widthP, heightP));
         
         proj.setCollider(coll);
 
-        setColliderProperties(coll, vPosition, vVelocity, 1.0f, 0.2f);
+        setColliderProperties(coll, vPosition, vVelocity, 3.0f, 0.2f);
 
         addProjectile(proj);
         
@@ -180,7 +176,6 @@ public class ProjectileFactory
     public void createClusterMunitions(SketchCharacter owner, int power, long vPosition, int count) {
         Texture texture = Texture.loadTexture("content/char/weapons/clusterBomb.png", false);
         
-        double ratio = texture.getTextureHeight()/texture.getTextureWidth();
         int widthP = (int)(CLUSTER_SCALE * 1024.0f) ;
         int heightP = (int)(widthP) ;
         
@@ -218,7 +213,6 @@ public class ProjectileFactory
         Texture texture = Texture.loadTexture("content/char/weapons/bazookaRocket.png", false);
         BazookaProjectile proj = new BazookaProjectile(texture, flameAnim, this);
         
-        double ratio = texture.getTextureHeight()/texture.getTextureWidth();
         int widthP = (int)(BAZOOKA_ROCKET_SCALE * 1024.0f) ;
         int heightP = (int)(widthP) ;
         Collider coll = new GamePixelCollider(proj, BitMaskFactory.createRectangle(widthP, heightP));
@@ -228,7 +222,7 @@ public class ProjectileFactory
         double offset = 0.1 * 1024.0;
         long distance = Vectors.scalarMultiply(offset, Vectors.normalize(vVelocity));
         
-        setColliderProperties(coll, Vectors.add(vPosition, distance), vVelocity, 1.0f, 0.2f);
+        setColliderProperties(coll, Vectors.add(vPosition, distance), vVelocity, 0.5f, 0.2f);
 
         addProjectile(proj);
         

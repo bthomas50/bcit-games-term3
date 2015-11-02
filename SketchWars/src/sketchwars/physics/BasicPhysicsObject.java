@@ -24,6 +24,11 @@ public class BasicPhysicsObject implements PhysicsObject
 		this.mass = mass;
 	}
     @Override
+    public boolean isStatic()
+    {
+        return mass <= 0.0f;
+    }
+    @Override
     public long getPosition()
     {
         return vPosition;

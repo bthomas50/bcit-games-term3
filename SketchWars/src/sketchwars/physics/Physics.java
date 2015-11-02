@@ -9,8 +9,8 @@ public class Physics
 	public static final double MAX_SPEED = 1000.0f;
 	private List<PhysicsObject> allPhysicsObjects;
     private List<Collider> allColliders;
+    private List<PhysicsEffect> globalEffects;
     private QuadTree collidersTree;
-    private long vGravity = Vectors.create(0, -600);
 	
 	private class ColliderPair
 	{
@@ -49,6 +49,7 @@ public class Physics
         collidersTree = new QuadTree(bounds);
         allColliders = new ArrayList<>();
         allPhysicsObjects = new ArrayList<>();
+        globalEffects = new ArrayList<>();
     }
 
     public BoundingBox getBounds()
@@ -58,9 +59,10 @@ public class Physics
 
     public void update(double elapsedMillis)
     {
+        applyEffects(elapsedMillis);
         updateKinematics(elapsedMillis);
         updateBounds();
-	handleCollisions();
+	    handleCollisions();
         removeExpiredObjects();
     }
 	
@@ -68,22 +70,21 @@ public class Physics
 	{
 		for(PhysicsObject obj : allPhysicsObjects)
 		{
-			//apply global forces
-			applyGravity(obj, elapsedMillis);
-			//wind will go here
-			//friction will go here
-			applySpeedLimit(obj);
 			applyVelocity(obj, elapsedMillis);
+            applySpeedLimit(obj);
 		}
 	}
-	
-	private void applyGravity(PhysicsObject obj, double elapsedMillis)
-	{
-        if(obj.getMass() != 0.0)
+
+    private void applyEffects(double elapsedMillis)
+    {
+        for(PhysicsObject obj : allPhysicsObjects)
         {
-            obj.accelerate(vGravity, elapsedMillis);
+            for(PhysicsEffect eff : globalEffects)
+            {
+                eff.apply(obj, elapsedMillis);
+            }
         }
-	}
+    }
 	
 	private void applyVelocity(PhysicsObject obj, double elapsedMillis)
 	{
@@ -162,14 +163,19 @@ public class Physics
         collidersTree.remove(coll);
     }
 
+    public void addEffect(PhysicsEffect effect)
+    {
+        globalEffects.add(effect);
+    }
+
+    public void removeEffect(PhysicsEffect effect)
+    {
+        globalEffects.remove(effect);
+    }
+
     public List<PhysicsObject> getPhysicsObjects()
     {
         return allPhysicsObjects;
-    }
-
-    public void setGravity(long vGravity)
-    {
-        this.vGravity = vGravity;
     }
 
     private void removeExpiredObjects()

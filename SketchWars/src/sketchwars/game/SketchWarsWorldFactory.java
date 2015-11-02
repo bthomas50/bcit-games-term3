@@ -1,6 +1,7 @@
 package sketchwars.game;
 
 import sketchwars.physics.*;
+import sketchwars.physics.effects.*;
 import sketchwars.scenes.*;
 import sketchwars.character.*;
 import sketchwars.character.weapon.*;
@@ -46,6 +47,7 @@ public class SketchWarsWorldFactory
     public void startGame()
     {
         try {
+            initPhysics();
             preloadTextures();
             createGameScene();
             createMap();
@@ -57,6 +59,12 @@ public class SketchWarsWorldFactory
         {
             System.err.println(e.getMessage());
         }
+    }
+
+    private void initPhysics()
+    {
+        physics.addEffect(new Gravity());
+        physics.addEffect(new Wind(Vectors.create(-200, 0)));
     }
 
     private void createGameScene() throws SceneManagerException

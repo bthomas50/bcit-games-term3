@@ -4,6 +4,7 @@ import sketchwars.Expires;
 
 public interface PhysicsObject extends Expires
 {
+    boolean isStatic();
     void setPosition(long vPos);
     long getPosition();
     void setVelocity(long vVel);
