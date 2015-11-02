@@ -68,10 +68,10 @@ public class MeleeProjectile extends AbstractProjectile {
             float xOffset = 0.02f;
             
             if (attackLeft) {
-                tranform.translation(posX - xOffset + sizeX, posY + Y_OFFSET);
+                tranform.translation(posX - xOffset + sizeX, posY);
                 scale.scaling(-sizeX, sizeY, 1);
             } else {
-                tranform.translation(posX - xOffset, posY + Y_OFFSET);
+                tranform.translation(posX - xOffset, posY);
                 scale.scaling(sizeX, sizeY, 1);
             }
             
