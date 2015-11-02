@@ -1,13 +1,18 @@
 package network;
 
 import entities.ClientEntityForManagementOnServer;
-import packets.*;
-
 import java.io.IOException;
-import java.util.HashMap;
+import java.net.Inet6Address;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.ServerSocket;
+import java.net.SocketException;
 import java.util.Collection;
 import java.util.Enumeration;
-import java.net.*;
+import java.util.HashMap;
+import packets.Packet;
+import packets.PacketStart;
+import packets.PeerInfo;
 
 public class Server implements Runnable {
 	public int port;

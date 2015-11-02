@@ -7,27 +7,18 @@ package sketchwars.ui.menu;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.FontFormatException;
-import java.io.File;
-import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import main.ServerMain;
-import network.DiscoveryServer;
-import network.Server;
 import org.joml.Vector2d;
-import sketchwars.OpenGL;
 import sketchwars.Scenes;
 import sketchwars.SketchWars;
 import sketchwars.exceptions.SceneException;
 import sketchwars.exceptions.SceneManagerException;
 import sketchwars.graphics.GraphicElement;
 import sketchwars.graphics.Texture;
-import sketchwars.input.KeyboardHandler;
 import sketchwars.scenes.Layer;
 import sketchwars.scenes.Scene;
 import sketchwars.scenes.SceneManager;
-import sketchwars.ui.components.Button;
 import sketchwars.ui.components.ComboBox;
 import sketchwars.ui.components.ListBox;
 import sketchwars.ui.components.TextButton;
@@ -118,7 +109,7 @@ public class MainMenu extends Scene implements UIActionListener {
             lb.setFontColor(Color.yellow);
             lb.setSelectionBackgroundColor(Color.RED);
             lb.setBackgroundFromColor(Color.BLACK);
-            lb.addItem("Item 1");
+            lb.addItem("Item 12");
             lb.addItem("Item 2");
             lb.addItem("Item 3");
             lb.addItem("Item 4");
@@ -179,10 +170,6 @@ public class MainMenu extends Scene implements UIActionListener {
     public void action(UIComponent component, float x, float y) {
         if (component.equals(buttonCreate)) {
             try {
-
-
-                
-                
                 sceneManager.setCurrentScene(Scenes.CREATE_MENU);
                 
                 

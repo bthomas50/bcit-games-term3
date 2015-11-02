@@ -1,9 +1,15 @@
 
 package sketchwars.ui.menu;
 
+import entities.ClientEntityForManagementOnServer;
+import java.awt.Color;
 import java.awt.Font;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import main.ServerMain;
+import network.DiscoveryServer;
 import network.Server;
 import org.joml.Vector2d;
 import sketchwars.Scenes;
@@ -14,13 +20,11 @@ import sketchwars.graphics.Texture;
 import sketchwars.scenes.Layer;
 import sketchwars.scenes.Scene;
 import sketchwars.scenes.SceneManager;
-import sketchwars.sound.SoundPlayer;
-import sketchwars.ui.components.Button;
-import sketchwars.ui.components.Label;
+import sketchwars.ui.components.ListBox;
 import sketchwars.ui.components.TextButton;
-import sketchwars.ui.components.TextInputbox;
 import sketchwars.ui.components.UIActionListener;
 import sketchwars.ui.components.UIComponent;
+import sketchwars.ui.components.UIGroup;
 /**
  *
  * @author a00762764
@@ -34,9 +38,19 @@ public class CreateOption extends Scene implements UIActionListener{
     private Texture hoverBtn;
     private Texture pressBtn;
     private Font font;
+    private Server server;
+    private Thread discoveryThread;
+    private boolean Triger = false;
+    Layer btnLayer;
+    
     
     private TextButton backButton;
-    Server server;
+    private TextButton findButton;
+    private ListBox userListBox;
+    private UIGroup group;
+    
+    private Collection<ClientEntityForManagementOnServer> userList;
+    
     
     public CreateOption(SceneManager<Scenes> sceneManager) {
         this.sceneManager = sceneManager;
@@ -47,18 +61,13 @@ public class CreateOption extends Scene implements UIActionListener{
         createBackground();
     }
     
-    public CreateOption(SceneManager<Scenes> sceneManager, Server serv) {
+    public CreateOption(SceneManager<Scenes> sceneManager, Server server) {
         this.sceneManager = sceneManager;
-        server = serv;
+        this.server = server;
         font = new Font("Comic Sans MS", Font.ITALIC, 12);
         createLayers();
         createButtons();
         createBackground();
-    }
-    
-    private void setServer(Server server)
-    {
-        this.server= server;
     }
     
     private void createLayers()
@@ -81,31 +90,65 @@ public class CreateOption extends Scene implements UIActionListener{
         
 
         Vector2d size = new Vector2d(0.3f,0.12f);
-
+        
         try {
-            Layer btnLayer = getLayer(MenuLayers.BUTTONS);
-
             
-            
+            btnLayer = getLayer(MenuLayers.BUTTONS);
             //back 
             backButton = new TextButton("BACK",font,new Vector2d(0.03, -0.30), size,normalBtn,hoverBtn,pressBtn);
             btnLayer.addDrawableObject(backButton);
             backButton.addActionListener(this);
             
-            //player list
-            server.getAllClients();
-            Label user = new Label("guy name",font,new Vector2d(0.03, -0.40), size,null);
-            btnLayer.addDrawableObject(user);
+            //find 
+            findButton = new TextButton("FIND",font,new Vector2d(0.03, -0.20), size,normalBtn,hoverBtn,pressBtn);
+            btnLayer.addDrawableObject(findButton);
+            findButton.addActionListener(this);
+            
+
+            //Player List
+            group = new UIGroup(null, null);
+            userListBox = new ListBox(new Vector2d(0.5, 0), new Vector2d(0.4, 0.4),  0.1f, null);
+            userListBox.setFontColor(Color.yellow);
+            userListBox.setSelectionBackgroundColor(Color.RED);
+            userListBox.setBackgroundFromColor(Color.BLACK);
+ 
+            
+            
             
         } catch (SceneException ex) {
             Logger.getLogger(MainMenu.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }
-    
+   @Override
+    public void update(double delta) {
+        super.update(delta);
+
+        if(Triger==true)
+        {
+            //Find latest connected players
+            userList = server.getAllClients();
+            //Every update clean list values
+            userListBox.clearAll();
+            Iterator i = userList.iterator();
+            while (i.hasNext())
+            {
+                //Added clients to list 
+                ClientEntityForManagementOnServer name = (ClientEntityForManagementOnServer)i.next();
+                userListBox.addItem(name.getUsername());
+                userListBox.addActionListener(this);
+                group.addUIComponent(userListBox);
+                btnLayer.addDrawableObject(userListBox);
+
+            }
+            
+        }
+
+    }
+            
     private void createBackground() {
         
-        backgroundImage = Texture.loadTexture("content/menu/sketchWars_bg.jpg", false);
+        backgroundImage = Texture.loadTexture("content/menu/sketchWars2_bg.jpg", false);
         Vector2d size = new Vector2d(2,2);
         try {
             Layer bgLayer = getLayer(MenuLayers.BACKGROUND);
@@ -118,16 +161,42 @@ public class CreateOption extends Scene implements UIActionListener{
         }
     }
     
+    private void startGame()
+    {
+        server = new Server(6969);
+        
+        new Thread(server).start();
+        discoveryThread = new DiscoveryServer();
+        discoveryThread.start();
+        ServerMain.tryToRunClient(server.localAddress, 6969, "Host");
+        //userList = server.getAllClients();
+        //userList = server.getAllClients();
+        Triger = true;
+
+    }
+    
+
     @Override
     public void action(UIComponent component, float x, float y) {
-        if (component.equals(backButton)) {
-            try {
+       if (component.equals(backButton)) {
+            //
+            //discoveryThread.
+            if(server !=null)
+            {
+                Triger = false;
+                server.stop();
+            }
+            try 
+            {
                 sceneManager.setCurrentScene(Scenes.MAIN_MENU);
-            } catch (SceneManagerException ex) {
+            } 
+            catch (SceneManagerException ex) 
+            {
                 Logger.getLogger(OptionMenu.class.getName()).log(Level.SEVERE, null, ex);
             }
-        } else if (component.equals(backButton)) {
-            SoundPlayer.pause(0);
+        } else if (component.equals(findButton)) {
+            startGame();
         }
+    
     }
 }

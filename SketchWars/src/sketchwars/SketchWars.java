@@ -2,6 +2,7 @@ package sketchwars;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import network.Server;
 import sketchwars.exceptions.SceneManagerException;
 import sketchwars.game.SketchWarsWorld;
 import sketchwars.game.SketchWarsWorldFactory;
@@ -12,6 +13,7 @@ import sketchwars.physics.Physics;
 import sketchwars.scenes.Scene;
 import sketchwars.scenes.SceneManager;
 import sketchwars.sound.SoundPlayer;
+import sketchwars.ui.menu.CreateOption;
 import sketchwars.ui.menu.MainMenu;
 import sketchwars.ui.menu.OptionMenu;
 import static sketchwars.util.Config.appendToLibraryPath;
@@ -27,6 +29,7 @@ public class SketchWars {
     private OpenGL openGL;
     private SketchWarsWorld world;
     private Physics physics;
+    private Server server;
     
     private SceneManager<Scenes> sceneManager;
     private double lastTime;
@@ -61,14 +64,14 @@ public class SketchWars {
         new Thread(server).start();
         new DiscoveryServer().start();
         ServerMain.tryToRunClient(server.localAddress, 6969, "Host");
-       
+       */
         CreateOption createMenuScene = new CreateOption(sceneManager, server);
-         */
+        
         try {
             sceneManager.addScene(Scenes.GAME, gameScene);
             sceneManager.addScene(Scenes.MAIN_MENU, mainMenuScene);
             sceneManager.addScene(Scenes.SUB_MENU, optionMenuScene);
-            //sceneManager.addScene(Scenes.CREATE_MENU, createMenuScene);
+            sceneManager.addScene(Scenes.CREATE_MENU, createMenuScene);
             
             sceneManager.setCurrentScene(Scenes.MAIN_MENU);
         } catch (SceneManagerException ex) {
