@@ -45,6 +45,12 @@ public class Timer
         remainingMillis = startingMillis;
     }
 
+    public void restart()
+    {
+        state = State.RUNNING;
+        remainingMillis = startingMillis;
+    }
+
     public boolean hasElapsed()
     {
         return remainingMillis <= 0.0;

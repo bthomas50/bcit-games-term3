@@ -192,7 +192,6 @@ public class SketchWarsWorldFactory
             charCollider = new CharacterCollider(character, BitMaskFactory.createRectangle(100, 120));
         }
         
-        charCollider.addCollisionListener(character);
         charCollider.setPosition(vPosition);
         charCollider.setMass(10);
         charCollider.setElasticity(0.0f);

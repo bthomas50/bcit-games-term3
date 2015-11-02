@@ -16,7 +16,7 @@ import sketchwars.physics.colliders.CharacterCollider;
  *
  * @author Najash Najimudeen <najash.najm@gmail.com>
  */
-public class SketchCharacter implements GraphicsObject, GameObject, CollisionListener {
+public class SketchCharacter implements GraphicsObject, GameObject {
     public static final int DEFAULT_MAX_HEALTH = 100;
     private float posX;
     private float posY;
@@ -46,7 +46,6 @@ public class SketchCharacter implements GraphicsObject, GameObject, CollisionLis
     private boolean active;
     
     private AnimationSet<CharacterAnimations> animationSet;
-    private boolean canJump;
 
     public SketchCharacter() {
         this(DEFAULT_MAX_HEALTH, DEFAULT_MAX_HEALTH);
@@ -61,7 +60,6 @@ public class SketchCharacter implements GraphicsObject, GameObject, CollisionLis
         this.isFacingLeft = false;//start facing right.
         reticleTexture = Texture.loadTexture("content/misc/reticle.png", false);
         vHealthBarOffset = Vectors.create(0, 0.1);
-        this.canJump = true;
     }
 
     public boolean isActive() {
@@ -90,6 +88,7 @@ public class SketchCharacter implements GraphicsObject, GameObject, CollisionLis
     @Override
     public void update(double delta) {
         updateCharacterInfo();
+        coll.updateJumpTimer(delta);
         computeAngleFromMouse();        
         checkIfTimeToIdle();
         
@@ -282,8 +281,7 @@ public class SketchCharacter implements GraphicsObject, GameObject, CollisionLis
     
     void jump(double elapsedMillis)
     {
-        if (canJump) {
-            coll.jump(elapsedMillis);
+        if (coll.tryJump(elapsedMillis)) {
             
             lastActionTime = (int) System.currentTimeMillis();
             if (isFacingLeft) {
@@ -291,8 +289,6 @@ public class SketchCharacter implements GraphicsObject, GameObject, CollisionLis
             } else {
                 animationSet.setCurrentAnimation(CharacterAnimations.JUMP_RIGHT);
             }
-            
-            canJump = false;
         } 
     }
 
@@ -332,16 +328,6 @@ public class SketchCharacter implements GraphicsObject, GameObject, CollisionLis
             animationSet.setCurrentAnimation(CharacterAnimations.IDLE_LEFT);
         } else {
             animationSet.setCurrentAnimation(CharacterAnimations.IDLE_RIGHT);
-        }
-    }
-
-    @Override
-    public void collided(Collider thisColl, Collider otherColl) {
-        if(otherColl.hasAttachedGameObject()) {
-            GameObject otherObj = otherColl.getAttachedGameObject();
-            if(otherObj instanceof AbstractMap) {
-                canJump = true;
-            }
         }
     }
 
