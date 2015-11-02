@@ -261,7 +261,7 @@ public class SketchCharacter implements GraphicsObject, GameObject {
         //System.out.println("angle: " + angle);*/
     }
 
-    void moveLeft(double elapsedMillis) 
+    public void moveLeft(double elapsedMillis) 
     {
         this.isFacingLeft = true;
         coll.moveLeft(elapsedMillis);
@@ -270,7 +270,7 @@ public class SketchCharacter implements GraphicsObject, GameObject {
         animationSet.setCurrentAnimation(CharacterAnimations.WALK_LEFT);
     }
 
-    void moveRight(double elapsedMillis)
+    public void moveRight(double elapsedMillis)
     {
         this.isFacingLeft = false;
         coll.moveRight(elapsedMillis);
@@ -279,7 +279,12 @@ public class SketchCharacter implements GraphicsObject, GameObject {
         animationSet.setCurrentAnimation(CharacterAnimations.WALK_RIGHT);
     }
     
-    void jump(double elapsedMillis)
+    public void stand()
+    {
+        coll.stand();
+    }
+
+    public void jump(double elapsedMillis)
     {
         if (coll.tryJump(elapsedMillis)) {
             

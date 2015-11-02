@@ -8,6 +8,10 @@ public interface Collider extends PhysicsObject
     long getCenterOfMass();
     float getElasticity();
     void setElasticity(float ela);
+    float getStaticFriction();
+    void setStaticFriction(float staticFriction);
+    float getDynamicFriction();
+    void setDynamicFriction(float dynamicFriction);
     boolean isStatic();
 
     void notify(Collider other);

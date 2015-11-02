@@ -28,8 +28,10 @@ public class Input
             currentInput.commands.add(Command.MOVE_LEFT);
         } else if(KeyboardHandler.isKeyDown(GLFW_KEY_D) && !KeyboardHandler.isKeyDown(GLFW_KEY_A)) {
             currentInput.commands.add(Command.MOVE_RIGHT);
+        } else {
+            currentInput.commands.add(Command.STAND);
         }
-        
+
         if(KeyboardHandler.isKeyDown(GLFW_KEY_SPACE)){
             currentInput.commands.add(Command.FIRE);
         }

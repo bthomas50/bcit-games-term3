@@ -92,8 +92,11 @@ public class SketchWarsWorldFactory
             
             MapCollider mapCollider = new MapCollider(mapImageMask);
             mapCollider.setElasticity(0.5f);
+            mapCollider.setStaticFriction(1.0f);
+            mapCollider.setDynamicFriction(1.0f);
             TestMap map = new TestMap(mapCollider, mapBGTexture, mapFGTexture, mapImage);
             mapCollider.attachGameObject(map);
+
             
             try {
                 gameScene.getLayer(GameLayers.MAP).addDrawableObject(map);

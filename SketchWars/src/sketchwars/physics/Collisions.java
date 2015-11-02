@@ -106,8 +106,8 @@ public class Collisions
         }
         else
         {
-            double clipDistance1 = collision.getProjectedLength(vNorm1) + 0.5;
-            double clipDistance2 = collision.getProjectedLength(vNorm2) + 0.5;
+            double clipDistance1 = collision.getProjectedLength(vNorm1);
+            double clipDistance2 = collision.getProjectedLength(vNorm2);
             double massFraction1 = coll1.getMass() / (coll1.getMass() + coll2.getMass());
             double massFraction2 = coll2.getMass() / (coll1.getMass() + coll2.getMass());
             if(clipDistance1 < clipDistance2)
@@ -126,7 +126,7 @@ public class Collisions
     private static double findSmallestAcceptableClipDistance(Collider staticColl, Collider dynamicColl, BitMask collision, long vDirection) 
     {
         long vSavedPos = dynamicColl.getPosition();
-        double maxClip = collision.getProjectedLength(vDirection) + 0.5;
+        double maxClip = collision.getProjectedLength(vDirection);
         for(double test = 1.0; test <= maxClip - 1; test += 1.0)
         {
             long vTranslation = scalarMultiply(test, vDirection);
@@ -134,7 +134,7 @@ public class Collisions
             if(!hasCollided(staticColl, dynamicColl))
             {
                 dynamicColl.setPosition(vSavedPos);
-                return test + 0.5;
+                return test;
             }
         }
         dynamicColl.setPosition(vSavedPos);
@@ -180,10 +180,12 @@ public class Collisions
         double invMass1 = getInvMass(coll1);
         double invMass2 = getInvMass(coll2);
         ret.impulse = dot(vRelative, ret.vTangent) / (invMass1 + invMass2);
-        if(Math.abs(ret.impulse) >= Math.abs(momImpulse) * 0.1)
+        float combinedStatic = coll1.getStaticFriction() * coll2.getStaticFriction();
+        if(Math.abs(ret.impulse) >= Math.abs(momImpulse) * combinedStatic)
         {
             //System.out.println(ret.impulse + ", " + momImpulse);
-            ret.impulse = Math.abs(momImpulse) * Math.signum(ret.impulse) * 0.03;
+            float combinedDynamic = coll1.getDynamicFriction() * coll2.getDynamicFriction();
+            ret.impulse = Math.abs(momImpulse) * Math.signum(ret.impulse) * combinedDynamic;
         }
         ret.vAcceleration1 = scalarMultiply(ret.vTangent, invMass1 * ret.impulse);
         ret.vAcceleration2 = scalarMultiply(ret.vTangent, -invMass2 * ret.impulse);

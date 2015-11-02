@@ -16,6 +16,12 @@ public class CharacterCollider extends GamePixelCollider implements CollisionLis
     private static final float JUMP_SPEED_THRESHOLD = 200;
     private static final int JUMP_TIME_MILLIS = 500;
 
+    private static final float STANDING_FRICTION_STATIC = 0.4f;
+    private static final float WALKING_FRICTION_STATIC = 0.2f;
+
+    private static final float STANDING_FRICTION_DYNAMIC = 0.2f;
+    private static final float WALKING_FRICTION_DYNAMIC = 0.01f;
+
     private boolean hasHitGround = false;
     private boolean hasJumpTimeElapsed = false;
     private Timer jumpTimer = new Timer(JUMP_TIME_MILLIS);
@@ -51,6 +57,7 @@ public class CharacterCollider extends GamePixelCollider implements CollisionLis
             deltaX = MAX_RUN_ACCELERATION * Math.signum(deltaX);
         }
         accelerate(Vectors.create(deltaX, 0), elapsedMillis);
+        useWalkingFrictionValues();
     }
     
     public void moveRight(double elapsedMillis)
@@ -63,8 +70,21 @@ public class CharacterCollider extends GamePixelCollider implements CollisionLis
             deltaX = MAX_RUN_ACCELERATION * Math.signum(deltaX);
         }
         accelerate(Vectors.create(deltaX, 0), elapsedMillis);
+        useWalkingFrictionValues();
     }
     
+    public void stand() 
+    {
+        setStaticFriction(STANDING_FRICTION_STATIC);
+        setDynamicFriction(STANDING_FRICTION_DYNAMIC);
+    }
+
+    private void useWalkingFrictionValues()
+    {
+        setStaticFriction(WALKING_FRICTION_STATIC);
+        setDynamicFriction(WALKING_FRICTION_DYNAMIC);
+    }
+
     public boolean tryJump(double elapsedMillis)
     {
         if(canJump()) 

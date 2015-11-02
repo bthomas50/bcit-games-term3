@@ -72,6 +72,9 @@ public class Team
             case MOVE_RIGHT:
                active.moveRight(elapsedMillis);
                 break;
+            case STAND:
+                active.stand();
+                break;
             case JUMP:
                 active.jump(elapsedMillis);
                 break;

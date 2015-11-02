@@ -6,6 +6,7 @@ public enum Command
     CROUCH, 
     MOVE_LEFT, 
     MOVE_RIGHT, 
+    STAND,
     FIRE, 
     AIM_UP, 
     AIM_DOWN, 
@@ -17,13 +18,5 @@ public enum Command
     SWITCH_6,
     SWITCH_7,
     SWITCH_8,
-    SWITCH_9,
-    LOWER_BGM,
-    HIGHER_BGM,
-    MAIN_MENU_PLAY,
-    MAIN_MENU_OPTIONS,
-    MAIN_MENU_CREATE,
-    MAIN_MENU_EXIT,
-    OPTION_MENU_MUSIC,
-    OPTION_MENU_BACK
+    SWITCH_9
 }

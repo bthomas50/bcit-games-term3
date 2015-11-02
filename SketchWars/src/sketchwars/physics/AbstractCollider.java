@@ -12,6 +12,8 @@ public abstract class AbstractCollider extends BasicPhysicsObject implements Col
 {
     private List<CollisionListener> listeners;
     private float elasticity;
+    private float staticFriction;
+    private float dynamicFriction;
     private GameObject attached;
     private CollisionBehaviour behaviour;
 
@@ -24,6 +26,9 @@ public abstract class AbstractCollider extends BasicPhysicsObject implements Col
     {
         this.behaviour = behaviour;
         listeners = new ArrayList<CollisionListener>();
+        elasticity = 0.0f;
+        staticFriction = 0.0f;
+        dynamicFriction = 0.0f;
     }
 
     @Override
@@ -44,6 +49,30 @@ public abstract class AbstractCollider extends BasicPhysicsObject implements Col
     public void setElasticity(float ela)
     {
         this.elasticity = ela;
+    }
+
+    @Override
+    public float getStaticFriction()
+    {
+        return this.staticFriction;
+    }
+
+    @Override
+    public void setStaticFriction(float staticFriction)
+    {
+        this.staticFriction = staticFriction;
+    }
+
+    @Override
+    public float getDynamicFriction()
+    {
+        return this.dynamicFriction;
+    }
+
+    @Override
+    public void setDynamicFriction(float dynamicFriction)
+    {
+        this.dynamicFriction = dynamicFriction;
     }
 
     @Override
