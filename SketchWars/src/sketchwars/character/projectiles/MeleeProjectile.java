@@ -18,20 +18,17 @@ public class MeleeProjectile extends AbstractProjectile {
     private HashSet<SketchCharacter> damagedChars;
     private HashSet<Collider> pushedObjects;
     private Timer timer;
-    private int xDir;
     
     private boolean attackLeft;
     
-    public MeleeProjectile(Texture texture, SketchCharacter owner, long vVelocity, int directionX) {
+    public MeleeProjectile(Texture texture, SketchCharacter owner, long vVelocity) {
         super(texture, owner, DAMAGE);
         timer = new Timer(LIFESPAN);
         timer.start();
         damagedChars = new HashSet<>();
         pushedObjects = new HashSet<>();
-        xDir = directionX;
         
-        float angle = (float)Math.atan2(Vectors.yComp(vVelocity), Vectors.xComp(vVelocity));
-        attackLeft = (angle >= Math.PI/2.0f);
+        attackLeft = (Vectors.xComp(vVelocity) <= 0);
     }
 
     @Override
@@ -84,14 +81,17 @@ public class MeleeProjectile extends AbstractProjectile {
         }
     }
 
-    
-    
     @Override
     protected void handleCollision(Collider c) {
         if(!pushedObjects.contains(c))
         {
-            c.applyForce(Vectors.create(1000 * xDir, 200), 1000.0);
+            c.applyForce(Vectors.create(4000 * getXDir(), 2000), 1000.0);
             pushedObjects.add(c);
         }
+    }
+
+    private int getXDir()
+    {
+        return attackLeft ? -1 : 1;
     }
 }
