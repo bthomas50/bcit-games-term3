@@ -104,7 +104,7 @@ public class MainMenu extends Scene implements UIActionListener {
             buttonExit.addActionListener(this);  
             
             ////////////////////test code to show how to use components////////////////////////////////////
-            UIGroup group = new UIGroup(null, null);
+            UIGroup group = new UIGroup(new Vector2d(), new Vector2d(2, 2));
             ListBox lb = new ListBox(new Vector2d(0.5, 0), new Vector2d(0.4, 0.4),  0.1f, null);
             lb.setFontColor(Color.yellow);
             lb.setSelectionBackgroundColor(Color.RED);
@@ -144,7 +144,8 @@ public class MainMenu extends Scene implements UIActionListener {
             cbox.addItem("test 5");
             cbox.addItem("test 6");
             cbox.setSelection(2);
-            btnLayer.addDrawableObject(cbox);
+            
+            group.addUIComponent(cbox);
         } catch (SceneException ex) {
             Logger.getLogger(MainMenu.class.getName()).log(Level.SEVERE, null, ex);
         }

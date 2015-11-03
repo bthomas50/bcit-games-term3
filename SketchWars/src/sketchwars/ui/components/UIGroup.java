@@ -71,10 +71,9 @@ public class UIGroup extends UIComponent implements UIActionListener {
     @Override
     public void action(UIComponent component, float x, float y) {
         if (component != null) {
-            if (component instanceof UIGroup) {
-                setSelected(true);
-            } else {
-                deselectAll();
+            deselectAll();
+            
+            if (!(component instanceof UIGroup)) {
                 component.setSelected(true);
             }
         }

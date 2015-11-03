@@ -127,18 +127,6 @@ public class ListBox extends UIComponent implements UIActionListener {
         return null;
     }
     
-    private void deselectAll() {
-        selection = null;
-        int total = items.size();
-        for (int i = 0; i < total; i++) {
-            Label item = items.get(i);
-
-            if (item != null) {
-                item.setBackground(null);
-            }
-        }
-    }
-
     @Override
     public void render() {
         if (visible) {
@@ -337,12 +325,19 @@ public class ListBox extends UIComponent implements UIActionListener {
         
         return false;
     }
+    
+    public int getSelection() {
+        if (selection != null) {
+            return items.indexOf(selection);
+        }
+        
+        return -1;
+    }
 
     @Override
     public void action(UIComponent component, float x, float y) {
-        if (component != null) {
+        if (component != null) {            
             if (component instanceof Label && !isOnScrollButtons(x, y)) {
-                deselectAll();
                 selection = (Label)component;
             } else if (component instanceof Button) {
                 if (canScrollUp() && component.equals(scrollDown)) {
