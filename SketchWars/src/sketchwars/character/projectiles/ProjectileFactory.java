@@ -53,14 +53,14 @@ public class ProjectileFactory
     public AbstractProjectile createMelee(SketchCharacter owner, long vPosition, long vVelocity)
     {
         Texture texture = Texture.loadTexture("content/char/weapons/meleeBoxing.png", false);
-        MeleeProjectile proj = new MeleeProjectile(texture, owner, vVelocity);
+        MeleeProjectile proj = new MeleeProjectile(texture, owner);
         int widthP = (int)(WeaponFactory.MELEE_SCALE * 1024.0f);
         int heightP = (int)(widthP);
         
         Collider coll = new GamePixelCollider(proj, BitMaskFactory.createRectangle(widthP, heightP), CollisionBehaviour.NOTIFY);
         proj.setCollider(coll);
 
-        setColliderProperties(coll, vPosition, Vectors.V_ZERO, 0.0f, 1.0f);
+        setColliderProperties(coll, vPosition, vVelocity, 0.0f, 1.0f);
 
         addProjectile(proj);
         return proj;
@@ -117,8 +117,10 @@ public class ProjectileFactory
     protected void setColliderProperties(Collider coll, long vPosition, long vVelocity, float mass, float elasticity)
     {
         BoundingBox projBounds = coll.getBounds();
-        long halfSize = Vectors.create((-projBounds.getWidth()/2.0f), (projBounds.getHeight()/2.0f));
-        coll.setPosition(Vectors.add(vPosition, halfSize));
+        long halfSize = Vectors.create(projBounds.getWidth()/2.0, (projBounds.getHeight()/2.0) + 50);
+        long center = Vectors.add(vPosition, halfSize);
+                
+        coll.setPosition(center);
         coll.setVelocity(vVelocity);
         coll.setMass(mass);
         coll.setElasticity(elasticity);

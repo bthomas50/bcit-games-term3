@@ -7,7 +7,6 @@ import sketchwars.physics.*;
 import sketchwars.character.weapon.AbstractWeapon;
 import sketchwars.graphics.*;
 import sketchwars.game.GameObject;
-import sketchwars.map.AbstractMap;
 import sketchwars.HUD.HealthBar;
 import sketchwars.input.MouseHandler;
 import sketchwars.physics.colliders.CharacterCollider;

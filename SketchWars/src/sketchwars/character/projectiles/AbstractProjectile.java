@@ -60,8 +60,8 @@ public abstract class AbstractProjectile implements GraphicsObject, GameObject{
             
             rotate.rotate(angle, 0, 0, 1);
             
-            if (angle >= Math.PI/2.0f) {
-                scale.scale(-bounds.getWidth() / 1024.0f, -bounds.getHeight() / 1024.0f, 1);
+            if (angle < -Math.PI/2.0f || angle > Math.PI/2.0f) {
+                scale.scale(bounds.getWidth() / 1024.0f, -bounds.getHeight() / 1024.0f, 1);
             } else {
                 scale.scale(bounds.getWidth() / 1024.0f, bounds.getHeight() / 1024.0f, 1);
             }

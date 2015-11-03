@@ -105,8 +105,8 @@ public class SketchWars {
                 Input.update();
                 openGL.beginUpdate();
                 double time = System.nanoTime(); //calculate frame length in milliseconds
-                double delta = Math.min((time - lastTime) / MILLION, MAX_FRAME_DELTA);
-                
+                //double delta = Math.min((time - lastTime) / MILLION, MAX_FRAME_DELTA);
+                double delta = 1;
                 Scenes current = sceneManager.getCurrentSceneType();
                 if (sceneManager != null && current != null) {
                     sceneManager.render();//call the main graphics renderer
