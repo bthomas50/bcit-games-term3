@@ -5,11 +5,9 @@ import entities.ClientEntityForManagementOnServer;
 import java.awt.Color;
 import java.awt.Font;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import main.ServerMain;
-import network.DiscoveryServer;
 import network.Server;
 import org.joml.Vector2d;
 import sketchwars.Scenes;
@@ -20,8 +18,11 @@ import sketchwars.graphics.Texture;
 import sketchwars.scenes.Layer;
 import sketchwars.scenes.Scene;
 import sketchwars.scenes.SceneManager;
+import sketchwars.ui.components.ComboBox;
+import sketchwars.ui.components.Label;
 import sketchwars.ui.components.ListBox;
 import sketchwars.ui.components.TextButton;
+import sketchwars.ui.components.TextInputbox;
 import sketchwars.ui.components.UIActionListener;
 import sketchwars.ui.components.UIComponent;
 import sketchwars.ui.components.UIGroup;
@@ -29,7 +30,7 @@ import sketchwars.ui.components.UIGroup;
  *
  * @author a00762764
  */
-public class CreateOption extends Scene implements UIActionListener{
+public class GameSettingMenu extends Scene implements UIActionListener{
     
     private SceneManager<Scenes> sceneManager;
     
@@ -39,20 +40,18 @@ public class CreateOption extends Scene implements UIActionListener{
     private Texture pressBtn;
     private Font font;
     private Server server;
-    private Thread discoveryThread;
-    private boolean Triger = false;
     Layer btnLayer;
     
     
     private TextButton backButton;
-    private TextButton findButton;
-    private ListBox userListBox;
-    private UIGroup group;
+    private TextButton ContinueButton;
+    private TextInputbox b2;
+
     
     private Collection<ClientEntityForManagementOnServer> userList;
     
     
-    public CreateOption(SceneManager<Scenes> sceneManager) {
+    public GameSettingMenu(SceneManager<Scenes> sceneManager) {
         this.sceneManager = sceneManager;
 
         font = new Font("Comic Sans MS", Font.ITALIC, 12);
@@ -61,7 +60,7 @@ public class CreateOption extends Scene implements UIActionListener{
         createBackground();
     }
     
-    public CreateOption(SceneManager<Scenes> sceneManager, Server server) {
+    public GameSettingMenu(SceneManager<Scenes> sceneManager, Server server) {
         this.sceneManager = sceneManager;
         this.server = server;
         font = new Font("Comic Sans MS", Font.ITALIC, 12);
@@ -94,57 +93,73 @@ public class CreateOption extends Scene implements UIActionListener{
         try {
             
             btnLayer = getLayer(MenuLayers.BUTTONS);
-            //back 
-            backButton = new TextButton("BACK",font,new Vector2d(0.03, -0.30), size,normalBtn,hoverBtn,pressBtn);
+            
+            //StartLobby Button 
+            ContinueButton = new TextButton("Continue",font,new Vector2d(0.03, -0.30), size,normalBtn,hoverBtn,pressBtn);
+            btnLayer.addDrawableObject(ContinueButton);
+            ContinueButton.addActionListener(this);
+            
+            //Back Button 
+            backButton = new TextButton("BACK",font,new Vector2d(0.03, -0.45), size,normalBtn,hoverBtn,pressBtn);
             btnLayer.addDrawableObject(backButton);
             backButton.addActionListener(this);
             
-            //find 
-            findButton = new TextButton("FIND",font,new Vector2d(0.03, -0.20), size,normalBtn,hoverBtn,pressBtn);
-            btnLayer.addDrawableObject(findButton);
-            findButton.addActionListener(this);
+            ////////////////////Setting components////////////////////////////////////
+            
+            UIGroup group = new UIGroup(null, null);
+            
+            //Username  label
+            Label userNameLabel = new Label("Username: ",font,new Vector2d(-0.50, 0.8),new Vector2d(0.4, 0.1),null);
+            btnLayer.addDrawableObject(userNameLabel);
+            Vector2d size1 = new Vector2d(0.4, 0.1);
+            b2 = new TextInputbox(new Vector2d(-0.1, 0.8), size1, null);
+            b2.setText("Host");
+            b2.setFontColor(Color.BLUE);
+            //
+            
+            //MAPS selections
+            Label mapLabel = new Label("Maps: ",font,new Vector2d(-0.6, 0.6),new Vector2d(0.4, 0.1),null);
+            btnLayer.addDrawableObject(mapLabel);
+            
+            ComboBox cbox = new ComboBox(new Vector2d(-0.3, 0.6), new Vector2d(0.4, 0.1),null);
+            cbox.setBackgroundFromColor(Color.ORANGE);
+            cbox.getListBox().setBackgroundFromColor(Color.ORANGE);
+            
+            cbox.addItem("Map 1");
+            cbox.addItem("Map 2");
+            cbox.addItem("Map 3");
+            cbox.setSelection(2);
+            btnLayer.addDrawableObject(cbox);
+            //
+            
+            //MAX players label
+            Label maxPlayerLabel = new Label("Max Player: ",font,new Vector2d(0.2, 0.6),new Vector2d(0.4, 0.1),null);
+            btnLayer.addDrawableObject(maxPlayerLabel);
+            //MAX player list
+            ListBox lb = new ListBox(new Vector2d(0.6, 0.4), new Vector2d(0.4, 0.4),  0.1f, null);
+            lb.setFontColor(Color.yellow);
+            lb.setSelectionBackgroundColor(Color.RED);
+            lb.setBackgroundFromColor(Color.BLACK);
+            lb.addItem("2");
+            lb.addItem("3");
+            lb.addItem("4");
+            lb.addActionListener(this);
             
 
-            //Player List
-            group = new UIGroup(null, null);
-            userListBox = new ListBox(new Vector2d(0.5, 0), new Vector2d(0.4, 0.4),  0.1f, null);
-            userListBox.setFontColor(Color.yellow);
-            userListBox.setSelectionBackgroundColor(Color.RED);
-            userListBox.setBackgroundFromColor(Color.BLACK);
- 
             
+            group.addUIComponent(lb);
+            group.addUIComponent(b2);
             
+            btnLayer.addDrawableObject(group);
             
+
+
         } catch (SceneException ex) {
             Logger.getLogger(MainMenu.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }
-   @Override
-    public void update(double delta) {
-        super.update(delta);
-
-        if(Triger==true)
-        {
-            //Find latest connected players
-            userList = server.getAllClients();
-            //Every update clean list values
-            userListBox.clearAll();
-            Iterator i = userList.iterator();
-            while (i.hasNext())
-            {
-                //Added clients to list 
-                ClientEntityForManagementOnServer name = (ClientEntityForManagementOnServer)i.next();
-                userListBox.addItem(name.getUsername());
-                userListBox.addActionListener(this);
-                group.addUIComponent(userListBox);
-                btnLayer.addDrawableObject(userListBox);
-
-            }
-            
-        }
-
-    }
+ 
             
     private void createBackground() {
         
@@ -161,30 +176,12 @@ public class CreateOption extends Scene implements UIActionListener{
         }
     }
     
-    private void startGame()
-    {
-        server = new Server(6969);
-        
-        new Thread(server).start();
-        discoveryThread = new DiscoveryServer();
-        discoveryThread.start();
-        ServerMain.tryToRunClient(server.localAddress, 6969,ServerMain.getHostUsername());
-
-        Triger = true;
-
-    }
     
 
     @Override
     public void action(UIComponent component, float x, float y) {
-       if (component.equals(backButton)) {
-            //
-            //discoveryThread.
-            if(server !=null)
-            {
-                Triger = false;
-                server.stop();
-            }
+       if (component.equals(backButton)) 
+       {
             try 
             {
                 sceneManager.setCurrentScene(Scenes.MAIN_MENU);
@@ -193,9 +190,19 @@ public class CreateOption extends Scene implements UIActionListener{
             {
                 Logger.getLogger(OptionMenu.class.getName()).log(Level.SEVERE, null, ex);
             }
-        } else if (component.equals(findButton)) {
-            startGame();
         }
+       else if(component.equals(ContinueButton))
+       {
+            try 
+            {
+                ServerMain.setHostUsername(b2.getText());
+                sceneManager.setCurrentScene(Scenes.CREATE_MENU);
+            } 
+            catch (SceneManagerException ex) 
+            {
+                Logger.getLogger(OptionMenu.class.getName()).log(Level.SEVERE, null, ex);
+            }
+       }
     
     }
 }

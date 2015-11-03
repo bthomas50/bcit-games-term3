@@ -14,6 +14,7 @@ import sketchwars.scenes.Scene;
 import sketchwars.scenes.SceneManager;
 import sketchwars.sound.SoundPlayer;
 import sketchwars.ui.menu.CreateOption;
+import sketchwars.ui.menu.GameSettingMenu;
 import sketchwars.ui.menu.MainMenu;
 import sketchwars.ui.menu.OptionMenu;
 import static sketchwars.util.Config.appendToLibraryPath;
@@ -57,23 +58,18 @@ public class SketchWars {
         Scene gameScene = new Scene();
         MainMenu mainMenuScene = new MainMenu(sceneManager, this);
         OptionMenu optionMenuScene = new OptionMenu(sceneManager);
-        
-        
-       /* //start listening
-        Server server = new Server(6969);
-        new Thread(server).start();
-        new DiscoveryServer().start();
-        ServerMain.tryToRunClient(server.localAddress, 6969, "Host");
-       */
         CreateOption createMenuScene = new CreateOption(sceneManager, server);
+        GameSettingMenu gameSettingMenuScene = new GameSettingMenu(sceneManager, server);
         
         try {
             sceneManager.addScene(Scenes.GAME, gameScene);
             sceneManager.addScene(Scenes.MAIN_MENU, mainMenuScene);
             sceneManager.addScene(Scenes.SUB_MENU, optionMenuScene);
             sceneManager.addScene(Scenes.CREATE_MENU, createMenuScene);
+            sceneManager.addScene(Scenes.GAME_SETTING_MENU, gameSettingMenuScene);
             
             sceneManager.setCurrentScene(Scenes.MAIN_MENU);
+            
         } catch (SceneManagerException ex) {
             Logger.getLogger(SketchWars.class.getName()).log(Level.SEVERE, null, ex);
         }

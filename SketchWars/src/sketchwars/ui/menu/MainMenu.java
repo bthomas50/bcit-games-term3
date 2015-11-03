@@ -5,7 +5,6 @@
  */
 package sketchwars.ui.menu;
 
-import java.awt.Color;
 import java.awt.Font;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -19,13 +18,9 @@ import sketchwars.graphics.Texture;
 import sketchwars.scenes.Layer;
 import sketchwars.scenes.Scene;
 import sketchwars.scenes.SceneManager;
-import sketchwars.ui.components.ComboBox;
-import sketchwars.ui.components.ListBox;
 import sketchwars.ui.components.TextButton;
-import sketchwars.ui.components.TextInputbox;
 import sketchwars.ui.components.UIActionListener;
 import sketchwars.ui.components.UIComponent;
-import sketchwars.ui.components.UIGroup;
 
 /**
  *
@@ -49,8 +44,7 @@ public class MainMenu extends Scene implements UIActionListener {
     public MainMenu(SceneManager<Scenes> sceneManager, SketchWars sketchWars) {
         this.sceneManager = sceneManager;
         this.sketchWars = sketchWars;
-        
-        
+
         font = new Font("Comic Sans MS", Font.ITALIC, 12);
         
         createLayers();
@@ -81,8 +75,7 @@ public class MainMenu extends Scene implements UIActionListener {
 
         try {
             Layer btnLayer = getLayer(MenuLayers.BUTTONS);
-            
-            
+
             //Join 
             buttonJoin = new TextButton("JOIN",font,new Vector2d(0.03, -0.30), size,normalBtn,hoverBtn,pressBtn);
             btnLayer.addDrawableObject(buttonJoin);
@@ -102,50 +95,7 @@ public class MainMenu extends Scene implements UIActionListener {
             buttonExit = new TextButton("EXIT",font,new Vector2d(0.03, -0.75), size,normalBtn,hoverBtn,pressBtn);
             btnLayer.addDrawableObject(buttonExit);
             buttonExit.addActionListener(this);  
-            
-            ////////////////////test code to show how to use components////////////////////////////////////
-            UIGroup group = new UIGroup(new Vector2d(), new Vector2d(2, 2));
-            ListBox lb = new ListBox(new Vector2d(0.5, 0), new Vector2d(0.4, 0.4),  0.1f, null);
-            lb.setFontColor(Color.yellow);
-            lb.setSelectionBackgroundColor(Color.RED);
-            lb.setBackgroundFromColor(Color.BLACK);
-            lb.addItem("Item 12");
-            lb.addItem("Item 2");
-            lb.addItem("Item 3");
-            lb.addItem("Item 4");
-            lb.addItem("Item 5");
-            lb.addItem("Item 6");
-            lb.addItem("Item 7");
-            lb.addItem("Item 8");
-            lb.addItem("Item 9");
-            lb.addActionListener(this);
-            
-            Vector2d size1 = new Vector2d(0.4, 0.1);
-            TextInputbox b1 = new TextInputbox(new Vector2d(-0.5, 0), size1, null);
-            TextInputbox b2 = new TextInputbox(new Vector2d(-0.5, 0.2), size1, null);
-            TextInputbox b3 = new TextInputbox(new Vector2d(-0.5, 0.4), size1, null);
-            b2.setText("input box");
-            b2.setFontColor(Color.BLUE);
-            group.addUIComponent(lb);
-            group.addUIComponent(b1);
-            group.addUIComponent(b2);
-            group.addUIComponent(b3);
-            btnLayer.addDrawableObject(group);
-            
-            
-            ComboBox cbox = new ComboBox(new Vector2d(-0.5, 0.6), new Vector2d(0.4, 0.1), null);
-            cbox.setBackgroundFromColor(Color.ORANGE);
-            cbox.getListBox().setBackgroundFromColor(Color.ORANGE);
-            
-            cbox.addItem("test 1");
-            cbox.addItem("test 2");
-            cbox.addItem("test 3");
-            cbox.addItem("test 4");
-            cbox.addItem("test 5");
-            cbox.addItem("test 6");
-            cbox.setSelection(2);
-            
-            group.addUIComponent(cbox);
+
         } catch (SceneException ex) {
             Logger.getLogger(MainMenu.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -171,10 +121,7 @@ public class MainMenu extends Scene implements UIActionListener {
     public void action(UIComponent component, float x, float y) {
         if (component.equals(buttonCreate)) {
             try {
-                sceneManager.setCurrentScene(Scenes.CREATE_MENU);
-                
-                
-                //OpenGL.hideMousePointer();
+                sceneManager.setCurrentScene(Scenes.GAME_SETTING_MENU);
             } catch (SceneManagerException ex) {
                 Logger.getLogger(MainMenu.class.getName()).log(Level.SEVERE, null, ex);
             }
