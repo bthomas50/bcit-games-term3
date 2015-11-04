@@ -92,28 +92,30 @@ public class CreateOption extends Scene implements UIActionListener{
         Vector2d size = new Vector2d(0.3f,0.12f);
         
         try {
-            
             btnLayer = getLayer(MenuLayers.BUTTONS);
+            
+            group = new UIGroup(new Vector2d(0, 0), new Vector2d(2, 2));
+            btnLayer.addDrawableObject(group);
+            
             //back 
             backButton = new TextButton("BACK",font,new Vector2d(0.03, -0.30), size,normalBtn,hoverBtn,pressBtn);
-            btnLayer.addDrawableObject(backButton);
+            group.addUIComponent(backButton);
             backButton.addActionListener(this);
             
             //find 
             findButton = new TextButton("FIND",font,new Vector2d(0.03, -0.20), size,normalBtn,hoverBtn,pressBtn);
-            btnLayer.addDrawableObject(findButton);
+            group.addUIComponent(findButton);
             findButton.addActionListener(this);
             
 
             //Player List
-            group = new UIGroup(null, null);
+            
             userListBox = new ListBox(new Vector2d(0.5, 0), new Vector2d(0.4, 0.4),  0.1f, null);
             userListBox.setFontColor(Color.yellow);
             userListBox.setSelectionBackgroundColor(Color.RED);
             userListBox.setBackgroundFromColor(Color.BLACK);
- 
-            
-            
+            userListBox.addActionListener(this);
+            group.addUIComponent(userListBox);
             
         } catch (SceneException ex) {
             Logger.getLogger(MainMenu.class.getName()).log(Level.SEVERE, null, ex);
@@ -136,10 +138,7 @@ public class CreateOption extends Scene implements UIActionListener{
                 //Added clients to list 
                 ClientEntityForManagementOnServer name = (ClientEntityForManagementOnServer)i.next();
                 userListBox.addItem(name.getUsername());
-                userListBox.addActionListener(this);
-                group.addUIComponent(userListBox);
-                btnLayer.addDrawableObject(userListBox);
-
+                
             }
             
         }

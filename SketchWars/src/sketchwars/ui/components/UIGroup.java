@@ -86,4 +86,17 @@ public class UIGroup extends UIComponent implements UIActionListener {
             uic.setFontColor(fontColor);
         }
     }
+
+    @Override
+    protected void finalize() throws Throwable {
+        super.finalize(); 
+        for (UIComponent component : components) {
+            if (component instanceof TextInputbox) {
+                KeyboardHandler.removeCharListener((TextInputbox)component);
+            }
+        }
+        components.clear();
+    }
+    
+    
 }

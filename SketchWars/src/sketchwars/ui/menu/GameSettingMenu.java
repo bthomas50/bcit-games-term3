@@ -106,11 +106,11 @@ public class GameSettingMenu extends Scene implements UIActionListener{
             
             ////////////////////Setting components////////////////////////////////////
             
-            UIGroup group = new UIGroup(null, null);
+            UIGroup group = new UIGroup(new Vector2d(), new Vector2d(2, 2));
             
             //Username  label
             Label userNameLabel = new Label("Username: ",font,new Vector2d(-0.50, 0.8),new Vector2d(0.4, 0.1),null);
-            btnLayer.addDrawableObject(userNameLabel);
+            group.addUIComponent(userNameLabel);
             Vector2d size1 = new Vector2d(0.4, 0.1);
             b2 = new TextInputbox(new Vector2d(-0.1, 0.8), size1, null);
             b2.setText("Host");
@@ -119,7 +119,7 @@ public class GameSettingMenu extends Scene implements UIActionListener{
             
             //MAPS selections
             Label mapLabel = new Label("Maps: ",font,new Vector2d(-0.6, 0.6),new Vector2d(0.4, 0.1),null);
-            btnLayer.addDrawableObject(mapLabel);
+            group.addUIComponent(mapLabel);
             
             ComboBox cbox = new ComboBox(new Vector2d(-0.3, 0.6), new Vector2d(0.4, 0.1),null);
             cbox.setBackgroundFromColor(Color.ORANGE);
@@ -129,12 +129,12 @@ public class GameSettingMenu extends Scene implements UIActionListener{
             cbox.addItem("Map 2");
             cbox.addItem("Map 3");
             cbox.setSelection(2);
-            btnLayer.addDrawableObject(cbox);
+            group.addUIComponent(cbox);
             //
             
             //MAX players label
             Label maxPlayerLabel = new Label("Max Player: ",font,new Vector2d(0.2, 0.6),new Vector2d(0.4, 0.1),null);
-            btnLayer.addDrawableObject(maxPlayerLabel);
+            group.addUIComponent(maxPlayerLabel);
             //MAX player list
             ListBox lb = new ListBox(new Vector2d(0.6, 0.4), new Vector2d(0.4, 0.4),  0.1f, null);
             lb.setFontColor(Color.yellow);
