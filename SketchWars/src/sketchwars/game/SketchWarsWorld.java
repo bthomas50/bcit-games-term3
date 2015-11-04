@@ -137,9 +137,9 @@ public class SketchWarsWorld extends World {
                 long center = coll.getBounds().getCenterVector();
                 float posX = (float) (Vectors.xComp(center) / 1024.0f);
                 float posY = (float) (Vectors.yComp(center) / 1024.0f);
-                camera.setCameraPosition(posX, posY);
+                camera.setNextCameraPosition(posX, posY);
             } else {
-                camera.setCameraPosition(character.getPosX(), character.getPosY());
+                camera.setNextCameraPosition(character.getPosX(), character.getPosY());
             }
         }
     }

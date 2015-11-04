@@ -258,12 +258,13 @@ public class SketchCharacter implements GraphicsObject, GameObject {
                 } else {//has started moving fast again after stoping
                     waitAfterFire.restart();
                 }
-            } else {
+            } else if (firedProjectile.hasExpired()) {
                 waitAfterFire.start();
             }
         }
         
         if (turnEnded) {
+            weapon.resetFire();
             firedProjectile = null;
         }
         

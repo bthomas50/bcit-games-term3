@@ -16,8 +16,10 @@ import sketchwars.input.MouseHandler;
  * @author Najash Najimudeen <najash.najm@gmail.com>
  */
 public class Camera implements GameObject {
-    private static final float MIN_DIST = 0.001f;
-    private static final float PAN_SPEED = 0.0005f;
+    private static final float SLOW_RADIUS = 0.01f;
+    private static final float REACHED_RADIUS = 0.001f;
+    
+    private static final float PAN_SPEED = 0.0008f;
     
     private float panSpeed;
     
@@ -30,14 +32,10 @@ public class Camera implements GameObject {
     private final float worldHeight;
     
     private float left;
-    private float right;
     private float top;
-    private float bottom;
     
     private float nextLeft;
-    private float nextRight;
     private float nextTop;
-    private float nextBottom;
     
     private float width;
     private float height;
@@ -56,7 +54,7 @@ public class Camera implements GameObject {
         this.worldTop = worldTop;
         this.worldBottom = worldTop - worldHeight;
                 
-        panSpeed = PAN_SPEED;
+        this.panSpeed = PAN_SPEED;
         
         this.worldWidth = worldWidth;
         this.worldHeight = worldHeight;
@@ -64,19 +62,15 @@ public class Camera implements GameObject {
         this.height = this.worldHeight;
         
         this.left = this.worldLeft;
-        this.right = this.worldRight;
         this.top = this.worldTop;
-        this.bottom = this.worldBottom;
         
         this.nextLeft = this.left;
-        this.nextRight = this.right;
         this.nextTop = this.top;
-        this.nextBottom = this.bottom;
         
         this.xScale = worldWidth/this.width;
         this.yScale = worldHeight/this.height;
         
-        expired = false;
+        this.expired = false;
     }
 
     public void setPanning(boolean panning) {
@@ -105,9 +99,7 @@ public class Camera implements GameObject {
     
     public void setCameraPosition(float xCenter, float yCenter) {
         left = getBoundedXFromCenter(xCenter);
-        right = left + width;
         top = getBoundedYFromCenter(yCenter);
-        bottom = top - height;
     }
     
     private float getBoundedXFromCenter(float xCenter) {
@@ -138,9 +130,8 @@ public class Camera implements GameObject {
         
     public void setNextCameraPosition(float xCenter, float yCenter) {
         nextLeft = getBoundedXFromCenter(xCenter);
-        nextRight = nextLeft + width;
         nextTop = getBoundedYFromCenter(yCenter);
-        nextBottom = nextTop - height;
+        panning = true;
     }
     
     @Override
@@ -159,41 +150,28 @@ public class Camera implements GameObject {
     }
 
     private void handleCameraPan(double delta) {
-        Vector2d distanceLT = new Vector2d(nextLeft - left, 
+        Vector2d distance = new Vector2d(nextLeft - left, 
                                            nextTop - top);
-        Vector2d distanceRB = new Vector2d(nextRight - right, 
-                                           nextBottom - bottom);
         
-        Vector2d directionLT = new Vector2d();
-        Vector2d directionRB = new Vector2d();
-        distanceLT.normalize(directionLT);
-        distanceRB.normalize(directionRB);
+        Vector2d direction = new Vector2d();
+        distance.normalize(direction);
         
-        float speed = (float) (panSpeed * delta);
+        float speed = panSpeed;
         
-        boolean reachedLeft = Math.abs(distanceLT.x) < MIN_DIST;
-        boolean reachedRight = Math.abs(distanceRB.x) < MIN_DIST;
-        boolean reachedTop = Math.abs(distanceLT.y) < MIN_DIST;
-        boolean reachedBottom = Math.abs(distanceRB.y) < MIN_DIST;
+        float dist = (float) distance.length();
         
-        if (!reachedLeft) {
-            left += directionLT.x * speed;
+        if (dist < SLOW_RADIUS) {
+            speed = (panSpeed * dist/SLOW_RADIUS);
         }
-        
-        if (!reachedRight) {
-            right += directionRB.x * speed;
-        }
-        
-        if (!reachedTop) {
-            top += directionLT.y * speed;
-        }
-        
-        if (!reachedBottom) {
-            bottom += directionRB.y * speed;
-        }
-        
-        if (reachedLeft && reachedRight && reachedTop && reachedBottom) {
+                
+        if (dist < REACHED_RADIUS) {
             panning = false;
+        } else {
+            Vector2d velocity = new Vector2d(direction.x * speed, 
+                                               direction.y * speed);
+
+            left += velocity.x * delta;
+            top += velocity.y * delta;
         }
     }
 
