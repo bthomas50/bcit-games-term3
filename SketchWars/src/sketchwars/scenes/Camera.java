@@ -95,7 +95,6 @@ public class Camera implements GameObject {
         this.panSpeed = panSpeed;
     }
 
-    
     public void setCameraSize(float width, float height) {
         this.width = width;
         this.height = height;
@@ -105,32 +104,42 @@ public class Camera implements GameObject {
     }
     
     public void setCameraPosition(float xCenter, float yCenter) {
-        float xOffset = width/2.0f;
-        float yOffset = height/2.0f;
-        
-        float maxLeft = worldRight - width;
-        float minTop = worldBottom + height;
-        
-        left = Math.min(Math.max(xCenter - xOffset, worldLeft), maxLeft);
+        left = getBoundedXFromCenter(xCenter);
         right = left + width;
-        top = Math.max(Math.min(yCenter + yOffset, worldTop), minTop);
+        top = getBoundedYFromCenter(yCenter);
         bottom = top - height;
     }
     
-    private void getClippedLeft(float left) {
-        return;
+    private float getBoundedXFromCenter(float xCenter) {
+        float xOffset = width/2.0f;
+        float maxLeft = worldRight - width;
+        return (float)Math.min(Math.max(xCenter - xOffset, worldLeft), maxLeft);
     }
     
-    public void setNextCameraPosition(float xCenter, float yCenter) {
-        float xOffset = width/2.0f;
+    private float getBoundedYFromCenter(float yCenter) {
         float yOffset = height/2.0f;
-        
-        float maxLeft = worldRight - width;
         float minTop = worldBottom + height;
+        return (float)Math.max(Math.min(yCenter + yOffset, worldTop), minTop);
+    }
+    
+    private float getBoundedX(float x) {
+        float xOffset = width/2.0f;
+        float maxLeft = worldRight - xOffset;
+        float minLeft = worldLeft + xOffset;
+        return (float)Math.min(Math.max(x, minLeft), maxLeft);
+    }
+    
+    private float getBoundedY(float y) {
+        float yOffset = height/2.0f;
+        float minTop = worldBottom + yOffset;
+        float maxTop = worldTop - yOffset;
+        return (float)Math.max(Math.min(y, maxTop), minTop);
+    }
         
-        nextLeft = Math.min(Math.max(xCenter - xOffset, worldLeft), maxLeft);
+    public void setNextCameraPosition(float xCenter, float yCenter) {
+        nextLeft = getBoundedXFromCenter(xCenter);
         nextRight = nextLeft + width;
-        nextTop = Math.max(Math.min(yCenter + yOffset, worldTop), minTop);
+        nextTop = getBoundedYFromCenter(yCenter);
         nextBottom = nextTop - height;
     }
     
@@ -213,8 +222,8 @@ public class Camera implements GameObject {
             float xDelta = xMouseFalling - xMouse;
             float yDelta = yMouseFalling - yMouse;
             
-            float xNewOffset = xOffset - xDelta;
-            float yNewOffset = yOffset - yDelta;
+            float xNewOffset = getBoundedX(xOffset - xDelta);
+            float yNewOffset = getBoundedY(yOffset - yDelta);
             
             offset.set(xNewOffset, yNewOffset);
         } else {
