@@ -117,6 +117,10 @@ public class Camera implements GameObject {
         bottom = top - height;
     }
     
+    private void getClippedLeft(float left) {
+        return;
+    }
+    
     public void setNextCameraPosition(float xCenter, float yCenter) {
         float xOffset = width/2.0f;
         float yOffset = height/2.0f;

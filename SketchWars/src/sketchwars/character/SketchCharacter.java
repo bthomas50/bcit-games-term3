@@ -19,7 +19,7 @@ import sketchwars.util.Timer;
  * @author Najash Najimudeen <najash.najm@gmail.com>
  */
 public class SketchCharacter implements GraphicsObject, GameObject {
-    public static final int WAIT_AFTER_FIRE_TIME = 1000;
+    public static final int WAIT_AFTER_FIRE_TIME = 500;
     public static final int DEFAULT_MAX_HEALTH = 100;
     private float posX;
     private float posY;
@@ -249,14 +249,17 @@ public class SketchCharacter implements GraphicsObject, GameObject {
         boolean turnEnded = waitAfterFire.hasElapsed();
         
         if (firedProjectile != null) {
-            long velocity = firedProjectile.getCollider().getVelocity();
-            double length = Vectors.length(velocity);
-
-            if (length < 50 || (firedProjectile.hasExpired() &&
-                    !(firedProjectile instanceof MineProjectile))) { //has stopped moving
+            if (firedProjectile instanceof MineProjectile) {
+                long velocity = firedProjectile.getCollider().getVelocity();
+                double length = Vectors.length(velocity);
+                
+                if (length < 50) {//has stopped moving
+                    waitAfterFire.start();
+                } else {//has started moving fast again after stoping
+                    waitAfterFire.restart();
+                }
+            } else {
                 waitAfterFire.start();
-            } else { //has started moving fast again after stoping
-                waitAfterFire.restart();
             }
         }
         

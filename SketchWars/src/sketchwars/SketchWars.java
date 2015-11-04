@@ -50,7 +50,7 @@ public class SketchWars {
 
     private void initOpenGL() {
         openGL = new OpenGL();
-        openGL.init(false);
+        openGL.init(true);
     }
     
     private void initScenes() {

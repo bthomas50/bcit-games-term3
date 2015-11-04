@@ -136,13 +136,17 @@ public abstract class AbstractWeapon implements Updateable, Drawable {
         double timeFired = elapsed;
         double timeSinceLastFired = timeFired - lastTimeFired;
         float rateOfFireInMilli = 1000/rateOfFire;
-                            
+        
         if (timeSinceLastFired > rateOfFireInMilli) {
             lastTimeFired = timeFired;
             return fire(owner, power, vAimDirection);
         } else {
             return null;
         }
+    }
+    
+    public void resetFire() {
+        lastTimeFired = 0;
     }
 
     private AbstractProjectile  fire(SketchCharacter owner, float power, long vAimDirection) {
