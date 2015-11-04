@@ -6,6 +6,7 @@ import sketchwars.character.Team;
 import sketchwars.input.*;
 
 import java.util.ArrayList;
+import sketchwars.scenes.Camera;
 
 /**
  * @author Najash Najimudeen <najash.najm@gmail.com>
@@ -17,13 +18,18 @@ public class SketchWarsWorld extends World {
     protected ArrayList<SketchCharacter> characters;
     protected ArrayList<Team> teams;
     protected Turn currentTurn;
+    protected Camera camera;
     
     public SketchWarsWorld() {
         characters = new ArrayList<>();
         teams = new ArrayList<>();
         currentTurn = Turn.createDefaultTurn();
     }
-    
+
+    public void setCamera(Camera camera) {
+        this.camera = camera;
+    }
+        
     public void setMap(AbstractMap map) {
         this.map = map;
         addGameObject(map);
@@ -48,6 +54,7 @@ public class SketchWarsWorld extends World {
         updateObjects(deltaMillis);
         updateTeamBars();
         updateTurn(deltaMillis);
+        handlePanningCamera();
         removeExpiredObjects();
     }
     
@@ -114,5 +121,13 @@ public class SketchWarsWorld extends World {
 
     public AbstractMap getMap() {
         return map;
+    }
+
+    private void handlePanningCamera() {
+        if (camera != null) {
+            Team firstTeam = teams.get(0); //temporary untill we can get multiplayer working
+            SketchCharacter character = firstTeam.getActiveCharacter();
+            camera.setCameraPosition(character.getPosX(), character.getPosY());
+        }
     }
 }

@@ -117,8 +117,8 @@ public class ProjectileFactory
     protected void setColliderProperties(Collider coll, long vPosition, long vVelocity, float mass, float elasticity)
     {
         BoundingBox projBounds = coll.getBounds();
-        long halfSize = Vectors.create(projBounds.getWidth()/2.0, (projBounds.getHeight()/2.0) + 50);
-        long center = Vectors.add(vPosition, halfSize);
+        long offset = Vectors.create(projBounds.getWidth()/2.0, (projBounds.getHeight()/2.0) + 50);
+        long center = Vectors.add(vPosition, offset);
                 
         coll.setPosition(center);
         coll.setVelocity(vVelocity);

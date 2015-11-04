@@ -10,6 +10,7 @@ import sketchwars.graphics.Texture;
 import sketchwars.input.Input;
 import sketchwars.physics.BoundingBox;
 import sketchwars.physics.Physics;
+import sketchwars.scenes.Camera;
 import sketchwars.scenes.Scene;
 import sketchwars.scenes.SceneManager;
 import sketchwars.sound.SoundPlayer;

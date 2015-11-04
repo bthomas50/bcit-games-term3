@@ -11,12 +11,21 @@ import sketchwars.exceptions.SceneException;
  * @param <T> layer index type
  */
 public class Scene<T> {
+    private Camera camera;
     private final HashMap<T, Layer> layerIndex;
     private final SortedSet<Layer> drawableLayers;
 
     public Scene() {
         layerIndex = new HashMap<>();
         drawableLayers = new TreeSet<>();
+    }
+
+    public Camera getCamera() {
+        return camera;
+    }
+
+    public void setCamera(Camera camera) {
+        this.camera = camera;
     }
     
     /**
@@ -73,12 +82,20 @@ public class Scene<T> {
     }
         
     public void render() {
+        if (camera != null) {
+            camera.applyCameraSettings();
+        }
+        
         for (Layer layer : drawableLayers) {
             layer.render();
         }
     }
     
     public void update(double delta) {
+        if (camera != null) {
+            camera.update(delta);
+        }
+        
         for (Layer layer : drawableLayers) {
             layer.update(delta);
         }
