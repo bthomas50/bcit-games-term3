@@ -36,7 +36,7 @@ public class Input
             currentInput.commands.add(Command.FIRE);
         }
         
-        if(MouseHandler.state == KeyState.FALLING){
+        if(MouseHandler.leftBtnState == MouseState.FALLING){
             currentInput.commands.add(Command.FIRE);
         }
                 

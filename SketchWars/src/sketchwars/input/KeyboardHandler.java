@@ -6,7 +6,7 @@ import static org.lwjgl.glfw.GLFW.*;
 import org.lwjgl.glfw.GLFWCharCallback;
 
 public class KeyboardHandler extends GLFWKeyCallback { 
-    public static KeyState state;
+    public static MouseState state;
     
     private static final boolean[] keys = new boolean[65536];
 

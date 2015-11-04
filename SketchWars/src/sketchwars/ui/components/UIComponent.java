@@ -16,7 +16,7 @@ import org.joml.Vector2d;
 import sketchwars.OpenGL;
 import sketchwars.graphics.GraphicsObject;
 import sketchwars.graphics.Texture;
-import sketchwars.input.KeyState;
+import sketchwars.input.MouseState;
 import sketchwars.input.MouseHandler;
 
 /**
@@ -230,7 +230,7 @@ public abstract class UIComponent implements GraphicsObject {
 
             mouseInComponent = contains(xMouse, yMouse);
 
-            if (mouseInComponent && MouseHandler.state == KeyState.RISING) {
+            if (mouseInComponent && MouseHandler.leftBtnState == MouseState.RISING) {
                 notifyListeners(xMouse, yMouse);
                 return true;
             }

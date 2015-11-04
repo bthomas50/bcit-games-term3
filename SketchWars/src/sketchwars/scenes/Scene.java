@@ -92,10 +92,6 @@ public class Scene<T> {
     }
     
     public void update(double delta) {
-        if (camera != null) {
-            camera.update(delta);
-        }
-        
         for (Layer layer : drawableLayers) {
             layer.update(delta);
         }

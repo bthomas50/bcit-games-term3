@@ -7,13 +7,16 @@ package sketchwars.scenes;
 
 import org.joml.Vector2d;
 import org.lwjgl.opengl.GL11;
+import sketchwars.game.GameObject;
+import sketchwars.input.MouseState;
+import sketchwars.input.MouseHandler;
 
 /**
  *
  * @author Najash Najimudeen <najash.najm@gmail.com>
  */
-public class Camera {
-    private static final float MIN_DIST = 0.01f;
+public class Camera implements GameObject {
+    private static final float MIN_DIST = 0.001f;
     private static final float PAN_SPEED = 0.0005f;
     
     private float panSpeed;
@@ -38,8 +41,14 @@ public class Camera {
     
     private float width;
     private float height;
+    private float xScale;
+    private float yScale;
+        
+    private boolean panning;
+    private float xMouseFalling;
+    private float yMouseFalling;
     
-    private boolean startPanning;
+    private boolean expired;
     
     public Camera(float worldLeft, float worldTop, float worldWidth, float worldHeight) {
         this.worldLeft = worldLeft;
@@ -63,10 +72,19 @@ public class Camera {
         this.nextRight = this.right;
         this.nextTop = this.top;
         this.nextBottom = this.bottom;
+        
+        this.xScale = worldWidth/this.width;
+        this.yScale = worldHeight/this.height;
+        
+        expired = false;
     }
 
     public void setPanning(boolean panning) {
-        this.startPanning = panning;
+        this.panning = panning;
+    }
+
+    public boolean isPanning() {
+        return panning;
     }
 
     public float getPanSpeed() {
@@ -81,6 +99,9 @@ public class Camera {
     public void setCameraSize(float width, float height) {
         this.width = width;
         this.height = height;
+        
+        this.xScale = worldWidth/width;
+        this.yScale = worldHeight/height;
     }
     
     public void setCameraPosition(float xCenter, float yCenter) {
@@ -120,27 +141,21 @@ public class Camera {
                 nextTop -= difference;
             }
         }
-        
-        //System.out.println("NextLeft: " + nextLeft + ", NextTop: " + nextTop +
-        //                   ", NextRight: " + nextRight + ", NextBottom: " + nextBottom);
     }
     
+    @Override
     public void update(double delta) {
-        if (startPanning) {
+        if (panning) {
             handleCameraPan(delta);
         }
     }
     
     public void applyCameraSettings() {
-        float xScale = worldWidth/width;
-        float yScale = worldHeight/height;
-        
-        float xOffset = -(left + (width / xScale));
-        float yOffset = -(top - (height / yScale));
+        Vector2d offset = getOffset();
         
         GL11.glLoadIdentity();
         GL11.glScalef(xScale, yScale, 1);
-        GL11.glTranslatef(xOffset, yOffset, 0);
+        GL11.glTranslatef((float)offset.x, (float)offset.y, 0);
     }
 
     private void handleCameraPan(double delta) {
@@ -156,20 +171,89 @@ public class Camera {
         
         float speed = (float) (panSpeed * delta);
         
-        if (Math.abs(distanceLT.x) > MIN_DIST) {
+        boolean reachedLeft = Math.abs(distanceLT.x) < MIN_DIST;
+        boolean reachedRight = Math.abs(distanceRB.x) < MIN_DIST;
+        boolean reachedTop = Math.abs(distanceLT.y) < MIN_DIST;
+        boolean reachedBottom = Math.abs(distanceRB.y) < MIN_DIST;
+        
+        if (!reachedLeft) {
             left += directionLT.x * speed;
         }
         
-        if (Math.abs(distanceRB.x) > MIN_DIST) {
+        if (!reachedRight) {
             right += directionRB.x * speed;
         }
         
-        if (Math.abs(distanceLT.y) > MIN_DIST) {
+        if (!reachedTop) {
             top += directionLT.y * speed;
         }
         
-        if (Math.abs(distanceRB.y) > MIN_DIST) {
+        if (!reachedBottom) {
             bottom += directionRB.y * speed;
         }
+        
+        if (reachedLeft && reachedRight && reachedTop && reachedBottom) {
+            panning = false;
+        }
+    }
+
+    public void setExpired(boolean expired) {
+        this.expired = expired;
+    }
+    
+    @Override
+    public boolean hasExpired() {
+        return expired;
+    }
+
+    private Vector2d getOffset() {
+        Vector2d offset = new Vector2d();
+        float xOffset = -(left + (width / 2.0f));
+        float yOffset = -(top - (height / 2.0f));
+            
+        if (MouseHandler.rightBtnState == MouseState.FALLING) {
+            xMouseFalling = MouseHandler.xNormalized;
+            yMouseFalling = MouseHandler.yNormalized;
+        }
+        
+        if (MouseHandler.rightBtnState == MouseState.DOWN) {
+            float xMouse = MouseHandler.xNormalized;
+            float yMouse = MouseHandler.yNormalized;
+            float xDelta = xMouseFalling - xMouse;
+            float yDelta = yMouseFalling - yMouse;
+            
+            float xNewOffset = xOffset - xDelta;
+            float yNewOffset = yOffset - yDelta;
+            
+            offset.set(xNewOffset, yNewOffset);
+        } else {
+            offset.set(xOffset, yOffset);
+        }
+        
+        return offset;
+    }
+
+    public float getWidth() {
+        return width;
+    }
+    
+    public float getHeight() {
+        return height;
+    }
+
+    public float getWorldLeft() {
+        return worldLeft;
+    }
+
+    public float getWorldTop() {
+        return worldTop;
+    }
+
+    public float getLeft() {
+        return left;
+    }
+    
+    public float getTop() {
+        return top;
     }
 }

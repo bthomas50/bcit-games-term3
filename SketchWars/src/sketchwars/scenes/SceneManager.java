@@ -7,6 +7,7 @@ package sketchwars.scenes;
 
 import java.util.HashMap;
 import sketchwars.exceptions.SceneManagerException;
+import sketchwars.input.MouseHandler;
 
 /**
  * Manage scenes like game scene and menu scenes
@@ -43,6 +44,7 @@ public class SceneManager <T> {
         if (scenes.containsKey(key)) {
             currentScene = scenes.get(key);
             currentSceneType = key;
+            MouseHandler.setCurrentCamera(currentScene.getCamera());
         } else {
             throw new SceneManagerException("Given scene key does not exist.");
         }

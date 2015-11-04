@@ -19,8 +19,6 @@ import java.util.HashMap;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Random;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.joml.Matrix3d;
 import sketchwars.animation.Animation;
 import sketchwars.animation.AnimationSet;
@@ -277,7 +275,8 @@ public class SketchWarsWorldFactory
         Camera camera = new Camera(OpenGL.OPENGL_LEFT, OpenGL.OPENGL_TOP, 
                 OpenGL.OPENGL_WIDTH, OpenGL.OPENGL_HEIGHT);
         camera.setCameraSize(1, 1);
-                
+        
+        world.addGameObject(camera);
         gameScene.setCamera(camera);
         world.setCamera(camera);
     }

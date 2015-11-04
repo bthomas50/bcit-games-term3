@@ -3,7 +3,7 @@ package sketchwars.ui.components;
 import org.joml.Vector2d;
 import sketchwars.graphics.Texture;
 import sketchwars.input.MouseHandler;
-import sketchwars.input.KeyState;
+import sketchwars.input.MouseState;
 
 
 /**
@@ -39,7 +39,7 @@ public class Button extends UIComponent {
         super.render();
         
         if (mouseInComponent) {
-            if(pressedTexture != null && MouseHandler.state == KeyState.DOWN) {
+            if(pressedTexture != null && MouseHandler.leftBtnState == MouseState.DOWN) {
                 pressedTexture.draw(null, (float)position.x, (float)position.y, (float)size.x, (float)size.y);
             } else if (highlightTexture != null) {
                 highlightTexture.draw(null, (float)position.x, (float)position.y, (float)size.x, (float)size.y);
