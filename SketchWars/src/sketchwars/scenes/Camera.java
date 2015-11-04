@@ -108,39 +108,26 @@ public class Camera implements GameObject {
         float xOffset = width/2.0f;
         float yOffset = height/2.0f;
         
-        left = xCenter - xOffset;
-        right = xCenter + xOffset;
-        top = yCenter + yOffset;
-        bottom = yCenter - yOffset;
+        float maxLeft = worldRight - width;
+        float minTop = worldBottom + height;
+        
+        left = Math.min(Math.max(xCenter - xOffset, worldLeft), maxLeft);
+        right = left + width;
+        top = Math.max(Math.min(yCenter + yOffset, worldTop), minTop);
+        bottom = top - height;
     }
     
     public void setNextCameraPosition(float xCenter, float yCenter) {
-        float xOffset = width/2.f;
-        float yOffset = height/2.f;
+        float xOffset = width/2.0f;
+        float yOffset = height/2.0f;
         
-        nextLeft = Math.max(xCenter - xOffset, worldLeft);
-        nextRight = Math.min(xCenter + xOffset, worldRight);
-        nextTop = Math.min(yCenter + yOffset, worldTop);
-        nextBottom = Math.max(yCenter - yOffset, worldBottom);
-    
-        float newWidth = nextRight - nextLeft;
-        float newHeight = nextTop - nextBottom;
-        if (newWidth < width) {
-            float difference = width - newWidth;
-            if (nextLeft == worldLeft) {
-                nextRight += difference;
-            } else {
-                nextLeft -= difference;
-            }
-        }
-        if (newHeight < height) {
-            float difference = height - newHeight;
-            if (nextTop == worldTop) {
-                nextLeft += difference;
-            } else {
-                nextTop -= difference;
-            }
-        }
+        float maxLeft = worldRight - width;
+        float minTop = worldBottom + height;
+        
+        nextLeft = Math.min(Math.max(xCenter - xOffset, worldLeft), maxLeft);
+        nextRight = nextLeft + width;
+        nextTop = Math.max(Math.min(yCenter + yOffset, worldTop), minTop);
+        nextBottom = nextTop - height;
     }
     
     @Override
