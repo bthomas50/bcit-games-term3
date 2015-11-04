@@ -8,6 +8,7 @@ import sketchwars.graphics.Drawable;
 import sketchwars.graphics.Texture;
 import sketchwars.character.SketchCharacter;
 import sketchwars.physics.Vectors;
+import sketchwars.util.Timer;
 
 /**
  *

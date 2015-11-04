@@ -10,12 +10,14 @@ import sketchwars.game.GameObject;
 import sketchwars.HUD.HealthBar;
 import sketchwars.input.MouseHandler;
 import sketchwars.physics.colliders.CharacterCollider;
+import sketchwars.util.Timer;
 
 /*
  *
  * @author Najash Najimudeen <najash.najm@gmail.com>
  */
 public class SketchCharacter implements GraphicsObject, GameObject {
+    public static final int WAIT_AFTER_FIRE_TIME = 3500;
     public static final int DEFAULT_MAX_HEALTH = 100;
     private float posX;
     private float posY;
@@ -30,7 +32,7 @@ public class SketchCharacter implements GraphicsObject, GameObject {
     private int health;
     private boolean isDead;
     
-    private boolean hasFired;
+    private Timer waitAfterFire;
     private boolean isFacingLeft;
     private float angle;
 
@@ -54,11 +56,12 @@ public class SketchCharacter implements GraphicsObject, GameObject {
         this.maxHealth = maxHealth;
         this.health = health;
         this.isDead = false;
-        this.hasFired = false;
         this.angle = 0.0f;
         this.isFacingLeft = false;//start facing right.
         reticleTexture = Texture.loadTexture("content/misc/reticle.png", false);
         vHealthBarOffset = Vectors.create(0, 0.1);
+        
+        waitAfterFire = new Timer(WAIT_AFTER_FIRE_TIME);
     }
 
     public boolean isActive() {
@@ -86,6 +89,7 @@ public class SketchCharacter implements GraphicsObject, GameObject {
     
     @Override
     public void update(double delta) {
+        waitAfterFire.update(delta);
         updateCharacterInfo();
         coll.updateJumpTimer(delta);
         computeAngleFromMouse();        
@@ -233,16 +237,18 @@ public class SketchCharacter implements GraphicsObject, GameObject {
     }
 
     public void resetHasFiredThisTurn() {
-        hasFired = false;
+        waitAfterFire.reset();
     }
 
     public boolean hasFiredThisTurn() {
-        return hasFired;
+        return waitAfterFire.hasElapsed();
     }
 
     public void fireCurrentWeapon(float power) {
         if(weapon != null) {
-            hasFired = weapon.tryToFire(this, (float)power, Vectors.createRTheta(1.0f, getActualFireAngle()));
+            if (weapon.tryToFire(this, (float)power, Vectors.createRTheta(1.0f, getActualFireAngle()))) {
+                waitAfterFire.start();
+            }
         }
     }
 
