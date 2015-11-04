@@ -253,7 +253,7 @@ public class SketchCharacter implements GraphicsObject, GameObject {
                 long velocity = firedProjectile.getCollider().getVelocity();
                 double length = Vectors.length(velocity);
                 
-                if (length < 50) {//has stopped moving
+                if (length < 50 || firedProjectile.hasExpired()) {//has stopped moving
                     waitAfterFire.start();
                 } else {//has started moving fast again after stoping
                     waitAfterFire.restart();
