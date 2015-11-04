@@ -132,25 +132,24 @@ public abstract class AbstractWeapon implements Updateable, Drawable {
     }
    
     
-    public boolean tryToFire(SketchCharacter owner, float power, long vAimDirection) {
+    public AbstractProjectile tryToFire(SketchCharacter owner, float power, long vAimDirection) {
         double timeFired = elapsed;
         double timeSinceLastFired = timeFired - lastTimeFired;
         float rateOfFireInMilli = 1000/rateOfFire;
                             
         if (timeSinceLastFired > rateOfFireInMilli) {
-            fire(owner, power, vAimDirection);
             lastTimeFired = timeFired;
-            return true;
+            return fire(owner, power, vAimDirection);
         } else {
-            return false;
+            return null;
         }
     }
 
-    private void fire(SketchCharacter owner, float power, long vAimDirection) {
+    private AbstractProjectile  fire(SketchCharacter owner, float power, long vAimDirection) {
         long normalDir = Vectors.normalize(vAimDirection);
         long vVelocity = Vectors.scalarMultiply(getProjectileSpeed(power), normalDir);
         long vPosition = Vectors.add(owner.getCollider().getPosition(), Vectors.scaleToLength(normalDir, 100.0));
-        createProjectile(owner, vPosition, vVelocity);
+        return createProjectile(owner, vPosition, vVelocity);
     }
 
     protected abstract AbstractProjectile createProjectile(SketchCharacter owner, long vPosition, long vVelocity);

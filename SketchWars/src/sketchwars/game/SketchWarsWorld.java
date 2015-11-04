@@ -6,6 +6,9 @@ import sketchwars.character.Team;
 import sketchwars.input.*;
 
 import java.util.ArrayList;
+import sketchwars.character.projectiles.AbstractProjectile;
+import sketchwars.physics.Collider;
+import sketchwars.physics.Vectors;
 import sketchwars.scenes.Camera;
 
 /**
@@ -127,7 +130,17 @@ public class SketchWarsWorld extends World {
         if (camera != null) {
             Team firstTeam = teams.get(0); //temporary untill we can get multiplayer working
             SketchCharacter character = firstTeam.getActiveCharacter();
-            camera.setCameraPosition(character.getPosX(), character.getPosY());
+            AbstractProjectile projectile = character.getFiredProjectile();
+            
+            if (projectile != null) {
+                Collider coll = projectile.getCollider();
+                long center = coll.getBounds().getCenterVector();
+                float posX = (float) (Vectors.xComp(center) / 1024.0f);
+                float posY = (float) (Vectors.yComp(center) / 1024.0f);
+                camera.setCameraPosition(posX, posY);
+            } else {
+                camera.setCameraPosition(character.getPosX(), character.getPosY());
+            }
         }
     }
 }
