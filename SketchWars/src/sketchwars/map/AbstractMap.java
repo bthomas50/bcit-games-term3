@@ -6,7 +6,9 @@ import sketchwars.graphics.GraphicsObject;
 import sketchwars.game.GameObject;
 import sketchwars.graphics.Texture;
 import sketchwars.physics.*;
-import sketchwars.util.OpenGLToImage;
+import sketchwars.scenes.Camera;
+import sketchwars.util.Converter;
+import sketchwars.util.GraphicsToImage;
 
 /**
  *
@@ -18,7 +20,11 @@ public abstract class AbstractMap implements GraphicsObject, GameObject {
     private final Texture foreground;
     private final BufferedImage foregroundImage;
 
-    public AbstractMap(MapCollider mapCollider, Texture background, Texture foreground, BufferedImage foregroundImage) {
+    private final Camera camera;
+    
+    public AbstractMap(Camera camera, MapCollider mapCollider, Texture background, 
+                       Texture foreground, BufferedImage foregroundImage) {
+        this.camera = camera;
         this.mapCollider = mapCollider;
         this.background = background;
         this.foreground = foreground;
@@ -53,8 +59,13 @@ public abstract class AbstractMap implements GraphicsObject, GameObject {
     
     @Override
     public void render() {
-        background.draw(null, 0, 0, 2, 2);
-        foreground.draw(null, 0, 0, 2, 2);
+        float width = camera.getWorldWidth();
+        float height = camera.getWorldHeight();
+        float x = camera.getWorldLeft() + width/2.0f;
+        float y = camera.getWorldTop() - height/2.0f;
+        
+        background.draw(null, x, y, width, height);
+        foreground.draw(null, x, y, width, height);
     }
 
     public void dispose() {
@@ -64,7 +75,7 @@ public abstract class AbstractMap implements GraphicsObject, GameObject {
 
     public boolean updateTexture(BufferedImage subImage, boolean erase, float posX, float posY, float width, float height) {  
         //opengl coordinates to image coordinates
-        OpenGLToImage glToImg = new OpenGLToImage(foregroundImage);
+        GraphicsToImage glToImg = new GraphicsToImage(foregroundImage);
         int subNewWidth = (int)glToImg.transformWidth(width);
         int subNewHeight = (int)glToImg.transformHeight(height);
         int xImage = (int)(glToImg.transformX(posX) - subNewWidth/2);
@@ -82,7 +93,7 @@ public abstract class AbstractMap implements GraphicsObject, GameObject {
         BoundingBox fgBounds = new BoundingBox(0, 0, foregroundImage.getHeight() - 1, foregroundImage.getWidth() - 1);
         BoundingBox intersection = fgBounds.intersection(subImageBounds);
         //no part of the foreground image will be affected.
-        if(intersection == BoundingBox.EMPTY) { return false;}
+        if(intersection == BoundingBox.EMPTY) {return false;}
         
         //get new image coordinates
         xImage = intersection.getLeft();
@@ -101,7 +112,7 @@ public abstract class AbstractMap implements GraphicsObject, GameObject {
                 int color = subImage.getRGB(imageI, imageJ);
                 int alpha = color >> 24;
 
-                if (alpha != 0) { 
+                if (alpha != 0) {  
                     if (erase) {
                         foregroundImage.setRGB(xSet, ySet, Color.TRANSLUCENT);
                     } else {
@@ -117,11 +128,11 @@ public abstract class AbstractMap implements GraphicsObject, GameObject {
     public void updateInPhysics(BufferedImage subImage, boolean erase, float xStart, float yStart, float width, float height) {
         BitMask mapBitmask = mapCollider.getPixels();
         
-        int widthPhysics = (int)(width * 1024.0);
-        int heightPhysics = (int)(height * 1024.0);
+        int widthPhysics = Converter.GraphicsToPhysicsX(width);
+        int heightPhysics = Converter.GraphicsToPhysicsY(height);
         
-        int xPhysics = (int) (xStart * 1024.0) - widthPhysics/2;
-        int yPhysics = (int) (yStart * 1024.0) - heightPhysics/2;
+        int xPhysics = Converter.GraphicsToPhysicsX(xStart) - widthPhysics/2;
+        int yPhysics = Converter.GraphicsToPhysicsY(yStart) - heightPhysics/2;
         
         BoundingBox bb = new BoundingBox(yPhysics, xPhysics, yPhysics + heightPhysics, xPhysics + widthPhysics);
         

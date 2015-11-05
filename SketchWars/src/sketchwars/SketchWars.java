@@ -10,6 +10,7 @@ import sketchwars.graphics.Texture;
 import sketchwars.input.Input;
 import sketchwars.physics.BoundingBox;
 import sketchwars.physics.Physics;
+import sketchwars.scenes.Camera;
 import sketchwars.scenes.Scene;
 import sketchwars.scenes.SceneManager;
 import sketchwars.sound.SoundPlayer;
@@ -25,6 +26,18 @@ import static sketchwars.util.Config.appendToLibraryPath;
  * @author Brian Thomas <bthomas50@my.bcit.ca>
  */
 public class SketchWars {
+    public static final int WORLD_SCALE = 2;
+    
+    public static final int PHYSICS_TOP = -1024 * WORLD_SCALE;
+    public static final int PHYSICS_LEFT = -1024 * WORLD_SCALE;
+    public static final int PHYSICS_WIDTH = 2048 * WORLD_SCALE;
+    public static final int PHYSICS_HEIGHT = 2048 * WORLD_SCALE;
+    
+    public static final float OPENGL_TOP = 1 * WORLD_SCALE;
+    public static final float OPENGL_LEFT = -1 * WORLD_SCALE;
+    public static final float OPENGL_WIDTH = 2 * WORLD_SCALE;
+    public static final float OPENGL_HEIGHT = 2 * WORLD_SCALE;
+    
     private static final double MILLION = 1000000;//used in calculating frame length
     private static final double MAX_FRAME_DELTA = 33;
     private OpenGL openGL;
@@ -56,10 +69,17 @@ public class SketchWars {
         sceneManager = new SceneManager<>();
         
         Scene gameScene = new Scene();
+        
+        Camera menuCamera = new Camera(-1, 1, 2, 2);
         MainMenu mainMenuScene = new MainMenu(sceneManager, this);
         OptionMenu optionMenuScene = new OptionMenu(sceneManager);
         CreateOption createMenuScene = new CreateOption(sceneManager, server);
         GameSettingMenu gameSettingMenuScene = new GameSettingMenu(sceneManager, server);
+        
+        mainMenuScene.setCamera(menuCamera);
+        optionMenuScene.setCamera(menuCamera);
+        createMenuScene.setCamera(menuCamera);
+        gameSettingMenuScene.setCamera(menuCamera);
         
         try {
             sceneManager.addScene(Scenes.GAME, gameScene);
@@ -77,7 +97,8 @@ public class SketchWars {
     
     public void startGame() {
         SoundPlayer.loadSound();
-        physics = new Physics(new BoundingBox(-1024, -1024, 1024, 1024));
+        physics = new Physics(new BoundingBox(PHYSICS_TOP, PHYSICS_LEFT, 
+                PHYSICS_TOP + PHYSICS_WIDTH, PHYSICS_LEFT + PHYSICS_WIDTH));
         world = new SketchWarsWorld();
         SketchWarsWorldFactory fact = new SketchWarsWorldFactory(world, physics, sceneManager);
         fact.startGame();

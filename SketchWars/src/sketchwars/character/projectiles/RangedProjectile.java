@@ -4,6 +4,7 @@ import sketchwars.character.SketchCharacter;
 
 import sketchwars.graphics.Texture;
 import sketchwars.physics.*;
+import sketchwars.util.Converter;
 /**
  *
  * @author Najash Najimudeen <najash.najm@gmail.com>
@@ -22,7 +23,8 @@ public class RangedProjectile extends AbstractProjectile {
         if (texture != null) {
             BoundingBox bounds = coll.getBounds();
             long vCenter = bounds.getCenterVector();
-            texture.draw(null, (float)Vectors.xComp(vCenter) / 1024.0f , (float)Vectors.yComp(vCenter) / 1024.0f, DRAW_SIZE, DRAW_SIZE);
+            texture.draw(null, Converter.PhysicsToGraphicsX(Vectors.xComp(vCenter)), 
+                               Converter.PhysicsToGraphicsY(Vectors.yComp(vCenter)), DRAW_SIZE, DRAW_SIZE);
         }
     }
 

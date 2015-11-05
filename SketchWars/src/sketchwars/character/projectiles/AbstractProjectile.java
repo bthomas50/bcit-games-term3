@@ -1,11 +1,13 @@
 package sketchwars.character.projectiles;
 
 import org.joml.Matrix3d;
+import sketchwars.SketchWars;
 import sketchwars.graphics.GraphicsObject;
 import sketchwars.graphics.Texture;
 import sketchwars.physics.*;
 import sketchwars.game.GameObject;
 import sketchwars.character.SketchCharacter;
+import sketchwars.util.Converter;
 
 /**
  *
@@ -53,7 +55,8 @@ public abstract class AbstractProjectile implements GraphicsObject, GameObject{
             Matrix3d rotate = new Matrix3d();
             Matrix3d scale = new Matrix3d();
             
-            transform.translation(Vectors.xComp(vCenter) / 1024.0f, (Vectors.yComp(vCenter) / 1024.0f));
+            transform.translation(Converter.PhysicsToGraphicsX(Vectors.xComp(vCenter)), 
+                                  Converter.PhysicsToGraphicsY(Vectors.yComp(vCenter)));
             
             long velocity = coll.getVelocity();
             float angle = (float)Math.atan2(Vectors.yComp(velocity), Vectors.xComp(velocity));
@@ -61,9 +64,11 @@ public abstract class AbstractProjectile implements GraphicsObject, GameObject{
             rotate.rotate(angle, 0, 0, 1);
             
             if (angle < -Math.PI/2.0f || angle > Math.PI/2.0f) {
-                scale.scale(bounds.getWidth() / 1024.0f, -bounds.getHeight() / 1024.0f, 1);
+                scale.scale(Converter.PhysicsToGraphicsX(bounds.getWidth()), 
+                            Converter.PhysicsToGraphicsY(-bounds.getHeight()), 1);
             } else {
-                scale.scale(bounds.getWidth() / 1024.0f, bounds.getHeight() / 1024.0f, 1);
+                scale.scale(Converter.PhysicsToGraphicsX(bounds.getWidth()), 
+                            Converter.PhysicsToGraphicsY(bounds.getHeight()), 1);
             }
             
             transform.mul(rotate);

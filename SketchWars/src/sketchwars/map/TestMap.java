@@ -3,6 +3,7 @@ package sketchwars.map;
 import java.awt.image.BufferedImage;
 import sketchwars.graphics.Texture;
 import sketchwars.physics.MapCollider;
+import sketchwars.scenes.Camera;
 
 /**
  *
@@ -11,7 +12,7 @@ import sketchwars.physics.MapCollider;
  */
 public class TestMap extends AbstractMap {
     
-    public TestMap(MapCollider mapCollider, Texture background, Texture foreground, BufferedImage foregroundImage) {
-        super(mapCollider, background, foreground, foregroundImage);
+    public TestMap(Camera camera, MapCollider mapCollider, Texture background, Texture foreground, BufferedImage foregroundImage) {
+        super(camera, mapCollider, background, foreground, foregroundImage);
     }
 }

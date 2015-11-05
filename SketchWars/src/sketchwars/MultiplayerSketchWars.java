@@ -13,6 +13,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.Map;
 import org.lwjgl.Sys;
+import static sketchwars.SketchWars.PHYSICS_HEIGHT;
+import static sketchwars.SketchWars.PHYSICS_LEFT;
+import static sketchwars.SketchWars.PHYSICS_TOP;
+import static sketchwars.SketchWars.PHYSICS_WIDTH;
 
 /**
  * The SketchWars main class
@@ -52,7 +56,8 @@ public class MultiplayerSketchWars {
             Logger.getLogger(MultiplayerSketchWars.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        physics = new Physics(new BoundingBox(-1024, -1024, 1024, 1024));
+        physics = new Physics(new BoundingBox(PHYSICS_TOP, PHYSICS_LEFT, 
+                PHYSICS_TOP + PHYSICS_WIDTH, PHYSICS_LEFT + PHYSICS_WIDTH));
         world = new MultiplayerWorld();
 
         SketchWarsWorldFactory fact = new SketchWarsWorldFactory(world, physics, sceneManager);

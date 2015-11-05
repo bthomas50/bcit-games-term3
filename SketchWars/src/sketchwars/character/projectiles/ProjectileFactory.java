@@ -15,6 +15,7 @@ import sketchwars.exceptions.*;
 import org.joml.Vector2d;
 import org.joml.Vector3d;
 import sketchwars.map.AbstractMap;
+import sketchwars.util.Converter;
 
 public class ProjectileFactory
 {
@@ -37,7 +38,7 @@ public class ProjectileFactory
         Texture texture = Texture.loadTexture("content/char/weapons/grenade.png", false);
         GrenadeProjectile proj = new GrenadeProjectile(texture, this);
         
-        int widthP = (int)(WeaponFactory.GRENADE_SCALE * 1024.0f) ;
+        int widthP = Converter.GraphicsToPhysicsX(WeaponFactory.GRENADE_SCALE);
         int heightP = (int)(widthP) ;
         Collider coll = new GamePixelCollider(proj, BitMaskFactory.createRectangle(widthP, heightP));
         
@@ -54,7 +55,7 @@ public class ProjectileFactory
     {
         Texture texture = Texture.loadTexture("content/char/weapons/meleeBoxing.png", false);
         MeleeProjectile proj = new MeleeProjectile(texture, owner);
-        int widthP = (int)(WeaponFactory.MELEE_SCALE * 1024.0f);
+        int widthP = Converter.GraphicsToPhysicsX(WeaponFactory.MELEE_SCALE);
         int heightP = (int)(widthP);
         
         Collider coll = new GamePixelCollider(proj, BitMaskFactory.createRectangle(widthP, heightP), CollisionBehaviour.NOTIFY);
@@ -84,11 +85,11 @@ public class ProjectileFactory
     public AnimatedProjectile createExplosion(long vCenter, double radius, int damage, BufferedImage explosionAlpha) {
         try {
             Explosion explosion = new Explosion();
-            float posX = (float)Vectors.xComp(vCenter)/1024.0f;
-            float posY = (float)Vectors.yComp(vCenter)/1024.0f;
+            float posX = Converter.PhysicsToGraphicsX(Vectors.xComp(vCenter));
+            float posY = Converter.PhysicsToGraphicsY(Vectors.yComp(vCenter));
             
-            float width = (float) ((radius * 2) / 1024.0f);
-            float height = (float) (((radius * 2) / 1024.0f));
+            float width = Converter.PhysicsToGraphicsX(radius * 2);
+            float height = Converter.PhysicsToGraphicsY(radius * 2);
             
             explosion.setPosition(new Vector2d(posX, posY));
             explosion.setDimension(new Vector2d(width * 0.8f, height * 0.8f));
@@ -147,7 +148,7 @@ public class ProjectileFactory
         Texture texture = Texture.loadTexture("content/char/weapons/mine.png", false);
         MineProjectile proj = new MineProjectile(texture, acitvatedAnim, this);
         
-        int widthP = (int)(WeaponFactory.MINE_SCALE * 1024.0f) ;
+        int widthP = Converter.GraphicsToPhysicsX(WeaponFactory.MINE_SCALE) ;
         int heightP = (int)(widthP) ;
         Collider coll = new GamePixelCollider(proj, BitMaskFactory.createRectangle(widthP, heightP));
         
@@ -164,7 +165,7 @@ public class ProjectileFactory
         Texture texture = Texture.loadTexture("content/char/weapons/clusterBomb.png", false);
         ClusterBombProjectile proj = new ClusterBombProjectile(texture, this);
         
-        int widthP = (int)(WeaponFactory.CLUSTER_BOMB_SCALE * 1024.0f) ;
+        int widthP = Converter.GraphicsToPhysicsX(WeaponFactory.CLUSTER_BOMB_SCALE) ;
         int heightP = (int)(widthP) ;
         Collider coll = new GamePixelCollider(proj, BitMaskFactory.createRectangle(widthP, heightP));
         
@@ -180,7 +181,7 @@ public class ProjectileFactory
     public void createClusterMunitions(SketchCharacter owner, int power, long vPosition, int count) {
         Texture texture = Texture.loadTexture("content/char/weapons/clusterBomb.png", false);
         
-        int widthP = (int)(CLUSTER_SCALE * 1024.0f) ;
+        int widthP = Converter.GraphicsToPhysicsX(CLUSTER_SCALE) ;
         int heightP = (int)(widthP) ;
         
         Random rnd = new Random();
@@ -217,13 +218,13 @@ public class ProjectileFactory
         Texture texture = Texture.loadTexture("content/char/weapons/bazookaRocket.png", false);
         BazookaProjectile proj = new BazookaProjectile(texture, flameAnim, this);
         
-        int widthP = (int)(BAZOOKA_ROCKET_SCALE * 1024.0f) ;
+        int widthP = Converter.GraphicsToPhysicsX(BAZOOKA_ROCKET_SCALE) ;
         int heightP = (int)(widthP) ;
         Collider coll = new GamePixelCollider(proj, BitMaskFactory.createRectangle(widthP, heightP));
         
         proj.setCollider(coll);
 
-        double offset = 0.1 * 1024.0;
+        double offset = Converter.GraphicsToPhysicsX(0.01f);
         long distance = Vectors.scalarMultiply(offset, Vectors.normalize(vVelocity));
         
         setColliderProperties(coll, Vectors.add(vPosition, distance), vVelocity, 0.5f, 0.2f);

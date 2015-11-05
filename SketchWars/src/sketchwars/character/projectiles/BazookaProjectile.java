@@ -3,11 +3,13 @@ package sketchwars.character.projectiles;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import org.joml.Matrix3d;
+import sketchwars.SketchWars;
 import sketchwars.animation.Animation;
 import sketchwars.character.SketchCharacter;
 
 import sketchwars.graphics.Texture;
 import sketchwars.physics.*;
+import sketchwars.util.Converter;
 /**
  *
  * @author Najash Najimudeen <najash.najm@gmail.com>
@@ -46,15 +48,17 @@ public class BazookaProjectile extends AbstractProjectile {
                 BoundingBox bounds = coll.getBounds();
                 long vCenter = bounds.getCenterVector();
                 long velocity = Vectors.normalize(coll.getVelocity());
-                double distance = ProjectileFactory.BAZOOKA_ROCKET_SCALE * 1024;
+                double distance = Converter.GraphicsToPhysicsX(ProjectileFactory.BAZOOKA_ROCKET_SCALE);
                 long flamePos = Vectors.subtract(vCenter, Vectors.scalarMultiply(distance, velocity));
                 
-                transform.translation(Vectors.xComp(flamePos) / 1024.0f, (Vectors.yComp(flamePos) / 1024.0f));
+                transform.translation(Converter.PhysicsToGraphicsX(Vectors.xComp(flamePos)), 
+                                      Converter.PhysicsToGraphicsY((Vectors.yComp(flamePos))));
                 
                 float angle = (float)Math.atan2(Vectors.yComp(velocity), Vectors.xComp(velocity));
                 rotate.rotate(angle, 0, 0, 1);
                 
-                scale.scale(bounds.getWidth() / 1024.0f, bounds.getHeight() / 1024.0f, 1);
+                scale.scale(Converter.PhysicsToGraphicsX(bounds.getWidth()), 
+                            Converter.PhysicsToGraphicsY(bounds.getHeight()), 1);
                 
                 transform.mul(rotate);
                 transform.mul(scale);

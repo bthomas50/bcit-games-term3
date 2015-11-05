@@ -8,10 +8,12 @@ import sketchwars.character.weapon.AbstractWeapon;
 import sketchwars.graphics.*;
 import sketchwars.game.GameObject;
 import sketchwars.HUD.HealthBar;
+import sketchwars.SketchWars;
 import sketchwars.character.projectiles.AbstractProjectile;
 import sketchwars.character.projectiles.MineProjectile;
 import sketchwars.input.MouseHandler;
 import sketchwars.physics.colliders.CharacterCollider;
+import sketchwars.util.Converter;
 import sketchwars.util.Timer;
 
 /*
@@ -134,10 +136,11 @@ public class SketchCharacter implements GraphicsObject, GameObject {
     private void updateCharacterInfo() {
         BoundingBox bounds = coll.getBounds();
         long vCenter = bounds.getCenterVector();
-        posX = (float)Vectors.xComp(vCenter) / 1024.0f;
-        posY = (float)Vectors.yComp(vCenter) / 1024.0f;
-        width = (float) bounds.getWidth() / 1024.0f;
-        height = (float) bounds.getHeight() / 1024.0f;
+        posX = Converter.PhysicsToGraphicsX(Vectors.xComp(vCenter));
+        posY = Converter.PhysicsToGraphicsY(Vectors.yComp(vCenter));
+        
+        width = Converter.PhysicsToGraphicsX(bounds.getWidth());
+        height = Converter.PhysicsToGraphicsY(bounds.getHeight());
     }
     
     @Override

@@ -24,6 +24,7 @@ import sketchwars.animation.Animation;
 import sketchwars.animation.AnimationSet;
 import sketchwars.animation.CharacterAnimations;
 import sketchwars.physics.colliders.CharacterCollider;
+import sketchwars.util.Converter;
 
 public class SketchWarsWorldFactory
 {
@@ -50,9 +51,9 @@ public class SketchWarsWorldFactory
             initPhysics();
             preloadTextures();
             createGameScene();
+            setupCamera();
             createMap();
             createTeams();
-            setupCamera();
             SoundPlayer.playMusic(0, true, -15);
         } catch (SceneManagerException ex) {
             System.err.println(ex.getMessage());
@@ -91,22 +92,21 @@ public class SketchWarsWorldFactory
     private void createMap()
     {
         Texture mapBGTexture = Texture.loadTexture("content/map/clouds.png", false);
-        Texture mapFGTexture = Texture.loadTexture("content/map/map.png", false);
+        Texture mapFGTexture = Texture.loadTexture("content/map/BiggerMap.png", true);
         //it'll be empty if an error occurs when loading the map texture.
         BitMask mapImageMask = BitMaskFactory.createEmpty();
         try 
         {
-            BufferedImage mapImage = Texture.loadImageFile("content/map/map.png");
+            BufferedImage mapImage = Texture.loadImageFile("content/map/BiggerMap.png");
             mapImageMask = BitMaskFactory.createFromImageAlpha(mapImage, physics.getBounds());
             
             MapCollider mapCollider = new MapCollider(mapImageMask);
             mapCollider.setElasticity(0.5f);
             mapCollider.setStaticFriction(1.0f);
             mapCollider.setDynamicFriction(1.0f);
-            TestMap map = new TestMap(mapCollider, mapBGTexture, mapFGTexture, mapImage);
+            TestMap map = new TestMap(gameScene.getCamera(), mapCollider, mapBGTexture, mapFGTexture, mapImage);
             mapCollider.attachGameObject(map);
 
-            
             try {
                 gameScene.getLayer(GameLayers.MAP).addDrawableObject(map);
             } catch (SceneException ex) {
@@ -196,7 +196,7 @@ public class SketchWarsWorldFactory
         
         if (idle != null) {
             double ratio = idle.getSpriteHeight()/idle.getSpriteWidth();
-            int widthP = (int)(CHARACTER_SCALE * 1024.0f);
+            int widthP = Converter.GraphicsToPhysicsX(CHARACTER_SCALE);
             int heightP = (int)(widthP * ratio);
             
             charCollider = new CharacterCollider(character, BitMaskFactory.createRectangle(widthP, heightP));
@@ -272,8 +272,8 @@ public class SketchWarsWorldFactory
     }
 
     private void setupCamera() {
-        Camera camera = new Camera(OpenGL.OPENGL_LEFT, OpenGL.OPENGL_TOP, 
-                OpenGL.OPENGL_WIDTH, OpenGL.OPENGL_HEIGHT);
+        Camera camera = new Camera(SketchWars.OPENGL_LEFT, SketchWars.OPENGL_TOP, 
+                SketchWars.OPENGL_WIDTH, SketchWars.OPENGL_HEIGHT);
         camera.setCameraSize(1, 1);
         
         world.addGameObject(camera);

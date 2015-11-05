@@ -10,6 +10,7 @@ import sketchwars.character.projectiles.AbstractProjectile;
 import sketchwars.physics.Collider;
 import sketchwars.physics.Vectors;
 import sketchwars.scenes.Camera;
+import sketchwars.util.Converter;
 
 /**
  * @author Najash Najimudeen <najash.najm@gmail.com>
@@ -135,8 +136,8 @@ public class SketchWarsWorld extends World {
             if (projectile != null) {
                 Collider coll = projectile.getCollider();
                 long center = coll.getBounds().getCenterVector();
-                float posX = (float) (Vectors.xComp(center) / 1024.0f);
-                float posY = (float) (Vectors.yComp(center) / 1024.0f);
+                float posX = Converter.PhysicsToGraphicsX(Vectors.xComp(center));
+                float posY = Converter.PhysicsToGraphicsY(Vectors.yComp(center));
                 camera.setNextCameraPosition(posX, posY);
             } else {
                 camera.setNextCameraPosition(character.getPosX(), character.getPosY());

@@ -16,10 +16,10 @@ import sketchwars.input.MouseHandler;
  * @author Najash Najimudeen <najash.najm@gmail.com>
  */
 public class Camera implements GameObject {
-    private static final float SLOW_RADIUS = 0.01f;
-    private static final float REACHED_RADIUS = 0.001f;
+    private static final float SLOW_RADIUS = 0.1f;
+    private static final float REACHED_RADIUS = 0.02f;
     
-    private static final float PAN_SPEED = 0.0008f;
+    private static final float PAN_SPEED = 0.0012f;
     
     private float panSpeed;
     
@@ -145,6 +145,9 @@ public class Camera implements GameObject {
         Vector2d offset = getOffset();
         
         GL11.glLoadIdentity();
+        GL11.glOrtho(worldLeft, worldRight, 
+                worldBottom, worldTop, -1.0, 1.0);
+        
         GL11.glScalef(xScale, yScale, 1);
         GL11.glTranslatef((float)offset.x, (float)offset.y, 0);
     }
@@ -233,5 +236,13 @@ public class Camera implements GameObject {
     
     public float getTop() {
         return top;
+    }
+
+    public float getWorldWidth() {
+        return worldWidth;
+    }
+
+    public float getWorldHeight() {
+        return worldHeight;
     }
 }

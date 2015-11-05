@@ -3,10 +3,12 @@ package sketchwars.character.projectiles;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import org.joml.Vector2d;
+import sketchwars.SketchWars;
 import sketchwars.animation.Animation;
 import sketchwars.graphics.Texture;
 import sketchwars.character.*;
 import sketchwars.physics.*;
+import sketchwars.util.Converter;
 import sketchwars.util.Timer;
 
 /**
@@ -65,8 +67,8 @@ public class MineProjectile extends AbstractProjectile {
             BoundingBox bounds = coll.getBounds();
             long vCenter = bounds.getCenterVector();
             
-            Vector2d position = new Vector2d(Vectors.xComp(vCenter) / 1024.0f, Vectors.yComp(vCenter) / 1024.0f);
-            Vector2d size = new Vector2d(bounds.getWidth() / 1024.0f, bounds.getHeight() / 1024.0f);
+            Vector2d position = Converter.PhysicsToGraphics(Vectors.xComp(vCenter), Vectors.yComp(vCenter));
+            Vector2d size = Converter.PhysicsToGraphics(bounds.getWidth(), bounds.getHeight());
             
             activatedTex.setPosition(position);
             activatedTex.setDimension(size);

@@ -4,7 +4,11 @@ import static sketchwars.physics.BitMask.*;
 import static sketchwars.physics.Vectors.*;
 
 import java.awt.image.BufferedImage;
-import sketchwars.util.PhysicsToImage;
+import static sketchwars.SketchWars.PHYSICS_HEIGHT;
+import static sketchwars.SketchWars.PHYSICS_LEFT;
+import static sketchwars.SketchWars.PHYSICS_TOP;
+import static sketchwars.SketchWars.PHYSICS_WIDTH;
+
 /**
  * Static factory methods for creating BitMasks
  * @author brian <bthomas50@my.bcit.ca>
@@ -58,7 +62,8 @@ public class BitMaskFactory
         float widthRatio = (float) im.getWidth() / width;
         float heightRatio = (float) im.getHeight() / height;
         
-        BoundingBox physicsBounds =  new BoundingBox(-1024, -1024, 1024, 1024);
+        BoundingBox physicsBounds =  new BoundingBox(PHYSICS_TOP, PHYSICS_LEFT, 
+                PHYSICS_TOP + PHYSICS_WIDTH, PHYSICS_LEFT + PHYSICS_WIDTH);
         BoundingBox intersection = physicsBounds.intersection(bounds);
         
         //no part of the bitmap will be affected.

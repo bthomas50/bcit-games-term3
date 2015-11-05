@@ -16,11 +16,6 @@ import sketchwars.input.*;
  * @author Najash Najimudeen <najash.najm@gmail.com>
  */
 public class OpenGL {
-    public static final float OPENGL_TOP = 1;
-    public static final float OPENGL_LEFT = -1;
-    public static final float OPENGL_WIDTH = 2;
-    public static final float OPENGL_HEIGHT = 2;
-    
     private static final int WIDTH = 800;
     private static final int HEIGHT = 600;
 
@@ -142,12 +137,6 @@ public class OpenGL {
         // enable alpha blending
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        GL11.glMatrixMode(GL11.GL_PROJECTION);
-        GL11.glPushMatrix();
-        GL11.glLoadIdentity();
-        
-        GL11.glOrtho(OPENGL_LEFT, OPENGL_TOP, 
-                OPENGL_TOP - OPENGL_HEIGHT, OPENGL_LEFT + OPENGL_WIDTH, -1.0, 1.0);
         GL11.glMatrixMode(GL11.GL_MODELVIEW);
         GL11.glPushMatrix();
         GL11.glLoadIdentity();
