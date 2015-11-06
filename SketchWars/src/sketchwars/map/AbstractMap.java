@@ -96,18 +96,33 @@ public abstract class AbstractMap implements GraphicsObject, GameObject {
         if(intersection == BoundingBox.EMPTY) {return false;}
         
         //get new image coordinates
-        xImage = intersection.getLeft();
-        yImage = intersection.getTop();
-        subNewWidth = intersection.getWidth();
-        subNewHeight = intersection.getHeight();
+        int clippedX = intersection.getLeft();
+        int clippedY = intersection.getTop();
+        int clippedWidth = intersection.getWidth();
+        int clippedHeight = intersection.getHeight();
         
-        for (int i = 0; i < subNewWidth; i++) {
-            for (int j = 0; j < subNewHeight; j++) {
-                int imageI = (int) ((float)i * widthRatio);
-                int imageJ = (int) ((float)j * heightRatio);
+        int subImageOffsetX = 0;
+        int subImageOffsetY = 0;
+        
+        if (xImage < 0) {
+            subImageOffsetX = -xImage;
+        } else if (xImage + subNewWidth > foregroundImage.getWidth()) {
+            subImageOffsetX = (xImage + subNewWidth) - foregroundImage.getWidth();
+        }
+        
+        if (yImage < 0) {
+            subImageOffsetY = -yImage;
+        } else if (yImage + subNewHeight > foregroundImage.getHeight()) {
+            subImageOffsetY = (yImage + subNewHeight) - foregroundImage.getHeight();
+        }
+        
+        for (int i = 0; i < clippedWidth; i++) {
+            for (int j = 0; j < clippedHeight; j++) {
+                int imageI = (int) ((i + subImageOffsetX) * widthRatio);
+                int imageJ = (int) ((j + subImageOffsetY) * heightRatio);
 
-                int xSet = xImage + i;
-                int ySet = yImage + j;
+                int xSet = clippedX + i;
+                int ySet = clippedY + j;
 
                 int color = subImage.getRGB(imageI, imageJ);
                 int alpha = color >> 24;
@@ -121,8 +136,8 @@ public abstract class AbstractMap implements GraphicsObject, GameObject {
                 }
             }
         }
-        BufferedImage replacedRegion = foregroundImage.getSubimage(xImage, yImage, subNewWidth, subNewHeight);
-        return foreground.setSubTexture(replacedRegion, xImage, yImage, replacedRegion.getWidth(), replacedRegion.getHeight());
+        BufferedImage replacedRegion = foregroundImage.getSubimage(clippedX, clippedY, clippedWidth, clippedHeight);
+        return foreground.setSubTexture(replacedRegion, clippedX, clippedY, clippedWidth, clippedHeight);
     }
 
     public void updateInPhysics(BufferedImage subImage, boolean erase, float xStart, float yStart, float width, float height) {

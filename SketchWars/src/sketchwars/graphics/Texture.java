@@ -365,6 +365,10 @@ public class Texture {
             height = bottom - yOffset - 1;
         }
         
+        if (width < 1 || height < 1) {
+            return false;
+        }
+        
         if (subImage == null) {
             System.err.println("Texture::setSubTexture: Given image cannot be null.");
         } else {

@@ -16,8 +16,8 @@ import sketchwars.input.*;
  * @author Najash Najimudeen <najash.najm@gmail.com>
  */
 public class OpenGL {
-    private static final int WIDTH = 800;
-    private static final int HEIGHT = 600;
+    private static final int WIDTH = 1024;
+    private static final int HEIGHT = 800;
 
     private static int currentScreenWidth;
     private static int currentScreenHeight;
