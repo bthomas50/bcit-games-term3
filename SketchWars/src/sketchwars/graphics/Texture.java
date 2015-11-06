@@ -347,11 +347,25 @@ public class Texture {
      * @return true if successful
      */
     public boolean setSubTexture(BufferedImage subImage, int xOffset, int yOffset, int width, int height) {
-        if (xOffset < 0 || yOffset < 0) {
-            System.err.println("Texture::setSubTexture: Given sub texture offset cannot be less than 0.");
-        } else if ((xOffset + width) >= tWidth || (yOffset + height) >= tHeight) {
-            System.err.println("Texture::setSubTexture: Given sub texture offset cannot be greater than texture size.");
-        } else if (subImage == null) {
+        if (xOffset < 0) {
+            width += xOffset;
+            xOffset = 0;
+        }
+        if (yOffset < 0) {
+            height += yOffset;
+            yOffset = 0;
+        }
+        
+        int right = (xOffset + width);
+        int bottom = (yOffset + height);
+        if (right >= tWidth) {
+            width = right - xOffset - 1;
+        }
+        if (bottom >= tHeight) {
+            height = bottom - yOffset - 1;
+        }
+        
+        if (subImage == null) {
             System.err.println("Texture::setSubTexture: Given image cannot be null.");
         } else {
             ByteBuffer data;

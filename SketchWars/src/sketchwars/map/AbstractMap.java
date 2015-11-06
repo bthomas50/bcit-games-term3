@@ -98,8 +98,8 @@ public abstract class AbstractMap implements GraphicsObject, GameObject {
         //get new image coordinates
         xImage = intersection.getLeft();
         yImage = intersection.getTop();
-        subNewWidth = intersection.getRight() - intersection.getLeft();
-        subNewHeight = intersection.getBottom() - intersection.getTop();
+        subNewWidth = intersection.getWidth();
+        subNewHeight = intersection.getHeight();
         
         for (int i = 0; i < subNewWidth; i++) {
             for (int j = 0; j < subNewHeight; j++) {

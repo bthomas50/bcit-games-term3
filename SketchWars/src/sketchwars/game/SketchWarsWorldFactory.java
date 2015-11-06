@@ -274,7 +274,7 @@ public class SketchWarsWorldFactory
     private void setupCamera() {
         Camera camera = new Camera(SketchWars.OPENGL_LEFT, SketchWars.OPENGL_TOP, 
                 SketchWars.OPENGL_WIDTH, SketchWars.OPENGL_HEIGHT);
-        camera.setCameraSize(1, 1);
+        camera.setCameraSize(SketchWars.OPENGL_WIDTH, SketchWars.OPENGL_HEIGHT);
         
         world.addGameObject(camera);
         gameScene.setCamera(camera);
