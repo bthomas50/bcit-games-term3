@@ -17,7 +17,7 @@ import sketchwars.util.GraphicsToImage;
 public abstract class AbstractMap implements GraphicsObject, GameObject {
     private final MapCollider mapCollider;
     private Texture background;
-    private final Texture foreground;
+    private Texture foreground;
     private final BufferedImage foregroundImage;
 
     private final Camera camera;
@@ -101,25 +101,13 @@ public abstract class AbstractMap implements GraphicsObject, GameObject {
         int clippedWidth = intersection.getWidth();
         int clippedHeight = intersection.getHeight();
         
-        int subImageOffsetX = 0;
-        int subImageOffsetY = 0;
-        
-        if (xImage < 0) {
-            subImageOffsetX = -xImage;
-        } else if (xImage + subNewWidth > foregroundImage.getWidth()) {
-            subImageOffsetX = (xImage + subNewWidth) - foregroundImage.getWidth();
-        }
-        
-        if (yImage < 0) {
-            subImageOffsetY = -yImage;
-        } else if (yImage + subNewHeight > foregroundImage.getHeight()) {
-            subImageOffsetY = (yImage + subNewHeight) - foregroundImage.getHeight();
-        }
-        
+        int subImageOffsetX = (xImage < 0) ? -xImage : 0;
+        int subImageOffsetY = (yImage < 0) ? -yImage : 0;
+                
         for (int i = 0; i < clippedWidth; i++) {
             for (int j = 0; j < clippedHeight; j++) {
-                int imageI = (int) ((i + subImageOffsetX) * widthRatio);
-                int imageJ = (int) ((j + subImageOffsetY) * heightRatio);
+                int imageI = (int) Math.round((i + subImageOffsetX) * widthRatio);
+                int imageJ = (int) Math.round((j + subImageOffsetY) * heightRatio);
 
                 int xSet = clippedX + i;
                 int ySet = clippedY + j;
@@ -128,6 +116,7 @@ public abstract class AbstractMap implements GraphicsObject, GameObject {
                 int alpha = color >> 24;
 
                 if (alpha != 0) {  
+                    
                     if (erase) {
                         foregroundImage.setRGB(xSet, ySet, Color.TRANSLUCENT);
                     } else {
@@ -136,6 +125,7 @@ public abstract class AbstractMap implements GraphicsObject, GameObject {
                 }
             }
         }
+        
         BufferedImage replacedRegion = foregroundImage.getSubimage(clippedX, clippedY, clippedWidth, clippedHeight);
         return foreground.setSubTexture(replacedRegion, clippedX, clippedY, clippedWidth, clippedHeight);
     }

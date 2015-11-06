@@ -359,10 +359,10 @@ public class Texture {
         int right = (xOffset + width);
         int bottom = (yOffset + height);
         if (right >= tWidth) {
-            width = right - xOffset - 1;
+            width = right - xOffset;
         }
         if (bottom >= tHeight) {
-            height = bottom - yOffset - 1;
+            height = bottom - yOffset;
         }
         
         if (width < 1 || height < 1) {
@@ -399,8 +399,8 @@ public class Texture {
     public boolean setSubTexture(ByteBuffer subImage, int xOffset, int yOffset, int width, int height) {
         if (xOffset < 0 || yOffset < 0) {
             System.err.println("Texture::setSubTexture: Given sub texture offset cannot be less than 0.");
-        } else if ((xOffset + width) >= tWidth || (yOffset + height) >= tHeight) {
-            System.err.println("Texture::setSubTexture: Given sub texture offset cannot be greater than texture size.");
+        } else if ((xOffset + width) > tWidth || (yOffset + height) > tHeight) {
+            return false;
         } else if (subImage == null) {
             System.err.println("Texture::setSubTexture: Given ByteBuffer cannot be null.");
         } else {
