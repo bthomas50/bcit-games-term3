@@ -20,8 +20,10 @@ public class Camera implements GameObject {
     private static final float REACHED_RADIUS = 0.02f;
     
     private static final float PAN_SPEED = 0.0012f;
+    private static final float ZOOM_SPEED = 0.0012f;
     
     private float panSpeed;
+    private float zoomSpeed;
     
     private final float worldLeft;
     private final float worldRight;
@@ -39,10 +41,11 @@ public class Camera implements GameObject {
     
     private float width;
     private float height;
-    private float xScale;
-    private float yScale;
-        
+    private float nextWidth;
+    private float nextHeight;
+    
     private boolean panning;
+    private boolean zooming;
     private float xMouseFalling;
     private float yMouseFalling;
     
@@ -55,30 +58,30 @@ public class Camera implements GameObject {
         this.worldBottom = worldTop - worldHeight;
                 
         this.panSpeed = PAN_SPEED;
+        this.zoomSpeed = ZOOM_SPEED;
         
         this.worldWidth = worldWidth;
         this.worldHeight = worldHeight;
         this.width = this.worldWidth;
         this.height = this.worldHeight;
-        
+        this.nextWidth = this.width;
+        this.nextHeight = this.height;
+    
         this.left = this.worldLeft;
         this.top = this.worldTop;
         
         this.nextLeft = this.left;
         this.nextTop = this.top;
         
-        this.xScale = worldWidth/this.width;
-        this.yScale = worldHeight/this.height;
-        
         this.expired = false;
-    }
-
-    public void setPanning(boolean panning) {
-        this.panning = panning;
     }
 
     public boolean isPanning() {
         return panning;
+    }
+    
+    public boolean isZooming() {
+        return zooming;
     }
 
     public float getPanSpeed() {
@@ -89,12 +92,19 @@ public class Camera implements GameObject {
         this.panSpeed = panSpeed;
     }
 
+    public void setZoomSpeed(float zoomSpeed) {
+        this.zoomSpeed = zoomSpeed;
+    }
+    
     public void setCameraSize(float width, float height) {
         this.width = width;
         this.height = height;
-        
-        this.xScale = worldWidth/width;
-        this.yScale = worldHeight/height;
+    }
+    
+    public void setNextCameraSize(float width, float height) {
+        this.nextWidth = width;
+        this.nextHeight = height;
+        zooming = true;
     }
     
     public void setCameraPosition(float xCenter, float yCenter) {
@@ -115,16 +125,14 @@ public class Camera implements GameObject {
     }
     
     private float getBoundedX(float x) {
-        float xOffset = width/2.0f;
-        float maxLeft = worldRight - xOffset;
-        float minLeft = worldLeft + xOffset;
+        float maxLeft = worldRight - width;
+        float minLeft = worldLeft;
         return (float)Math.min(Math.max(x, minLeft), maxLeft);
     }
     
     private float getBoundedY(float y) {
-        float yOffset = height/2.0f;
-        float minTop = worldBottom + yOffset;
-        float maxTop = worldTop - yOffset;
+        float minTop = worldBottom + height;
+        float maxTop = worldTop;
         return (float)Math.max(Math.min(y, maxTop), minTop);
     }
         
@@ -136,6 +144,10 @@ public class Camera implements GameObject {
     
     @Override
     public void update(double delta) {
+        if (zooming) {
+            handleCameraZooming(delta);
+        }
+        
         if (panning) {
             handleCameraPan(delta);
         }
@@ -148,13 +160,35 @@ public class Camera implements GameObject {
         GL11.glOrtho(worldLeft, worldRight, 
                 worldBottom, worldTop, -1.0, 1.0);
         
-        GL11.glScalef(xScale, yScale, 1);
+        GL11.glScalef(worldWidth/width, worldHeight/height, 1);
         GL11.glTranslatef((float)offset.x, (float)offset.y, 0);
+    }
+
+    private Vector2d getOffset() {
+        if (MouseHandler.rightBtnState == MouseState.FALLING) {
+            xMouseFalling = MouseHandler.xNormalized;
+            yMouseFalling = MouseHandler.yNormalized;
+        } else if (MouseHandler.rightBtnState == MouseState.DOWN) {
+            float xMouse = MouseHandler.xNormalized;
+            float yMouse = MouseHandler.yNormalized;
+            float xDragOffset = xMouseFalling - xMouse;
+            float yDragOffset = yMouseFalling - yMouse;
+           
+            left = getBoundedX(left + xDragOffset);
+            top = getBoundedY(top + yDragOffset);
+        }
+        
+        Vector2d offset = new Vector2d();
+        float xOffset = -(left + (width / 2.0f));
+        float yOffset = -(top - (height / 2.0f));
+        offset.set(xOffset, yOffset);
+        
+        return offset;
     }
 
     private void handleCameraPan(double delta) {
         Vector2d distance = new Vector2d(nextLeft - left, 
-                                           nextTop - top);
+                                         nextTop - top);
         
         Vector2d direction = new Vector2d();
         distance.normalize(direction);
@@ -187,33 +221,6 @@ public class Camera implements GameObject {
         return expired;
     }
 
-    private Vector2d getOffset() {
-        Vector2d offset = new Vector2d();
-        float xOffset = -(left + (width / 2.0f));
-        float yOffset = -(top - (height / 2.0f));
-            
-        if (MouseHandler.rightBtnState == MouseState.FALLING) {
-            xMouseFalling = MouseHandler.xNormalized;
-            yMouseFalling = MouseHandler.yNormalized;
-        }
-        
-        if (MouseHandler.rightBtnState == MouseState.DOWN) {
-            float xMouse = MouseHandler.xNormalized;
-            float yMouse = MouseHandler.yNormalized;
-            float xDelta = xMouseFalling - xMouse;
-            float yDelta = yMouseFalling - yMouse;
-            
-            float xNewOffset = getBoundedX(xOffset - xDelta);
-            float yNewOffset = getBoundedY(yOffset - yDelta);
-            
-            offset.set(xNewOffset, yNewOffset);
-        } else {
-            offset.set(xOffset, yOffset);
-        }
-        
-        return offset;
-    }
-
     public float getWidth() {
         return width;
     }
@@ -244,5 +251,38 @@ public class Camera implements GameObject {
 
     public float getWorldHeight() {
         return worldHeight;
+    }
+
+    private void handleCameraZooming(double delta) {
+        Vector2d distance = new Vector2d(nextWidth - width, 
+                                         nextHeight - height);
+        
+        Vector2d direction = new Vector2d();
+        distance.normalize(direction);
+        
+        float speed = zoomSpeed;
+        
+        float dist = (float) distance.length();
+        
+        if (dist < SLOW_RADIUS) {
+            speed = (zoomSpeed * dist/SLOW_RADIUS);
+        }
+        
+        if (dist < REACHED_RADIUS) {
+            zooming = false;
+        } else {
+            Vector2d velocity = new Vector2d(direction.x * speed, 
+                                             direction.y * speed);
+            width += velocity.x * delta;
+            height += velocity.y * delta;
+        }
+    }
+
+    public float getWorldRight() {
+        return worldRight;
+    }
+
+    public float getWorldBottom() {
+        return worldBottom;
     }
 }
