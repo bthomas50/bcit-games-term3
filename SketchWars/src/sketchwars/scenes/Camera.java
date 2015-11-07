@@ -20,7 +20,7 @@ public class Camera implements GameObject {
     private static final float REACHED_RADIUS = 0.02f;
     
     private static final float PAN_SPEED = 0.0012f;
-    private static final float ZOOM_SPEED = 0.0012f;
+    private static final float ZOOM_SPEED = 0.0009f;
     
     private float panSpeed;
     private float zoomSpeed;
