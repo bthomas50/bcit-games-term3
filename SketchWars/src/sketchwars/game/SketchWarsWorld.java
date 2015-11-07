@@ -6,6 +6,7 @@ import sketchwars.character.Team;
 import sketchwars.input.*;
 
 import java.util.ArrayList;
+import org.lwjgl.glfw.GLFW;
 import sketchwars.character.projectiles.AbstractProjectile;
 import sketchwars.physics.Collider;
 import sketchwars.physics.Vectors;
@@ -17,7 +18,7 @@ import sketchwars.util.Converter;
  * @author Brian Thomas <bthomas50@my,bcit.ca>
  * @author David Ly <ly_nekros@hotmail.com>
  */
-public class SketchWarsWorld extends World {    
+public class SketchWarsWorld extends World implements KeyCharListener {    
     protected AbstractMap map;
     protected ArrayList<SketchCharacter> characters;
     protected ArrayList<Team> teams;
@@ -28,6 +29,8 @@ public class SketchWarsWorld extends World {
         characters = new ArrayList<>();
         teams = new ArrayList<>();
         currentTurn = Turn.createDefaultTurn();
+        
+        KeyboardHandler.addCharListener((SketchWarsWorld)this);
     }
 
     public void setCamera(Camera camera) {
@@ -133,15 +136,30 @@ public class SketchWarsWorld extends World {
             SketchCharacter character = firstTeam.getActiveCharacter();
             AbstractProjectile projectile = character.getFiredProjectile();
             
-            if (projectile != null) {
-                Collider coll = projectile.getCollider();
-                long center = coll.getBounds().getCenterVector();
-                float posX = Converter.PhysicsToGraphicsX(Vectors.xComp(center));
-                float posY = Converter.PhysicsToGraphicsY(Vectors.yComp(center));
-                camera.setCameraPosition(posX, posY);
-            } else {
-                camera.setNextCameraPosition(character.getPosX(), character.getPosY());
+            if (camera.isDragResetOn()) {
+                if (projectile != null) {
+                    Collider coll = projectile.getCollider();
+                    long center = coll.getBounds().getCenterVector();
+                    float posX = Converter.PhysicsToGraphicsX(Vectors.xComp(center));
+                    float posY = Converter.PhysicsToGraphicsY(Vectors.yComp(center));
+                    camera.setNextCameraPosition(posX, posY);
+                } else {
+                    camera.setNextCameraPosition(character.getPosX(), character.getPosY());
+                }
             }
+        }
+    }
+
+    @Override
+    protected void finalize() throws Throwable {
+        super.finalize();
+        KeyboardHandler.removeCharListener(this);
+    }
+    
+    @Override
+    public void charTyped(int keycode) {
+        if ((char)keycode == 'c') {
+            camera.toggleDragReset();
         }
     }
 }

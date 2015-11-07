@@ -16,7 +16,7 @@ import sketchwars.input.MouseHandler;
  * @author Najash Najimudeen <najash.najm@gmail.com>
  */
 public class Camera implements GameObject {
-    private static final float SLOW_RADIUS = 0.07f;
+    private static final float SLOW_RADIUS = 0.09f;
     private static final float REACHED_RADIUS = 0.01f;
     
     private static final float MAX_PAN_ACCEL = 0.01f;
@@ -55,6 +55,8 @@ public class Camera implements GameObject {
     
     private boolean expired;
     
+    private boolean dragReset;
+    
     public Camera(float worldLeft, float worldTop, float worldWidth, float worldHeight) {
         this.worldLeft = worldLeft;
         this.worldRight = worldLeft + worldWidth;
@@ -79,10 +81,23 @@ public class Camera implements GameObject {
         
         this.expired = false;
         
-        panVelocity = new Vector2d();
-        zoomVelocity = new Vector2d();
+        this.panVelocity = new Vector2d();
+        this.zoomVelocity = new Vector2d();
+        this.dragReset = true;
     }
 
+    public void toggleDragReset() {
+        dragReset = !dragReset;
+    }
+    
+    public void setDragReset(boolean value) {
+        dragReset = value;
+    }
+    
+    public boolean isDragResetOn() {
+        return dragReset;
+    }
+    
     public boolean isPanning() {
         return panning;
     }
