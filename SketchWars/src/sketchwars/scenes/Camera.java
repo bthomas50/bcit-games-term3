@@ -16,14 +16,18 @@ import sketchwars.input.MouseHandler;
  * @author Najash Najimudeen <najash.najm@gmail.com>
  */
 public class Camera implements GameObject {
-    private static final float SLOW_RADIUS = 0.1f;
-    private static final float REACHED_RADIUS = 0.02f;
+    private static final float SLOW_RADIUS = 0.07f;
+    private static final float REACHED_RADIUS = 0.01f;
     
-    private static final float PAN_SPEED = 0.0012f;
-    private static final float ZOOM_SPEED = 0.0009f;
+    private static final float MAX_PAN_ACCEL = 0.01f;
+    private static final float MAX_ZOOM_ACCEL = 0.01f;
+    private static final float PAN_SPEED = 0.0032f;
+    private static final float ZOOM_SPEED = 0.0020f;
     
     private float panSpeed;
     private float zoomSpeed;
+    private Vector2d panVelocity;
+    private Vector2d zoomVelocity;
     
     private final float worldLeft;
     private final float worldRight;
@@ -74,6 +78,9 @@ public class Camera implements GameObject {
         this.nextTop = this.top;
         
         this.expired = false;
+        
+        panVelocity = new Vector2d();
+        zoomVelocity = new Vector2d();
     }
 
     public boolean isPanning() {
@@ -148,7 +155,7 @@ public class Camera implements GameObject {
             handleCameraZooming(delta);
         }
         
-        if (panning) {
+        if (panning && !zooming) {
             handleCameraPan(delta);
         }
     }
@@ -193,22 +200,31 @@ public class Camera implements GameObject {
         Vector2d direction = new Vector2d();
         distance.normalize(direction);
         
-        float speed = panSpeed;
-        
         float dist = (float) distance.length();
         
+        float targetSpeed = panSpeed;
         if (dist < SLOW_RADIUS) {
-            speed = (panSpeed * dist/SLOW_RADIUS);
+            targetSpeed = (panSpeed * dist/SLOW_RADIUS);
         }
-                
+        
         if (dist < REACHED_RADIUS) {
             panning = false;
+            panVelocity = new Vector2d();
         } else {
-            Vector2d velocity = new Vector2d(direction.x * speed, 
-                                               direction.y * speed);
-
-            left += velocity.x * delta;
-            top += velocity.y * delta;
+            Vector2d linearAccel = new Vector2d(direction.x * MAX_PAN_ACCEL, 
+                                                direction.y * MAX_PAN_ACCEL);
+           
+            panVelocity.x += linearAccel.x * delta;
+            panVelocity.y += linearAccel.y * delta;
+            
+            if (panVelocity.length() > targetSpeed) {
+                panVelocity.normalize();
+                panVelocity = new Vector2d(panVelocity.x * targetSpeed,
+                                           panVelocity.y * targetSpeed);
+            }
+            
+            left += panVelocity.x * delta;
+            top += panVelocity.y * delta;
         }
     }
 
@@ -253,28 +269,45 @@ public class Camera implements GameObject {
         return worldHeight;
     }
 
-    private void handleCameraZooming(double delta) {
+    private void handleCameraZooming(double delta) {        
         Vector2d distance = new Vector2d(nextWidth - width, 
                                          nextHeight - height);
         
         Vector2d direction = new Vector2d();
         distance.normalize(direction);
         
-        float speed = zoomSpeed;
+        float targetSpeed = zoomSpeed;
         
         float dist = (float) distance.length();
         
         if (dist < SLOW_RADIUS) {
-            speed = (zoomSpeed * dist/SLOW_RADIUS);
+            targetSpeed = (zoomSpeed * dist/SLOW_RADIUS);
         }
-        
+                
         if (dist < REACHED_RADIUS) {
             zooming = false;
+            zoomVelocity = new Vector2d();
         } else {
-            Vector2d velocity = new Vector2d(direction.x * speed, 
-                                             direction.y * speed);
-            width += velocity.x * delta;
-            height += velocity.y * delta;
+            Vector2d linearAccel = new Vector2d(direction.x * MAX_ZOOM_ACCEL, 
+                                                direction.y * MAX_ZOOM_ACCEL);
+           
+            zoomVelocity.x += linearAccel.x * delta;
+            zoomVelocity.y += linearAccel.y * delta;
+            
+            if (zoomVelocity.length() > targetSpeed) {
+                zoomVelocity.normalize();
+                zoomVelocity = new Vector2d(zoomVelocity.x * targetSpeed,
+                                            zoomVelocity.y * targetSpeed);
+            }
+            
+            float xVelocity = (float) (zoomVelocity.x * delta);
+            float yVelocity = (float) (zoomVelocity.y * delta);
+            
+            width += xVelocity;
+            height += yVelocity;
+            
+            left -= xVelocity/2.0f;
+            top += yVelocity/2.0f;
         }
     }
 
