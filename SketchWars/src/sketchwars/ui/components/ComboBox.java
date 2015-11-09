@@ -88,7 +88,6 @@ public class ComboBox extends UIComponent implements UIActionListener {
             dropButton.render();
         }
         
-                System.out.println(selected + ", " + dropButton.isSelected() + ", " + listBox.isSelected());
         if (listBox != null) {
             if (!(selected || dropButton.isSelected() || 
                 listBox.isSelected())) {
