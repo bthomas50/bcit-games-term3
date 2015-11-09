@@ -32,6 +32,11 @@ public class Team
     {
         healthBar = healthbar;
     }
+    
+    public HealthBar getHealthBar()
+    {
+        return healthBar;
+    }
     public void changeAmmo(WeaponTypes weaponType, int num)
     {
         weapons.get(weaponType).setAmmo(num);

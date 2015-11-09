@@ -73,9 +73,13 @@ public class SketchWarsWorld extends World implements KeyCharListener {
     
     private void updateTeamBars()
     {
+        float counter = 0;
         for (Team t: teams)
         {
             t.updateTotalHealth();
+            
+            t.getHealthBar().setPosition(camera.getLeft(), camera.getTop() - 1.6f - counter);
+            counter += 0.1f;
         }
     }
 

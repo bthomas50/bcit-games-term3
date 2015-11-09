@@ -12,7 +12,7 @@ import sketchwars.graphics.Texture;
 import sketchwars.character.Team;
 import sketchwars.sound.SoundPlayer;
 import sketchwars.*;
-import sketchwars.HUD.HealthBar;
+import sketchwars.HUD.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -172,11 +172,12 @@ public class SketchWarsWorldFactory
             characters.add(character);
         }
         
-        teamHealthBar = new HealthBar(HealthBar.lifeBars[teamNum*2],
+        teamHealthBar = new TeamHealthBar(HealthBar.lifeBars[teamNum*2],
                                       HealthBar.lifeBars[teamNum*2+1],
                                       Vectors.create(-1.0f, -0.7f + (-0.1f * teamNum)),
                                       -0.5f,
-                                      0.05f);
+                                      0.05f,
+                                      gameScene.getCamera());
         
         teamHealthBar.setMaxHealth(characters.get(0).getMaxHealth() * characters.size());
         teamHealthBar.setHealth(characters.get(0).getHealth() * characters.size());
@@ -189,6 +190,8 @@ public class SketchWarsWorldFactory
         
         Team team = new Team(characters, weapons);
         team.setHealthBar(teamHealthBar);
+        world.addGameObject(teamHealthBar);
+        
         return team;
     }
 
@@ -205,7 +208,13 @@ public class SketchWarsWorldFactory
         
         if (idle != null) {
             double ratio = idle.getSpriteHeight()/idle.getSpriteWidth();
-            int widthP = Converter.GraphicsToPhysicsX(CHARACTER_SCALE);
+            int widthP;
+            if(teamNum == 0)
+                widthP = Converter.GraphicsToPhysicsX(0.15f);
+            else
+                widthP = Converter.GraphicsToPhysicsX(CHARACTER_SCALE);
+            
+            //int widthP = Converter.GraphicsToPhysicsX(CHARCTER_SCALE);
             int heightP = (int)(widthP * ratio);
             
             charCollider = new CharacterCollider(character, BitMaskFactory.createRectangle(widthP, heightP));
