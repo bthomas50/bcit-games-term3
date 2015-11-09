@@ -18,7 +18,10 @@ import sketchwars.graphics.Texture;
 import sketchwars.scenes.Layer;
 import sketchwars.scenes.Scene;
 import sketchwars.scenes.SceneManager;
+import sketchwars.ui.components.ComboBox;
+import sketchwars.ui.components.ListBox;
 import sketchwars.ui.components.TextButton;
+import sketchwars.ui.components.TextInputbox;
 import sketchwars.ui.components.UIActionListener;
 import sketchwars.ui.components.UIComponent;
 
@@ -95,7 +98,6 @@ public class MainMenu extends Scene implements UIActionListener {
             buttonExit = new TextButton("EXIT",font,new Vector2d(0.03, -0.75), size,normalBtn,hoverBtn,pressBtn);
             btnLayer.addDrawableObject(buttonExit);
             buttonExit.addActionListener(this);  
-
         } catch (SceneException ex) {
             Logger.getLogger(MainMenu.class.getName()).log(Level.SEVERE, null, ex);
         }

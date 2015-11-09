@@ -40,6 +40,8 @@ public class TextInputbox extends UIComponent implements KeyCharListener {
         setBackgroundFromColor(Color.LIGHT_GRAY);
         
         lastKeyPressTime = System.currentTimeMillis();
+        
+        KeyboardHandler.addCharListener((TextInputbox)this);
     }
 
     public String getText() {
@@ -121,5 +123,11 @@ public class TextInputbox extends UIComponent implements KeyCharListener {
     @Override
     public void redraw() {
         updateLabel();
+    }
+
+    @Override
+    protected void finalize() throws Throwable {
+        KeyboardHandler.removeCharListener(this);
+        super.finalize(); 
     }
 }

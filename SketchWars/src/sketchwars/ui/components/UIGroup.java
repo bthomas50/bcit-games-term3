@@ -7,13 +7,12 @@ package sketchwars.ui.components;
 
 import java.util.ArrayList;
 import org.joml.Vector2d;
-import sketchwars.input.KeyboardHandler;
 
 /**
  *
  * @author Najash Najimudeen <najash.najm@gmail.com>
  */
-public class UIGroup extends UIComponent implements UIActionListener {
+public class UIGroup extends UIComponent {
     private final ArrayList<UIComponent> components;
     
     /**
@@ -25,28 +24,16 @@ public class UIGroup extends UIComponent implements UIActionListener {
         super(position, size, null, true);
         
         components = new ArrayList<>();
-        addActionListener((UIGroup)this);
     }
     
     public void addUIComponent(UIComponent component) {
         if (component != null) {
             components.add(component);
-            
-            if (component instanceof TextInputbox) {
-                KeyboardHandler.addCharListener((TextInputbox)component);
-            }
-            component.addActionListener(this);
         }
     }
     
     public void removeUIComponent(UIComponent component) {
         if (component != null) {
-            component.removeActionListener(this);
-            
-            if (component instanceof TextInputbox) {
-                KeyboardHandler.removeCharListener((TextInputbox)component);
-            }
-            
             components.remove(component);
         }
     }
@@ -62,41 +49,8 @@ public class UIGroup extends UIComponent implements UIActionListener {
         }
     }
     
-    public void deselectAll() {
-        for (UIComponent uic: components) {
-            uic.setSelected(false);
-        }
-    }
-
-    @Override
-    public void action(UIComponent component, float x, float y) {
-        if (component != null) {
-            deselectAll();
-            
-            if (!(component instanceof UIGroup)) {
-                component.setSelected(true);
-            }
-        }
-    }
-
     @Override
     public void redraw() { 
-        for (UIComponent uic: components) {
-            uic.setFont(font);
-            uic.setFontColor(fontColor);
-        }
+        
     }
-
-    @Override
-    protected void finalize() throws Throwable {
-        super.finalize(); 
-        for (UIComponent component : components) {
-            if (component instanceof TextInputbox) {
-                KeyboardHandler.removeCharListener((TextInputbox)component);
-            }
-        }
-        components.clear();
-    }
-    
-    
 }

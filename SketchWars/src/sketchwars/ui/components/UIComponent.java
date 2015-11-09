@@ -144,10 +144,6 @@ public abstract class UIComponent implements GraphicsObject {
         }
     }
 
-    public void setSelected(boolean selected) {
-        this.selected = selected;
-    }
-
     public boolean isSelected() {
         return selected;
     }
@@ -210,6 +206,8 @@ public abstract class UIComponent implements GraphicsObject {
         if (visible) {
             renderBackground();
             update();
+        } else {
+            selected = false;
         }
     }
         
@@ -218,6 +216,10 @@ public abstract class UIComponent implements GraphicsObject {
             if (handleInput) {
                 handleInput();
             }
+        } 
+        
+        if (!enabled) {
+            selected = false;
         }
     }
     
@@ -230,9 +232,14 @@ public abstract class UIComponent implements GraphicsObject {
 
             mouseInComponent = contains(xMouse, yMouse);
 
-            if (mouseInComponent && MouseHandler.leftBtnState == MouseState.RISING) {
-                notifyListeners(xMouse, yMouse);
-                return true;
+            if (MouseHandler.leftBtnState == MouseState.RISING) {
+                if (mouseInComponent) {
+                    selected = true;
+                    notifyListeners(xMouse, yMouse);
+                    return true;
+                } else {
+                    selected = false;
+                }
             }
         }
         return false;
