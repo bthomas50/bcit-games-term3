@@ -37,6 +37,7 @@ public class SketchWarsWorldFactory
     private final Physics physics;
     private final SceneManager<Scenes> sceneManager;
     private Scene<GameLayers> gameScene;
+    private String[] charSprites;
 
     public SketchWarsWorldFactory(SketchWarsWorld world, Physics physics, SceneManager<Scenes> sceneManager)
     {
@@ -50,6 +51,7 @@ public class SketchWarsWorldFactory
         try {
             initPhysics();
             preloadTextures();
+            initCharSprites();
             createGameScene();
             setupCamera();
             createMap();
@@ -62,7 +64,14 @@ public class SketchWarsWorldFactory
             System.err.println(e.getMessage());
         }
     }
-
+    private void initCharSprites()
+    {
+        charSprites = new String[4];
+        charSprites[2] = "monster";
+        charSprites[1] = "stickman";
+        charSprites[0] = "tank";
+        charSprites[3] = "default";
+    }
     private void initPhysics()
     {
         physics.addEffect(new Gravity());
@@ -153,7 +162,7 @@ public class SketchWarsWorldFactory
             //random between -900, 900
             //double r = (rng.nextDouble() - 0.5) * 1800.0;
             double r = ((double)c * 1500.0 / CHARS_PER_TEAM) - 800.0 + teamNum * 100;
-            SketchCharacter character = createCharacter(Vectors.create(r, 800.0), rng);
+            SketchCharacter character = createCharacter(Vectors.create(r, 800.0), rng, teamNum);
             character.setWeapon(weapons.get(WeaponTypes.MELEE_WEAPON));
             //character.setMaxHealth(100);
             charHealthBar = new HealthBar(HealthBar.lifeBars[teamNum*2], 
@@ -183,10 +192,10 @@ public class SketchWarsWorldFactory
         return team;
     }
 
-    private SketchCharacter createCharacter(long vPosition, Random rng)
+    private SketchCharacter createCharacter(long vPosition, Random rng, int teamNum)
     {
         SketchCharacter character = new SketchCharacter();
-        AnimationSet<CharacterAnimations> animationSet = createCharacterAnimations(rng);
+        AnimationSet<CharacterAnimations> animationSet = createCharacterAnimations(rng, teamNum);
         
         character.setAnimationSet(animationSet);
         
@@ -221,14 +230,14 @@ public class SketchWarsWorldFactory
         return character;
     }
 
-    private AnimationSet<CharacterAnimations> createCharacterAnimations(Random rng) {
+    private AnimationSet<CharacterAnimations> createCharacterAnimations(Random rng, int teamNum) {
         AnimationSet<CharacterAnimations> animationSet = new AnimationSet<>();
         
         try {
             Matrix3d trans = new Matrix3d();
             trans.scale(-1, 1, 1); //flip horizontal
             
-            Texture idleSpriteSheet = Texture.loadTexture("content/animation/characters/stickman/idle.png", true);
+            Texture idleSpriteSheet = Texture.loadTexture("content/animation/characters/" + charSprites[teamNum] + "/idle.png", true);
             Animation idleRight = new Animation(idleSpriteSheet, 36, 6, 6, 5000, true);
             idleRight.start(rng.nextInt(750));
             animationSet.addAnimation(CharacterAnimations.IDLE_RIGHT, idleRight);
@@ -238,7 +247,7 @@ public class SketchWarsWorldFactory
             idleRight.start();
             animationSet.addAnimation(CharacterAnimations.IDLE_LEFT, idleLeft);
             
-            Texture jumpSpriteSheet = Texture.loadTexture("content/animation/characters/stickman/jump.png", true);
+            Texture jumpSpriteSheet = Texture.loadTexture("content/animation/characters/" + charSprites[teamNum] + "/jump.png", true);
             Animation jumpRight = new Animation(jumpSpriteSheet, 36, 6, 6, 1000, true);
             jumpRight.start();
             animationSet.addAnimation(CharacterAnimations.JUMP_RIGHT, jumpRight);
@@ -248,7 +257,7 @@ public class SketchWarsWorldFactory
             jumpLeft.start();
             animationSet.addAnimation(CharacterAnimations.JUMP_LEFT, jumpLeft);
             
-            Texture walkSpriteSheet = Texture.loadTexture("content/animation/characters/stickman/run.png", true);
+            Texture walkSpriteSheet = Texture.loadTexture("content/animation/characters/" + charSprites[teamNum] + "/run.png", true);
             Animation walkRight = new Animation(walkSpriteSheet, 36, 6, 6, 2000, true);
             walkRight.start();
             animationSet.addAnimation(CharacterAnimations.WALK_RIGHT, walkRight);
