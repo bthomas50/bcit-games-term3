@@ -30,7 +30,7 @@ public class SketchWarsWorldFactory
 {
     private static final float CHARACTER_SCALE = 0.07f;
     
-    private static final int NUM_TEAMS = 2;
+    private static final int NUM_TEAMS = 4;
     private static final int CHARS_PER_TEAM = 3;
 
     private final SketchWarsWorld world;
@@ -172,12 +172,11 @@ public class SketchWarsWorldFactory
             characters.add(character);
         }
         
-        teamHealthBar = new TeamHealthBar(HealthBar.lifeBars[teamNum*2],
+        teamHealthBar = new HealthBar(HealthBar.lifeBars[teamNum*2],
                                       HealthBar.lifeBars[teamNum*2+1],
                                       Vectors.create(-1.0f, -0.7f + (-0.1f * teamNum)),
                                       -0.5f,
-                                      0.05f,
-                                      gameScene.getCamera());
+                                      0.05f);
         
         teamHealthBar.setMaxHealth(characters.get(0).getMaxHealth() * characters.size());
         teamHealthBar.setHealth(characters.get(0).getHealth() * characters.size());
