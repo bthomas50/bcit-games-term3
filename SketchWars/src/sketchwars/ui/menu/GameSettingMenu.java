@@ -45,7 +45,13 @@ public class GameSettingMenu extends Scene implements UIActionListener{
     
     private TextButton backButton;
     private TextButton ContinueButton;
-    private TextInputbox b2;
+    private TextInputbox userNameInput;
+    private ComboBox mapCheckBox;
+    private ComboBox charactorBox;
+    private ListBox maxPlayerListBox;
+    private TextInputbox maxHealthInput;
+    private TextInputbox maxTurnTimeInput;
+    private ListBox gameModeListBox;
 
     
     private Collection<ClientEntityForManagementOnServer> userList;
@@ -95,12 +101,12 @@ public class GameSettingMenu extends Scene implements UIActionListener{
             btnLayer = getLayer(MenuLayers.BUTTONS);
             
             //StartLobby Button 
-            ContinueButton = new TextButton("Continue",font,new Vector2d(0.03, -0.30), size,normalBtn,hoverBtn,pressBtn);
+            ContinueButton = new TextButton("Continue",font,new Vector2d(0.03, -0.60), size,normalBtn,hoverBtn,pressBtn);
             btnLayer.addDrawableObject(ContinueButton);
             ContinueButton.addActionListener(this);
             
             //Back Button 
-            backButton = new TextButton("BACK",font,new Vector2d(0.03, -0.45), size,normalBtn,hoverBtn,pressBtn);
+            backButton = new TextButton("BACK",font,new Vector2d(0.03, -0.75), size,normalBtn,hoverBtn,pressBtn);
             btnLayer.addDrawableObject(backButton);
             backButton.addActionListener(this);
             
@@ -109,46 +115,96 @@ public class GameSettingMenu extends Scene implements UIActionListener{
             UIGroup group = new UIGroup(new Vector2d(), new Vector2d(2, 2));
             
             //Username  label
-            Label userNameLabel = new Label("Username: ",font,new Vector2d(-0.50, 0.8),new Vector2d(0.4, 0.1),null);
+            Label userNameLabel = new Label("Username: ",font,new Vector2d(-0.80, 0.8),new Vector2d(0.4, 0.1),null);
             group.addUIComponent(userNameLabel);
-            Vector2d size1 = new Vector2d(0.4, 0.1);
-            b2 = new TextInputbox(new Vector2d(-0.1, 0.8), size1, null);
-            b2.setText("Host");
-            b2.setFontColor(Color.BLUE);
+            userNameInput = new TextInputbox(new Vector2d(-0.4, 0.8), new Vector2d(0.4, 0.1), null);
+            userNameInput.setText("Host");
+            userNameInput.setFontColor(Color.BLUE);
             //
             
             //MAPS selections
-            Label mapLabel = new Label("Maps: ",font,new Vector2d(-0.6, 0.6),new Vector2d(0.4, 0.1),null);
+            Label mapLabel = new Label("Maps: ",font,new Vector2d(-0.85, 0.6),new Vector2d(0.4, 0.1),null);
             group.addUIComponent(mapLabel);
             
-            ComboBox cbox = new ComboBox(new Vector2d(-0.3, 0.6), new Vector2d(0.4, 0.1),null);
-            cbox.setBackgroundFromColor(Color.ORANGE);
-            cbox.getListBox().setBackgroundFromColor(Color.ORANGE);
+            mapCheckBox = new ComboBox(new Vector2d(-0.4, 0.6), new Vector2d(0.4, 0.1),null);
+            mapCheckBox.setBackgroundFromColor(Color.ORANGE);
+            mapCheckBox.getListBox().setBackgroundFromColor(Color.ORANGE);
             
-            cbox.addItem("Map 1");
-            cbox.addItem("Map 2");
-            cbox.addItem("Map 3");
-            cbox.setSelection(2);
-            group.addUIComponent(cbox);
+            mapCheckBox.addItem("Map 1");
+            mapCheckBox.addItem("Map 2");
+            mapCheckBox.setSelection(1);
+            group.addUIComponent(mapCheckBox);
             //
             
-            //MAX players label
-            Label maxPlayerLabel = new Label("Max Player: ",font,new Vector2d(0.2, 0.6),new Vector2d(0.4, 0.1),null);
-            group.addUIComponent(maxPlayerLabel);
-            //MAX player list
-            ListBox lb = new ListBox(new Vector2d(0.6, 0.4), new Vector2d(0.4, 0.4),  0.1f, null);
-            lb.setFontColor(Color.yellow);
-            lb.setSelectionBackgroundColor(Color.RED);
-            lb.setBackgroundFromColor(Color.BLACK);
-            lb.addItem("2");
-            lb.addItem("3");
-            lb.addItem("4");
-            lb.addActionListener(this);
+            //Max Character selections
+            Label maxCharacterLabel = new Label("Characters: ",font,new Vector2d(-0.8, 0.3),new Vector2d(0.4, 0.1),null);
+            group.addUIComponent(maxCharacterLabel);
             
+            charactorBox = new ComboBox(new Vector2d(-0.4, 0.3), new Vector2d(0.4, 0.1),null);
+            charactorBox.setBackgroundFromColor(Color.ORANGE);
+            charactorBox.getListBox().setBackgroundFromColor(Color.ORANGE);
+            
+            charactorBox.addItem("1");
+            charactorBox.addItem("2");
+            charactorBox.addItem("3");
+            charactorBox.addItem("4");
+            charactorBox.setSelection(1);
+            group.addUIComponent(charactorBox);
 
             
-            group.addUIComponent(lb);
-            group.addUIComponent(b2);
+            //Right side
+
+            //Health label
+            Label maxHealthLabel = new Label("Health: ",font,new Vector2d(0.4, 0.65),new Vector2d(0.4, 0.1),null);
+            group.addUIComponent(maxHealthLabel);
+            maxHealthInput = new TextInputbox(new Vector2d(0.7, 0.65), new Vector2d(0.4, 0.1), null);
+            maxHealthInput.setText("200");
+            maxHealthInput.setFontColor(Color.BLUE);
+            //
+            
+            //Turn Time label
+            Label maxTurnTimeLabel = new Label("Time: ",font,new Vector2d(0.4, 0.55),new Vector2d(0.4, 0.1),null);
+            group.addUIComponent(maxTurnTimeLabel);
+            maxTurnTimeInput = new TextInputbox(new Vector2d(0.7, 0.55), new Vector2d(0.4, 0.1), null);
+            maxTurnTimeInput.setText("15 sec");
+            maxTurnTimeInput.setFontColor(Color.BLUE);
+            //
+            
+
+            //Game modes
+            Label gameModeLabel = new Label("Mode: ",font,new Vector2d(-0.8, -0.15),new Vector2d(0.4, 0.1),null);
+            group.addUIComponent(gameModeLabel);
+            gameModeListBox = new ListBox(new Vector2d(-0.55, -0.25), new Vector2d(0.3, 0.25),  0.1f, null);
+            gameModeListBox.setFontColor(Color.yellow);
+            gameModeListBox.setSelectionBackgroundColor(Color.RED);
+            gameModeListBox.setBackgroundFromColor(Color.BLACK);
+            gameModeListBox.addItem("Normal");
+            gameModeListBox.addItem("Rapid");
+            gameModeListBox.addActionListener(this);
+            //
+            
+            //MAX player list
+            Label maxPlayerLabel = new Label("Max Player: ",font,new Vector2d(0.1, 0.8),new Vector2d(0.4, 0.1),null);
+            group.addUIComponent(maxPlayerLabel);
+            maxPlayerListBox = new ListBox(new Vector2d(0.1, 0.5), new Vector2d(0.3, 0.4),  0.1f, null);
+            maxPlayerListBox.setFontColor(Color.yellow);
+            maxPlayerListBox.setSelectionBackgroundColor(Color.RED);
+            maxPlayerListBox.setBackgroundFromColor(Color.BLACK);
+            maxPlayerListBox.addItem("1");
+            maxPlayerListBox.addItem("2");
+            maxPlayerListBox.addItem("3");
+            maxPlayerListBox.addItem("4");
+            maxPlayerListBox.addActionListener(this);
+            //
+
+            
+            
+            //
+            group.addUIComponent(gameModeListBox);
+            group.addUIComponent(maxTurnTimeInput);
+            group.addUIComponent(maxPlayerListBox);
+            group.addUIComponent(maxHealthInput);
+            group.addUIComponent(userNameInput);
             
             btnLayer.addDrawableObject(group);
             
@@ -159,8 +215,7 @@ public class GameSettingMenu extends Scene implements UIActionListener{
         }
 
     }
- 
-            
+   
     private void createBackground() {
         
         backgroundImage = Texture.loadTexture("content/menu/sketchWars2_bg.jpg", false);
@@ -195,7 +250,7 @@ public class GameSettingMenu extends Scene implements UIActionListener{
        {
             try 
             {
-                ServerMain.setHostUsername(b2.getText());
+                ServerMain.setHostUsername(userNameInput.getText());
                 sceneManager.setCurrentScene(Scenes.CREATE_MENU);
             } 
             catch (SceneManagerException ex) 
