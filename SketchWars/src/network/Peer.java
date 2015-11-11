@@ -10,6 +10,10 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.io.IOException;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ObjectInputStream;
 
 public class Peer {
     private static final byte ACK = (byte)0xFF;
@@ -36,17 +40,13 @@ public class Peer {
 
     public void broadcastInput(int frameNum) {
         System.out.println("sending inputs for frame: " + frameNum);
-        byte[] inputData = Input.currentInput.serializeByteArray();
-        byte[] data = new byte[inputData.length + 2];
-        data[0] = (byte) localId;
-        data[1] = (byte) frameNum;
-        System.arraycopy(inputData, 0, data, 2, inputData.length);
+        InputPacket pkt = new InputPacket((byte)localId, (byte)frameNum, Input.currentInput.getCommands());
         for(PeerInfo peer : peers.values()) {
-            sendReliably(data, peer);
+            sendReliably(pkt, peer);
         }
     }
 
-    public void sendReliably(byte[] data, PeerInfo dest) {
+    public void sendReliably(InputPacket data, PeerInfo dest) {
         ReliableMessage msg = new ReliableMessage(data, dest);
         synchronized(outgoingMessages) {
             outgoingMessages.add(msg);
@@ -54,14 +54,15 @@ public class Peer {
         msg.send(socket);
     }
 
-    public void sendAck(int id, byte seq) {
+    public void sendAck(int id, byte seq) throws IOException {
         System.out.println("sending ack to id " + id + " for seq: " + seq);
-        byte[] data = new byte[3];
-        data[0] = (byte) localId;
-        data[1] = seq;
-        data[2] = ACK;
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ObjectOutputStream oos = new ObjectOutputStream(baos);
+        oos.writeObject(new GamePacket(Type.Acknowledgement, (byte) localId, seq));
+        oos.flush();
+        byte[] data = baos.toByteArray();
         PeerInfo sendTo = peers.get(id);
-        DatagramPacket packet = new DatagramPacket(data, 3, sendTo.ipAddress, sendTo.portNum);
+        DatagramPacket packet = new DatagramPacket(data, data.length, sendTo.ipAddress, sendTo.portNum);
         try {
             socket.send(packet);
         } catch(IOException ioe) {
@@ -105,7 +106,7 @@ public class Peer {
     }
 
     private class Listener implements Runnable {
-        private byte[] data = new byte[256];
+        private byte[] data = new byte[1024];
         private DatagramSocket socket;
 
         private Listener(DatagramSocket sock) {
@@ -115,26 +116,37 @@ public class Peer {
         @Override
         public void run() {
             while(true) {
-                DatagramPacket packet = new DatagramPacket(data, 256);
+                DatagramPacket packet = new DatagramPacket(data, data.length);
                 try {
                     socket.receive(packet);
-                    byte[] pktData = packet.getData();
-                    int senderId = pktData[0];
-                    byte seq = pktData[1];
-                    byte flag = pktData[2];
-                    if(flag == ACK) {
-                        receiveAck(senderId, seq);
-                    } else {
-                        receiveInput(senderId, seq, packet);
+                    GamePacket pkt = deserializePacket(packet.getData());
+                    switch(pkt.type)
+                    {
+                    case Acknowledgement:
+                        receiveAck(pkt);
+                        break;
+                    case Input:
+                        receiveInput((InputPacket)pkt);
+                        break;
                     }
-                    
                 } catch(IOException ioe) {
-                    System.err.println(ioe);
+                    System.err.println("IOException: " + ioe.getMessage());
+                } catch(ClassNotFoundException cnfe) {
+                    System.err.println("ClassNotFoundException: " + cnfe.getMessage());
                 }
             }
         }
 
-        private void receiveAck(int senderId, byte seq) {
+        private GamePacket deserializePacket(byte[] pktData) throws IOException, ClassNotFoundException {
+            ByteArrayInputStream bais = new ByteArrayInputStream(pktData);
+            ObjectInputStream ois = new ObjectInputStream(bais);
+
+            return (GamePacket) ois.readObject();
+        }
+
+        private void receiveAck(GamePacket packet) {
+            int senderId = packet.id;
+            byte seq = packet.frameId;
             ReliableMessage matchingMsg = null;
             synchronized(outgoingMessages) {
                 for (ReliableMessage msg : outgoingMessages) {
@@ -154,17 +166,15 @@ public class Peer {
             }
         }
 
-        private void receiveInput(int senderId, byte seq, DatagramPacket packet) {
-            byte[] pktData = packet.getData();
-            byte[] inputData = new byte[packet.getLength() - 2];
-            System.arraycopy(pktData, 2, inputData, 0, inputData.length);
-            Input input = Input.deserializeByteArray(inputData);
+        private void receiveInput(InputPacket packet) throws IOException {
+            int senderId = packet.id;
+            byte seq = packet.frameId;
             synchronized(lastInputsReceived) {
                 byte desiredSeq = (byte)((int)consumed + 1);
-                System.out.println(packet.getAddress() + ":" + packet.getPort() + "(id = " + senderId + ") says " + seq + ", wanted " + desiredSeq);
+                System.out.println("id = " + senderId + " says " + seq + ", wanted " + desiredSeq);
                 if(seq == desiredSeq) {
                     lastInputsReceived.put(senderId, seq);
-                    inputs.put(senderId, input);
+                    inputs.put(senderId, new Input(packet.commands));
                     sendAck(senderId, seq);
                 }
             }

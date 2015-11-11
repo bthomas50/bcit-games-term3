@@ -364,25 +364,29 @@ public class SketchCharacter implements GraphicsObject, GameObject {
         }
     }
 
+    public void aimAt(float x, float y) {
+        Vector2d direction = new Vector2d(x - posX, y - posY);
+        direction.normalize();
+        angle = (float) Math.atan2(direction.y, direction.x);
+
+        if (x < posX) {
+            isFacingLeft = true;
+            animationSet.setCurrentAnimation(CharacterAnimations.WALK_LEFT);
+        } else {
+            isFacingLeft = false;
+            animationSet.setCurrentAnimation(CharacterAnimations.WALK_RIGHT);
+        }
+
+    }
+
     private void computeAngleFromMouse() {
         if (active) {
             float mouseX = MouseHandler.xNormalized;
             float mouseY = MouseHandler.yNormalized;
 
-            Vector2d direction = new Vector2d(mouseX - posX, mouseY - posY);
-            direction.normalize();
-            angle = (float) Math.atan2(direction.y, direction.x);
-
             if (lastMouseX != mouseX) {
-                if (mouseX < posX) {
-                    isFacingLeft = true;
-                    animationSet.setCurrentAnimation(CharacterAnimations.WALK_LEFT);
-                } else {
-                    isFacingLeft = false;
-                    animationSet.setCurrentAnimation(CharacterAnimations.WALK_RIGHT);
-                }
+                aimAt(mouseX, mouseY);
             }
-
             lastMouseX = mouseX;
         }
     }

@@ -1,10 +1,12 @@
 package network;
 
-import packets.PeerInfo;
+import packets.*;
 
 import java.net.DatagramSocket;
 import java.net.DatagramPacket;
 import java.io.IOException;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectOutputStream;
 import java.lang.InterruptedException;
 
 class ReliableMessage
@@ -12,13 +14,13 @@ class ReliableMessage
     private static final int RESEND_DELAY_MILLIS = 5;
 
     private boolean wasAcknowledged;
-    private byte[] data;
+    private InputPacket packet;
     private PeerInfo destination;
 
-    ReliableMessage(byte[] data, PeerInfo dest)
+    ReliableMessage(InputPacket packet, PeerInfo dest)
     {
         wasAcknowledged = false;
-        this.data = data;
+        this.packet = packet;
         destination = dest;
     }
 
@@ -27,19 +29,23 @@ class ReliableMessage
         new Thread(new Sender(sock)).start();
     }
 
-    int getDestinationId() {
+    int getDestinationId() 
+    {
         return destination.id;
     }
 
-    byte getSequence() {
-        return data[1];
+    byte getSequence() 
+    {
+        return packet.frameId;
     }
 
-    synchronized void notifyAcknowledged() {
+    synchronized void notifyAcknowledged() 
+    {
         wasAcknowledged = true;
     }
 
-    synchronized boolean wasAcknowledged() {
+    synchronized boolean wasAcknowledged() 
+    {
         return wasAcknowledged;
     }
 
@@ -55,7 +61,20 @@ class ReliableMessage
         @Override
         public void run() 
         {
-            DatagramPacket packet = new DatagramPacket(data, data.length, destination.ipAddress, destination.portNum);
+            try
+            {
+                byte[] data = serializeData();
+                DatagramPacket packet = new DatagramPacket(data, data.length, destination.ipAddress, destination.portNum);
+                sendUntilStopped(packet);
+            }
+            catch(IOException ioe)
+            {
+                System.out.println("Unable to serialize inputs: " + ioe.getMessage());
+            }
+        }
+
+        private void sendUntilStopped(DatagramPacket packet) 
+        {
             while(!wasAcknowledged()) 
             {
                 try
@@ -74,6 +93,15 @@ class ReliableMessage
                     break;
                 }
             }
+        }
+
+        private byte[] serializeData() throws IOException 
+        {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ObjectOutputStream oos = new ObjectOutputStream(baos);
+            oos.writeObject(packet);
+            oos.flush();
+            return baos.toByteArray();
         }
     }
 }

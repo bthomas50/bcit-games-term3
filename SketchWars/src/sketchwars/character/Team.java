@@ -60,7 +60,7 @@ public class Team
         }
         for(Command command : input.getCommands())
         {
-            switch(command)
+            switch(command.getType())
             {
             case FIRE:
                 //don't fire more than once in a turn.
@@ -75,6 +75,9 @@ public class Team
             case AIM_DOWN:
                 active.aimDown(elapsedMillis);
                 break;
+            case MOUSE_AIM:
+                MouseCommand comm = (MouseCommand) command;
+                active.aimAt(comm.getX(), comm.getY());
             case MOVE_LEFT:
                active.moveLeft(elapsedMillis);
                 break;

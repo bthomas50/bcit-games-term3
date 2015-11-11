@@ -52,11 +52,8 @@ public class PencilWeapon extends AbstractWeapon {
     public void update(double elapsed) {
         posX = MouseHandler.xNormalized;
         posY = MouseHandler.yNormalized;
-        // if(MouseHandler.leftBtnState == MouseState.DOWN) {
-        //     handleErasing();
-        // }
         timer.update(elapsed);
-        super.update(elapsed); 
+        super.update(elapsed);
     }
     
     @Override
