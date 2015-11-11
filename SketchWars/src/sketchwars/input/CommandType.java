@@ -8,6 +8,7 @@ public enum CommandType
     MOVE_RIGHT, 
     STAND,
     FIRE, 
+    MOUSE_FIRE,
     AIM_UP, 
     AIM_DOWN, 
     MOUSE_AIM,

@@ -58,6 +58,7 @@ public class Team
         {
             return;
         }
+        MouseCommand comm = null;
         for(Command command : input.getCommands())
         {
             switch(command.getType())
@@ -76,8 +77,16 @@ public class Team
                 active.aimDown(elapsedMillis);
                 break;
             case MOUSE_AIM:
-                MouseCommand comm = (MouseCommand) command;
+                comm = (MouseCommand) command;
                 active.aimAt(comm.getX(), comm.getY());
+                break;
+            case MOUSE_FIRE:
+                //don't fire more than once in a turn.
+                if(!active.hasFiredThisTurn())
+                {
+                    comm = (MouseCommand) command;
+                    active.fireCurrentWeapon(1.0f, comm.getX(), comm.getY());
+                }
                 break;
             case MOVE_LEFT:
                active.moveLeft(elapsedMillis);

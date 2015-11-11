@@ -40,7 +40,6 @@ public class SketchCharacter implements GraphicsObject, GameObject {
     private AbstractProjectile firedProjectile;
     
     private boolean isFacingLeft;
-    private float angle;
 
     private long vReticleOffset;
     private long vHealthBarOffset;
@@ -65,7 +64,6 @@ public class SketchCharacter implements GraphicsObject, GameObject {
         this.maxHealth = maxHealth;
         this.health = health;
         this.isDead = false;
-        this.angle = 0.0f;
         this.isFacingLeft = false;//start facing right.
         reticleTexture = Texture.loadTexture("content/misc/reticle.png", false);
         vHealthBarOffset = Vectors.create(0, 0.1);
@@ -111,10 +109,8 @@ public class SketchCharacter implements GraphicsObject, GameObject {
         }
         
         if (weapon != null) {
-            float fireAngle = getActualFireAngle();
-            weapon.setAngle(fireAngle);
             weapon.setPosition(posX, posY);
-            vReticleOffset = Vectors.createRTheta(0.1, fireAngle);
+            vReticleOffset = Vectors.createRTheta(0.1, weapon.getAngle());
             weapon.update(delta);
         }
         
@@ -266,7 +262,13 @@ public class SketchCharacter implements GraphicsObject, GameObject {
 
     public void fireCurrentWeapon(float power) {
         if(weapon != null) {
-            firedProjectile = weapon.tryToFire(this, (float)power, Vectors.createRTheta(1.0f, getActualFireAngle()));
+            firedProjectile = weapon.tryToFire(this, power);
+        }
+    }
+
+    public void fireCurrentWeapon(float power, float xTarget, float yTarget) {
+        if(weapon != null) {
+            firedProjectile = weapon.tryToFire(this, power, xTarget, yTarget);
         }
     }
 
@@ -324,16 +326,6 @@ public class SketchCharacter implements GraphicsObject, GameObject {
         } 
     }
 
-    private float getActualFireAngle() {
-       /* if(isFacingLeft) {
-            return (float)(Math.PI - angle);
-        } else {
-            
-        }*/
-        
-        return angle;
-    }
-
     public Collider getCollider() {
         return coll;
     }
@@ -364,9 +356,9 @@ public class SketchCharacter implements GraphicsObject, GameObject {
     }
 
     public void aimAt(float x, float y) {
-        Vector2d direction = new Vector2d(x - posX, y - posY);
-        direction.normalize();
-        angle = (float) Math.atan2(direction.y, direction.x);
+        if(weapon != null) {
+            weapon.aimAt(x, y);
+        }
 
         if (x < posX) {
             isFacingLeft = true;

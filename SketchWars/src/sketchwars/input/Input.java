@@ -38,7 +38,11 @@ public class Input
 
         //mimic behaviour of space firing.
         if(MouseHandler.leftBtnState == MouseState.FALLING || MouseHandler.leftBtnState == MouseState.DOWN) {
-            currentInput.commands.add(new Command(CommandType.FIRE));
+            currentInput.commands.add(
+                new MouseCommand(
+                    CommandType.MOUSE_FIRE, 
+                    MouseHandler.xNormalized, 
+                    MouseHandler.yNormalized));
         }
         
         //always aim with mouse.

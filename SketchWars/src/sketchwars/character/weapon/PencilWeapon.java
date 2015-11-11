@@ -30,6 +30,8 @@ public class PencilWeapon extends AbstractWeapon {
     private final boolean isEraser;
 
     private Timer timer;
+    private float targetX;
+    private float targetY;
     
     public PencilWeapon(Texture texture, Texture point, BufferedImage pointImage, float width, float height, 
             ProjectileFactory projectileFactory, boolean isEraser) {
@@ -46,12 +48,12 @@ public class PencilWeapon extends AbstractWeapon {
         eHeight = height/2;
 
         timer = new Timer(FIRING_TIME_MILLIS);
+        targetX = 0;
+        targetY = 0;
     }
 
     @Override
     public void update(double elapsed) {
-        posX = MouseHandler.xNormalized;
-        posY = MouseHandler.yNormalized;
         timer.update(elapsed);
         super.update(elapsed);
     }
@@ -59,7 +61,7 @@ public class PencilWeapon extends AbstractWeapon {
     @Override
     public void render() {
         if (texture != null) {
-            texture.draw(null, posX, posY, width, height);
+            texture.draw(null, targetX + eWidth, targetY + eHeight, width, height);
         }
     }
 
@@ -67,8 +69,15 @@ public class PencilWeapon extends AbstractWeapon {
         this.currentMap = map;
     }
 
+    @Override
+    public void aimAt(float x, float y) {
+        super.aimAt(x, y);
+        targetX = x;
+        targetY = y;
+    }
+    //disable keyboard firing for this weapon.
     @Override 
-    public AbstractProjectile tryToFire(SketchCharacter owner, float power, long vAimDirection) {
+    public AbstractProjectile tryToFire(SketchCharacter owner, float power) {
         if(isFiringPossible()) {
             handleErasing();
         } else {
@@ -96,8 +105,8 @@ public class PencilWeapon extends AbstractWeapon {
         if(!timer.isRunning()) {
             timer.restart();
         }
-        float xEraser = posX - 0.04f;
-        float yEraser = posY - 0.08f;
+        float xEraser = targetX;
+        float yEraser = targetY;
         
         point.draw(null, xEraser, yEraser, eWidth, eHeight);
         

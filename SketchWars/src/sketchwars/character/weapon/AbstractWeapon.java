@@ -4,11 +4,10 @@ import org.joml.Matrix3d;
 import org.joml.Vector2d;
 import sketchwars.Updateable;
 import sketchwars.character.projectiles.*;
-import sketchwars.graphics.Drawable;
-import sketchwars.graphics.Texture;
+import sketchwars.graphics.*;
 import sketchwars.character.SketchCharacter;
 import sketchwars.physics.Vectors;
-import sketchwars.util.Timer;
+import sketchwars.util.*;
 
 /**
  *
@@ -48,6 +47,7 @@ public abstract class AbstractWeapon implements Updateable, Drawable {
         elapsed = Integer.MAX_VALUE;
         this.width = width;
         this.height = height;
+        angle = 0;
     }
     
     @Override
@@ -82,6 +82,12 @@ public abstract class AbstractWeapon implements Updateable, Drawable {
         this.elapsed += elapsed;
     }
 
+    public void aimAt(float x, float y) {
+        Vector2d direction = new Vector2d(x - posX, y - posY);
+        direction.normalize();
+        angle = (float) Math.atan2(direction.y, direction.x);
+    }
+
     public void dispose() {
         if (texture != null) {
             texture.dispose();
@@ -96,6 +102,10 @@ public abstract class AbstractWeapon implements Updateable, Drawable {
         this.texture = texture;
     }
 
+    public double getAngle() {
+        return angle;
+    }
+    
     public double getPosX() {
         return posX;
     }
@@ -132,21 +142,16 @@ public abstract class AbstractWeapon implements Updateable, Drawable {
     }
    
     
-    public AbstractProjectile tryToFire(SketchCharacter owner, float power, long vAimDirection) {
-        // double timeFired = elapsed;
-        // double timeSinceLastFired = timeFired - lastTimeFired;
-        // float rateOfFireInMilli = 1000/rateOfFire;
-        
-        // if (timeSinceLastFired > rateOfFireInMilli) {
-        //     lastTimeFired = timeFired;
-        //     return fire(owner, power, vAimDirection);
-        // } else {
-        //     return null;
-        // }
+    public AbstractProjectile tryToFire(SketchCharacter owner, float power) {
         owner.notifyFired();
-        return fire(owner, power, vAimDirection);
+        return fire(owner, power, Vectors.createRTheta(1.0f, angle));
     }
     
+    public AbstractProjectile tryToFire(SketchCharacter owner, float power, float xNormalized, float yNormalized) {
+        aimAt(xNormalized, yNormalized);
+        return tryToFire(owner, power);
+    }
+
     public void resetFire() {
         lastTimeFired = 0;
     }
@@ -161,10 +166,6 @@ public abstract class AbstractWeapon implements Updateable, Drawable {
     protected abstract AbstractProjectile createProjectile(SketchCharacter owner, long vPosition, long vVelocity);
 
     protected abstract double getProjectileSpeed(float power);
-
-    protected long getFireDirection(long vAimDirection) {
-        return vAimDirection;
-    }
 
     public float getRateOfFire() {
         return rateOfFire;

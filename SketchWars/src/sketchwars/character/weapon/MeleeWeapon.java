@@ -17,15 +17,6 @@ public class MeleeWeapon extends AbstractWeapon {
     }
 
     @Override
-    protected long getFireDirection(long vAimDirection) {
-        if(Vectors.xComp(vAimDirection) < 0) {
-            return Vectors.V_UNIT_X;
-        } else {
-            return Vectors.reverse(Vectors.V_UNIT_X);
-        }
-    }
-
-    @Override
     public AbstractProjectile createProjectile(SketchCharacter owner, long vPosition, long vVelocity) {
         try{
             SoundPlayer.playSFX(0, true, 0);
