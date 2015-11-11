@@ -38,6 +38,10 @@ public class Peer {
         outgoingMessages = new ArrayList<>();
     }
 
+    public int getLocalId() {
+        return localId;
+    }
+
     public void broadcastInput(int frameNum) {
         System.out.println("sending inputs for frame: " + frameNum);
         InputPacket pkt = new InputPacket((byte)localId, (byte)frameNum, Input.currentInput.getCommands());

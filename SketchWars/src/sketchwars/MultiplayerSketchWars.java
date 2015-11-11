@@ -59,7 +59,7 @@ public class MultiplayerSketchWars {
         
         physics = new Physics(new BoundingBox(PHYSICS_TOP, PHYSICS_LEFT, 
                 PHYSICS_TOP + PHYSICS_HEIGHT, PHYSICS_LEFT + PHYSICS_WIDTH));
-        world = new MultiplayerWorld();
+        world = new MultiplayerWorld(network.getLocalId());
 
         SketchWarsWorldFactory fact = new SketchWarsWorldFactory(world, physics, sceneManager);
         fact.startGame();

@@ -12,6 +12,12 @@ import java.util.Map;
 public class MultiplayerWorld extends SketchWarsWorld {
     private Map<Integer, Input> inputs = null;
 
+    private int localIdx;
+
+    public MultiplayerWorld(int localIdx) {
+        this.localIdx = localIdx;
+    }
+
     public void update(Map<Integer, Input> inputs, double elapsedMillis) {
         this.inputs = inputs;
         super.update(elapsedMillis);
@@ -26,5 +32,10 @@ public class MultiplayerWorld extends SketchWarsWorld {
                 teams.get(i).handleInput(inputs.get(i), elapsedMillis);
             }
         }
+    }
+
+    @Override
+    protected int getLocalTeamIdx() {
+        return localIdx;
     }
 }

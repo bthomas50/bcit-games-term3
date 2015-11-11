@@ -136,12 +136,12 @@ public class SketchWarsWorld extends World implements KeyCharListener {
 
     private void handlePanningCamera() {
         if (camera != null) {
-            Team firstTeam = teams.get(0); //temporary untill we can get multiplayer working
+            Team firstTeam = teams.get(getLocalTeamIdx()); //temporary untill we can get multiplayer working
             SketchCharacter character = firstTeam.getActiveCharacter();
             AbstractProjectile projectile = character.getFiredProjectile();
             
             if (camera.isDragResetOn()) {
-                if (projectile != null) {
+                if (projectile != null && !projectile.hasExpired()) {
                     Collider coll = projectile.getCollider();
                     long center = coll.getBounds().getCenterVector();
                     float posX = Converter.PhysicsToGraphicsX(Vectors.xComp(center));
@@ -152,6 +152,10 @@ public class SketchWarsWorld extends World implements KeyCharListener {
                 }
             }
         }
+    }
+
+    protected int getLocalTeamIdx() {
+        return 0;
     }
 
     @Override
