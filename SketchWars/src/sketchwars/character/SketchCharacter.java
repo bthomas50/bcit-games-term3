@@ -102,7 +102,6 @@ public class SketchCharacter implements GraphicsObject, GameObject {
         waitAfterFire.update(delta);
         updateCharacterInfo();
         coll.updateJumpTimer(delta);
-        computeAngleFromMouse();        
         checkIfTimeToIdle();
         
         if (animationSet != null) {
@@ -375,19 +374,6 @@ public class SketchCharacter implements GraphicsObject, GameObject {
         } else {
             isFacingLeft = false;
             animationSet.setCurrentAnimation(CharacterAnimations.WALK_RIGHT);
-        }
-
-    }
-
-    private void computeAngleFromMouse() {
-        if (active) {
-            float mouseX = MouseHandler.xNormalized;
-            float mouseY = MouseHandler.yNormalized;
-
-            if (lastMouseX != mouseX) {
-                aimAt(mouseX, mouseY);
-            }
-            lastMouseX = mouseX;
         }
     }
 }

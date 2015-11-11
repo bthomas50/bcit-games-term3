@@ -40,7 +40,14 @@ public class Input
         if(MouseHandler.leftBtnState == MouseState.FALLING || MouseHandler.leftBtnState == MouseState.DOWN) {
             currentInput.commands.add(new Command(CommandType.FIRE));
         }
-                
+        
+        //always aim with mouse.
+        currentInput.commands.add(
+            new MouseCommand(
+                CommandType.MOUSE_AIM, 
+                MouseHandler.xNormalized, 
+                MouseHandler.yNormalized));
+
         if(KeyboardHandler.isKeyDown(GLFW_KEY_UP) && !KeyboardHandler.isKeyDown(GLFW_KEY_DOWN)) {
             currentInput.commands.add(new Command(CommandType.AIM_UP));
         } else if(KeyboardHandler.isKeyDown(GLFW_KEY_DOWN) && !KeyboardHandler.isKeyDown(GLFW_KEY_UP)) {

@@ -78,6 +78,7 @@ public class Team
             case MOUSE_AIM:
                 MouseCommand comm = (MouseCommand) command;
                 active.aimAt(comm.getX(), comm.getY());
+                break;
             case MOVE_LEFT:
                active.moveLeft(elapsedMillis);
                 break;
