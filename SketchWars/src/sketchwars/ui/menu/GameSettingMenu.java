@@ -8,8 +8,8 @@ import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import main.ServerMain;
-import network.Server;
 import network.GameSetting;
+import network.Server;
 import org.joml.Vector2d;
 import sketchwars.Scenes;
 import sketchwars.exceptions.SceneException;
@@ -227,8 +227,6 @@ public class GameSettingMenu extends Scene implements UIActionListener{
             Layer bgLayer = getLayer(MenuLayers.BACKGROUND);
             GraphicElement bg = new GraphicElement(new Vector2d(0,0),size,backgroundImage);
             bgLayer.addDrawableObject(bg);
-            
-            
         } catch (SceneException ex) {
             Logger.getLogger(MainMenu.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -238,29 +236,46 @@ public class GameSettingMenu extends Scene implements UIActionListener{
     {
         String temp;
         int value;
-        GameModeType type;
+
         //Health
         temp = maxHealthInput.getText();
         setting.setMaxPlayer(Integer.parseInt(temp));
         //Turn Delay
         temp = maxTurnTimeInput.getText();
         setting.setTimePerTurn(Integer.parseInt(temp));
+        //Player limit
+        value = maxPlayerListBox.getSelection();
+        setting.setMaxPlayer(value);
+        //Character limit
+        temp = charactorBox.getSelectedItem();
+        setting.setCharacterPerTeam(Integer.parseInt(temp));
         //Map
         temp = mapCheckBox.getSelectedItem();
-        if(temp.equals("normal"))
-        {
-            setting.setMapSelected(GameModeType.Normal);
-        }
-        else
-        {
-            
-        }
+        setting.setMapSelected(gameModeCheck(temp));
+        
+        //Game Mode
+        temp = gameModeListBox.getSelectedItem();
+        setting.setMapSelected(gameModeCheck(temp));
         
         //Player limit
         value = maxPlayerListBox.getSelection();
         setting.setMaxPlayer(value);
-        //value = .getSelection();
-        
+    }
+    
+    public GameModeType gameModeCheck(String value)
+    {
+        if(value.equalsIgnoreCase("normal"))
+        {
+            return GameModeType.Normal; 
+        }
+        else if(value.equalsIgnoreCase("Rapid Fire"))
+        {
+            return GameModeType.RAPID_FIRE;
+        }
+        else
+        {
+            return GameModeType.Normal;
+        }
     }
     
     
@@ -294,6 +309,5 @@ public class GameSettingMenu extends Scene implements UIActionListener{
                 Logger.getLogger(OptionMenu.class.getName()).log(Level.SEVERE, null, ex);
             }
        }
-    
     }
 }
