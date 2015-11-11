@@ -53,8 +53,8 @@ public class Team
 
     public void handleInput(Input input, double elapsedMillis)
     {
-        //if it shot already, its turn is over.
-        if(active == null || active.isDead() || active.hasFiredThisTurn())
+        //don't control dead/turnDone characters
+        if(active == null || active.isDead() || active.isTurnDone())
         {
             return;
         }
@@ -63,7 +63,11 @@ public class Team
             switch(command)
             {
             case FIRE:
-                active.fireCurrentWeapon(1.0f);
+                //don't fire more than once in a turn.
+                if(!active.hasFiredThisTurn())
+                {
+                    active.fireCurrentWeapon(1.0f);
+                }
                 break;
             case AIM_UP:
                 active.aimUp(elapsedMillis);
@@ -139,8 +143,8 @@ public class Team
         int curIdx = startIdx;
         do
         {
-            SketchCharacter pervious = characters.get(curIdx);
-            pervious.setActive(false);
+            SketchCharacter previous = characters.get(curIdx);
+            previous.setActive(false);
             curIdx = getNextIdx(curIdx);
             SketchCharacter trial = characters.get(curIdx);
             trial.setActive(true);
@@ -167,22 +171,24 @@ public class Team
     private void setActiveCharacter(SketchCharacter ch)
     {
         AbstractWeapon wep = getActiveWeapon();
-        if(wep == null)
-        {
-            wep = weapons.get(WeaponTypes.MELEE_WEAPON);
-        }
         resetCharacters();
+        resetWeapons();
         active = ch;
         active.setWeapon(wep);
     }
 
     private AbstractWeapon getActiveWeapon()
     {
+        AbstractWeapon ret = null;
         if(active != null)
         {
-            return active.getWeapon();
+            ret = active.getWeapon();
         }
-        return null;
+        if(ret == null)
+        {
+            ret = weapons.get(WeaponTypes.MELEE_WEAPON);
+        }
+        return ret;
     }
 
     private void resetCharacters()
@@ -191,6 +197,14 @@ public class Team
         {
             temp.resetHasFiredThisTurn();
             temp.setWeapon(null);
+        }
+    }
+
+    private void resetWeapons()
+    {
+        for(AbstractWeapon wep : weapons.values())
+        {
+            wep.resetFire();
         }
     }
 }

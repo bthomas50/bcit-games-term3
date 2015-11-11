@@ -7,13 +7,12 @@ package sketchwars.character.weapon;
 
 import java.awt.image.BufferedImage;
 import sketchwars.character.SketchCharacter;
-import sketchwars.character.projectiles.AbstractProjectile;
-import sketchwars.character.projectiles.ProjectileFactory;
+import sketchwars.character.projectiles.*;
 import sketchwars.graphics.Texture;
-import sketchwars.input.MouseHandler;
-import sketchwars.input.MouseState;
+import sketchwars.input.*;
 import sketchwars.map.AbstractMap;
 import sketchwars.physics.Vectors;
+import sketchwars.util.*;
 
 /**
  *
@@ -26,28 +25,37 @@ public class PencilWeapon extends AbstractWeapon {
     
     private final float eWidth;
     private final float eHeight;
+    private static final int FIRING_TIME_MILLIS = 2000;
     
-    private final boolean eraser;
+    private final boolean isEraser;
+
+    private Timer timer;
     
     public PencilWeapon(Texture texture, Texture point, BufferedImage pointImage, float width, float height, 
-            ProjectileFactory projectileFactory, boolean eraser) {
+            ProjectileFactory projectileFactory, boolean isEraser) {
         super(texture, width, height, projectileFactory);
         
-        this.eraser = eraser;
+        this.isEraser = isEraser;
+        if(point == null || pointImage == null) {
+            throw new IllegalArgumentException("point and pointImage must not be null");
+        }
         this.point = point;
         this.pointImage = pointImage;
         
         eWidth = width/2;
         eHeight = height/2;
+
+        timer = new Timer(FIRING_TIME_MILLIS);
     }
 
     @Override
     public void update(double elapsed) {
         posX = MouseHandler.xNormalized;
         posY = MouseHandler.yNormalized;
-        
-        handleErasing();
-        
+        // if(MouseHandler.leftBtnState == MouseState.DOWN) {
+        //     handleErasing();
+        // }
+        timer.update(elapsed);
         super.update(elapsed); 
     }
     
@@ -62,27 +70,49 @@ public class PencilWeapon extends AbstractWeapon {
         this.currentMap = map;
     }
 
-    @Override
-    protected AbstractProjectile createProjectile(SketchCharacter owner, long vPosition, long vVelocity) {
+    @Override 
+    public AbstractProjectile tryToFire(SketchCharacter owner, float power, long vAimDirection) {
+        if(isFiringPossible()) {
+            handleErasing();
+        } else {
+            owner.notifyFired();
+        }
         return null;
     }
 
     @Override
+    public void resetFire() {
+        timer.reset();
+    }
+
+    @Override
+    protected AbstractProjectile createProjectile(SketchCharacter owner, long vPosition, long vVelocity) {
+        throw new UnsupportedOperationException("not defined for Pencil-Eraser");
+    }
+
+    @Override
     protected double getProjectileSpeed(float power) {
-        return 0;
+        throw new UnsupportedOperationException("not defined for Pencil-Eraser");
     }
 
     private void handleErasing() {
-        if (point != null && currentMap != null && pointImage != null &&
-                MouseHandler.leftBtnState == MouseState.DOWN) {
-            float xEraser = posX - 0.04f;
-            float yEraser = posY - 0.08f;
-            
-            point.draw(null, xEraser, yEraser, eWidth, eHeight);
-            
-            if (currentMap.updateTexture(pointImage, eraser, xEraser, yEraser, eWidth, eHeight)) {
-                currentMap.updateInPhysics(pointImage, eraser, xEraser, yEraser, eWidth, eHeight);
-            }
+        if(!timer.isRunning()) {
+            timer.restart();
+        }
+        float xEraser = posX - 0.04f;
+        float yEraser = posY - 0.08f;
+        
+        point.draw(null, xEraser, yEraser, eWidth, eHeight);
+        
+        if (currentMap.updateTexture(pointImage, isEraser, xEraser, yEraser, eWidth, eHeight)) {
+            currentMap.updateInPhysics(pointImage, isEraser, xEraser, yEraser, eWidth, eHeight);
         }
     }
+
+    private boolean isFiringPossible() {
+        return currentMap != null &&
+               !timer.hasElapsed();
+    }
+
+
 }

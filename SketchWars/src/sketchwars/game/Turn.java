@@ -40,7 +40,7 @@ public class Turn
     {
         for(SketchCharacter ch : activeCharacters)
         {
-            if(!ch.hasFiredThisTurn() && !ch.isDead())
+            if(!ch.isTurnDone() && !ch.isDead())
             {
                 return false;
             }

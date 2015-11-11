@@ -21,7 +21,7 @@ import sketchwars.util.Timer;
  * @author Najash Najimudeen <najash.najm@gmail.com>
  */
 public class SketchCharacter implements GraphicsObject, GameObject {
-    public static final int WAIT_AFTER_FIRE_TIME = 500;
+    public static final int WAIT_AFTER_FIRE_TIME_MILLIS = 5000;
     public static final int DEFAULT_MAX_HEALTH = 100;
     private float posX;
     private float posY;
@@ -54,6 +54,8 @@ public class SketchCharacter implements GraphicsObject, GameObject {
     
     private AnimationSet<CharacterAnimations> animationSet;
 
+    private boolean hasFired;
+
     
     public SketchCharacter() {
         this(DEFAULT_MAX_HEALTH, DEFAULT_MAX_HEALTH);
@@ -68,7 +70,8 @@ public class SketchCharacter implements GraphicsObject, GameObject {
         reticleTexture = Texture.loadTexture("content/misc/reticle.png", false);
         vHealthBarOffset = Vectors.create(0, 0.1);
         
-        waitAfterFire = new Timer(WAIT_AFTER_FIRE_TIME);
+        waitAfterFire = new Timer(WAIT_AFTER_FIRE_TIME_MILLIS);
+        hasFired = false;
     }
 
     public boolean isActive() {
@@ -245,46 +248,33 @@ public class SketchCharacter implements GraphicsObject, GameObject {
     }
 
     public void resetHasFiredThisTurn() {
+        hasFired = false;
         waitAfterFire.reset();
     }
 
+    public void notifyFired() {
+        hasFired = true;
+        waitAfterFire.restart();
+    }
+
     public boolean hasFiredThisTurn() {
-        boolean turnEnded = waitAfterFire.hasElapsed();
-        
-        if (firedProjectile != null) {
-            if (firedProjectile instanceof MineProjectile) {
-                long velocity = firedProjectile.getCollider().getVelocity();
-                double length = Vectors.length(velocity);
-                
-                if (length < 50 || firedProjectile.hasExpired()) {//has stopped moving
-                    waitAfterFire.start();
-                } else {//has started moving fast again after stoping
-                    waitAfterFire.restart();
-                }
-            } else if (firedProjectile.hasExpired()) {
-                waitAfterFire.start();
-            }
-        }
-        
-        if (turnEnded) {
-            weapon.resetFire();
-            firedProjectile = null;
-        }
-        
-        return turnEnded;
+        return hasFired;
+    }
+
+    public boolean isTurnDone() {
+        return hasFiredThisTurn() && waitAfterFire.hasElapsed();
     }
 
     public void fireCurrentWeapon(float power) {
         if(weapon != null) {
             firedProjectile = weapon.tryToFire(this, (float)power, Vectors.createRTheta(1.0f, getActualFireAngle()));
-            
         }
     }
 
     public AbstractProjectile getFiredProjectile() {
         return firedProjectile;
     }
-    
+
     public void aimUp(double elapsedMillis) {
         /*angle += Math.PI * elapsedMillis / 1000.0;
         //make sure not to aim higher than straight up
