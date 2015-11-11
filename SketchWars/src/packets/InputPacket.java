@@ -11,6 +11,6 @@ public class InputPacket extends GamePacket
 	public InputPacket(byte id, byte frameId, List<Command> commands)
 	{
 		super(Type.Input, id, frameId);
-		this.commands = commands;
+		this.commands = new ArrayList<>(commands);
 	}
 }
