@@ -9,10 +9,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import main.ServerMain;
 import network.Server;
+import network.GameSetting;
 import org.joml.Vector2d;
 import sketchwars.Scenes;
 import sketchwars.exceptions.SceneException;
 import sketchwars.exceptions.SceneManagerException;
+import sketchwars.game.GameModeType;
 import sketchwars.graphics.GraphicElement;
 import sketchwars.graphics.Texture;
 import sketchwars.scenes.Layer;
@@ -39,8 +41,11 @@ public class GameSettingMenu extends Scene implements UIActionListener{
     private Texture hoverBtn;
     private Texture pressBtn;
     private Font font;
-    private Server server;
     Layer btnLayer;
+
+    //Network attritbutes
+    private Server server;
+    private GameSetting gameSetting;
     
     
     private TextButton backButton;
@@ -121,7 +126,7 @@ public class GameSettingMenu extends Scene implements UIActionListener{
             userNameInput.setText("Host");
             userNameInput.setFontColor(Color.BLUE);
             //
-            
+
             //MAPS selections
             Label mapLabel = new Label("Maps: ",font,new Vector2d(-0.85, 0.6),new Vector2d(0.4, 0.1),null);
             group.addUIComponent(mapLabel);
@@ -130,8 +135,8 @@ public class GameSettingMenu extends Scene implements UIActionListener{
             mapCheckBox.setBackgroundFromColor(Color.ORANGE);
             mapCheckBox.getListBox().setBackgroundFromColor(Color.ORANGE);
             
-            mapCheckBox.addItem("Map 1");
-            mapCheckBox.addItem("Map 2");
+            mapCheckBox.addItem("Normal");
+            mapCheckBox.addItem("Rapid");
             mapCheckBox.setSelection(1);
             group.addUIComponent(mapCheckBox);
             //
@@ -149,7 +154,6 @@ public class GameSettingMenu extends Scene implements UIActionListener{
             charactorBox.addItem("3");
             charactorBox.addItem("4");
             charactorBox.setSelection(1);
-            group.addUIComponent(charactorBox);
 
             
             //Right side
@@ -179,7 +183,7 @@ public class GameSettingMenu extends Scene implements UIActionListener{
             gameModeListBox.setSelectionBackgroundColor(Color.RED);
             gameModeListBox.setBackgroundFromColor(Color.BLACK);
             gameModeListBox.addItem("Normal");
-            gameModeListBox.addItem("Rapid");
+            gameModeListBox.addItem("Rapid Fire");
             gameModeListBox.addActionListener(this);
             //
             
@@ -197,9 +201,8 @@ public class GameSettingMenu extends Scene implements UIActionListener{
             maxPlayerListBox.addActionListener(this);
             //
 
-            
-            
-            //
+            //Draw them
+            group.addUIComponent(charactorBox);
             group.addUIComponent(gameModeListBox);
             group.addUIComponent(maxTurnTimeInput);
             group.addUIComponent(maxPlayerListBox);
@@ -231,6 +234,35 @@ public class GameSettingMenu extends Scene implements UIActionListener{
         }
     }
     
+    private void createGameSetting(GameSetting setting)
+    {
+        String temp;
+        int value;
+        GameModeType type;
+        //Health
+        temp = maxHealthInput.getText();
+        setting.setMaxPlayer(Integer.parseInt(temp));
+        //Turn Delay
+        temp = maxTurnTimeInput.getText();
+        setting.setTimePerTurn(Integer.parseInt(temp));
+        //Map
+        temp = mapCheckBox.getSelectedItem();
+        if(temp.equals("normal"))
+        {
+            setting.setMapSelected(GameModeType.Normal);
+        }
+        else
+        {
+            
+        }
+        
+        //Player limit
+        value = maxPlayerListBox.getSelection();
+        setting.setMaxPlayer(value);
+        //value = .getSelection();
+        
+    }
+    
     
 
     @Override
@@ -250,7 +282,11 @@ public class GameSettingMenu extends Scene implements UIActionListener{
        {
             try 
             {
+                //Set Host Name
                 ServerMain.setHostUsername(userNameInput.getText());
+                //GameSettingFileUpdate
+                createGameSetting(gameSetting);
+                //Set screen to lobby screen
                 sceneManager.setCurrentScene(Scenes.CREATE_MENU);
             } 
             catch (SceneManagerException ex) 
