@@ -20,7 +20,11 @@ public class MultiplayerWorld extends SketchWarsWorld {
     @Override
     protected void handleInput(double elapsedMillis) {
         for(int i = 0; i < teams.size(); i++) {
-            teams.get(i).handleInput(inputs.get(i), elapsedMillis);
+            Input inputsForTeam = inputs.get(i);
+            if(inputsForTeam != null)
+            {
+                teams.get(i).handleInput(inputs.get(i), elapsedMillis);
+            }
         }
     }
 }

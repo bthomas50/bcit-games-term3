@@ -58,7 +58,6 @@ public class Team
         {
             return;
         }
-        System.out.println("commands: " + input.getCommands());
         for(Command command : input.getCommands())
         {
             switch(command.getType())

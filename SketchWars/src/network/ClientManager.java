@@ -45,7 +45,7 @@ class ClientManager implements Runnable {
         for(ClientEntityForManagementOnServer c : server.getAllClients()) {
             System.out.println(c.username);
         }
-        if(server.getClientCount() >= 3) {
+        if(server.getClientCount() > 1) {
             server.startGame();
         }
     }
