@@ -68,18 +68,16 @@ public class SketchWars {
     private void initScenes() {
         sceneManager = new SceneManager<>();
         
-        Scene gameScene = new Scene();
-        
         Camera menuCamera = new Camera(-1, 1, 2, 2);
-        MainMenu mainMenuScene = new MainMenu(sceneManager, this);
-        OptionMenu optionMenuScene = new OptionMenu(sceneManager);
-        CreateOption createMenuScene = new CreateOption(sceneManager, server);
-        GameSettingMenu gameSettingMenuScene = new GameSettingMenu(sceneManager, server);
+        Camera gameCamera = new Camera(SketchWars.OPENGL_LEFT, SketchWars.OPENGL_TOP, 
+                                       SketchWars.OPENGL_WIDTH, SketchWars.OPENGL_HEIGHT);
+
+        Scene gameScene = new Scene(gameCamera);
         
-        mainMenuScene.setCamera(menuCamera);
-        optionMenuScene.setCamera(menuCamera);
-        createMenuScene.setCamera(menuCamera);
-        gameSettingMenuScene.setCamera(menuCamera);
+        MainMenu mainMenuScene = new MainMenu(sceneManager, this, menuCamera);
+        OptionMenu optionMenuScene = new OptionMenu(sceneManager, menuCamera);
+        CreateOption createMenuScene = new CreateOption(sceneManager, server, menuCamera);
+        GameSettingMenu gameSettingMenuScene = new GameSettingMenu(sceneManager, server, menuCamera);
         
         try {
             sceneManager.addScene(Scenes.GAME, gameScene);
@@ -98,7 +96,7 @@ public class SketchWars {
     public void startGame() {
         SoundPlayer.loadSound();
         physics = new Physics(new BoundingBox(PHYSICS_TOP, PHYSICS_LEFT, 
-                PHYSICS_TOP + PHYSICS_WIDTH, PHYSICS_LEFT + PHYSICS_WIDTH));
+                PHYSICS_TOP + PHYSICS_HEIGHT, PHYSICS_LEFT + PHYSICS_WIDTH));
         world = new SketchWarsWorld();
         SketchWarsWorldFactory fact = new SketchWarsWorldFactory(world, physics, sceneManager);
         fact.startGame();

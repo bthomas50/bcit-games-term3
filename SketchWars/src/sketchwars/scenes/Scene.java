@@ -15,9 +15,10 @@ public class Scene<T> {
     private final HashMap<T, Layer> layerIndex;
     private final SortedSet<Layer> drawableLayers;
 
-    public Scene() {
+    public Scene(Camera camera) {
         layerIndex = new HashMap<>();
         drawableLayers = new TreeSet<>();
+        this.camera = camera;
     }
 
     public Camera getCamera() {

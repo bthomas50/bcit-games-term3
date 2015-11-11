@@ -33,7 +33,6 @@ public class MultiplayerSketchWars {
     private Peer network;
     
     private SceneManager<Scenes> sceneManager;
-    private double lastTime;
     
     public MultiplayerSketchWars(Peer networkInterface) {
         network = networkInterface;
@@ -48,7 +47,9 @@ public class MultiplayerSketchWars {
 
         SoundPlayer.loadSound();
 
-        Scene gameScene = new Scene();
+        Camera gameCamera = new Camera(SketchWars.OPENGL_LEFT, SketchWars.OPENGL_TOP, 
+                                       SketchWars.OPENGL_WIDTH, SketchWars.OPENGL_HEIGHT);
+        Scene gameScene = new Scene(gameCamera);
         try {
             sceneManager.addScene(Scenes.GAME, gameScene);
             sceneManager.setCurrentScene(Scenes.GAME);
@@ -57,7 +58,7 @@ public class MultiplayerSketchWars {
         }
         
         physics = new Physics(new BoundingBox(PHYSICS_TOP, PHYSICS_LEFT, 
-                PHYSICS_TOP + PHYSICS_WIDTH, PHYSICS_LEFT + PHYSICS_WIDTH));
+                PHYSICS_TOP + PHYSICS_HEIGHT, PHYSICS_LEFT + PHYSICS_WIDTH));
         world = new MultiplayerWorld();
 
         SketchWarsWorldFactory fact = new SketchWarsWorldFactory(world, physics, sceneManager);
@@ -66,19 +67,18 @@ public class MultiplayerSketchWars {
     
     
     public void start() {
-        lastTime = System.nanoTime();
         int frameNum = 0;
         try {
             // Run the rendering loop until the user has attempted to close
         // the window or has pressed the ESCAPE key.
             while (!openGL.windowsIsClosing()) {
+                Input.update();
                 Input.handleGameInput();
                 //do network stuff.
                 network.broadcastInput(frameNum);
                 Map<Integer, Input> allInputs = network.getInputs(frameNum);
 
                 openGL.beginUpdate();
-                double time = System.nanoTime(); //calculate frame length in milliseconds
                 double delta = 16;//(time - lastTime) / NANOS_PER_MILLI;
 
                 if (sceneManager != null) {
@@ -88,8 +88,6 @@ public class MultiplayerSketchWars {
                 
                 world.update(allInputs, delta);
                 physics.update(delta);
-
-                lastTime = time;
 
                 openGL.endUpdate();
                 

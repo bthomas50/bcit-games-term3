@@ -15,9 +15,7 @@ import sketchwars.exceptions.SceneException;
 import sketchwars.exceptions.SceneManagerException;
 import sketchwars.graphics.GraphicElement;
 import sketchwars.graphics.Texture;
-import sketchwars.scenes.Layer;
-import sketchwars.scenes.Scene;
-import sketchwars.scenes.SceneManager;
+import sketchwars.scenes.*;
 import sketchwars.ui.components.ComboBox;
 import sketchwars.ui.components.ListBox;
 import sketchwars.ui.components.TextButton;
@@ -44,7 +42,8 @@ public class MainMenu extends Scene implements UIActionListener {
     private TextButton buttonExit;
     private Font font;
     
-    public MainMenu(SceneManager<Scenes> sceneManager, SketchWars sketchWars) {
+    public MainMenu(SceneManager<Scenes> sceneManager, SketchWars sketchWars, Camera camera) {
+        super(camera);
         this.sceneManager = sceneManager;
         this.sketchWars = sketchWars;
 

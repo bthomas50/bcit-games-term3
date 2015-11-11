@@ -14,9 +14,7 @@ import sketchwars.exceptions.SceneException;
 import sketchwars.exceptions.SceneManagerException;
 import sketchwars.graphics.GraphicElement;
 import sketchwars.graphics.Texture;
-import sketchwars.scenes.Layer;
-import sketchwars.scenes.Scene;
-import sketchwars.scenes.SceneManager;
+import sketchwars.scenes.*;
 import sketchwars.sound.SoundPlayer;
 import sketchwars.ui.components.TextButton;
 import sketchwars.ui.components.UIActionListener;
@@ -38,7 +36,8 @@ public class OptionMenu extends Scene implements UIActionListener {
     
     private TextButton backButton;
     
-    public OptionMenu(SceneManager<Scenes> sceneManager) {
+    public OptionMenu(SceneManager<Scenes> sceneManager, Camera camera) {
+        super(camera);
         this.sceneManager = sceneManager;
 
         font = new Font("Comic Sans MS", Font.ITALIC, 12);

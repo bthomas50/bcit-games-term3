@@ -17,17 +17,8 @@ import sketchwars.exceptions.SceneManagerException;
 import sketchwars.game.GameModeType;
 import sketchwars.graphics.GraphicElement;
 import sketchwars.graphics.Texture;
-import sketchwars.scenes.Layer;
-import sketchwars.scenes.Scene;
-import sketchwars.scenes.SceneManager;
-import sketchwars.ui.components.ComboBox;
-import sketchwars.ui.components.Label;
-import sketchwars.ui.components.ListBox;
-import sketchwars.ui.components.TextButton;
-import sketchwars.ui.components.TextInputbox;
-import sketchwars.ui.components.UIActionListener;
-import sketchwars.ui.components.UIComponent;
-import sketchwars.ui.components.UIGroup;
+import sketchwars.scenes.*;
+import sketchwars.ui.components.*;
 /**
  *
  * @author a00762764
@@ -62,7 +53,8 @@ public class GameSettingMenu extends Scene implements UIActionListener{
     private Collection<ClientEntityForManagementOnServer> userList;
     
     
-    public GameSettingMenu(SceneManager<Scenes> sceneManager) {
+    public GameSettingMenu(SceneManager<Scenes> sceneManager, Camera camera) {
+        super(camera);
         this.sceneManager = sceneManager;
 
         font = new Font("Comic Sans MS", Font.ITALIC, 12);
@@ -71,7 +63,8 @@ public class GameSettingMenu extends Scene implements UIActionListener{
         createBackground();
     }
     
-    public GameSettingMenu(SceneManager<Scenes> sceneManager, Server server) {
+    public GameSettingMenu(SceneManager<Scenes> sceneManager, Server server, Camera camera) {
+        super(camera);
         this.sceneManager = sceneManager;
         this.server = server;
         font = new Font("Comic Sans MS", Font.ITALIC, 12);

@@ -78,6 +78,7 @@ public class Team
                 break;
             case MOUSE_AIM:
                 comm = (MouseCommand) command;
+                //System.out.println(comm.getX() + ", " + comm.getY());
                 active.aimAt(comm.getX(), comm.getY());
                 break;
             case MOUSE_FIRE:
