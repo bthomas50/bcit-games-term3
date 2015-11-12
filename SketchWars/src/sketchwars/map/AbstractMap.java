@@ -22,6 +22,8 @@ public abstract class AbstractMap implements GraphicsObject, GameObject {
 
     private final Camera camera;
     
+    private MapWater mapWater;
+    
     public AbstractMap(Camera camera, MapCollider mapCollider, Texture background, 
                        Texture foreground, BufferedImage foregroundImage) {
         this.camera = camera;
@@ -32,8 +34,11 @@ public abstract class AbstractMap implements GraphicsObject, GameObject {
     }
 
     @Override
-    public void update(double elapsedMillis) 
-    {}
+    public void update(double elapsedMillis) {
+        if (mapWater != null) {
+            mapWater.update(elapsedMillis);
+        }
+    }
 
     @Override
     public boolean hasExpired()
@@ -41,6 +46,10 @@ public abstract class AbstractMap implements GraphicsObject, GameObject {
         return false;
     }
 
+    public void setMapWater(MapWater mapWater) {
+        this.mapWater = mapWater;
+    }
+    
     public PixelCollider getMapCollider() {
         return mapCollider;
     }
@@ -66,6 +75,10 @@ public abstract class AbstractMap implements GraphicsObject, GameObject {
         
         background.draw(null, x, y, width, height);
         foreground.draw(null, x, y, width, height);
+        
+        if (mapWater != null) {
+            mapWater.render();
+        }
     }
 
     public void dispose() {

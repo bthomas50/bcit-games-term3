@@ -77,10 +77,15 @@ public final class SoundPlayer
     
     private static Clip getClip(AudioInputStream soundStream) throws Exception
     {
-        AudioFormat format = soundStream.getFormat();
-        DataLine.Info info = new DataLine.Info(Clip.class, format);
-        Clip clip = (Clip)AudioSystem.getLine(info);
-        clip.open(soundStream);
+        Clip clip = null;
+        try {
+            AudioFormat format = soundStream.getFormat();
+            DataLine.Info info = new DataLine.Info(Clip.class, format);
+            clip = (Clip)AudioSystem.getLine(info);
+            clip.open(soundStream);
+        } catch (IllegalArgumentException | LineUnavailableException | IOException ex) {
+            System.err.println(ex);
+        }
         return clip;
     }
 

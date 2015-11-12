@@ -16,8 +16,10 @@ import javax.imageio.ImageIO;
 import org.joml.Matrix3d;
 import org.joml.Vector2d;
 import org.joml.Vector3d;
+import org.lwjgl.opengl.ARBShaderObjects;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
+import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import sketchwars.OpenGL;
 
@@ -235,12 +237,8 @@ public class Texture {
      * @param matrix transformation matrix 
      */
     public void draw(Matrix3d matrix) {   
-        glPushMatrix();
-        
         Vector3d points[] = getTransformedQuad(matrix);
-        Texture.this.draw(points);
-        
-        glPopMatrix();
+        draw(points);
     }
     
     /**
@@ -249,12 +247,8 @@ public class Texture {
      * @param matrix transformation matrix 
      */
     public void draw(Vector2d[] textureCoord, Matrix3d matrix) {   
-        glPushMatrix();
-        
         Vector3d points[] = getTransformedQuad(matrix);
-        Texture.this.draw(textureCoord, points);
-        
-        glPopMatrix();
+        draw(textureCoord, points);
     }
     
     private Vector3d[] getTransformedQuad(Matrix3d matrix) {
@@ -281,12 +275,12 @@ public class Texture {
     }
 
     private void draw(Vector3d[] points) {
-        Texture.this.draw((float)points[0].x, (float)points[1].x, (float)points[2].x, (float)points[3].x, 
+        draw((float)points[0].x, (float)points[1].x, (float)points[2].x, (float)points[3].x, 
              (float)points[0].y, (float)points[1].y, (float)points[2].y, (float)points[3].y);
     }
     
     private void draw(Vector2d[] textureCoord, Vector3d[] points) {
-        Texture.this.draw((float)textureCoord[0].x, (float)textureCoord[1].x, (float)textureCoord[2].x, (float)textureCoord[3].x, 
+        draw((float)textureCoord[0].x, (float)textureCoord[1].x, (float)textureCoord[2].x, (float)textureCoord[3].x, 
              (float)textureCoord[0].y, (float)textureCoord[1].y, (float)textureCoord[2].y, (float)textureCoord[3].y,
              (float)points[0].x, (float)points[1].x, (float)points[2].x, (float)points[3].x, 
              (float)points[0].y, (float)points[1].y, (float)points[2].y, (float)points[3].y);

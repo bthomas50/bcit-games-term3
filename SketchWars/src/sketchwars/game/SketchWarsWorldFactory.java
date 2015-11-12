@@ -23,6 +23,7 @@ import org.joml.Matrix3d;
 import sketchwars.animation.Animation;
 import sketchwars.animation.AnimationSet;
 import sketchwars.animation.CharacterAnimations;
+import sketchwars.graphics.Shader;
 import sketchwars.physics.colliders.CharacterCollider;
 import sketchwars.util.Converter;
 
@@ -107,36 +108,62 @@ public class SketchWarsWorldFactory
         gameScene.addLayer(GameLayers.HUD, hudLayer);
     }
 
+    
     private void createMap()
     {
         Texture mapBGTexture = Texture.loadTexture("content/map/clouds.png", false);
         Texture mapFGTexture = Texture.loadTexture("content/map/BiggerMap.png", true);
+        Texture waterTexture = Texture.loadTexture("content/shader/2d_water/water.png", true);
+               
         //it'll be empty if an error occurs when loading the map texture.
         BitMask mapImageMask = BitMaskFactory.createEmpty();
         try 
         {
+            Camera camera = gameScene.getCamera();
+            
             BufferedImage mapImage = Texture.loadImageFile("content/map/BiggerMap.png");
+            BufferedImage waterImage = Texture.loadImageFile("content/shader/2d_water/water.png");
+            
             mapImageMask = BitMaskFactory.createFromImageAlpha(mapImage, physics.getBounds());
             
             MapCollider mapCollider = new MapCollider(mapImageMask);
             mapCollider.setElasticity(0.5f);
             mapCollider.setStaticFriction(1.0f);
             mapCollider.setDynamicFriction(1.0f);
-            TestMap map = new TestMap(gameScene.getCamera(), mapCollider, mapBGTexture, mapFGTexture, mapImage);
+            TestMap map = new TestMap(camera, mapCollider, mapBGTexture, mapFGTexture, mapImage);
             mapCollider.attachGameObject(map);
 
             try {
                 gameScene.getLayer(GameLayers.MAP).addDrawableObject(map);
             } catch (SceneException ex) {
-                System.err.println(ex.getMessage());
+                System.err.println(ex);
             }
 
             physics.addCollider(mapCollider);
             world.setMap(map);
-        }
-        catch(IOException e) 
-        {
+            
+            int waterWidith = Converter.GraphicsToPhysicsX(camera.getWorldWidth());
+            int waterHeight = Converter.GraphicsToPhysicsY(camera.getWorldHeight());
+            
+            int waterLeft = Converter.GraphicsToPhysicsX(camera.getWorldLeft());
+            int waterTop = Converter.GraphicsToPhysicsY(camera.getWorldBottom()) - (int)(waterHeight* 0.9f);
+            BoundingBox waterBB = new BoundingBox(waterTop, waterLeft, waterTop + waterHeight, waterLeft + waterWidith);
+            
+            Collider waterCollider = new PixelCollider(BitMaskFactory.createFromImageAlpha(waterImage, waterBB), 
+                                                       CollisionBehaviour.NOTIFY);
+            waterCollider.setPosition(Vectors.create(waterLeft, waterTop));
+            
+            Shader waterShader = new Shader("content/shader/2d_water/vertShader.vert", "content/shader/2d_water/fragShader.frag");
+            MapWater mapWater = new MapWater(waterTexture, waterShader, waterCollider);
+            waterCollider.addCollisionListener(mapWater);
+            map.setMapWater(mapWater);
+            
+           // mapWater.riseWaterLevel();
+            physics.addCollider(waterCollider);
+        } catch(IOException e) {
             System.err.println(e);
+        } catch (Exception ex) {
+            System.err.println(ex);
         }
     }
 
