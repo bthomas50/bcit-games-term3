@@ -5,6 +5,7 @@ import java.net.InetAddress;
 import java.util.Scanner;
 import network.Client;
 import network.DiscoveryServer;
+import network.GameSetting;
 import network.Server;
 import static sketchwars.util.Config.appendToLibraryPath;
 
@@ -19,7 +20,7 @@ public class ServerMain
         System.out.println("Enter port: ");
         int port = in.nextInt();
         
-        Server server = new Server(port);
+        Server server = new Server(port, new GameSetting());
         new Thread(server).start();
         new DiscoveryServer().start();
         System.out.println("Enter username: ");

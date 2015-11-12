@@ -5,6 +5,7 @@
  */
 package sketchwars.ui.menu;
 
+import java.awt.Color;
 import java.awt.Font;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -14,11 +15,17 @@ import sketchwars.exceptions.SceneException;
 import sketchwars.exceptions.SceneManagerException;
 import sketchwars.graphics.GraphicElement;
 import sketchwars.graphics.Texture;
-import sketchwars.scenes.*;
+import sketchwars.scenes.Camera;
+import sketchwars.scenes.Layer;
+import sketchwars.scenes.Scene;
+import sketchwars.scenes.SceneManager;
 import sketchwars.sound.SoundPlayer;
+import sketchwars.ui.components.Label;
 import sketchwars.ui.components.TextButton;
+import sketchwars.ui.components.TextInputbox;
 import sketchwars.ui.components.UIActionListener;
 import sketchwars.ui.components.UIComponent;
+import sketchwars.ui.components.UIGroup;
 
 /**
  *
@@ -35,6 +42,8 @@ public class OptionMenu extends Scene implements UIActionListener {
     private Font font;
     
     private TextButton backButton;
+    private TextInputbox currentVolume;
+    private TextInputbox currentSfx;
     
     public OptionMenu(SceneManager<Scenes> sceneManager, Camera camera) {
         super(camera);
@@ -70,10 +79,35 @@ public class OptionMenu extends Scene implements UIActionListener {
         try {
             Layer btnLayer = getLayer(MenuLayers.BUTTONS);
 
+            //group
+            UIGroup group = new UIGroup(new Vector2d(), new Vector2d(2, 2));
+            
+            //Set Volume
+            Label setVolume = new Label("Volume: ",font,new Vector2d(-0.20, 0.6),new Vector2d(0.4, 0.1),null);
+            currentVolume = new TextInputbox(new Vector2d(0.2, 0.6), new Vector2d(0.4, 0.1), null);
+            currentVolume.setText("100%");
+            currentVolume.setFontColor(Color.BLUE);
+            
+            //Set Sfx
+            Label setSfx = new Label("SFX: ",font,new Vector2d(-0.20, 0.4),new Vector2d(0.4, 0.1),null);
+            currentSfx = new TextInputbox(new Vector2d(0.2, 0.4), new Vector2d(0.4, 0.1), null);
+            currentSfx.setText("100%");
+            currentSfx.setFontColor(Color.BLUE);
+            
+            //Print 
+            group.addUIComponent(setVolume);
+            group.addUIComponent(currentVolume);
+            group.addUIComponent(setSfx);
+            group.addUIComponent(currentSfx);
+            btnLayer.addDrawableObject(group);
+
+
+
             //play 
-            backButton = new TextButton("BACK",font,new Vector2d(0.03, -0.30), size,normalBtn,hoverBtn,pressBtn);
+            backButton = new TextButton("BACK",font,new Vector2d(0.03, -0.75), size,normalBtn,hoverBtn,pressBtn);
             btnLayer.addDrawableObject(backButton);
             backButton.addActionListener(this);
+            
 
         } catch (SceneException ex) {
             Logger.getLogger(MainMenu.class.getName()).log(Level.SEVERE, null, ex);
@@ -83,7 +117,7 @@ public class OptionMenu extends Scene implements UIActionListener {
     
     private void createBackground() {
         
-        backgroundImage = Texture.loadTexture("content/menu/sketchWars_bg.jpg", false);
+        backgroundImage = Texture.loadTexture("content/menu/sketchWars2_bg.jpg", false);
         Vector2d size = new Vector2d(2,2);
         try {
             Layer bgLayer = getLayer(MenuLayers.BACKGROUND);

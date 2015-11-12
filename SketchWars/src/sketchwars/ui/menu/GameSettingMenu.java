@@ -4,6 +4,11 @@ package sketchwars.ui.menu;
 import entities.ClientEntityForManagementOnServer;
 import java.awt.Color;
 import java.awt.Font;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -12,13 +17,24 @@ import network.GameSetting;
 import network.Server;
 import org.joml.Vector2d;
 import sketchwars.Scenes;
+import sketchwars.character.weapon.WeaponSetTypes;
 import sketchwars.exceptions.SceneException;
 import sketchwars.exceptions.SceneManagerException;
 import sketchwars.game.GameModeType;
 import sketchwars.graphics.GraphicElement;
 import sketchwars.graphics.Texture;
-import sketchwars.scenes.*;
-import sketchwars.ui.components.*;
+import sketchwars.scenes.Camera;
+import sketchwars.scenes.Layer;
+import sketchwars.scenes.Scene;
+import sketchwars.scenes.SceneManager;
+import sketchwars.ui.components.ComboBox;
+import sketchwars.ui.components.Label;
+import sketchwars.ui.components.ListBox;
+import sketchwars.ui.components.TextButton;
+import sketchwars.ui.components.TextInputbox;
+import sketchwars.ui.components.UIActionListener;
+import sketchwars.ui.components.UIComponent;
+import sketchwars.ui.components.UIGroup;
 /**
  *
  * @author a00762764
@@ -44,10 +60,11 @@ public class GameSettingMenu extends Scene implements UIActionListener{
     private TextInputbox userNameInput;
     private ComboBox mapCheckBox;
     private ComboBox charactorBox;
-    private ListBox maxPlayerListBox;
+    private TextInputbox maxPlayerInput;
     private TextInputbox maxHealthInput;
     private TextInputbox maxTurnTimeInput;
     private ListBox gameModeListBox;
+    private ListBox weaponSetListBox;
 
     
     private Collection<ClientEntityForManagementOnServer> userList;
@@ -56,7 +73,7 @@ public class GameSettingMenu extends Scene implements UIActionListener{
     public GameSettingMenu(SceneManager<Scenes> sceneManager, Camera camera) {
         super(camera);
         this.sceneManager = sceneManager;
-
+        gameSetting = new GameSetting();
         font = new Font("Comic Sans MS", Font.ITALIC, 12);
         createLayers();
         createButtons();
@@ -67,6 +84,7 @@ public class GameSettingMenu extends Scene implements UIActionListener{
         super(camera);
         this.sceneManager = sceneManager;
         this.server = server;
+        gameSetting = new GameSetting();
         font = new Font("Comic Sans MS", Font.ITALIC, 12);
         createLayers();
         createButtons();
@@ -151,6 +169,14 @@ public class GameSettingMenu extends Scene implements UIActionListener{
             
             //Right side
 
+            //Player label
+            Label maxPlayerLabel = new Label("Player: ",font,new Vector2d(0.4, 0.75),new Vector2d(0.4, 0.1),null);
+            group.addUIComponent(maxPlayerLabel);
+            maxPlayerInput = new TextInputbox(new Vector2d(0.7, 0.75), new Vector2d(0.4, 0.1), null);
+            maxPlayerInput.setText("2");
+            maxPlayerInput.setFontColor(Color.BLUE);
+            //
+            
             //Health label
             Label maxHealthLabel = new Label("Health: ",font,new Vector2d(0.4, 0.65),new Vector2d(0.4, 0.1),null);
             group.addUIComponent(maxHealthLabel);
@@ -163,42 +189,46 @@ public class GameSettingMenu extends Scene implements UIActionListener{
             Label maxTurnTimeLabel = new Label("Time: ",font,new Vector2d(0.4, 0.55),new Vector2d(0.4, 0.1),null);
             group.addUIComponent(maxTurnTimeLabel);
             maxTurnTimeInput = new TextInputbox(new Vector2d(0.7, 0.55), new Vector2d(0.4, 0.1), null);
-            maxTurnTimeInput.setText("15 sec");
+            maxTurnTimeInput.setText("15");
             maxTurnTimeInput.setFontColor(Color.BLUE);
             //
             
 
             //Game modes
-            Label gameModeLabel = new Label("Mode: ",font,new Vector2d(-0.8, -0.15),new Vector2d(0.4, 0.1),null);
+            Label gameModeLabel = new Label("Mode: ",font,new Vector2d(0.45, -0.10),new Vector2d(0.4, 0.1),null);
             group.addUIComponent(gameModeLabel);
-            gameModeListBox = new ListBox(new Vector2d(-0.55, -0.25), new Vector2d(0.3, 0.25),  0.1f, null);
+            gameModeListBox = new ListBox(new Vector2d(0.75, -0.20), new Vector2d(0.3, 0.25),  0.1f, null);
             gameModeListBox.setFontColor(Color.yellow);
             gameModeListBox.setSelectionBackgroundColor(Color.RED);
             gameModeListBox.setBackgroundFromColor(Color.BLACK);
             gameModeListBox.addItem("Normal");
             gameModeListBox.addItem("Rapid Fire");
+            gameModeListBox.setSelection(0);
             gameModeListBox.addActionListener(this);
             //
             
-            //MAX player list
-            Label maxPlayerLabel = new Label("Max Player: ",font,new Vector2d(0.1, 0.8),new Vector2d(0.4, 0.1),null);
-            group.addUIComponent(maxPlayerLabel);
-            maxPlayerListBox = new ListBox(new Vector2d(0.1, 0.5), new Vector2d(0.3, 0.4),  0.1f, null);
-            maxPlayerListBox.setFontColor(Color.yellow);
-            maxPlayerListBox.setSelectionBackgroundColor(Color.RED);
-            maxPlayerListBox.setBackgroundFromColor(Color.BLACK);
-            maxPlayerListBox.addItem("1");
-            maxPlayerListBox.addItem("2");
-            maxPlayerListBox.addItem("3");
-            maxPlayerListBox.addItem("4");
-            maxPlayerListBox.addActionListener(this);
+            
+            //Weapon set list
+            Label weaponSetLabel = new Label("Gun Set: ",font,new Vector2d(0.45, 0.40),new Vector2d(0.4, 0.1),null);
+            group.addUIComponent(weaponSetLabel);
+            weaponSetListBox = new ListBox(new Vector2d(0.75, 0.25), new Vector2d(0.3, 0.4),  0.1f, null);
+            weaponSetListBox.setFontColor(Color.yellow);
+            weaponSetListBox.setSelectionBackgroundColor(Color.RED);
+            weaponSetListBox.setBackgroundFromColor(Color.BLACK);
+            weaponSetListBox.addItem("MELEE");
+            weaponSetListBox.addItem("RANGE");
+            weaponSetListBox.addItem("EXPLOSIVE");
+            weaponSetListBox.addItem("MIX");
+            weaponSetListBox.setSelection(0);
+            weaponSetListBox.addActionListener(this);
             //
 
             //Draw them
-            group.addUIComponent(charactorBox);
+            group.addUIComponent(weaponSetListBox);
             group.addUIComponent(gameModeListBox);
+            group.addUIComponent(charactorBox);
             group.addUIComponent(maxTurnTimeInput);
-            group.addUIComponent(maxPlayerListBox);
+            group.addUIComponent(maxPlayerInput);
             group.addUIComponent(maxHealthInput);
             group.addUIComponent(userNameInput);
             
@@ -227,8 +257,7 @@ public class GameSettingMenu extends Scene implements UIActionListener{
     
     private void createGameSetting(GameSetting setting)
     {
-        String temp;
-        int value;
+        String temp = "test";
 
         //Health
         temp = maxHealthInput.getText();
@@ -237,8 +266,8 @@ public class GameSettingMenu extends Scene implements UIActionListener{
         temp = maxTurnTimeInput.getText();
         setting.setTimePerTurn(Integer.parseInt(temp));
         //Player limit
-        value = maxPlayerListBox.getSelection();
-        setting.setMaxPlayer(value);
+        temp = maxPlayerInput.getText();
+        setting.setMaxPlayer(Integer.parseInt(temp));
         //Character limit
         temp = charactorBox.getSelectedItem();
         setting.setCharacterPerTeam(Integer.parseInt(temp));
@@ -249,12 +278,34 @@ public class GameSettingMenu extends Scene implements UIActionListener{
         //Game Mode
         temp = gameModeListBox.getSelectedItem();
         setting.setMapSelected(gameModeCheck(temp));
-        
-        //Player limit
-        value = maxPlayerListBox.getSelection();
-        setting.setMaxPlayer(value);
+
+        //Weapon Set 
+        temp = weaponSetListBox.getSelectedItem();
+        setting.setWeaponSetSelected(weaponModeCheck(temp));
+       
     }
-    
+
+    //Check string against weapon set
+    public WeaponSetTypes weaponModeCheck(String value)
+    {
+        if(value.equalsIgnoreCase("Melee"))
+        {
+            return WeaponSetTypes.MELEE; 
+        }
+        else if(value.equalsIgnoreCase("Range"))
+        {
+            return WeaponSetTypes.RANGE;
+        }
+        else if(value.equalsIgnoreCase("Explosive"))
+        {
+            return WeaponSetTypes.EXPLOSIVE;
+        }
+        else
+        {
+            return WeaponSetTypes.MIX;
+        }
+    }
+    //Check string agains game mode
     public GameModeType gameModeCheck(String value)
     {
         if(value.equalsIgnoreCase("normal"))
@@ -270,8 +321,19 @@ public class GameSettingMenu extends Scene implements UIActionListener{
             return GameModeType.Normal;
         }
     }
-    
-    
+    //Serializing
+    public static byte[] serialize(GameSetting obj) throws IOException 
+    {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ObjectOutputStream os = new ObjectOutputStream(out);
+        os.writeObject(obj);
+        return out.toByteArray();
+    }
+    public static Object deserialize(byte[] data) throws IOException, ClassNotFoundException {
+        ByteArrayInputStream in = new ByteArrayInputStream(data);
+        ObjectInputStream is = new ObjectInputStream(in);
+        return is.readObject();
+    }
 
     @Override
     public void action(UIComponent component, float x, float y) {

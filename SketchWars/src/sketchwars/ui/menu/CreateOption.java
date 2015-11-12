@@ -10,6 +10,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import main.ServerMain;
 import network.DiscoveryServer;
+import network.GameSetting;
 import network.Server;
 import org.joml.Vector2d;
 import sketchwars.Scenes;
@@ -158,7 +159,7 @@ public class CreateOption extends Scene implements UIActionListener{
     
     private void startGame()
     {
-        server = new Server(6969);
+        server = new Server(6969, new GameSetting());
         
         new Thread(server).start();
         discoveryThread = new DiscoveryServer();

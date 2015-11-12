@@ -3,6 +3,7 @@
  */
 package network;
 
+import java.io.Serializable;
 import sketchwars.character.weapon.WeaponSetTypes;
 import sketchwars.game.GameModeType;
 
@@ -10,7 +11,7 @@ import sketchwars.game.GameModeType;
  *
  * @author Salman Shaharyar
  */
-public class GameSetting {
+public class GameSetting implements Serializable {
     
     private int maxPlayer;
     private int timePerTurn;

@@ -12,6 +12,7 @@ public enum CommandType
     AIM_UP, 
     AIM_DOWN, 
     MOUSE_AIM,
+    SHOWMENU,
     SWITCH_1, 
     SWITCH_2,
     SWITCH_3,

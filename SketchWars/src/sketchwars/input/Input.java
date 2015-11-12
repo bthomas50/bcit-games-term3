@@ -35,7 +35,9 @@ public class Input
         if(KeyboardHandler.isKeyDown(GLFW_KEY_SPACE)){
             currentInput.commands.add(new Command(CommandType.FIRE));
         }
-
+        if(KeyboardHandler.isKeyDown(GLFW_KEY_ESCAPE)){
+            currentInput.commands.add(new Command(CommandType.SHOWMENU));
+        }
         //mimic behaviour of space firing.
         if(MouseHandler.leftBtnState == MouseState.FALLING || MouseHandler.leftBtnState == MouseState.DOWN) {
             currentInput.commands.add(
