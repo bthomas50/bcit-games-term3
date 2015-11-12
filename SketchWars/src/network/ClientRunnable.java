@@ -6,6 +6,7 @@ import entities.*;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.Random;
 
 
 class ClientRunnable implements Runnable {
@@ -62,7 +63,7 @@ class ClientRunnable implements Runnable {
             }
             me.startListener();
             //Thread.sleep(1000);
-            MultiplayerSketchWars sketchWars = new MultiplayerSketchWars(me);
+            MultiplayerSketchWars sketchWars = new MultiplayerSketchWars(me, new Random(packet.randomSeed));
             sketchWars.start();
         } catch(IOException ioe) {
             System.out.println(ioe);

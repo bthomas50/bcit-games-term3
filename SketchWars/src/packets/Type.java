@@ -1,5 +1,5 @@
 package packets;
 
 public enum Type { 
-    LoginClient, LoginBroadcast, LoginConfirmation, StartGame, LocationUpdate, LogoutClient, Input, Acknowledgement
+    LoginClient, LoginBroadcast, LoginConfirmation, StartGame, LogoutClient, Input, Acknowledgement
 }

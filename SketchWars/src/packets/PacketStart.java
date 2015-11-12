@@ -3,14 +3,12 @@ package packets;
 
 public class PacketStart extends Packet {
 
-	public static final long serialVersionUID = 658099834261054358L;
 	public PeerInfo[] peers;
+	public int randomSeed;
 
-	public PacketStart(PeerInfo[] peerInfo) {
-		this.type = Type.StartGame;
-        this.peers = peerInfo;
+	public PacketStart(PeerInfo[] peerInfo, int randomSeed) {
+		super(Type.StartGame);
+        peers = peerInfo;
+        this.randomSeed = randomSeed;
 	}
-	
-
-    
 }

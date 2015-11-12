@@ -21,8 +21,6 @@ class ClientManager implements Runnable {
 
         if (type == Type.LoginClient) {
             handleClientLogin((PacketClientLogin) obj);
-        } else if (type == Type.LocationUpdate) {
-            handleLocationUpdate((PacketLocationUpdate) obj);
         } else if (type == Type.LogoutClient) {
             handleClientLogout((Packet) obj);
         } else if (type == Type.StartGame) {
@@ -48,16 +46,6 @@ class ClientManager implements Runnable {
         if(server.getClientCount() > 1) {
             server.startGame();
         }
-    }
-
-    private void handleLocationUpdate(PacketLocationUpdate packet) {
-        server.broadcast(packet);
-        System.out.println("Server recienved location package");
-
-        // Server can keep track of the current location of this
-        // client.
-        client.setX(packet.x);
-        client.setY(packet.y);
     }
 
     private void handleClientLogout(Packet packet) {

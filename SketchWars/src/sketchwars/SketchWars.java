@@ -2,6 +2,7 @@ package sketchwars;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.Random;
 import network.Server;
 import sketchwars.exceptions.SceneManagerException;
 import sketchwars.game.SketchWarsWorld;
@@ -98,8 +99,7 @@ public class SketchWars {
         physics = new Physics(new BoundingBox(PHYSICS_TOP, PHYSICS_LEFT, 
                 PHYSICS_TOP + PHYSICS_HEIGHT, PHYSICS_LEFT + PHYSICS_WIDTH));
         world = new SketchWarsWorld();
-        SketchWarsWorldFactory fact = new SketchWarsWorldFactory(world, physics, sceneManager);
-        fact.startGame();
+        new SketchWarsWorldFactory(world, physics, sceneManager, new Random()).startGame();
         
         if (sceneManager != null) {
             try {

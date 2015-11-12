@@ -2,17 +2,12 @@ package network;
 
 import entities.ClientEntityForManagementOnServer;
 import java.io.IOException;
-import java.net.Inet6Address;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.net.ServerSocket;
-import java.net.SocketException;
+import java.net.*;
+import java.util.Random;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
-import packets.Packet;
-import packets.PacketStart;
-import packets.PeerInfo;
+import packets.*;
 
 public class Server implements Runnable {
 	public int port;
@@ -86,7 +81,7 @@ public class Server implements Runnable {
 			System.out.println(client.socket.getLocalAddress().getHostAddress());
 			arrayOfPeers[i++] = new PeerInfo(client.socket.getInetAddress(), client.socket.getPort(), client.username, client.id);
 		}
-		PacketStart packet = new PacketStart(arrayOfPeers);
+		PacketStart packet = new PacketStart(arrayOfPeers, new Random().nextInt());
 		Utils.broadcast(packet, clients.values());
 	}
 

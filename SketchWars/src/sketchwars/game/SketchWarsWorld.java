@@ -136,7 +136,7 @@ public class SketchWarsWorld extends World implements KeyCharListener {
 
     private void handlePanningCamera() {
         if (camera != null) {
-            Team firstTeam = teams.get(getLocalTeamIdx()); //temporary untill we can get multiplayer working
+            Team firstTeam = teams.get(getLocalTeamIdx());
             SketchCharacter character = firstTeam.getActiveCharacter();
             AbstractProjectile projectile = character.getFiredProjectile();
             

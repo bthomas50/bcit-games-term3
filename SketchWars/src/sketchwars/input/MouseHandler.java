@@ -59,7 +59,6 @@ public class MouseHandler
     }
 
     public static void setCurrentCamera(Camera camera) {
-        System.out.println("Set Camera: " + camera);
         MouseHandler.currentCamera = camera;
     }
 

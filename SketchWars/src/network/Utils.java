@@ -35,7 +35,7 @@ public class Utils {
 		}
 		
 		// everything null
-		return new Packet();
+		return null;
 	}
 	
 	// Sending a packet

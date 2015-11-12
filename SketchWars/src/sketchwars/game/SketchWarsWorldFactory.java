@@ -38,17 +38,20 @@ public class SketchWarsWorldFactory
     private final SceneManager<Scenes> sceneManager;
     private Scene<GameLayers> gameScene;
     private String[] charSprites;
+    private Random rng;
 
-    public SketchWarsWorldFactory(SketchWarsWorld world, Physics physics, SceneManager<Scenes> sceneManager)
+    public SketchWarsWorldFactory(SketchWarsWorld world, Physics physics, SceneManager<Scenes> sceneManager, Random rng)
     {
         this.world = world;
         this.physics = physics;
         this.sceneManager = sceneManager;
+        this.rng = rng;
     }
 
     public void startGame()
     {
-        try {
+        try 
+        {
             initPhysics();
             preloadTextures();
             initCharSprites();
@@ -56,12 +59,18 @@ public class SketchWarsWorldFactory
             setupCamera();
             createMap();
             createTeams();
-            SoundPlayer.playMusic(0, true, -15);
-        } catch (SceneManagerException ex) {
-            System.err.println(ex.getMessage());
-        } catch (Exception e)
+            try
+            {
+                SoundPlayer.playMusic(0, true, -15);
+            }
+            catch(Exception e)
+            {
+                System.err.println("error starting music: " + e.getMessage());
+            }
+        } 
+        catch (SceneManagerException ex) 
         {
-            System.err.println(e.getMessage());
+            System.err.println(ex.getMessage());
         }
     }
     private void initCharSprites()
@@ -133,16 +142,14 @@ public class SketchWarsWorldFactory
 
     private void createTeams() 
     {
-        Random rng = new Random();
-        
         for(int t = 0; t < NUM_TEAMS; t++)
         {
-            Team team = createTeam(rng, t);
+            Team team = createTeam(t);
             world.addTeam(team);
         }
     }
 
-    private Team createTeam(Random rng, int teamNum)
+    private Team createTeam(int teamNum)
     {
         ArrayList<SketchCharacter> characters = new ArrayList<>(CHARS_PER_TEAM);
         HashMap<WeaponTypes, AbstractWeapon> weapons = new HashMap<>();
@@ -158,13 +165,11 @@ public class SketchWarsWorldFactory
         }
         for(int c = 0; c < CHARS_PER_TEAM; c++)
         {
-            //dont do randomness for now to simplify networking
             //random between -900, 900
-            //double r = (rng.nextDouble() - 0.5) * 1800.0;
-            double r = ((double)c * 1500.0 / CHARS_PER_TEAM) - 800.0 + teamNum * 100;
-            SketchCharacter character = createCharacter(Vectors.create(r, 800.0), rng, teamNum);
+            double r = (rng.nextDouble() - 0.5) * SketchWars.PHYSICS_WIDTH * 0.9;
+            SketchCharacter character = createCharacter(Vectors.create(r, 800.0), teamNum);
+
             character.setWeapon(weapons.get(WeaponTypes.MELEE_WEAPON));
-            //character.setMaxHealth(100);
             charHealthBar = new HealthBar(HealthBar.lifeBars[teamNum*2], 
                                         HealthBar.lifeBars[teamNum*2+1], 
                                         Vectors.create(character.getPosX(), character.getPosY()));
@@ -194,10 +199,10 @@ public class SketchWarsWorldFactory
         return team;
     }
 
-    private SketchCharacter createCharacter(long vPosition, Random rng, int teamNum)
+    private SketchCharacter createCharacter(long vPosition, int teamNum)
     {
         SketchCharacter character = new SketchCharacter();
-        AnimationSet<CharacterAnimations> animationSet = createCharacterAnimations(rng, teamNum);
+        AnimationSet<CharacterAnimations> animationSet = createCharacterAnimations(teamNum);
         
         character.setAnimationSet(animationSet);
         
@@ -213,7 +218,6 @@ public class SketchWarsWorldFactory
             else
                 widthP = Converter.GraphicsToPhysicsX(CHARACTER_SCALE);
             
-            //int widthP = Converter.GraphicsToPhysicsX(CHARCTER_SCALE);
             int heightP = (int)(widthP * ratio);
             
             charCollider = new CharacterCollider(character, BitMaskFactory.createRectangle(widthP, heightP));
@@ -238,7 +242,7 @@ public class SketchWarsWorldFactory
         return character;
     }
 
-    private AnimationSet<CharacterAnimations> createCharacterAnimations(Random rng, int teamNum) {
+    private AnimationSet<CharacterAnimations> createCharacterAnimations(int teamNum) {
         AnimationSet<CharacterAnimations> animationSet = new AnimationSet<>();
         
         try {

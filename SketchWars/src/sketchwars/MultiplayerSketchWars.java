@@ -12,6 +12,8 @@ import network.Peer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.Map;
+import java.util.Random;
+
 import org.lwjgl.Sys;
 import static sketchwars.SketchWars.PHYSICS_HEIGHT;
 import static sketchwars.SketchWars.PHYSICS_LEFT;
@@ -31,15 +33,14 @@ public class MultiplayerSketchWars {
     private MultiplayerWorld world;
     private Physics physics;
     private Peer network;
-    
     private SceneManager<Scenes> sceneManager;
     
-    public MultiplayerSketchWars(Peer networkInterface) {
+    public MultiplayerSketchWars(Peer networkInterface, Random rng) {
         network = networkInterface;
-        init();
+        init(rng);
     }
 
-    private void init() {
+    private void init(Random rng) {
         sceneManager = new SceneManager<>();
         
         openGL = new OpenGL();
@@ -61,16 +62,13 @@ public class MultiplayerSketchWars {
                 PHYSICS_TOP + PHYSICS_HEIGHT, PHYSICS_LEFT + PHYSICS_WIDTH));
         world = new MultiplayerWorld(network.getLocalId());
 
-        SketchWarsWorldFactory fact = new SketchWarsWorldFactory(world, physics, sceneManager);
-        fact.startGame();
+        new SketchWarsWorldFactory(world, physics, sceneManager, rng).startGame();
     }
     
     
     public void start() {
         int frameNum = 0;
         try {
-            // Run the rendering loop until the user has attempted to close
-        // the window or has pressed the ESCAPE key.
             while (!openGL.windowsIsClosing()) {
                 Input.update();
                 Input.handleGameInput();
@@ -79,10 +77,10 @@ public class MultiplayerSketchWars {
                 Map<Integer, Input> allInputs = network.getInputs(frameNum);
 
                 openGL.beginUpdate();
-                double delta = 16;//(time - lastTime) / NANOS_PER_MILLI;
+                double delta = 16;
 
                 if (sceneManager != null) {
-                    sceneManager.render();//call the main graphics renderer
+                    sceneManager.render();
                     sceneManager.update(delta);
                 }
                 
