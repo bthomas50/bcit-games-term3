@@ -157,7 +157,7 @@ public class SketchWarsWorldFactory
         
         try
         {
-            weapons = WeaponFactory.createDefaultWeaponSet(new ProjectileFactory(world, physics, gameScene), world);
+            weapons = WeaponFactory.createDefaultWeaponSet(new ProjectileFactory(world, physics, gameScene, rng), world);
         }
         catch(SceneException ex)
         {

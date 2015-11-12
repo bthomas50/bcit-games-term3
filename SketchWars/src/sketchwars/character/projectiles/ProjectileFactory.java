@@ -25,12 +25,14 @@ public class ProjectileFactory
     private final SketchWarsWorld world;
     private final Physics physics;
     private final Layer projectileLayer;
+    private Random rng;
 
-    public ProjectileFactory(SketchWarsWorld world, Physics physics, Scene<GameLayers> scene) throws SceneException
+    public ProjectileFactory(SketchWarsWorld world, Physics physics, Scene<GameLayers> scene, Random rng) throws SceneException
     {
         this.world = world;
         this.physics = physics;
         this.projectileLayer = scene.getLayer(GameLayers.PROJECTILE);
+        this.rng = rng;
     }
 
     public AbstractProjectile createGrenade(SketchCharacter owner, long vPosition, long vVelocity)
@@ -184,9 +186,8 @@ public class ProjectileFactory
         int widthP = Converter.GraphicsToPhysicsX(CLUSTER_SCALE) ;
         int heightP = (int)(widthP) ;
         
-        Random rnd = new Random();
         float angle = (float)((Math.PI * 2)/(float)count);
-        Vector3d velocity = new Vector3d((rnd.nextFloat() * 2) - 1, rnd.nextFloat() + 1, 0);
+        Vector3d velocity = new Vector3d((rng.nextFloat() * 2) - 1, rng.nextFloat() + 1, 0);
         Matrix3d matrix = new Matrix3d();
         matrix.rotate(angle, 0, 0, 1);
         
