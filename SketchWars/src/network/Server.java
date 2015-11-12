@@ -17,9 +17,11 @@ public class Server implements Runnable {
 	public Thread runner = null;
 	public HashMap<Integer, ClientEntityForManagementOnServer> clients = null;
 	public InetAddress localAddress = null;
+        public GameSetting setting;
 
-	public Server(int port) {
+	public Server(int port,GameSetting setting) {
 		this.port = port;
+                this.setting = setting;
 		clients = new HashMap<Integer, ClientEntityForManagementOnServer>();
 		try {
 			localAddress = getReachableLocalAddress();
@@ -81,7 +83,7 @@ public class Server implements Runnable {
 			System.out.println(client.socket.getLocalAddress().getHostAddress());
 			arrayOfPeers[i++] = new PeerInfo(client.socket.getInetAddress(), client.socket.getPort(), client.username, client.id);
 		}
-		PacketStart packet = new PacketStart(arrayOfPeers, new Random().nextInt());
+		PacketStart packet = new PacketStart(arrayOfPeers, new Random().nextInt(),setting);
 		Utils.broadcast(packet, clients.values());
 	}
 
