@@ -105,12 +105,12 @@ public class SketchWarsWorld extends World implements KeyCharListener {
             if(currentTurn.getRemainingMillis()/1000 < 6)
             {
                 timerLabel.setFontColor(Color.RED);
-                timerLabel.setSize(new Vector2d(0.8,0.8));
+                timerLabel.setSize(new Vector2d(0.9,0.9));
             }
             else
             {
-                timerLabel.setFontColor(Color.GREEN);
-                timerLabel.setSize(new Vector2d(0.65,0.65));
+                timerLabel.setFontColor(new Color(0,153,51));
+                timerLabel.setSize(new Vector2d(0.55,0.65));
             }
         }
         timerLabel.setPosition(new Vector2d(camera.getLeft() + camera.getWidth()/2, camera.getTop() - 0.1f));
