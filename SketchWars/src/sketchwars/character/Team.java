@@ -12,8 +12,8 @@ import java.util.*;
  */
 public class Team 
 {
-    private final ArrayList<SketchCharacter> characters;
-    private final HashMap<WeaponTypes, AbstractWeapon> weapons;
+    private ArrayList<SketchCharacter> characters;
+    private HashMap<WeaponTypes, AbstractWeapon> weapons;
     private SketchCharacter active;
     private HealthBar healthBar;
     
@@ -45,9 +45,8 @@ public class Team
     public void updateTotalHealth()
     {
         int total = 0;
-        for (SketchCharacter character : characters) {
-            total += character.getHealth();
-        }
+        for (int i = 0; i < characters.size(); i++)
+            total += characters.get(i).getHealth();
         
         healthBar.setHealth(total);
     }
@@ -103,52 +102,28 @@ public class Team
                 active.jump(elapsedMillis);
                 break;
             case SWITCH_1:
-                if(weapons.containsKey(WeaponTypes.MELEE_WEAPON))
-                {
-                    active.setWeapon(weapons.get(WeaponTypes.MELEE_WEAPON));
-                }
+                active.setWeapon(weapons.get(WeaponTypes.MELEE_WEAPON));
                 break;
             case SWITCH_2:
-                if(weapons.containsKey(WeaponTypes.RANGED_WEAPON))
-                {
-                    active.setWeapon(weapons.get(WeaponTypes.RANGED_WEAPON));
-                }
+                active.setWeapon(weapons.get(WeaponTypes.RANGED_WEAPON));
                 break;
             case SWITCH_3:
-                if(weapons.containsKey(WeaponTypes.BASIC_GRENADE))
-                {
-                    active.setWeapon(weapons.get(WeaponTypes.BASIC_GRENADE));
-                }
+                active.setWeapon(weapons.get(WeaponTypes.BASIC_GRENADE));
                 break;
             case SWITCH_4:
-                if(weapons.containsKey(WeaponTypes.MINE))
-                {
-                    active.setWeapon(weapons.get(WeaponTypes.MINE));
-                }
+                active.setWeapon(weapons.get(WeaponTypes.MINE));
                 break;
             case SWITCH_5:
-                if(weapons.containsKey(WeaponTypes.CLUSTER_BOMB))
-                {
-                    active.setWeapon(weapons.get(WeaponTypes.CLUSTER_BOMB));
-                }
+                active.setWeapon(weapons.get(WeaponTypes.CLUSTER_BOMB));
                 break;
             case SWITCH_6:
-                if(weapons.containsKey(WeaponTypes.BAZOOKA))
-                {
-                    active.setWeapon(weapons.get(WeaponTypes.BAZOOKA));
-                }
+                active.setWeapon(weapons.get(WeaponTypes.BAZOOKA));
                 break;
             case SWITCH_7:
-                if(weapons.containsKey(WeaponTypes.ERASER))
-                {
-                    active.setWeapon(weapons.get(WeaponTypes.ERASER));
-                }
+                active.setWeapon(weapons.get(WeaponTypes.ERASER));
                 break;
             case SWITCH_8:
-                if(weapons.containsKey(WeaponTypes.PENCIL))
-                {
-                    active.setWeapon(weapons.get(WeaponTypes.PENCIL));
-                }
+                active.setWeapon(weapons.get(WeaponTypes.PENCIL));
                 break;
             }
         
@@ -225,7 +200,7 @@ public class Team
         }
         if(ret == null)
         {
-            ret = WeaponTypes.getDefaultWeapon(weapons);
+            ret = weapons.get(WeaponTypes.MELEE_WEAPON);
         }
         return ret;
     }
