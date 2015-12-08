@@ -114,7 +114,7 @@ public class SketchWarsWorldFactory
     
     private void createMap()
     {
-        Texture mapBGTexture = Texture.loadTexture("content/map/clouds.png", false);
+        Texture mapBGTexture = Texture.loadTexture("content/map/new_sky.jpg", false);
         Texture mapFGTexture = Texture.loadTexture(gameSetting.getMapSelected().path, true);
         Texture waterTexture = Texture.loadTexture("content/shader/2d_water/water.png", true);
                
