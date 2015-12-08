@@ -7,7 +7,6 @@ import sketchwars.input.*;
 
 import java.util.ArrayList;
 import java.util.Map;
-import org.lwjgl.glfw.GLFW;
 import sketchwars.character.projectiles.AbstractProjectile;
 import sketchwars.physics.Collider;
 import sketchwars.physics.Vectors;
@@ -25,11 +24,13 @@ public class SketchWarsWorld extends World implements KeyCharListener {
     protected ArrayList<Team> teams;
     protected Turn currentTurn;
     protected Camera camera;
+    int turnTimeSeconds;
     
-    public SketchWarsWorld() {
+    public SketchWarsWorld(int turnTimeSeconds) {
         characters = new ArrayList<>();
         teams = new ArrayList<>();
-        currentTurn = Turn.createDefaultTurn();
+        currentTurn = new Turn(turnTimeSeconds);
+        this.turnTimeSeconds = turnTimeSeconds;
         
         KeyboardHandler.addCharListener((SketchWarsWorld)this);
     }
@@ -122,7 +123,7 @@ public class SketchWarsWorld extends World implements KeyCharListener {
     }
 
     private void beginNextTurn() {
-        currentTurn = Turn.createDefaultTurn();
+        currentTurn = new Turn(turnTimeSeconds * 1000);//Turn.createDefaultTurn();
         for(Team t : teams) {
             t.cycleActiveCharacter();
             currentTurn.addCharacter(t.getActiveCharacter());

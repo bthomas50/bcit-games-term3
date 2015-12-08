@@ -9,7 +9,8 @@ public class MultiplayerWorld extends SketchWarsWorld {
 
     private final int localIdx;
 
-    public MultiplayerWorld(int localIdx) {
+    public MultiplayerWorld(int localIdx, int turnTimeSeconds) {
+        super(turnTimeSeconds);
         this.localIdx = localIdx;
     }
 

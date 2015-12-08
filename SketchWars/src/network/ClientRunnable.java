@@ -1,12 +1,10 @@
 package network;
 
-import sketchwars.MultiplayerSketchWars;
 import packets.*;
 import entities.*;
 
 import java.io.IOException;
 import java.util.Random;
-import sketchwars.SketchWars;
 
 
 class ClientRunnable implements Runnable {

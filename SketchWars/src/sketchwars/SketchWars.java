@@ -10,6 +10,7 @@ import sketchwars.exceptions.SceneManagerException;
 import sketchwars.game.MultiplayerWorld;
 import sketchwars.game.SketchWarsWorld;
 import sketchwars.game.SketchWarsWorldFactory;
+import sketchwars.game.Turn;
 import sketchwars.graphics.Texture;
 import sketchwars.input.*;
 import sketchwars.physics.*;
@@ -96,8 +97,9 @@ public class SketchWars {
         inputter = new SingleInputSource();
         physics = new Physics(new BoundingBox(PHYSICS_TOP, PHYSICS_LEFT, 
                 PHYSICS_TOP + PHYSICS_HEIGHT, PHYSICS_LEFT + PHYSICS_WIDTH));
-        world = new SketchWarsWorld();
-        new SketchWarsWorldFactory(world, physics, sceneManager, new Random()).startGame(GameSetting.createTutorialSettings());
+        GameSetting tutorialSettings = GameSetting.createTutorialSettings();
+        world = new SketchWarsWorld(tutorialSettings.getTimePerTurn());
+        new SketchWarsWorldFactory(world, physics, sceneManager, new Random()).startGame(tutorialSettings);
         
         if (sceneManager != null) {
             try {
@@ -112,7 +114,7 @@ public class SketchWars {
         inputter = new MultiInputSource(network);
         physics = new Physics(new BoundingBox(PHYSICS_TOP, PHYSICS_LEFT, 
                 PHYSICS_TOP + PHYSICS_HEIGHT, PHYSICS_LEFT + PHYSICS_WIDTH));
-        world = new MultiplayerWorld(network.getLocalId());
+        world = new MultiplayerWorld(network.getLocalId(), setting.getTimePerTurn());
         new SketchWarsWorldFactory(world, physics, sceneManager, rng).startGame(setting);
         
         if (sceneManager != null) {
