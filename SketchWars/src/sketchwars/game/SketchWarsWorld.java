@@ -38,7 +38,7 @@ public class SketchWarsWorld extends World implements KeyCharListener {
         timerLabel = new Label(String.valueOf(currentTurn.getRemainingMillis()/1000),
                                 null,
                                 new Vector2d(0,0),
-                                new Vector2d(0.5,0.5),
+                                new Vector2d(0.65,0.65),
                                 null);
         KeyboardHandler.addCharListener((SketchWarsWorld)this);
     }
@@ -98,16 +98,22 @@ public class SketchWarsWorld extends World implements KeyCharListener {
     
     private void updateTimeLabel()
     {
-        timerLabel.setFontColor(Color.GREEN);
-        timerLabel.setText(String.valueOf((int)currentTurn.getRemainingMillis()/1000));
-        timerLabel.setPosition(new Vector2d(camera.getLeft() + camera.getWidth()/2, camera.getTop() - 0.1f));
-        
-        if(currentTurn.getRemainingMillis()/1000 < 6)
+
+        if (!timerLabel.getText().equals(String.valueOf((int)currentTurn.getRemainingMillis()/1000)))
         {
-            timerLabel.setFontColor(Color.RED);
-            timerLabel.setSize(new Vector2d(0.8,0.8));
+            timerLabel.setText(String.valueOf((int)currentTurn.getRemainingMillis()/1000));
+            if(currentTurn.getRemainingMillis()/1000 < 6)
+            {
+                timerLabel.setFontColor(Color.RED);
+                timerLabel.setSize(new Vector2d(0.9,0.9));
+            }
+            else
+            {
+                timerLabel.setFontColor(new Color(0,153,51));
+                timerLabel.setSize(new Vector2d(0.55,0.65));
+            }
         }
-        
+        timerLabel.setPosition(new Vector2d(camera.getLeft() + camera.getWidth()/2, camera.getTop() - 0.1f));
         timerLabel.render();
     }
 

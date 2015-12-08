@@ -10,7 +10,6 @@ import sketchwars.exceptions.SceneManagerException;
 import sketchwars.game.MultiplayerWorld;
 import sketchwars.game.SketchWarsWorld;
 import sketchwars.game.SketchWarsWorldFactory;
-import sketchwars.game.Turn;
 import sketchwars.graphics.Texture;
 import sketchwars.input.*;
 import sketchwars.physics.*;
@@ -47,22 +46,28 @@ public class SketchWars {
     private double lastTime;
         
     public static void main(String[] args) {
+        boolean fullscreen = false;
+        
+        if (args.length == 1) {
+            fullscreen = (args[0].equals("-f"));
+        }        
+        
         appendToLibraryPath("lib/native/");
         SketchWars sketchWars = new SketchWars();
-        sketchWars.init();
+        sketchWars.init(fullscreen);
         sketchWars.loop();
     }
     
-    private void init() {
+    private void init(boolean fullscreen) {
         inputter = new SingleInputSource();
-        initOpenGL();
+        initOpenGL(fullscreen);
         initScenes();
         SoundPlayer.loadSound();
     }
 
-    private void initOpenGL() {
+    private void initOpenGL(boolean fullscreen) {
         openGL = new OpenGL();
-        openGL.init(false);
+        openGL.init(fullscreen);
     }
     
     private void initScenes() {
