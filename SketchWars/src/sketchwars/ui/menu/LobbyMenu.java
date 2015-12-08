@@ -113,7 +113,7 @@ public class LobbyMenu extends Scene implements UIActionListener{
             userListBox.addItem(name.getUsername());
         }
         //if the client has stopped, start the game!
-        if(localClient.isReady) {
+        if(localClient.isReady()) {
             game.startMultiplayer(localClient.networkResult, localClient.rngResult, localClient.settingResult);
         }
 
