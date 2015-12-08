@@ -40,7 +40,6 @@ public class SketchWarsWorld extends World implements KeyCharListener {
                                 new Vector2d(0,0),
                                 new Vector2d(0.5,0.5),
                                 null);
-        timerLabel.setFontColor(Color.RED);
         KeyboardHandler.addCharListener((SketchWarsWorld)this);
     }
 
@@ -99,8 +98,16 @@ public class SketchWarsWorld extends World implements KeyCharListener {
     
     private void updateTimeLabel()
     {
+        timerLabel.setFontColor(Color.GREEN);
         timerLabel.setText(String.valueOf((int)currentTurn.getRemainingMillis()/1000));
         timerLabel.setPosition(new Vector2d(camera.getLeft() + camera.getWidth()/2, camera.getTop() - 0.1f));
+        
+        if(currentTurn.getRemainingMillis()/1000 < 6)
+        {
+            timerLabel.setFontColor(Color.RED);
+            timerLabel.setSize(new Vector2d(0.8,0.8));
+        }
+        
         timerLabel.render();
     }
 
