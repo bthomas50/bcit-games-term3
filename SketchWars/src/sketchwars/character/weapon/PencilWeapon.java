@@ -6,12 +6,16 @@
 package sketchwars.character.weapon;
 
 import java.awt.image.BufferedImage;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import org.joml.Vector2d;
 import sketchwars.character.SketchCharacter;
 import sketchwars.character.projectiles.*;
 import sketchwars.graphics.Texture;
 import sketchwars.input.*;
 import sketchwars.map.AbstractMap;
 import sketchwars.physics.Vectors;
+import sketchwars.ui.components.Label;
 import sketchwars.util.*;
 
 /**
@@ -32,6 +36,8 @@ public class PencilWeapon extends AbstractWeapon {
     private Timer timer;
     private float targetX;
     private float targetY;
+    private Label timeLabel;
+    NumberFormat formatter = new DecimalFormat("#0.0");
     
     public PencilWeapon(Texture texture, Texture point, BufferedImage pointImage, float width, float height, 
             ProjectileFactory projectileFactory, boolean isEraser) {
@@ -50,11 +56,15 @@ public class PencilWeapon extends AbstractWeapon {
         timer = new Timer(FIRING_TIME_MILLIS);
         targetX = 0;
         targetY = 0;
+        
+        timeLabel = new Label("", null, new Vector2d(targetX, targetY), new Vector2d(0.35,0.35), null);
     }
 
     @Override
     public void update(double elapsed) {
         timer.update(elapsed);
+        timeLabel.setPosition(new Vector2d(targetX + 0.1f, targetY - 0.1f));
+        timeLabel.setText(formatter.format(timer.getRemainingMillis()/1000));
         super.update(elapsed);
     }
     
@@ -62,6 +72,8 @@ public class PencilWeapon extends AbstractWeapon {
     public void render() {
         if (texture != null) {
             texture.draw(null, targetX + eWidth, targetY + eHeight, width, height);
+        if (timer.getRemainingMillis() != 0)
+            timeLabel.render();
         }
     }
 
