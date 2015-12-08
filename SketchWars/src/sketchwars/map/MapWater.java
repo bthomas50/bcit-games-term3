@@ -36,7 +36,6 @@ public class MapWater implements GameObject, GraphicsObject, CollisionListener {
     private final Texture waterTexture;
     private final Shader shader;
     
-    private final Texture waterDispTexture;
     private float waveAngle;
     
     private boolean riseWaterLevel;
@@ -46,8 +45,6 @@ public class MapWater implements GameObject, GraphicsObject, CollisionListener {
         this.collider = collider;
         this.waterTexture = waterTexture;
         this.shader = shader;
-        
-        waterDispTexture = Texture.loadTexture("content/shader/2d_water/waterdisp.png", true);
     }
     
     @Override
@@ -105,9 +102,6 @@ public class MapWater implements GameObject, GraphicsObject, CollisionListener {
     }
 
     private void setShaderVariables() {
-        int waterDispLoc = GL20.glGetUniformLocation(shader.getProgram(), "u_texture_displacement");
-        GL20.glUniform1i(waterDispLoc, waterDispTexture.getTextureID()); 
-
         int waveAngleLoc = GL20.glGetUniformLocation(shader.getProgram(), "wave_angle");
         GL20.glUniform1f(waveAngleLoc, waveAngle); 
 
