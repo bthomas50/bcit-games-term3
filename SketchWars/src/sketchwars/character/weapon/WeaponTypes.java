@@ -7,10 +7,10 @@ package sketchwars.character.weapon;
 public enum WeaponTypes {
     MELEE_WEAPON,
     RANGED_WEAPON,
+    BAZOOKA,
     BASIC_GRENADE,
+    CLUSTER_BOMB,
+    MINE,
     ERASER,
     PENCIL,
-    MINE,
-    CLUSTER_BOMB,
-    BAZOOKA
 }

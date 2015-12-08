@@ -1,5 +1,7 @@
 package network;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import static network.NetworkConstants.*;
 
 import java.net.DatagramSocket;
@@ -7,16 +9,21 @@ import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import packets.*;
 
 public class DiscoveryServer extends Thread
 {
     private DatagramSocket sock;
     private boolean shouldContinue;
     byte[] recvBuf;
-    public DiscoveryServer()
+    public int gameServerPort;
+    public DiscoveryServer(int gameServerPort)
     {
         shouldContinue = true;
         recvBuf = new byte[15000];
+        this.gameServerPort = gameServerPort;
     }
 
     @Override
@@ -37,7 +44,7 @@ public class DiscoveryServer extends Thread
         }   
     }
     
-    public synchronized void signalStopListening()
+    public synchronized void halt()
     {
         shouldContinue = false;
     }
@@ -51,9 +58,14 @@ public class DiscoveryServer extends Thread
     {
         if(shouldContinue)
         {
-            byte[] sendData = DISCOVERY_RESPONSE.getBytes();
-            //Send a response
-            DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, addr, port);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ObjectOutputStream oos = new ObjectOutputStream(baos);
+            oos.writeObject(new DiscoveryResponsePacket(gameServerPort));
+            oos.flush();
+            byte[] data = baos.toByteArray();
+            DatagramPacket sendPacket = new DatagramPacket(data, data.length, addr, port);
+            
+            
             sock.send(sendPacket);
         }
     }
@@ -71,17 +83,23 @@ public class DiscoveryServer extends Thread
         {
             DatagramPacket packet = new DatagramPacket(recvBuf, recvBuf.length);
             sock.receive(packet);
-            
-            //Packet received
-            System.out.println(">>>Packet received; data: " + new String(packet.getData()));
-            
-            //See if the packet holds the right command (message)
-            String message = new String(packet.getData()).trim();
-            if (message.equals(DISCOVERY_REQUEST))
+            ByteArrayInputStream bais = new ByteArrayInputStream(packet.getData());
+            ObjectInputStream ois = new ObjectInputStream(bais);
+            try
             {
-                sendReplyUnlessStopped(packet.getAddress(), packet.getPort());
+                Packet pkt = (Packet) ois.readObject();
+                //See if the packet holds the right command (message)
+                if (pkt.type == Type.DiscoveryRequest)
+                {
+                    sendReplyUnlessStopped(packet.getAddress(), packet.getPort());
+                }
+            }
+            catch(ClassNotFoundException ex)
+            {
+                System.out.println("Invalid packet type received");
             }
             
         }
+        sock.close();
     }
 }

@@ -5,13 +5,13 @@ import packets.*;
 import entities.*;
 
 import java.io.IOException;
-import java.util.Map;
 import java.util.Random;
+import sketchwars.SketchWars;
 
 
 class ClientRunnable implements Runnable {
-    private Client client;
-
+    private final Client client;
+    
     ClientRunnable(Client c) {
         client = c;
     }
@@ -34,6 +34,7 @@ class ClientRunnable implements Runnable {
             }
             else if(type == Type.StartGame) {
                 handleStart((PacketStart) obj);
+                return;
             }
             else if(type == Type.LogoutClient) {
                 PacketLogoutBroadcast packet = (PacketLogoutBroadcast) obj;
@@ -53,22 +54,14 @@ class ClientRunnable implements Runnable {
             System.out.println(peer);
         }
         try {
-            if(client.getId() == 1) {
-                System.out.println("waiting a bit");
-                Thread.sleep(1000);
-            }
             Peer me = new Peer(client.getSocket().getLocalPort(), client.getId());
             for(PeerInfo peer : packet.peers) {
                 me.addPeer(peer);
             }
             me.startListener();
-            //Thread.sleep(1000);
-            MultiplayerSketchWars sketchWars = new MultiplayerSketchWars(me, new Random(packet.randomSeed));
-            sketchWars.start();
+            client.startGame(me, new Random(packet.randomSeed), packet.setting);
         } catch(IOException ioe) {
             System.out.println(ioe);
-        } catch(InterruptedException ie) {
-            System.out.println(ie);
         }
     }
 

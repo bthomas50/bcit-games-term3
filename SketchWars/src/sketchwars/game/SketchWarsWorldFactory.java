@@ -26,6 +26,7 @@ import sketchwars.animation.CharacterAnimations;
 import sketchwars.graphics.Shader;
 import sketchwars.physics.colliders.CharacterCollider;
 import sketchwars.util.Converter;
+import network.GameSetting;
 
 public class SketchWarsWorldFactory
 {
@@ -39,7 +40,8 @@ public class SketchWarsWorldFactory
     private final SceneManager<Scenes> sceneManager;
     private Scene<GameLayers> gameScene;
     private String[] charSprites;
-    private Random rng;
+    private GameSetting gameSetting;
+    private final Random rng;
 
     public SketchWarsWorldFactory(SketchWarsWorld world, Physics physics, SceneManager<Scenes> sceneManager, Random rng)
     {
@@ -47,15 +49,23 @@ public class SketchWarsWorldFactory
         this.physics = physics;
         this.sceneManager = sceneManager;
         this.rng = rng;
+        initCharSprites();
     }
-
-    public void startGame()
+    private void initCharSprites()
     {
+        charSprites = new String[4];
+        charSprites[2] = "monster";
+        charSprites[1] = "stickman";
+        charSprites[0] = "tank";
+        charSprites[3] = "default";
+    }
+    public void startGame(GameSetting gameSetting)
+    {
+        this.gameSetting = gameSetting;
+        initPhysics();
         try 
         {
-            initPhysics();
             preloadTextures();
-            initCharSprites();
             createGameScene();
             setupCamera();
             createMap();
@@ -74,14 +84,7 @@ public class SketchWarsWorldFactory
             System.err.println(ex.getMessage());
         }
     }
-    private void initCharSprites()
-    {
-        charSprites = new String[4];
-        charSprites[2] = "monster";
-        charSprites[1] = "stickman";
-        charSprites[0] = "tank";
-        charSprites[3] = "default";
-    }
+
     private void initPhysics()
     {
         physics.addEffect(new Gravity());
@@ -112,25 +115,23 @@ public class SketchWarsWorldFactory
     private void createMap()
     {
         Texture mapBGTexture = Texture.loadTexture("content/map/clouds.png", false);
-        Texture mapFGTexture = Texture.loadTexture("content/map/BiggerMap.png", true);
+        Texture mapFGTexture = Texture.loadTexture(gameSetting.getMapSelected().path, true);
         Texture waterTexture = Texture.loadTexture("content/shader/2d_water/water.png", true);
                
-        //it'll be empty if an error occurs when loading the map texture.
-        BitMask mapImageMask = BitMaskFactory.createEmpty();
         try 
         {
             Camera camera = gameScene.getCamera();
             
-            BufferedImage mapImage = Texture.loadImageFile("content/map/BiggerMap.png");
+            BufferedImage mapImage = Texture.loadImageFile(gameSetting.getMapSelected().path);
             BufferedImage waterImage = Texture.loadImageFile("content/shader/2d_water/water.png");
             
-            mapImageMask = BitMaskFactory.createFromImageAlpha(mapImage, physics.getBounds());
+            BitMask mapImageMask = BitMaskFactory.createFromImageAlpha(mapImage, physics.getBounds());
             
             MapCollider mapCollider = new MapCollider(mapImageMask);
             mapCollider.setElasticity(0.5f);
             mapCollider.setStaticFriction(1.0f);
             mapCollider.setDynamicFriction(1.0f);
-            TestMap map = new TestMap(camera, mapCollider, mapBGTexture, mapFGTexture, mapImage);
+            BasicMap map = new BasicMap(camera, mapCollider, mapBGTexture, mapFGTexture, mapImage);
             mapCollider.attachGameObject(map);
 
             try {
@@ -169,7 +170,7 @@ public class SketchWarsWorldFactory
 
     private void createTeams() 
     {
-        for(int t = 0; t < NUM_TEAMS; t++)
+        for(int t = 0; t < gameSetting.getMaxPlayer(); t++)
         {
             Team team = createTeam(t);
             world.addTeam(team);
@@ -178,25 +179,25 @@ public class SketchWarsWorldFactory
 
     private Team createTeam(int teamNum)
     {
-        ArrayList<SketchCharacter> characters = new ArrayList<>(CHARS_PER_TEAM);
+        ArrayList<SketchCharacter> characters = new ArrayList<>(gameSetting.getCharacterPerTeam());
         HashMap<WeaponTypes, AbstractWeapon> weapons = new HashMap<>();
         HealthBar charHealthBar, teamHealthBar;
         
         try
         {
-            weapons = WeaponFactory.createDefaultWeaponSet(new ProjectileFactory(world, physics, gameScene, rng), world);
+            weapons = WeaponFactory.createWeaponSet(new ProjectileFactory(world, physics, gameScene, rng), world, gameSetting.getWeaponSetSelected());
         }
         catch(SceneException ex)
         {
             System.err.println(ex);
         }
-        for(int c = 0; c < CHARS_PER_TEAM; c++)
+        for(int c = 0; c < gameSetting.getMaxPlayer(); c++)
         {
             //random between -900, 900
             double r = (rng.nextDouble() - 0.5) * SketchWars.PHYSICS_WIDTH * 0.9;
             SketchCharacter character = createCharacter(Vectors.create(r, 800.0), teamNum);
 
-            character.setWeapon(weapons.get(WeaponTypes.MELEE_WEAPON));
+            character.setWeapon(getDefaultWeapon(weapons));
             charHealthBar = new HealthBar(HealthBar.lifeBars[teamNum*2], 
                                         HealthBar.lifeBars[teamNum*2+1], 
                                         Vectors.create(character.getPosX(), character.getPosY()));
@@ -226,9 +227,21 @@ public class SketchWarsWorldFactory
         return team;
     }
 
+    private AbstractWeapon getDefaultWeapon(HashMap<WeaponTypes, AbstractWeapon> weaponSet)
+    {
+        for(WeaponTypes type : WeaponTypes.values())
+        {
+            if(weaponSet.containsKey(type))
+            {
+                return weaponSet.get(type);
+            }
+        }
+        return null;
+    }
+    
     private SketchCharacter createCharacter(long vPosition, int teamNum)
     {
-        SketchCharacter character = new SketchCharacter();
+        SketchCharacter character = new SketchCharacter(gameSetting.getCharacterHealth(), gameSetting.getCharacterHealth());
         AnimationSet<CharacterAnimations> animationSet = createCharacterAnimations(teamNum);
         
         character.setAnimationSet(animationSet);

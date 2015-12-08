@@ -4,15 +4,16 @@ import network.GameSetting;
 
 
 public class PacketStart extends Packet {
+    public PeerInfo[] peers;
+    public int port;
+    public int randomSeed;
+    public GameSetting setting;
 
-	public PeerInfo[] peers;
-	public int randomSeed;
-        public GameSetting setting;
-
-	public PacketStart(PeerInfo[] peerInfo, int randomSeed, GameSetting setting) {
-            super(Type.StartGame);
-            peers = peerInfo;
-            this.randomSeed = randomSeed;
-            this.setting = setting;
-	}
+    public PacketStart(PeerInfo[] peerInfo, int randomSeed, int port, GameSetting setting) {
+        super(Type.StartGame);
+        peers = peerInfo;
+        this.randomSeed = randomSeed;
+        this.port = port;
+        this.setting = setting;
+    }
 }

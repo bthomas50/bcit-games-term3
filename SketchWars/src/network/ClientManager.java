@@ -6,11 +6,12 @@ import packets.*;
 class ClientManager implements Runnable {
 
     public ClientEntityForManagementOnServer client;
-    private Server server;
-
-    public ClientManager(Server server, ClientEntityForManagementOnServer client) {
+    private final Server server;
+    private final GameSetting setting;
+    public ClientManager(Server server, ClientEntityForManagementOnServer client, GameSetting setting) {
         this.client = client;
         this.server = server;
+        this.setting = setting;
     }
 
     @Override
@@ -43,7 +44,7 @@ class ClientManager implements Runnable {
         for(ClientEntityForManagementOnServer c : server.getAllClients()) {
             System.out.println(c.username);
         }
-        if(server.getClientCount() > 1) {
+        if(server.getClientCount() >= setting.getMaxPlayer()) {
             server.startGame();
         }
     }

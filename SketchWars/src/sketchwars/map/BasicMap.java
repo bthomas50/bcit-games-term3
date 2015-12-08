@@ -10,9 +10,9 @@ import sketchwars.scenes.Camera;
  * @author Najash Najimudeen <najash.najm@gmail.com>
  * @author Brian
  */
-public class TestMap extends AbstractMap {
+public class BasicMap extends AbstractMap {
     
-    public TestMap(Camera camera, MapCollider mapCollider, Texture background, Texture foreground, BufferedImage foregroundImage) {
+    public BasicMap(Camera camera, MapCollider mapCollider, Texture background, Texture foreground, BufferedImage foregroundImage) {
         super(camera, mapCollider, background, foreground, foregroundImage);
     }
 }

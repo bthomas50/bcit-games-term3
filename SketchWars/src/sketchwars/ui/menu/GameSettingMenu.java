@@ -4,59 +4,41 @@ package sketchwars.ui.menu;
 import entities.ClientEntityForManagementOnServer;
 import java.awt.Color;
 import java.awt.Font;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import main.ServerMain;
 import network.GameSetting;
-import network.Server;
 import org.joml.Vector2d;
 import sketchwars.Scenes;
 import sketchwars.character.weapon.WeaponSetTypes;
 import sketchwars.exceptions.SceneException;
 import sketchwars.exceptions.SceneManagerException;
 import sketchwars.game.GameModeType;
+import sketchwars.game.Maps;
 import sketchwars.graphics.GraphicElement;
 import sketchwars.graphics.Texture;
-import sketchwars.scenes.Camera;
-import sketchwars.scenes.Layer;
-import sketchwars.scenes.Scene;
-import sketchwars.scenes.SceneManager;
-import sketchwars.ui.components.ComboBox;
-import sketchwars.ui.components.Label;
-import sketchwars.ui.components.ListBox;
-import sketchwars.ui.components.TextButton;
-import sketchwars.ui.components.TextInputbox;
-import sketchwars.ui.components.UIActionListener;
-import sketchwars.ui.components.UIComponent;
-import sketchwars.ui.components.UIGroup;
+import sketchwars.scenes.*;
+import sketchwars.ui.components.*;
 /**
  *
  * @author a00762764
  */
 public class GameSettingMenu extends Scene implements UIActionListener{
-    
-    private SceneManager<Scenes> sceneManager;
+    private static final Font font = new Font("Comic Sans MS", Font.ITALIC, 12);
+    private final SceneManager<Scenes> sceneManager;
     
     private Texture backgroundImage;
     private Texture normalBtn;
     private Texture hoverBtn;
     private Texture pressBtn;
-    private Font font;
     Layer btnLayer;
 
     //Network attritbutes
-    private Server server;
-    private GameSetting gameSetting;
+    private final GameSetting gameSetting;
     
     
     private TextButton backButton;
-    private TextButton ContinueButton;
+    private TextButton continueButton;
     private TextInputbox userNameInput;
     private ComboBox mapCheckBox;
     private ComboBox charactorBox;
@@ -66,30 +48,21 @@ public class GameSettingMenu extends Scene implements UIActionListener{
     private ListBox gameModeListBox;
     private ListBox weaponSetListBox;
 
+    private final LobbyMenu lobbyMenu;
     
     private Collection<ClientEntityForManagementOnServer> userList;
     
     
-    public GameSettingMenu(SceneManager<Scenes> sceneManager, Camera camera) {
+    public GameSettingMenu(SceneManager<Scenes> sceneManager, LobbyMenu lobby, Camera camera) {
         super(camera);
         this.sceneManager = sceneManager;
         gameSetting = new GameSetting();
-        font = new Font("Comic Sans MS", Font.ITALIC, 12);
         createLayers();
         createButtons();
         createBackground();
+        this.lobbyMenu = lobby;
     }
     
-    public GameSettingMenu(SceneManager<Scenes> sceneManager, Server server, Camera camera) {
-        super(camera);
-        this.sceneManager = sceneManager;
-        this.server = server;
-        gameSetting = new GameSetting();
-        font = new Font("Comic Sans MS", Font.ITALIC, 12);
-        createLayers();
-        createButtons();
-        createBackground();
-    }
     
     private void createLayers()
     {
@@ -117,9 +90,9 @@ public class GameSettingMenu extends Scene implements UIActionListener{
             btnLayer = getLayer(MenuLayers.BUTTONS);
             
             //StartLobby Button 
-            ContinueButton = new TextButton("Continue",font,new Vector2d(0.03, -0.60), size,normalBtn,hoverBtn,pressBtn);
-            btnLayer.addDrawableObject(ContinueButton);
-            ContinueButton.addActionListener(this);
+            continueButton = new TextButton("Continue",font,new Vector2d(0.03, -0.60), size,normalBtn,hoverBtn,pressBtn);
+            btnLayer.addDrawableObject(continueButton);
+            continueButton.addActionListener(this);
             
             //Back Button 
             backButton = new TextButton("BACK",font,new Vector2d(0.03, -0.75), size,normalBtn,hoverBtn,pressBtn);
@@ -257,10 +230,9 @@ public class GameSettingMenu extends Scene implements UIActionListener{
     
     private void createGameSetting(GameSetting setting)
     {
-        String temp = "test";
 
         //Health
-        temp = maxHealthInput.getText();
+        String temp = maxHealthInput.getText();
         setting.setMaxPlayer(Integer.parseInt(temp));
         //Turn Delay
         temp = maxTurnTimeInput.getText();
@@ -273,11 +245,11 @@ public class GameSettingMenu extends Scene implements UIActionListener{
         setting.setCharacterPerTeam(Integer.parseInt(temp));
         //Map
         temp = mapCheckBox.getSelectedItem();
-        setting.setMapSelected(gameModeCheck(temp));
+        setting.setMapSelected(mapCheck(temp));
         
         //Game Mode
         temp = gameModeListBox.getSelectedItem();
-        setting.setMapSelected(gameModeCheck(temp));
+        setting.setGameModeSelected(gameModeCheck(temp));
 
         //Weapon Set 
         temp = weaponSetListBox.getSelectedItem();
@@ -321,18 +293,17 @@ public class GameSettingMenu extends Scene implements UIActionListener{
             return GameModeType.Normal;
         }
     }
-    //Serializing
-    public static byte[] serialize(GameSetting obj) throws IOException 
+    //Check string agains game mode
+    public Maps mapCheck(String value)
     {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        ObjectOutputStream os = new ObjectOutputStream(out);
-        os.writeObject(obj);
-        return out.toByteArray();
-    }
-    public static Object deserialize(byte[] data) throws IOException, ClassNotFoundException {
-        ByteArrayInputStream in = new ByteArrayInputStream(data);
-        ObjectInputStream is = new ObjectInputStream(in);
-        return is.readObject();
+        if(value.equalsIgnoreCase("normal"))
+        {
+            return Maps.NORMAL; 
+        }
+        else
+        {
+            return Maps.NORMAL;
+        }
     }
 
     @Override
@@ -348,14 +319,16 @@ public class GameSettingMenu extends Scene implements UIActionListener{
                 Logger.getLogger(OptionMenu.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-       else if(component.equals(ContinueButton))
+       else if(component.equals(continueButton))
        {
             try 
             {
-                //Set Host Name
-                ServerMain.setHostUsername(userNameInput.getText());
-                //GameSettingFileUpdate
                 createGameSetting(gameSetting);
+                //Set Host Name
+                lobbyMenu.setHostUsername(userNameInput.getText());
+                //GameSettingFileUpdate
+                lobbyMenu.setSettings(gameSetting);
+                lobbyMenu.startServer();
                 //Set screen to lobby screen
                 sceneManager.setCurrentScene(Scenes.CREATE_MENU);
             } 

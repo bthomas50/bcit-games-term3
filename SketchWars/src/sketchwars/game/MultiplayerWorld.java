@@ -10,28 +10,11 @@ import java.util.Map;
  * @author David Ly <ly_nekros@hotmail.com>
  */
 public class MultiplayerWorld extends SketchWarsWorld {
-    private Map<Integer, Input> inputs = null;
 
-    private int localIdx;
+    private final int localIdx;
 
     public MultiplayerWorld(int localIdx) {
         this.localIdx = localIdx;
-    }
-
-    public void update(Map<Integer, Input> inputs, double elapsedMillis) {
-        this.inputs = inputs;
-        super.update(elapsedMillis);
-    }
-    
-    @Override
-    protected void handleInput(double elapsedMillis) {
-        for(int i = 0; i < teams.size(); i++) {
-            Input inputsForTeam = inputs.get(i);
-            if(inputsForTeam != null)
-            {
-                teams.get(i).handleInput(inputs.get(i), elapsedMillis);
-            }
-        }
     }
 
     @Override

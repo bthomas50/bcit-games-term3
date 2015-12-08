@@ -28,26 +28,29 @@ import sketchwars.ui.components.UIComponent;
  * @author Najash Najimudeen <najash.najm@gmail.com>
  */
 public class MainMenu extends Scene implements UIActionListener {
+    private static final Font font = new Font("Comic Sans MS", Font.ITALIC, 12);
+    
     private final SceneManager<Scenes> sceneManager;
     private final SketchWars sketchWars;
+    private final LobbyMenu lobby;
     
     private Texture normalBtn;
     private Texture hoverBtn;
     private Texture pressBtn;
     private Texture backgroundImage;
-      
+    
     private TextButton buttonJoin;
     private TextButton buttonCreate;
+    private TextButton buttonTutorial;
     private TextButton buttonOptions;
     private TextButton buttonExit;
-    private Font font;
     
-    public MainMenu(SceneManager<Scenes> sceneManager, SketchWars sketchWars, Camera camera) {
+    
+    public MainMenu(SceneManager<Scenes> sceneManager, SketchWars sketchWars, LobbyMenu lobby, Camera camera) {
         super(camera);
         this.sceneManager = sceneManager;
         this.sketchWars = sketchWars;
-
-        font = new Font("Comic Sans MS", Font.ITALIC, 12);
+        this.lobby = lobby;
         
         createLayers();
         createButtons();
@@ -79,22 +82,27 @@ public class MainMenu extends Scene implements UIActionListener {
             Layer btnLayer = getLayer(MenuLayers.BUTTONS);
 
             //Join 
-            buttonJoin = new TextButton("JOIN",font,new Vector2d(0.03, -0.30), size,normalBtn,hoverBtn,pressBtn);
+            buttonJoin = new TextButton("JOIN",font,new Vector2d(0.03, -0.23), size,normalBtn,hoverBtn,pressBtn);
             btnLayer.addDrawableObject(buttonJoin);
             buttonJoin.addActionListener(this);
                     
             //create
-            buttonCreate = new TextButton("CREATE",font,new Vector2d(0.03, -0.45), size,normalBtn,hoverBtn,pressBtn);
+            buttonCreate = new TextButton("CREATE",font,new Vector2d(0.03, -0.37), size,normalBtn,hoverBtn,pressBtn);
             btnLayer.addDrawableObject(buttonCreate);            
             buttonCreate.addActionListener(this);
             
+            //Tutorial
+            buttonTutorial = new TextButton("TUTORIAL",font,new Vector2d(0.03, -0.51), size,normalBtn,hoverBtn,pressBtn);
+            btnLayer.addDrawableObject(buttonTutorial);            
+            buttonTutorial.addActionListener(this);
+            
             //Options
-            buttonOptions = new TextButton("OPTIONS",font,new Vector2d(0.03, -0.60), size,normalBtn,hoverBtn,pressBtn);
+            buttonOptions = new TextButton("OPTIONS",font,new Vector2d(0.03, -0.65), size,normalBtn,hoverBtn,pressBtn);
             btnLayer.addDrawableObject(buttonOptions);     
             buttonOptions.addActionListener(this);
             
             //Exit
-            buttonExit = new TextButton("EXIT",font,new Vector2d(0.03, -0.75), size,normalBtn,hoverBtn,pressBtn);
+            buttonExit = new TextButton("EXIT",font,new Vector2d(0.03, -0.79), size,normalBtn,hoverBtn,pressBtn);
             btnLayer.addDrawableObject(buttonExit);
             buttonExit.addActionListener(this);  
         } catch (SceneException ex) {
@@ -126,11 +134,18 @@ public class MainMenu extends Scene implements UIActionListener {
             } catch (SceneManagerException ex) {
                 Logger.getLogger(MainMenu.class.getName()).log(Level.SEVERE, null, ex);
             }
-        } else if (component.equals(buttonJoin)) {
+        } else if(component.equals(buttonTutorial)) {
             if (sketchWars != null) {
-                sketchWars.startGame();
+                sketchWars.startTutorial();
             } else {
                 System.err.println("Sketchwars instance in the main menu is a null pointer.");
+            }
+        } else if (component.equals(buttonJoin)) {
+            try {
+                lobby.startClient();
+                sceneManager.setCurrentScene(Scenes.CREATE_MENU);
+            } catch (SceneManagerException ex) {
+                Logger.getLogger(MainMenu.class.getName()).log(Level.SEVERE, null, ex);
             }
         }  else if (component.equals(buttonOptions)) {
             try {

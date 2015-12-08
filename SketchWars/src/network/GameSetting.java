@@ -6,6 +6,7 @@ package network;
 import java.io.Serializable;
 import sketchwars.character.weapon.WeaponSetTypes;
 import sketchwars.game.GameModeType;
+import sketchwars.game.Maps;
 
 /**
  *
@@ -17,19 +18,23 @@ public class GameSetting implements Serializable {
     private int timePerTurn;
     private int characterPerTeam;
     private int characterHealth;
-    private GameModeType mapSelected;
+    private Maps mapSelected;
     private GameModeType gameModeSelected;
     private WeaponSetTypes weaponSetSelected;
     
+    public static GameSetting createTutorialSettings() {
+        return new GameSetting();
+    }
+        
     public GameSetting() 
     {
         maxPlayer = 2;
         timePerTurn = 15;
         characterPerTeam = 2;
         characterHealth = 200;
-        mapSelected = GameModeType.Normal;
+        mapSelected = Maps.NORMAL;
         gameModeSelected = GameModeType.Normal;
-        weaponSetSelected = weaponSetSelected.MIX;
+        weaponSetSelected = WeaponSetTypes.MIX;
     }
     
     public int getMaxPlayer() {
@@ -64,11 +69,11 @@ public class GameSetting implements Serializable {
         this.characterHealth = characterHealth;
     }
 
-    public GameModeType getMapSelected() {
+    public Maps getMapSelected() {
         return mapSelected;
     }
 
-    public void setMapSelected(GameModeType mapSelected) {
+    public void setMapSelected(Maps mapSelected) {
         this.mapSelected = mapSelected;
     }
 

@@ -24,7 +24,24 @@ public class WeaponFactory
     public static final float CLUSTER_BOMB_SCALE = 0.04f;
     public static final float BAZOOKA_SCALE = 0.12f;
     
-    public static HashMap<WeaponTypes, AbstractWeapon> createDefaultWeaponSet(ProjectileFactory fact, SketchWarsWorld world) 
+    public static HashMap<WeaponTypes, AbstractWeapon> createWeaponSet(ProjectileFactory projectileFactory, SketchWarsWorld world, WeaponSetTypes weaponSetSelected) 
+    {
+        switch(weaponSetSelected)
+        {
+        case MIX:
+            return createDefaultWeaponSet(projectileFactory, world);
+        case MELEE:
+            return createMeleeWeaponSet(projectileFactory, world);
+        case RANGE:
+            return createRangedWeaponSet(projectileFactory, world);
+        case EXPLOSIVE:
+            return createExplosiveWeaponSet(projectileFactory, world);
+        default:
+            return new HashMap<>();
+        }
+    }
+       
+    private static HashMap<WeaponTypes, AbstractWeapon> createDefaultWeaponSet(ProjectileFactory fact, SketchWarsWorld world) 
     {
         HashMap<WeaponTypes, AbstractWeapon> ret = new HashMap<>();
         ret.put(WeaponTypes.BASIC_GRENADE, createGrenade(fact));
@@ -35,6 +52,34 @@ public class WeaponFactory
         ret.put(WeaponTypes.MINE, createMine(fact));
         ret.put(WeaponTypes.CLUSTER_BOMB, createClusterBomb(fact));
         ret.put(WeaponTypes.BAZOOKA, createBazooka(fact));
+        return ret;
+    }
+    
+    private static HashMap<WeaponTypes, AbstractWeapon> createMeleeWeaponSet(ProjectileFactory fact, SketchWarsWorld world) 
+    {
+        HashMap<WeaponTypes, AbstractWeapon> ret = new HashMap<>();
+        ret.put(WeaponTypes.MELEE_WEAPON, createBoxingGlove(fact));
+        ret.put(WeaponTypes.ERASER, createEraser(fact, world));
+        ret.put(WeaponTypes.PENCIL, createPencil(fact, world));
+        ret.put(WeaponTypes.MINE, createMine(fact));
+        return ret;
+    }
+    
+    private static HashMap<WeaponTypes, AbstractWeapon> createRangedWeaponSet(ProjectileFactory fact, SketchWarsWorld world) 
+    {
+        HashMap<WeaponTypes, AbstractWeapon> ret = new HashMap<>();
+        ret.put(WeaponTypes.RANGED_WEAPON, createRifle(fact));
+        ret.put(WeaponTypes.BAZOOKA, createBazooka(fact));
+        return ret;
+    }
+    
+    private static HashMap<WeaponTypes, AbstractWeapon> createExplosiveWeaponSet(ProjectileFactory fact, SketchWarsWorld world) 
+    {
+        HashMap<WeaponTypes, AbstractWeapon> ret = new HashMap<>();
+        ret.put(WeaponTypes.BAZOOKA, createBazooka(fact));
+        ret.put(WeaponTypes.BASIC_GRENADE, createGrenade(fact));
+        ret.put(WeaponTypes.CLUSTER_BOMB, createClusterBomb(fact));
+        ret.put(WeaponTypes.MINE, createMine(fact));
         return ret;
     }
 
@@ -154,4 +199,6 @@ public class WeaponFactory
         weapon.setAmmo(AbstractWeapon.INFINITE_AMMO);
         return weapon;
     }
+
+ 
 }

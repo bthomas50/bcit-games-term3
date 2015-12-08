@@ -6,6 +6,7 @@ import sketchwars.character.Team;
 import sketchwars.input.*;
 
 import java.util.ArrayList;
+import java.util.Map;
 import org.lwjgl.glfw.GLFW;
 import sketchwars.character.projectiles.AbstractProjectile;
 import sketchwars.physics.Collider;
@@ -53,9 +54,7 @@ public class SketchWarsWorld extends World implements KeyCharListener {
 
     @Override
     public void update(double deltaMillis) {
-        Input.handleGameInput();
         addPendingObjects();
-        handleInput(deltaMillis);
         handleCharacterDrowning();
         checkTeamStatus();
         updateObjects(deltaMillis);
@@ -65,9 +64,13 @@ public class SketchWarsWorld extends World implements KeyCharListener {
         removeExpiredObjects();
     }
     
-    protected void handleInput(double elapsedMillis) {
-        for(Team t : teams) {
-            t.handleInput(Input.currentInput, elapsedMillis);
+    public void handleInput(Map<Integer, Input> inputs, double elapsedMillis) {
+        for(int i = 0; i < teams.size(); i++) {
+            Input inputsForTeam = inputs.get(i);
+            if(inputsForTeam != null)
+            {
+                teams.get(i).handleInput(inputs.get(i), elapsedMillis);
+            }
         }
     }
     

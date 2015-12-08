@@ -13,6 +13,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.Map;
 import java.util.Random;
+import network.GameSetting;
 
 import org.lwjgl.Sys;
 import static sketchwars.SketchWars.PHYSICS_HEIGHT;
@@ -26,23 +27,22 @@ import static sketchwars.SketchWars.PHYSICS_WIDTH;
  * @author Brian Thomas <bthomas50@my.bcit.ca>
  */
 public class MultiplayerSketchWars {
-    //used in calculating frame length
-    private static final double NANOS_PER_MILLI = 1000000;
     
     private OpenGL openGL;
     private MultiplayerWorld world;
     private Physics physics;
-    private Peer network;
+    private final Peer network;
     private SceneManager<Scenes> sceneManager;
+    private InputSource inputter;
     
-    public MultiplayerSketchWars(Peer networkInterface, Random rng) {
+    public MultiplayerSketchWars(Peer networkInterface, Random rng, GameSetting setting) {
         network = networkInterface;
-        init(rng);
+        init(rng, setting);
     }
 
-    private void init(Random rng) {
+    private void init(Random rng, GameSetting setting) {
         sceneManager = new SceneManager<>();
-        
+        inputter = new MultiInputSource(network);
         openGL = new OpenGL();
         openGL.init(false);
 
@@ -62,19 +62,15 @@ public class MultiplayerSketchWars {
                 PHYSICS_TOP + PHYSICS_HEIGHT, PHYSICS_LEFT + PHYSICS_WIDTH));
         world = new MultiplayerWorld(network.getLocalId());
 
-        new SketchWarsWorldFactory(world, physics, sceneManager, rng).startGame();
+        new SketchWarsWorldFactory(world, physics, sceneManager, rng).startGame(setting);
     }
     
     
     public void start() {
-        int frameNum = 0;
         try {
             while (!openGL.windowsIsClosing()) {
-                Input.update();
-                Input.handleGameInput();
-                //do network stuff.
-                network.broadcastInput(frameNum);
-                Map<Integer, Input> allInputs = network.getInputs(frameNum);
+                
+                Map<Integer, Input> inputs = inputter.getCurrentInputs();
 
                 openGL.beginUpdate();
                 double delta = 16;
@@ -83,13 +79,11 @@ public class MultiplayerSketchWars {
                     sceneManager.render();
                     sceneManager.update(delta);
                 }
-                
-                world.update(allInputs, delta);
+                world.handleInput(inputs, delta);
+                world.update(delta);
                 physics.update(delta);
 
                 openGL.endUpdate();
-                
-                frameNum++;
             }
         } finally {
             openGL.dispose();

@@ -1,5 +1,7 @@
 package network;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import static network.NetworkConstants.*;
 
 import java.net.DatagramPacket;
@@ -9,22 +11,29 @@ import java.net.InterfaceAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.Enumeration;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.Collection;
+import java.util.Map;
+import packets.DiscoveryRequestPacket;
+import packets.DiscoveryResponsePacket;
+import packets.Packet;
+import packets.Type;
 
 public class DiscoveryClient extends Thread
 {
     private DatagramSocket sock;
     private boolean shouldContinue;
-    private byte[] recvBuf;
-    private HashSet<InetAddress> availableGames;
+    private final byte[] recvBuf;
+    private final HashMap<InetAddress, Integer> availableGames;
 
     public DiscoveryClient()
     {
         this.shouldContinue = true;
         recvBuf = new byte[15000];
-        availableGames = new HashSet<>();
+        availableGames = new HashMap<>();
     }
 
     @Override
@@ -60,15 +69,22 @@ public class DiscoveryClient extends Thread
     {
         while(shouldContinue())
         {
-            DatagramPacket receivePacket = new DatagramPacket(recvBuf, recvBuf.length);
-            sock.receive(receivePacket);
-            //We have a response
-            System.out.println(">>> Broadcast response from server: " + receivePacket.getAddress().getHostAddress());
-            //Check if the message is correct
-            String message = new String(receivePacket.getData()).trim();
-            if (message.equals(DISCOVERY_RESPONSE))
+            DatagramPacket packet = new DatagramPacket(recvBuf, recvBuf.length);
+            sock.receive(packet);
+            ByteArrayInputStream bais = new ByteArrayInputStream(packet.getData());
+            ObjectInputStream ois = new ObjectInputStream(bais);
+            try
             {
-                foundGame(receivePacket.getAddress());
+                Packet pkt = (Packet) ois.readObject();
+                //See if the packet holds the right command (message)
+                if (pkt.type == Type.DiscoveryResponse)
+                {
+                    foundGame(packet.getAddress(), ((DiscoveryResponsePacket)pkt).port);
+                }
+            }
+            catch(ClassNotFoundException ex)
+            {
+                System.out.println("Invalid packet type received");
             }
         }
     }
@@ -78,14 +94,16 @@ public class DiscoveryClient extends Thread
         return !availableGames.isEmpty();
     }
 
-    public synchronized Collection<InetAddress> getAvailableGames()
+    public synchronized Map<InetAddress, Integer> getAvailableGames()
     {
-        return (Collection<InetAddress>) (availableGames.clone());
+        Map<InetAddress, Integer> ret = new HashMap<>();
+        ret.putAll(availableGames);
+        return ret;
     }
 
-    private synchronized void foundGame(InetAddress addr)
+    private synchronized void foundGame(InetAddress addr, int port)
     {
-        availableGames.add(addr);
+        availableGames.put(addr, port);
     }
 
     private void createSocket() throws SocketException
@@ -100,7 +118,16 @@ public class DiscoveryClient extends Thread
         private byte[] sendData;
         public SenderThread()
         {
-            sendData = DISCOVERY_REQUEST.getBytes();
+            try
+            {
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                ObjectOutputStream oos = new ObjectOutputStream(baos);
+                oos.writeObject(new DiscoveryRequestPacket());
+                oos.flush();
+                sendData = baos.toByteArray();
+            }
+            catch(IOException ioe)
+            {}
         }
 
         @Override
