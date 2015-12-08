@@ -1,3 +1,6 @@
 /SketchWars/nbproject/private/
 /SketchWars/build/
 /SketchWars/dist/
+*.xml
+SketchWars/nbproject/build-impl.xml
+*.xml

@@ -1,5 +1,6 @@
 package sketchwars.game;
 
+import java.awt.Color;
 import sketchwars.character.SketchCharacter;
 import sketchwars.map.AbstractMap;
 import sketchwars.character.Team;
@@ -7,10 +8,12 @@ import sketchwars.input.*;
 
 import java.util.ArrayList;
 import java.util.Map;
+import org.joml.Vector2d;
 import sketchwars.character.projectiles.AbstractProjectile;
 import sketchwars.physics.Collider;
 import sketchwars.physics.Vectors;
 import sketchwars.scenes.Camera;
+import sketchwars.ui.components.Label;
 import sketchwars.util.Converter;
 
 /**
@@ -24,6 +27,7 @@ public class SketchWarsWorld extends World implements KeyCharListener {
     protected ArrayList<Team> teams;
     protected Turn currentTurn;
     protected Camera camera;
+    Label timerLabel;
     int turnTimeSeconds;
     
     public SketchWarsWorld(int turnTimeSeconds) {
@@ -31,7 +35,11 @@ public class SketchWarsWorld extends World implements KeyCharListener {
         teams = new ArrayList<>();
         currentTurn = new Turn(turnTimeSeconds);
         this.turnTimeSeconds = turnTimeSeconds;
-        
+        timerLabel = new Label(String.valueOf(currentTurn.getRemainingMillis()/1000),
+                                null,
+                                new Vector2d(0,0),
+                                new Vector2d(0.5,0.5),
+                                null);
         KeyboardHandler.addCharListener((SketchWarsWorld)this);
     }
 
@@ -62,6 +70,7 @@ public class SketchWarsWorld extends World implements KeyCharListener {
         updateTeamBars();
         updateTurn(deltaMillis);
         handlePanningCamera();
+        updateTimeLabel();
         removeExpiredObjects();
     }
     
@@ -85,6 +94,21 @@ public class SketchWarsWorld extends World implements KeyCharListener {
             t.getHealthBar().setPosition(camera.getLeft(), camera.getTop() - 1.6f - counter);
             counter += 0.1f;
         }
+    }
+    
+    private void updateTimeLabel()
+    {
+        timerLabel.setFontColor(Color.GREEN);
+        timerLabel.setText(String.valueOf((int)currentTurn.getRemainingMillis()/1000));
+        timerLabel.setPosition(new Vector2d(camera.getLeft() + camera.getWidth()/2, camera.getTop() - 0.1f));
+        
+        if(currentTurn.getRemainingMillis()/1000 < 6)
+        {
+            timerLabel.setFontColor(Color.RED);
+            timerLabel.setSize(new Vector2d(0.8,0.8));
+        }
+        
+        timerLabel.render();
     }
 
     @Override
