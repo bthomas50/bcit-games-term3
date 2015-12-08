@@ -8,12 +8,16 @@ package sketchwars.character.weapon;
 import java.awt.image.BufferedImage;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.List;
 import org.joml.Vector2d;
 import sketchwars.character.SketchCharacter;
 import sketchwars.character.projectiles.*;
 import sketchwars.graphics.Texture;
-import sketchwars.input.*;
 import sketchwars.map.AbstractMap;
+import sketchwars.physics.BitMaskFactory;
+import sketchwars.physics.Collider;
+import sketchwars.physics.Physics;
+import sketchwars.physics.PixelCollider;
 import sketchwars.physics.Vectors;
 import sketchwars.ui.components.Label;
 import sketchwars.util.*;
@@ -26,6 +30,9 @@ public class PencilWeapon extends AbstractWeapon {
     private final Texture point;
     private final BufferedImage pointImage;
     private AbstractMap currentMap;
+    
+    //so that we can check if any characters are in the way of the cursor.
+    private Physics physics;
     
     private final float eWidth;
     private final float eHeight;
@@ -40,9 +47,9 @@ public class PencilWeapon extends AbstractWeapon {
     NumberFormat formatter = new DecimalFormat("#0.0");
     
     public PencilWeapon(Texture texture, Texture point, BufferedImage pointImage, float width, float height, 
-            ProjectileFactory projectileFactory, boolean isEraser) {
+            ProjectileFactory projectileFactory, Physics phys, boolean isEraser) {
         super(texture, width, height, projectileFactory);
-        
+        this.physics = phys;
         this.isEraser = isEraser;
         if(point == null || pointImage == null) {
             throw new IllegalArgumentException("point and pointImage must not be null");
@@ -91,7 +98,10 @@ public class PencilWeapon extends AbstractWeapon {
     @Override 
     public AbstractProjectile tryToFire(SketchCharacter owner, float power) {
         if(isFiringPossible()) {
-            handleErasing();
+            if(!areCharactersInTarget())
+            {
+                handleErasing();
+            }
         } else {
             owner.notifyFired();
         }
@@ -117,19 +127,40 @@ public class PencilWeapon extends AbstractWeapon {
         if(!timer.isRunning()) {
             timer.restart();
         }
-        float xEraser = targetX;
-        float yEraser = targetY;
         
-        point.draw(null, xEraser, yEraser, eWidth, eHeight);
+        point.draw(null, targetX, targetY, eWidth, eHeight);
         
-        if (currentMap.updateTexture(pointImage, isEraser, xEraser, yEraser, eWidth, eHeight)) {
-            currentMap.updateInPhysics(pointImage, isEraser, xEraser, yEraser, eWidth, eHeight);
+        if (currentMap.updateTexture(pointImage, isEraser, targetX, targetY, eWidth, eHeight)) {
+            currentMap.updateInPhysics(pointImage, isEraser, targetX, targetY, eWidth, eHeight);
         }
     }
 
     private boolean isFiringPossible() {
         return currentMap != null &&
                !timer.hasElapsed();
+    }
+    
+    private boolean areCharactersInTarget() {
+        int widthPhysics = Converter.GraphicsToPhysicsX(eWidth);
+        int heightPhysics = Converter.GraphicsToPhysicsY(eHeight);
+        
+        int xPhysics = Converter.GraphicsToPhysicsX(targetX) - widthPhysics/2;
+        int yPhysics = Converter.GraphicsToPhysicsY(targetY) - heightPhysics/2;
+        Collider c = new PixelCollider(BitMaskFactory.createCircle(widthPhysics/2));
+        c.setPosition(Vectors.create(xPhysics, yPhysics));
+        System.out.println(widthPhysics + ", " + heightPhysics);
+        System.out.println(xPhysics + ", " + yPhysics);
+        List<Collider> lst = physics.getCollisions(c);
+        for(Collider c2 : lst) 
+        {
+            System.out.println(c2);
+            if(c2.hasAttachedGameObject() && 
+               c2.getAttachedGameObject() instanceof SketchCharacter)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
 
