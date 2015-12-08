@@ -197,7 +197,7 @@ public class SketchWarsWorldFactory
             double r = (rng.nextDouble() - 0.5) * SketchWars.PHYSICS_WIDTH * 0.9;
             SketchCharacter character = createCharacter(Vectors.create(r, 800.0), teamNum);
 
-            character.setWeapon(getDefaultWeapon(weapons));
+            character.setWeapon(WeaponTypes.getDefaultWeapon(weapons));
             charHealthBar = new HealthBar(HealthBar.lifeBars[teamNum*2], 
                                         HealthBar.lifeBars[teamNum*2+1], 
                                         Vectors.create(character.getPosX(), character.getPosY()));
@@ -227,17 +227,6 @@ public class SketchWarsWorldFactory
         return team;
     }
 
-    private AbstractWeapon getDefaultWeapon(HashMap<WeaponTypes, AbstractWeapon> weaponSet)
-    {
-        for(WeaponTypes type : WeaponTypes.values())
-        {
-            if(weaponSet.containsKey(type))
-            {
-                return weaponSet.get(type);
-            }
-        }
-        return null;
-    }
     
     private SketchCharacter createCharacter(long vPosition, int teamNum)
     {

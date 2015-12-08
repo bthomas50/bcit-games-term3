@@ -1,9 +1,5 @@
 package sketchwars.game;
 
-import sketchwars.input.*;
-
-import java.util.Map;
-
 /**
  * @author Najash Najimudeen <najash.najm@gmail.com>
  * @author Brian Thomas <bthomas50@my,bcit.ca>
