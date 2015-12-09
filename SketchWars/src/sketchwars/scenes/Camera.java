@@ -16,12 +16,12 @@ import sketchwars.input.MouseHandler;
  * @author Najash Najimudeen <najash.najm@gmail.com>
  */
 public class Camera implements GameObject {
-    private static final float SLOW_RADIUS = 0.09f;
-    private static final float REACHED_RADIUS = 0.03f;
+    private static final float SLOW_RADIUS = 0.05f;
+    private static final float REACHED_RADIUS = 0.01f;
     
     private static final float MAX_PAN_ACCEL = 0.01f;
     private static final float MAX_ZOOM_ACCEL = 0.01f;
-    private static final float PAN_SPEED = 0.0032f;
+    private static final float PAN_SPEED = 0.0020f;
     private static final float ZOOM_SPEED = 0.0020f;
     
     private float panSpeed;

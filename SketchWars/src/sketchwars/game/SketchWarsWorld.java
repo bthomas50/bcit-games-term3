@@ -185,22 +185,24 @@ public class SketchWarsWorld extends World implements KeyCharListener {
             AbstractProjectile projectile = character.getFiredProjectile();
             
             if (camera.isDragResetOn()) {
+                float posX = character.getPosX();
+                float posY = character.getPosY();
                 if (projectile != null && !projectile.hasExpired()) {
                     Collider coll = projectile.getCollider();
                     long center = coll.getBounds().getCenterVector();
-                    float posX = Converter.PhysicsToGraphicsX(Vectors.xComp(center));
-                    float posY = Converter.PhysicsToGraphicsY(Vectors.yComp(center));
+                    posX = Converter.PhysicsToGraphicsX(Vectors.xComp(center));
+                    posY = Converter.PhysicsToGraphicsY(Vectors.yComp(center));
+                    camera.setCameraPosition(posX, posY);
+                }
+
+                float distanceX = camera.getCenterX() - posX;
+                float distanceY = camera.getCenterY() - posY;
+                double distance = Math.sqrt((distanceX * distanceX) + (distanceY * distanceY));
+
+                if (distance > MAX_CAMERA_DISTANCE) {
                     camera.setNextCameraPosition(posX, posY);
                 } else {
-                    float distanceX = camera.getCenterX() - character.getPosX();
-                    float distanceY = camera.getCenterY() - character.getPosY();
-                    double distance = Math.sqrt((distanceX * distanceX) + (distanceY * distanceY));
-                    
-                    if (distance > MAX_CAMERA_DISTANCE) {
-                        camera.setNextCameraPosition(character.getPosX(), character.getPosY());
-                    } else {
-                        camera.setCameraPosition(character.getPosX(), character.getPosY());
-                    }
+                    camera.setCameraPosition(posX, posY);
                 }
             }
         }
