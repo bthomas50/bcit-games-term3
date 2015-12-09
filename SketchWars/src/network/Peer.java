@@ -200,6 +200,7 @@ public class Peer {
                     frameNum += diff;
                 }
                 System.out.println("id = " + senderId + " says " + frameNum + ", wanted (" + windowStart + ", " + windowEnd + ")");
+                
                 windowCursors.put(senderId, frameNum);
                 inputs.get(senderId).put(seq, new Input(packet.commands));
                 sendAck(senderId, seq);

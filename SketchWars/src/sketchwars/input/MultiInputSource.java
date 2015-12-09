@@ -20,6 +20,7 @@ public class MultiInputSource implements InputSource {
     public Map<Integer, Input> getCurrentInputs() {
         Input.update();
         Input.handleGameInput();
+        Input.handleLocalInput();
         networkInterface.broadcastInput(frameNum);
         Map<Integer, Input> allInputs = new HashMap<>();
         if(frameNum > WINDOW_SIZE)

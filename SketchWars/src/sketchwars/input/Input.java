@@ -4,19 +4,25 @@ import java.util.List;
 import java.util.ArrayList;
 
 import static org.lwjgl.glfw.GLFW.*;
-import sketchwars.sound.SoundPlayer;
 
 public class Input
 {
     public static Input currentInput;
-
+    public static Input localInput;
+    
     public static void update() {
         MouseHandler.update();
     }
     
+    public static void handleLocalInput() {
+        localInput = new Input();
+        if(KeyboardHandler.isKeyDown(GLFW_KEY_ESCAPE)){
+            localInput.commands.add(new Command(CommandType.SHOWMENU));
+        }
+    }
+    
     public static void handleGameInput() {
         currentInput = new Input();
-
         if(KeyboardHandler.isKeyDown(GLFW_KEY_W)){
             currentInput.commands.add(new Command(CommandType.JUMP));
         }
@@ -35,9 +41,7 @@ public class Input
         if(KeyboardHandler.isKeyDown(GLFW_KEY_SPACE)){
             currentInput.commands.add(new Command(CommandType.FIRE));
         }
-        if(KeyboardHandler.isKeyDown(GLFW_KEY_ESCAPE)){
-            currentInput.commands.add(new Command(CommandType.SHOWMENU));
-        }
+        
         //mimic behaviour of space firing.
         if(MouseHandler.leftBtnState == MouseState.FALLING || MouseHandler.leftBtnState == MouseState.DOWN) {
             currentInput.commands.add(
@@ -95,7 +99,7 @@ public class Input
         
     }
 
-    private ArrayList<Command> commands;
+    private final ArrayList<Command> commands;
 
     private Input() {
         commands = new ArrayList<>();

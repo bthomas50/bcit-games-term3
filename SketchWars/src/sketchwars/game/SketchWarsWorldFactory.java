@@ -95,7 +95,6 @@ public class SketchWarsWorldFactory
     private void createGameScene() throws SceneManagerException
     {
         gameScene = sceneManager.getScene(Scenes.GAME);
-        
         Layer mapLayer = new Layer();
         Layer characterLayer = new Layer();
         Layer projectileLayer = new Layer();

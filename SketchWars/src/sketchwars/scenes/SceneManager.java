@@ -40,6 +40,10 @@ public class SceneManager <T> {
         }
     }
     
+    public void setScene(T key, Scene scene) {
+        scenes.put(key, scene);
+    }
+    
     public void setCurrentScene(T key) throws SceneManagerException  {
         if (scenes.containsKey(key)) {
             currentScene = scenes.get(key);

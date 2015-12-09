@@ -73,7 +73,6 @@ public class SketchWarsWorld extends World implements KeyCharListener {
     public void update(double deltaMillis) {
         addPendingObjects();
         handleCharacterDrowning();
-        checkTeamStatus();
         updateObjects(deltaMillis);
         updateTeamBars();
         updateTurn(deltaMillis);
@@ -150,15 +149,21 @@ public class SketchWarsWorld extends World implements KeyCharListener {
         }
     }
     
-    protected void checkTeamStatus()
-    {
+    public boolean isGameOver() {
+        if(Input.localInput.getCommands().size() > 0 &&
+           Input.localInput.getCommands().get(0).getType() == CommandType.SHOWMENU)
+        {
+            return true;
+        }
         int counter = 0;
         for(Team team: teams)
         {
             if(!team.isDead())
                 counter++;
         }
+        return counter < 2;
     }
+
 
     private void updateTurn(double elapsedMillis) {
         currentTurn.update(elapsedMillis);
@@ -258,4 +263,5 @@ public class SketchWarsWorld extends World implements KeyCharListener {
             }
         }
     }
+
 }
