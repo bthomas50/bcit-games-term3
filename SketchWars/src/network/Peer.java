@@ -1,6 +1,5 @@
 package network;
 
-import entities.*;
 import packets.*;
 import sketchwars.input.Input;
 
@@ -14,15 +13,14 @@ import java.io.ByteArrayOutputStream;
 import java.io.ObjectOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ObjectInputStream;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class Peer {
     private final HashMap<Integer, PeerInfo> peers;
 
     private int windowStart, windowEnd;
     //for protecting the HashMaps.
-    private final Object syncObject;
+    private final Object windowMutex;
+    private final Object responseMutex;
     
     private final HashMap<Integer, Integer> windowCursors;
     
@@ -33,7 +31,8 @@ public class Peer {
     private final int localId;
 
     public Peer(int port, int localId) throws IOException {
-        syncObject = new Object();
+        windowMutex = new Object();
+        responseMutex = new Object();
         peers = new HashMap<>();
         socket = new DatagramSocket(port);
         inputs = new HashMap<>();
@@ -58,39 +57,13 @@ public class Peer {
 
     public void sendReliably(InputPacket data, PeerInfo dest) {
         ReliableMessage msg = new ReliableMessage(data, dest);
-        synchronized(syncObject) {
+        synchronized(responseMutex) {
             outgoingMessages.add(msg);
             msg.send(socket);
         }
     }
 
-    public void stopAllMessagesBefore(byte seq) {
-        ArrayList<ReliableMessage> ackedMessages = new ArrayList<>();
-        synchronized(syncObject) 
-        {
-            boolean hasSomethingToDelete;
-            do
-            {
-                hasSomethingToDelete = false;
-                for(ReliableMessage m : outgoingMessages)
-                {
-                    if(m.getSequence() == seq)
-                    {
-                        ackedMessages.add(m);
-                        m.notifyAcknowledged();
-                        hasSomethingToDelete = true;
-                    }
-                }
-                seq--;
-            }
-            while(hasSomethingToDelete);
-            outgoingMessages.removeAll(ackedMessages);
-        }
-        if(ackedMessages.size() > 0)
-        {
-            System.out.println("Removed " + ackedMessages.size() + " message(s)");
-        }
-    }
+
     
     public void sendAck(int id, byte seq) throws IOException {
         System.out.println("sending ack to id " + id + " for seq: " + seq);
@@ -102,9 +75,7 @@ public class Peer {
         PeerInfo sendTo = peers.get(id);
         DatagramPacket packet = new DatagramPacket(data, data.length, sendTo.ipAddress, sendTo.portNum);
         try {
-            synchronized(syncObject) {
-                socket.send(packet);
-            }
+            socket.send(packet);
         } catch(IOException ioe) {
             System.err.println(ioe);
         }
@@ -112,21 +83,26 @@ public class Peer {
 
     //blocks until we get inputs from each peer.
     public Map<Integer, Input> getInputs(int frameNum) {
+        System.out.println(">>>>trying to get inputs for frame: " + frameNum);
         byte seq = (byte) frameNum;
         while(true) {
-            synchronized(syncObject) {
-                if(hasAllInputs(frameNum)) {
-                    HashMap<Integer, Input> ret = new HashMap<>();
+            boolean done;
+            HashMap<Integer, Input> ret = new HashMap<>();
+            synchronized(windowMutex) {
+                done = hasAllInputs(frameNum);
+                if(done) {
                     for(Integer i : inputs.keySet())
                     {
                         ret.put(i, inputs.get(i).get(seq));
                     }
-                    System.out.println("got inputs for frame: " + frameNum);
+                    System.out.println(">>>>got inputs for frame: " + frameNum);
                     windowStart = frameNum;
                     windowEnd = frameNum + 4;
-                    stopAllMessagesBefore((byte) (seq - 1));
-                    return ret;
                 }
+            }
+            if(done)
+            {
+                return ret;
             }
         }
         //unreachable, no return needed
@@ -194,7 +170,7 @@ public class Peer {
             int senderId = packet.id;
             byte seq = packet.frameId;
             ReliableMessage matchingMsg = null;
-            synchronized(syncObject) {
+            synchronized(responseMutex) {
                 for (ReliableMessage msg : outgoingMessages) {
                     if(msg.getDestinationId() == senderId && 
                        msg.getSequence() == seq) {
@@ -202,12 +178,9 @@ public class Peer {
                         break;
                     }
                 }
-                if(matchingMsg == null) {
-                    System.out.println("unexpected ack received from " + senderId + " for frame " + seq);
-                } else {
+                if(matchingMsg != null) {
                     matchingMsg.notifyAcknowledged();
                     outgoingMessages.remove(matchingMsg);
-                    System.out.println("processed ack from " + senderId + " for frame " + seq);
                 }
             }
         }
@@ -215,7 +188,7 @@ public class Peer {
         private void receiveInput(InputPacket packet) throws IOException {
             int senderId = packet.id;
             byte seq = packet.frameId;
-            synchronized(syncObject) {
+            synchronized(windowMutex) {
                 int diff = seq - (byte) windowStart;
                 int frameNum = windowStart;
                 if(diff < -128)
@@ -227,11 +200,9 @@ public class Peer {
                     frameNum += diff;
                 }
                 System.out.println("id = " + senderId + " says " + frameNum + ", wanted (" + windowStart + ", " + windowEnd + ")");
-                if(frameNum >= windowStart && frameNum < windowEnd) {
-                    windowCursors.put(senderId, frameNum);
-                    inputs.get(senderId).put(seq, new Input(packet.commands));
-                    sendAck(senderId, seq);
-                }
+                windowCursors.put(senderId, frameNum);
+                inputs.get(senderId).put(seq, new Input(packet.commands));
+                sendAck(senderId, seq);
             }
         }
     }

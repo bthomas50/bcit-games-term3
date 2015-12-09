@@ -9,7 +9,7 @@ import network.Peer;
  * @author a00861166
  */
 public class MultiInputSource implements InputSource {
-    private static final int WINDOW_SIZE = 3;
+    private static final int WINDOW_SIZE = 4;
     private final Peer networkInterface;
     private int frameNum = 0;
     

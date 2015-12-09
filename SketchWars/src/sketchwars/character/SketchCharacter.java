@@ -268,6 +268,10 @@ public class SketchCharacter implements GraphicsObject, GameObject {
             firedProjectile = weapon.tryToFire(this, power, xTarget, yTarget);
         }
     }
+    
+    public void clearFiredProjectile() {
+        firedProjectile = null;
+    }
 
     public AbstractProjectile getFiredProjectile() {
         return firedProjectile;
