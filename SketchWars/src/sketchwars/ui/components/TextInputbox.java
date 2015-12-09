@@ -37,7 +37,7 @@ public class TextInputbox extends UIComponent implements KeyCharListener {
         
         text = "";
         updateLabel();
-        setBackgroundFromColor(Color.LIGHT_GRAY);
+        setBackgroundFromColor(Color.WHITE);
         
         lastKeyPressTime = System.currentTimeMillis();
         

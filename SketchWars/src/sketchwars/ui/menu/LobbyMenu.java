@@ -2,13 +2,10 @@
 package sketchwars.ui.menu;
 
 import entities.ClientEntityForClients;
-import entities.ClientEntityForManagementOnServer;
-import java.awt.Color;
 import java.awt.Font;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.util.Collection;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import network.Client;
@@ -93,18 +90,23 @@ public class LobbyMenu extends Scene implements UIActionListener{
         backButton.addActionListener(this);
 
         //Player List
+        Label weaponSetLabel = new Label("Loading..",font,new Vector2d(0.09, 0.2),new Vector2d(0.96, 0.5),null);
+        group.addUIComponent(weaponSetLabel);
+        
+        /*
         userListBox = new ListBox(new Vector2d(0.5, 0), new Vector2d(0.4, 0.4),  0.1f, null);
         userListBox.setFontColor(Color.yellow);
         userListBox.setSelectionBackgroundColor(Color.RED);
         userListBox.setBackgroundFromColor(Color.BLACK);
         userListBox.addActionListener(this);
         group.addUIComponent(userListBox);
+                */
 
     }
    @Override
     public void update(double delta) {
         super.update(delta);
-
+/*
         //Find latest connected players
         userList = localClient.getConnectedClients();
         //Every update clean list values
@@ -116,6 +118,7 @@ public class LobbyMenu extends Scene implements UIActionListener{
         if(localClient.isReady) {
             game.startMultiplayer(localClient.networkResult, localClient.rngResult, localClient.settingResult);
         }
+*/
 
     }
     public void setHostUsername(String str) {
