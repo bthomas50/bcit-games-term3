@@ -106,19 +106,19 @@ public class LobbyMenu extends Scene implements UIActionListener{
    @Override
     public void update(double delta) {
         super.update(delta);
-/*
-        //Find latest connected players
-        userList = localClient.getConnectedClients();
-        //Every update clean list values
-        userListBox.clearAll();
-        for (ClientEntityForClients name : userList) {
-            userListBox.addItem(name.getUsername());
-        }
+
+//        //Find latest connected players
+//        userList = localClient.getConnectedClients();
+//        //Every update clean list values
+//        userListBox.clearAll();
+//        for (ClientEntityForClients name : userList) {
+//            userListBox.addItem(name.getUsername());
+//        }
         //if the client has stopped, start the game!
         if(localClient.isReady()) {
             game.startMultiplayer(localClient.networkResult, localClient.rngResult, localClient.settingResult);
         }
-*/
+
 
     }
     public void setHostUsername(String str) {
