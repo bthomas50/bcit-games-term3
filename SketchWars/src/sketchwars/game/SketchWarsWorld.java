@@ -11,6 +11,8 @@ import java.util.Map;
 import org.joml.Vector2d;
 import sketchwars.HUD.HealthBar;
 import sketchwars.character.projectiles.AbstractProjectile;
+import sketchwars.character.projectiles.MineProjectile;
+import sketchwars.character.weapon.MineWeapon;
 import sketchwars.physics.Collider;
 import sketchwars.physics.Vectors;
 import sketchwars.scenes.Camera;
@@ -181,18 +183,18 @@ public class SketchWarsWorld extends World implements KeyCharListener {
     private void handlePanningCamera() {
         if (camera != null) {
             Team firstTeam = teams.get(getLocalTeamIdx());
-            SketchCharacter character = firstTeam.getActiveCharacter();
-            AbstractProjectile projectile = character.getFiredProjectile();
             
             if (camera.isDragResetOn()) {
+                SketchCharacter character = firstTeam.getActiveCharacter();
+                AbstractProjectile projectile = character.getFiredProjectile();
                 float posX = character.getPosX();
                 float posY = character.getPosY();
+                
                 if (projectile != null && !projectile.hasExpired()) {
                     Collider coll = projectile.getCollider();
                     long center = coll.getBounds().getCenterVector();
                     posX = Converter.PhysicsToGraphicsX(Vectors.xComp(center));
                     posY = Converter.PhysicsToGraphicsY(Vectors.yComp(center));
-                    camera.setCameraPosition(posX, posY);
                 }
 
                 float distanceX = camera.getCenterX() - posX;
