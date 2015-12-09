@@ -19,6 +19,9 @@ public class Input
         if(KeyboardHandler.isKeyDown(GLFW_KEY_ESCAPE)){
             localInput.commands.add(new Command(CommandType.SHOWMENU));
         }
+        if(KeyboardHandler.isKeyDown(GLFW_KEY_ENTER)) {
+            localInput.commands.add(new Command(CommandType.CONTINUE));
+        }
     }
     
     public static void handleGameInput() {

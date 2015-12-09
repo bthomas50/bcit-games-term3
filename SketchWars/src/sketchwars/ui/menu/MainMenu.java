@@ -140,6 +140,11 @@ public class MainMenu extends Scene implements UIActionListener {
         } else if(component.equals(buttonTutorial)) {
             if (sketchWars != null) {
                 sketchWars.startTutorial();
+                try {
+                    sceneManager.setCurrentScene(Scenes.TUTORIAL_SEQUENCE);
+                } catch (SceneManagerException ex) {
+                    Logger.getLogger(MainMenu.class.getName()).log(Level.SEVERE, null, ex);
+                }
             } else {
                 System.err.println("Sketchwars instance in the main menu is a null pointer.");
             }

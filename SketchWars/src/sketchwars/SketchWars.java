@@ -80,7 +80,7 @@ public class SketchWars {
         FindHostMenu findHostMeueScene = new FindHostMenu(sceneManager,lobbyMenuScene, menuCamera);
         MainMenu mainMenuScene = new MainMenu(sceneManager, this, lobbyMenuScene, findHostMeueScene, menuCamera);
         OptionMenu optionMenuScene = new OptionMenu(sceneManager, menuCamera);
-
+        TutorialSequence tutorial = new TutorialSequence(sceneManager, menuCamera);
         GameSettingMenu gameSettingMenuScene = new GameSettingMenu(sceneManager, lobbyMenuScene, menuCamera);
         
         try {
@@ -89,7 +89,7 @@ public class SketchWars {
             sceneManager.addScene(Scenes.LOBBY_MENU, lobbyMenuScene);
             sceneManager.addScene(Scenes.FINDHOST_MENU, findHostMeueScene);
             sceneManager.addScene(Scenes.GAME_SETTING_MENU, gameSettingMenuScene);
-            
+            sceneManager.addScene(Scenes.TUTORIAL_SEQUENCE, tutorial);
             sceneManager.setCurrentScene(Scenes.MAIN_MENU);
             
         } catch (SceneManagerException ex) {
@@ -134,7 +134,7 @@ public class SketchWars {
         physics = new Physics(physicsBB);
         BoundingBox extendedWorldBoundingBox = new BoundingBox((int)(physicsBB.getTop() * EXTENDED_BB_RANGE), 
                                                    (int)(physicsBB.getLeft() * EXTENDED_BB_RANGE), 
-                                                   (int)(physicsBB.getBottom() * EXTENDED_BB_RANGE) ,
+                                                   (int)(physicsBB.getBottom() * EXTENDED_BB_RANGE),
                                                    (int)(physicsBB.getRight() * EXTENDED_BB_RANGE));
         
         world = new MultiplayerWorld(network.getLocalId(), setting.getTimePerTurn(), extendedWorldBoundingBox);
