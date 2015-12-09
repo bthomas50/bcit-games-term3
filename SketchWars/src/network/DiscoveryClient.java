@@ -13,9 +13,11 @@ import java.net.SocketException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import packets.DiscoveryRequestPacket;
 import packets.DiscoveryResponsePacket;
@@ -27,13 +29,13 @@ public class DiscoveryClient extends Thread
     private DatagramSocket sock;
     private boolean shouldContinue;
     private final byte[] recvBuf;
-    private final HashMap<InetAddress, Integer> availableGames;
+    private final List<GameListing> availableGames;
 
     public DiscoveryClient()
     {
         this.shouldContinue = true;
         recvBuf = new byte[15000];
-        availableGames = new HashMap<>();
+        availableGames = new ArrayList<>();
     }
 
     @Override
@@ -94,16 +96,16 @@ public class DiscoveryClient extends Thread
         return !availableGames.isEmpty();
     }
 
-    public synchronized Map<InetAddress, Integer> getAvailableGames()
+    public synchronized List<GameListing> getAvailableGames()
     {
-        Map<InetAddress, Integer> ret = new HashMap<>();
-        ret.putAll(availableGames);
+        List<GameListing> ret = new ArrayList<>();
+        ret.addAll(availableGames);
         return ret;
     }
 
     private synchronized void foundGame(InetAddress addr, int port)
     {
-        availableGames.put(addr, port);
+        availableGames.add(new GameListing(addr, port, "testName"));
     }
 
     private void createSocket() throws SocketException
@@ -184,6 +186,20 @@ public class DiscoveryClient extends Thread
             DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, broadcast, DISCOVERY_PORT);
             sock.send(sendPacket);
             System.out.println(">>> Request packet sent to: " + broadcast.getHostAddress());
+        }
+    }
+    
+    public class GameListing
+    {
+        public InetAddress addr;
+        public int port;
+        public String name;
+        
+        GameListing(InetAddress addr, int port, String name)
+        {
+            this.addr = addr;
+            this.port = port;
+            this.name = name;
         }
     }
 }

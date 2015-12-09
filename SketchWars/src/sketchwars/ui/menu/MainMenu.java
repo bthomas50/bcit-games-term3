@@ -33,6 +33,7 @@ public class MainMenu extends Scene implements UIActionListener {
     private final SceneManager<Scenes> sceneManager;
     private final SketchWars sketchWars;
     private final LobbyMenu lobby;
+    private final FindHostMenu hostlobby;
     
     private Texture normalBtn;
     private Texture hoverBtn;
@@ -46,11 +47,13 @@ public class MainMenu extends Scene implements UIActionListener {
     private TextButton buttonExit;
     
     
-    public MainMenu(SceneManager<Scenes> sceneManager, SketchWars sketchWars, LobbyMenu lobby, Camera camera) {
+    public MainMenu(SceneManager<Scenes> sceneManager, SketchWars sketchWars, LobbyMenu lobby,
+            FindHostMenu hostlobby, Camera camera) {
         super(camera);
         this.sceneManager = sceneManager;
         this.sketchWars = sketchWars;
         this.lobby = lobby;
+        this.hostlobby = hostlobby;
         
         createLayers();
         createButtons();
@@ -142,8 +145,8 @@ public class MainMenu extends Scene implements UIActionListener {
             }
         } else if (component.equals(buttonJoin)) {
             try {
-                lobby.startClient();
-                sceneManager.setCurrentScene(Scenes.CREATE_MENU);
+                hostlobby.startServer();
+                sceneManager.setCurrentScene(Scenes.FINDHOST_MENU);
             } catch (SceneManagerException ex) {
                 Logger.getLogger(MainMenu.class.getName()).log(Level.SEVERE, null, ex);
             }
