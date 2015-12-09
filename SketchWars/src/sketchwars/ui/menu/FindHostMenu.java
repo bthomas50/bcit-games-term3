@@ -160,7 +160,10 @@ public class FindHostMenu extends Scene implements UIActionListener {
         activeGameList.clear();
         for(DiscoveryClient.GameListing game : availableGames)
         {
-            activeGameList.add(game.name);
+            if(!activeGameList.contains(gamesListListBox.getSelectedItem()))
+            {
+                activeGameList.add(game.name);
+            }
         }
         
         int idx = gamesListListBox.getSelection();
