@@ -1,5 +1,6 @@
 package sketchwars.input;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import network.Peer;
@@ -17,7 +18,7 @@ public class MultiInputSource implements InputSource {
         networkInterface = peer;
     }
     @Override
-    public Map<Integer, Input> getCurrentInputs() {
+    public Map<Integer, Input> getCurrentInputs() throws IOException {
         Input.update();
         Input.handleGameInput();
         Input.handleLocalInput();

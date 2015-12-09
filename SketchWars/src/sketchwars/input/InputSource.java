@@ -5,6 +5,7 @@
  */
 package sketchwars.input;
 
+import java.io.IOException;
 import java.util.Map;
 
 /**
@@ -12,5 +13,5 @@ import java.util.Map;
  * @author a00861166
  */
 public interface InputSource {
-    Map<Integer, Input> getCurrentInputs();
+    Map<Integer, Input> getCurrentInputs() throws IOException;
 }

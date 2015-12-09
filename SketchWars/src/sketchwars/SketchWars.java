@@ -1,5 +1,6 @@
 package sketchwars;
 
+import java.io.IOException;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -152,7 +153,18 @@ public class SketchWars {
             // Run the rendering loop until the user has attempted to close
             // the window or has pressed the ESCAPE key.
             while (!openGL.windowsIsClosing()) {
-                Map<Integer, Input> inputs = inputter.getCurrentInputs();
+                Map<Integer, Input> inputs;
+                try {
+                    inputs = inputter.getCurrentInputs();
+                } catch(IOException e) {
+                    inputter = new SingleInputSource();
+                    inputs = ((SingleInputSource)inputter).getCurrentInputs();
+                    try {
+                        sceneManager.setCurrentScene(Scenes.MAIN_MENU);
+                    } catch (SceneManagerException ex) {
+                        Logger.getLogger(SketchWars.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
                 openGL.beginUpdate();
                 double delta = 16;
                 Scenes current = sceneManager.getCurrentSceneType();
