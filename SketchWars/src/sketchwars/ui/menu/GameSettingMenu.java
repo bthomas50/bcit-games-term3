@@ -108,7 +108,7 @@ public class GameSettingMenu extends Scene implements UIActionListener{
             group.addUIComponent(userNameLabel);
             userNameInput = new TextInputbox(new Vector2d(-0.4, 0.8), new Vector2d(0.4, 0.1), null);
             userNameInput.setText("Host");
-            userNameInput.setFontColor(Color.BLUE);
+            userNameInput.setFontColor(Color.black);
             //
 
             //MAPS selections
@@ -116,22 +116,22 @@ public class GameSettingMenu extends Scene implements UIActionListener{
             group.addUIComponent(mapLabel);
             
             mapCheckBox = new ComboBox(new Vector2d(-0.4, 0.6), new Vector2d(0.4, 0.1),null);
-            mapCheckBox.setBackgroundFromColor(Color.ORANGE);
-            mapCheckBox.getListBox().setBackgroundFromColor(Color.ORANGE);
+            mapCheckBox.setBackgroundFromColor(Color.WHITE);
+            mapCheckBox.getListBox().setBackgroundFromColor(Color.WHITE);
             
             mapCheckBox.addItem("Normal");
-            mapCheckBox.addItem("Rapid");
-            mapCheckBox.setSelection(1);
+            //mapCheckBox.addItem("Rapid");
+            mapCheckBox.setSelection(0);
             group.addUIComponent(mapCheckBox);
             //
             
             //Max Character selections
-            Label maxCharacterLabel = new Label("Characters: ",font,new Vector2d(-0.8, 0.3),new Vector2d(0.4, 0.1),null);
+            Label maxCharacterLabel = new Label("Characters: ",font,new Vector2d(-0.8, 0.15),new Vector2d(0.4, 0.1),null);
             group.addUIComponent(maxCharacterLabel);
             
-            charactorBox = new ComboBox(new Vector2d(-0.4, 0.3), new Vector2d(0.4, 0.1),null);
-            charactorBox.setBackgroundFromColor(Color.ORANGE);
-            charactorBox.getListBox().setBackgroundFromColor(Color.ORANGE);
+            charactorBox = new ComboBox(new Vector2d(-0.4, 0.15), new Vector2d(0.4, 0.1),null);
+            charactorBox.setBackgroundFromColor(Color.WHITE);
+            charactorBox.getListBox().setBackgroundFromColor(Color.WHITE);
             
             charactorBox.addItem("1");
             charactorBox.addItem("2");
@@ -147,7 +147,7 @@ public class GameSettingMenu extends Scene implements UIActionListener{
             group.addUIComponent(maxPlayerLabel);
             maxPlayerInput = new TextInputbox(new Vector2d(0.7, 0.75), new Vector2d(0.4, 0.1), null);
             maxPlayerInput.setText("2");
-            maxPlayerInput.setFontColor(Color.BLUE);
+            maxPlayerInput.setFontColor(Color.black);
             //
             
             //Health label
@@ -155,7 +155,7 @@ public class GameSettingMenu extends Scene implements UIActionListener{
             group.addUIComponent(maxHealthLabel);
             maxHealthInput = new TextInputbox(new Vector2d(0.7, 0.65), new Vector2d(0.4, 0.1), null);
             maxHealthInput.setText("200");
-            maxHealthInput.setFontColor(Color.BLUE);
+            maxHealthInput.setFontColor(Color.black);
             //
             
             //Turn Time label
@@ -163,17 +163,17 @@ public class GameSettingMenu extends Scene implements UIActionListener{
             group.addUIComponent(maxTurnTimeLabel);
             maxTurnTimeInput = new TextInputbox(new Vector2d(0.7, 0.55), new Vector2d(0.4, 0.1), null);
             maxTurnTimeInput.setText("15");
-            maxTurnTimeInput.setFontColor(Color.BLUE);
+            maxTurnTimeInput.setFontColor(Color.black);
             //
             
 
             //Game modes
-            Label gameModeLabel = new Label("Mode: ",font,new Vector2d(0.45, -0.10),new Vector2d(0.4, 0.1),null);
+            Label gameModeLabel = new Label("Mode: ",font,new Vector2d(0.35, -0.10),new Vector2d(0.4, 0.1),null);
             group.addUIComponent(gameModeLabel);
-            gameModeListBox = new ListBox(new Vector2d(0.75, -0.20), new Vector2d(0.3, 0.25),  0.1f, null);
-            gameModeListBox.setFontColor(Color.yellow);
+            gameModeListBox = new ListBox(new Vector2d(0.7, -0.20), new Vector2d(0.4, 0.25),  0.1f, null);
+            gameModeListBox.setFontColor(Color.black);
             gameModeListBox.setSelectionBackgroundColor(Color.RED);
-            gameModeListBox.setBackgroundFromColor(Color.BLACK);
+            gameModeListBox.setBackgroundFromColor(Color.WHITE);
             gameModeListBox.addItem("Normal");
             gameModeListBox.addItem("Rapid Fire");
             gameModeListBox.setSelection(0);
@@ -182,12 +182,12 @@ public class GameSettingMenu extends Scene implements UIActionListener{
             
             
             //Weapon set list
-            Label weaponSetLabel = new Label("Gun Set: ",font,new Vector2d(0.45, 0.40),new Vector2d(0.4, 0.1),null);
+            Label weaponSetLabel = new Label("Gun Set: ",font,new Vector2d(0.35, 0.40),new Vector2d(0.4, 0.1),null);
             group.addUIComponent(weaponSetLabel);
-            weaponSetListBox = new ListBox(new Vector2d(0.75, 0.25), new Vector2d(0.3, 0.4),  0.1f, null);
-            weaponSetListBox.setFontColor(Color.yellow);
+            weaponSetListBox = new ListBox(new Vector2d(0.7, 0.25), new Vector2d(0.4, 0.4),  0.1f, null);
+            weaponSetListBox.setFontColor(Color.black);
             weaponSetListBox.setSelectionBackgroundColor(Color.RED);
-            weaponSetListBox.setBackgroundFromColor(Color.BLACK);
+            weaponSetListBox.setBackgroundFromColor(Color.WHITE);
             weaponSetListBox.addItem("MELEE");
             weaponSetListBox.addItem("RANGE");
             weaponSetListBox.addItem("EXPLOSIVE");

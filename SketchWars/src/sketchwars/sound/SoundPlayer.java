@@ -45,7 +45,7 @@ public final class SoundPlayer
         ie: Two players shoot a rocket at the same time
         */
         AudioInputStream soundStream = AudioSystem.getAudioInputStream(new File(sfxList.get(refNumber)));
-        Clip clip = getClip(soundStream);
+        final Clip clip = getClip(soundStream);
         clip.setFramePosition(0);
         
         clip.addLineListener(new LineListener() {
