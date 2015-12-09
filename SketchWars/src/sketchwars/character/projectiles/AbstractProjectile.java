@@ -35,6 +35,10 @@ public abstract class AbstractProjectile implements GraphicsObject, GameObject{
     public boolean hasExpired() {
         return expired;
     }
+    
+    public void setExpired() {
+        expired = true;
+    }
 
     public Collider getCollider() {
         return coll;

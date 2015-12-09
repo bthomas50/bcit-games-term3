@@ -1,5 +1,7 @@
 package sketchwars.game;
 
+import sketchwars.physics.BoundingBox;
+
 /**
  * @author Najash Najimudeen <najash.najm@gmail.com>
  * @author Brian Thomas <bthomas50@my,bcit.ca>
@@ -9,8 +11,8 @@ public class MultiplayerWorld extends SketchWarsWorld {
 
     private final int localIdx;
 
-    public MultiplayerWorld(int localIdx, int turnTimeSeconds) {
-        super(turnTimeSeconds);
+    public MultiplayerWorld(int localIdx, int turnTimeSeconds, BoundingBox extendedWorldBoundingBox) {
+        super(turnTimeSeconds, extendedWorldBoundingBox);
         this.localIdx = localIdx;
     }
 

@@ -2,6 +2,7 @@ package sketchwars.game;
 
 import java.util.ArrayList;
 import sketchwars.map.BasicMap;
+import sketchwars.physics.BoundingBox;
 
 /**
  * @author Najash Najimudeen <najash.najm@gmail.com>
@@ -11,7 +12,7 @@ import sketchwars.map.BasicMap;
 public class World {
     private ArrayList<GameObject> toAdd;
     protected ArrayList<GameObject> allObjects;
-    
+        
     public World() {
         toAdd = new ArrayList<>();
         allObjects = new ArrayList<>();
