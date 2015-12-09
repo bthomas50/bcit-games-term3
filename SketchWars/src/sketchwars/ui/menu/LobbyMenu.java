@@ -181,8 +181,8 @@ public class LobbyMenu extends Scene implements UIActionListener{
         }
         if(server !=null)
         {
-            server.stop();
             discoveryServer.halt();
+            server.stop();
         }
         try 
         {

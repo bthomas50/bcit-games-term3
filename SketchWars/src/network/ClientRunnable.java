@@ -18,7 +18,10 @@ class ClientRunnable implements Runnable {
     public void run() {
         while(client.isRunning()) {
             Object obj = Utils.incoming(client.getSocket());
-            
+            if(obj == null)
+            {
+                break;
+            }
             Type type = ((Packet) obj).type;
             
             if(type == Type.LoginBroadcast) {

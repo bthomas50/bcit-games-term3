@@ -84,7 +84,7 @@ public class Peer {
     //blocks until we get inputs from each peer.
     public Map<Integer, Input> getInputs(int frameNum) throws IOException {
         System.out.println(">>>>trying to get inputs for frame: " + frameNum);
-        long cutoffTime = System.currentTimeMillis() + 10000000;
+        long cutoffTime = System.currentTimeMillis() + 10000;
         byte seq = (byte) frameNum;
         while(true) {
             boolean done;

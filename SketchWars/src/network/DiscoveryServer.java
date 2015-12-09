@@ -47,6 +47,7 @@ public class DiscoveryServer extends Thread
     public synchronized void halt()
     {
         shouldContinue = false;
+        sock.close();
     }
 
     private synchronized boolean shouldContinue()
@@ -64,7 +65,6 @@ public class DiscoveryServer extends Thread
             oos.flush();
             byte[] data = baos.toByteArray();
             DatagramPacket sendPacket = new DatagramPacket(data, data.length, addr, port);
-            
             
             sock.send(sendPacket);
         }

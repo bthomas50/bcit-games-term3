@@ -194,7 +194,8 @@ public class FindHostMenu extends Scene implements UIActionListener {
             } catch (SceneManagerException ex) {
                 Logger.getLogger(OptionMenu.class.getName()).log(Level.SEVERE, null, ex);
             }
-        } else if (component.equals(joinRoomButton)) {
+        } else if (component.equals(joinRoomButton) && 
+                   selectedListing != null) {
             try {
                 //connect to X game
                 sceneManager.setCurrentScene(Scenes.LOBBY_MENU);
