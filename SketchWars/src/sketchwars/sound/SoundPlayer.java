@@ -14,7 +14,7 @@ import java.util.ArrayList;
  *
  * @author David Ly <ly_nekros@hotmail.com>
  */
-public final class SoundPlayer 
+public final class SoundPlayer
 {
     
     private static final ArrayList<Clip> bgmList = new ArrayList<Clip>();
@@ -47,7 +47,17 @@ public final class SoundPlayer
         AudioInputStream soundStream = AudioSystem.getAudioInputStream(new File(sfxList.get(refNumber)));
         Clip clip = getClip(soundStream);
         clip.setFramePosition(0);
-
+        
+        clip.addLineListener(new LineListener() {
+            @Override
+            public void update(LineEvent event) {
+                LineEvent.Type type = event.getType();
+                if (type == LineEvent.Type.STOP) {
+                    clip.close();
+                }
+            }
+        });
+        
        // incrementGainIfPossible(refNumber, gain);
         
         if(autostart) clip.start();
@@ -97,7 +107,6 @@ public final class SoundPlayer
     public static void resume(int refNumber)
     {
         bgmList.get(refNumber).start();
-    }
-    
+    }   
 
 }
