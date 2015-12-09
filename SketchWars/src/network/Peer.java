@@ -58,8 +58,10 @@ public class Peer {
     public void sendReliably(InputPacket data, PeerInfo dest) {
         ReliableMessage msg = new ReliableMessage(data, dest);
         synchronized(responseMutex) {
+            System.out.println("lock responseMutex");
             outgoingMessages.add(msg);
             msg.send(socket);
+            System.out.println("lock responseMutex");
         }
     }
 
@@ -87,6 +89,7 @@ public class Peer {
         byte seq = (byte) frameNum;
         while(true) {
             synchronized(windowMutex) {
+                System.out.println("lock windowMutex");
                 if(hasAllInputs(frameNum)) {
                     HashMap<Integer, Input> ret = new HashMap<>();
                     for(Integer i : inputs.keySet())
@@ -96,6 +99,7 @@ public class Peer {
                     System.out.println("got inputs for frame: " + frameNum);
                     windowStart = frameNum;
                     windowEnd = frameNum + 4;
+                    System.out.println("unlock windowMutex");
                     return ret;
                 }
             }
@@ -166,6 +170,7 @@ public class Peer {
             byte seq = packet.frameId;
             ReliableMessage matchingMsg = null;
             synchronized(responseMutex) {
+                System.out.println("lock responseMutex");
                 for (ReliableMessage msg : outgoingMessages) {
                     if(msg.getDestinationId() == senderId && 
                        msg.getSequence() == seq) {
@@ -177,6 +182,7 @@ public class Peer {
                     matchingMsg.notifyAcknowledged();
                     outgoingMessages.remove(matchingMsg);
                 }
+                System.out.println("lock responseMutex");
             }
         }
 
@@ -184,6 +190,7 @@ public class Peer {
             int senderId = packet.id;
             byte seq = packet.frameId;
             synchronized(windowMutex) {
+                System.out.println("lock windowMutex");
                 int diff = seq - (byte) windowStart;
                 int frameNum = windowStart;
                 if(diff < -128)
@@ -198,6 +205,7 @@ public class Peer {
                 windowCursors.put(senderId, frameNum);
                 inputs.get(senderId).put(seq, new Input(packet.commands));
                 sendAck(senderId, seq);
+                System.out.println("unlock windowMutex");
             }
         }
     }
