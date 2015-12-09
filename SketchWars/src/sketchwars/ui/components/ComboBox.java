@@ -15,7 +15,7 @@ import sketchwars.graphics.Texture;
 public class ComboBox extends UIComponent implements UIActionListener {
     private static final float BUTTON_SCALE_X = 0.2f;
     private static final float LISTBOX_SCALE_Y = 3;
-    
+
     private final Label textbox; 
     private ListBox listBox;
     private final Button dropButton;

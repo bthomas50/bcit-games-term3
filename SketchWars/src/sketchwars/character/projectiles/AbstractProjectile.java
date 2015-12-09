@@ -1,7 +1,6 @@
 package sketchwars.character.projectiles;
 
 import org.joml.Matrix3d;
-import sketchwars.SketchWars;
 import sketchwars.graphics.GraphicsObject;
 import sketchwars.graphics.Texture;
 import sketchwars.physics.*;
