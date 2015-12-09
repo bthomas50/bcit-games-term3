@@ -59,39 +59,13 @@ public class Peer {
 
     public void sendReliably(InputPacket data, PeerInfo dest) {
         ReliableMessage msg = new ReliableMessage(data, dest);
-        synchronized(producerMutex) {
+        synchronized(responseMutex) {
             outgoingMessages.add(msg);
             msg.send(socket);
         }
     }
 
-    public void stopAllMessagesBefore(byte seq) {
-        ArrayList<ReliableMessage> ackedMessages = new ArrayList<>();
-        synchronized(producerMutex) 
-        {
-            boolean hasSomethingToDelete;
-            do
-            {
-                hasSomethingToDelete = false;
-                for(ReliableMessage m : outgoingMessages)
-                {
-                    if(m.getSequence() == seq)
-                    {
-                        ackedMessages.add(m);
-                        m.notifyAcknowledged();
-                        hasSomethingToDelete = true;
-                    }
-                }
-                seq--;
-            }
-            while(hasSomethingToDelete);
-            outgoingMessages.removeAll(ackedMessages);
-        }
-        if(ackedMessages.size() > 0)
-        {
-            System.out.println("Removed " + ackedMessages.size() + " message(s)");
-        }
-    }
+
     
     public void sendAck(int id, byte seq) throws IOException {
         System.out.println("sending ack to id " + id + " for seq: " + seq);
@@ -121,9 +95,8 @@ public class Peer {
                         ret.put(i, inputs.get(i).get(seq));
                     }
                     System.out.println("got inputs for frame: " + frameNum);
-                    windowStart = frameNum + 1;
-                    windowEnd = frameNum + 5;
-                    //stopAllMessagesBefore((byte) (seq - 1));
+                    windowStart = frameNum;
+                    windowEnd = frameNum + 4;
                     return ret;
                 }
             }
@@ -193,7 +166,7 @@ public class Peer {
             int senderId = packet.id;
             byte seq = packet.frameId;
             ReliableMessage matchingMsg = null;
-            synchronized(producerMutex) {
+            synchronized(responseMutex) {
                 for (ReliableMessage msg : outgoingMessages) {
                     if(msg.getDestinationId() == senderId && 
                        msg.getSequence() == seq) {
@@ -201,12 +174,9 @@ public class Peer {
                         break;
                     }
                 }
-                if(matchingMsg == null) {
-                    System.out.println("unexpected ack received from " + senderId + " for frame " + seq);
-                } else {
+                if(matchingMsg != null) {
                     matchingMsg.notifyAcknowledged();
                     outgoingMessages.remove(matchingMsg);
-                    System.out.println("processed ack from " + senderId + " for frame " + seq);
                 }
             }
         }
@@ -226,11 +196,11 @@ public class Peer {
                     frameNum += diff;
                 }
                 System.out.println("id = " + senderId + " says " + frameNum + ", wanted (" + windowStart + ", " + windowEnd + ")");
-                if(frameNum >= windowStart && frameNum < windowEnd) {
+                //if(frameNum >= windowStart && frameNum < windowEnd) {
                     windowCursors.put(senderId, frameNum);
                     inputs.get(senderId).put(seq, new Input(packet.commands));
                     sendAck(senderId, seq);
-                }
+                //}
             }
         }
     }
