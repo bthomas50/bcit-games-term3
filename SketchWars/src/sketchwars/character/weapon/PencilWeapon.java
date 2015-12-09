@@ -79,8 +79,8 @@ public class PencilWeapon extends AbstractWeapon {
     public void render() {
         if (texture != null) {
             texture.draw(null, targetX + eWidth, targetY + eHeight, width, height);
-        if (timer.getRemainingMillis() != 0)
-            timeLabel.render();
+            /*if (timer.getRemainingMillis() != 0)
+                timeLabel.render();*/
         }
     }
 
