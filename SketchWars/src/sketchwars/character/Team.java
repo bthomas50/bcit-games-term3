@@ -184,6 +184,7 @@ public class Team
         {
             SketchCharacter previous = characters.get(curIdx);
             previous.setActive(false);
+            previous.clearFiredProjectile();
             curIdx = getNextIdx(curIdx);
             SketchCharacter trial = characters.get(curIdx);
             trial.setActive(true);

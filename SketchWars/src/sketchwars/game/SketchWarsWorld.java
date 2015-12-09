@@ -12,7 +12,6 @@ import org.joml.Vector2d;
 import sketchwars.HUD.HealthBar;
 import sketchwars.character.projectiles.AbstractProjectile;
 import sketchwars.character.projectiles.MineProjectile;
-import sketchwars.character.weapon.MineWeapon;
 import sketchwars.physics.BoundingBox;
 import sketchwars.physics.Collider;
 import sketchwars.physics.Vectors;
@@ -26,7 +25,7 @@ import sketchwars.util.Converter;
  * @author David Ly <ly_nekros@hotmail.com>
  */
 public class SketchWarsWorld extends World implements KeyCharListener {   
-    private static final float MAX_CAMERA_DISTANCE = 0.35f;
+    private static final float MAX_CAMERA_DISTANCE = 0.15f;
     
     protected AbstractMap map;
     protected ArrayList<SketchCharacter> characters;
@@ -195,11 +194,17 @@ public class SketchWarsWorld extends World implements KeyCharListener {
                 float posX = character.getPosX();
                 float posY = character.getPosY();
                 
-                if (projectile != null && !projectile.hasExpired()) {
-                    Collider coll = projectile.getCollider();
-                    long center = coll.getBounds().getCenterVector();
-                    posX = Converter.PhysicsToGraphicsX(Vectors.xComp(center));
-                    posY = Converter.PhysicsToGraphicsY(Vectors.yComp(center));
+                if (projectile != null) {
+                    if (!projectile.hasExpired()) {
+                        Collider coll = projectile.getCollider();
+                        long center = coll.getBounds().getCenterVector();
+                        posX = Converter.PhysicsToGraphicsX(Vectors.xComp(center));
+                        posY = Converter.PhysicsToGraphicsY(Vectors.yComp(center));
+                    }
+                    
+                    if (projectile instanceof MineProjectile && projectile.hasStoppedMoving()) {
+                        character.clearFiredProjectile();
+                    }      
                 }
 
                 float distanceX = camera.getCenterX() - posX;
