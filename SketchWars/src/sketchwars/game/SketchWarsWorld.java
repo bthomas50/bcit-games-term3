@@ -22,7 +22,9 @@ import sketchwars.util.Converter;
  * @author Brian Thomas <bthomas50@my,bcit.ca>
  * @author David Ly <ly_nekros@hotmail.com>
  */
-public class SketchWarsWorld extends World implements KeyCharListener {    
+public class SketchWarsWorld extends World implements KeyCharListener {   
+    private static final float MAX_CAMERA_DISTANCE = 0.35f;
+    
     protected AbstractMap map;
     protected ArrayList<SketchCharacter> characters;
     protected ArrayList<Team> teams;
@@ -190,7 +192,15 @@ public class SketchWarsWorld extends World implements KeyCharListener {
                     float posY = Converter.PhysicsToGraphicsY(Vectors.yComp(center));
                     camera.setNextCameraPosition(posX, posY);
                 } else {
-                    camera.setNextCameraPosition(character.getPosX(), character.getPosY());
+                    float distanceX = camera.getCenterX() - character.getPosX();
+                    float distanceY = camera.getCenterY() - character.getPosY();
+                    double distance = Math.sqrt((distanceX * distanceX) + (distanceY * distanceY));
+                    
+                    if (distance > MAX_CAMERA_DISTANCE) {
+                        camera.setNextCameraPosition(character.getPosX(), character.getPosY());
+                    } else {
+                        camera.setCameraPosition(character.getPosX(), character.getPosY());
+                    }
                 }
             }
         }

@@ -17,7 +17,7 @@ import sketchwars.input.MouseHandler;
  */
 public class Camera implements GameObject {
     private static final float SLOW_RADIUS = 0.09f;
-    private static final float REACHED_RADIUS = 0.01f;
+    private static final float REACHED_RADIUS = 0.03f;
     
     private static final float MAX_PAN_ACCEL = 0.01f;
     private static final float MAX_ZOOM_ACCEL = 0.01f;
@@ -332,5 +332,13 @@ public class Camera implements GameObject {
 
     public float getWorldBottom() {
         return worldBottom;
+    }
+
+    public float getCenterX() {
+        return left + width/2.0f;
+    }
+    
+    public float getCenterY() {
+        return top - height/2.0f;
     }
 }
