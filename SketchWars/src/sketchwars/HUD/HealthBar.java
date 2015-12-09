@@ -54,14 +54,14 @@ public class HealthBar implements GraphicsObject, GameObject {
         emptyBar.draw(null,
                      drawPosX, 
                      drawPosY, 
-                     0.1f + scaleX, 
-                     0.025f + scaleY);
+                     scaleX, 
+                     scaleY);
         
         filledBar.draw(null,
                       drawPosX, 
                       drawPosY, 
-                      (float)currentHealth / (float)maxHealth * (0.1f + scaleX), 
-                      0.025f + scaleY);
+                      (float)currentHealth / (float)maxHealth * scaleX, 
+                      scaleY);
     }
     
     private double getHealthRatio()
@@ -104,5 +104,21 @@ public class HealthBar implements GraphicsObject, GameObject {
         lifeBars[5] = Texture.loadTexture("content/misc/yellowFilled.png", true);
         lifeBars[6] = Texture.loadTexture("content/misc/greenEmpty.png", true);
         lifeBars[7] = Texture.loadTexture("content/misc/greenFilled.png", true);   
+    }
+
+    public float getX() {
+        return drawPosX;
+    }
+    
+    public float getY() {
+        return drawPosY;
+    }
+    
+    public float getHeight() {
+        return scaleY;
+    }
+    
+    public float getWidth() {
+        return scaleX;
     }
 }

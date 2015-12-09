@@ -89,21 +89,33 @@ public class MapWater implements GameObject, GraphicsObject, CollisionListener {
             float w = Converter.PhysicsToGraphicsX(bounds.getWidth());
             float h = Converter.PhysicsToGraphicsY(bounds.getHeight());
             
-            matrix.translation(x, y + 0.2);
-            matrix.scale(w, h, 1);            
             
+            //layer 1
+            matrix.translation(x, y + 0.2);  
+            matrix.scale(w, h, 1);   
             shader.begin();
-            setShaderVariables();
+            setShaderVariables((float) Math.PI/1.5f);
+            waterTexture.draw(matrix);
+            
+            
+            //layer 2
+            matrix.translation(x, y + 0.15);  
+            matrix.scale(w, h, 1);   
+            setShaderVariables((float) Math.PI/2.0f);
+            waterTexture.draw(matrix);
+            
+            //layer 3
+            matrix.translation(x, y + 0.1);    
+            matrix.scale(w, h, 1);   
+            setShaderVariables((float) Math.PI/2.5f);
             waterTexture.draw(matrix);
             shader.end();
-            
-            
         }
     }
 
-    private void setShaderVariables() {
+    private void setShaderVariables(float angleOffset) {
         int waveAngleLoc = GL20.glGetUniformLocation(shader.getProgram(), "wave_angle");
-        GL20.glUniform1f(waveAngleLoc, waveAngle); 
+        GL20.glUniform1f(waveAngleLoc, waveAngle + angleOffset); 
 
         int waveLengthLoc = GL20.glGetUniformLocation(shader.getProgram(), "wave_length");
         GL20.glUniform1f(waveLengthLoc, WAVE_LENGTH); 

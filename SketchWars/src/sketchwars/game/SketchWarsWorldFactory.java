@@ -27,6 +27,7 @@ import sketchwars.graphics.Shader;
 import sketchwars.physics.colliders.CharacterCollider;
 import sketchwars.util.Converter;
 import network.GameSetting;
+import org.joml.Vector2d;
 
 public class SketchWarsWorldFactory
 {
@@ -198,7 +199,7 @@ public class SketchWarsWorldFactory
             character.setWeapon(WeaponTypes.getDefaultWeapon(weapons));
             charHealthBar = new HealthBar(HealthBar.lifeBars[teamNum*2], 
                                         HealthBar.lifeBars[teamNum*2+1], 
-                                        Vectors.create(character.getPosX(), character.getPosY()));
+                                        Vectors.create(character.getPosX(), character.getPosY()), 0.1f, 0.02f);
             character.setHealthBar(charHealthBar);
             characters.add(character);
         }
@@ -320,8 +321,14 @@ public class SketchWarsWorldFactory
     }
 
     private void setupCamera() {
+        Vector2d screenSize = OpenGL.getDisplaySize();
+        double aspectRatio = screenSize.y/screenSize.x;
+        
         Camera camera = gameScene.getCamera();
-        camera.setNextCameraSize(SketchWars.OPENGL_WIDTH/2.0f, SketchWars.OPENGL_WIDTH/2.0f);
+        
+        float cameraWidth = SketchWars.OPENGL_WIDTH/2.0f;
+        float cameraHeight = (float) (cameraWidth * aspectRatio);
+        camera.setNextCameraSize(cameraWidth, cameraHeight);
         
         world.addGameObject(camera);
         world.setCamera(camera);

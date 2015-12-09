@@ -9,6 +9,7 @@ import sketchwars.input.*;
 import java.util.ArrayList;
 import java.util.Map;
 import org.joml.Vector2d;
+import sketchwars.HUD.HealthBar;
 import sketchwars.character.projectiles.AbstractProjectile;
 import sketchwars.physics.Collider;
 import sketchwars.physics.Vectors;
@@ -86,13 +87,20 @@ public class SketchWarsWorld extends World implements KeyCharListener {
     
     private void updateTeamBars()
     {
-        float counter = 0;
+        int counter = teams.size();
+        float cameraBottom = (camera.getTop() - camera.getHeight());
+        float cameraLeft = camera.getLeft() ;
+        
         for (Team t: teams)
         {
             t.updateTotalHealth();
             
-            t.getHealthBar().setPosition(camera.getLeft(), camera.getTop() - 1.6f - counter);
-            counter += 0.1f;
+            HealthBar current = t.getHealthBar();
+            float x = cameraLeft;
+            float y = cameraBottom + (counter * current.getHeight()) + (counter * 0.01f);
+            
+            t.getHealthBar().setPosition(x, y);
+            counter--;
         }
     }
     
@@ -105,12 +113,12 @@ public class SketchWarsWorld extends World implements KeyCharListener {
             if(currentTurn.getRemainingMillis()/1000 < 6)
             {
                 timerLabel.setFontColor(Color.RED);
-                timerLabel.setSize(new Vector2d(0.9,0.9));
+                timerLabel.setSize(new Vector2d(0.9,0.6));
             }
             else
             {
                 timerLabel.setFontColor(new Color(0,153,51));
-                timerLabel.setSize(new Vector2d(0.55,0.65));
+                timerLabel.setSize(new Vector2d(0.55,0.35));
             }
         }
         timerLabel.setPosition(new Vector2d(camera.getLeft() + camera.getWidth()/2, camera.getTop() - 0.1f));

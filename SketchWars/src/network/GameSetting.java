@@ -32,7 +32,7 @@ public class GameSetting implements Serializable {
         timePerTurn = 15;
         characterPerTeam = 2;
         characterHealth = 200;
-        mapSelected = Maps.SALMAN;
+        mapSelected = Maps.NORMAL;
         gameModeSelected = GameModeType.Normal;
         weaponSetSelected = WeaponSetTypes.MIX;
     }

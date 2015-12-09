@@ -44,13 +44,13 @@ public class SketchWars {
     private InputSource inputter;
     private SceneManager<Scenes> sceneManager;
     private double lastTime;
-        
+
     public static void main(String[] args) {
         boolean fullscreen = false;
         
         if (args.length == 1) {
             fullscreen = (args[0].equals("-f"));
-        }        
+        }
         
         appendToLibraryPath("lib/native/");
         SketchWars sketchWars = new SketchWars();
