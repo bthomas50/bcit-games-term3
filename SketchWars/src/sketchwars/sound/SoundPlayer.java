@@ -18,7 +18,7 @@ public final class SoundPlayer
 {
     
     private static final ArrayList<Clip> bgmList = new ArrayList<>();
-    private static final ArrayList<Clip> sfxList = new ArrayList<>();
+    private static final ArrayList<ArrayList<Clip>> sfxList = new ArrayList<>();
     private SoundPlayer()
     {}
     
@@ -30,13 +30,29 @@ public final class SoundPlayer
             bgmList.add(getClip(soundStream));
 
             soundStream = AudioSystem.getAudioInputStream(new File("content/sfx/bluntAttack.wav"));
-            sfxList.add(getClip(soundStream));
+            sfxList.add(new ArrayList<Clip>());
+            for(int i = 0; i < 5; i++)
+            {
+                sfxList.get(0).add(getClip(soundStream));
+            }
             soundStream = AudioSystem.getAudioInputStream(new File("content/sfx/rifleShot.wav"));
-            sfxList.add(getClip(soundStream));
+            sfxList.add(new ArrayList<Clip>());
+            for(int i = 0; i < 5; i++)
+            {
+                sfxList.get(0).add(getClip(soundStream));
+            }
             soundStream = AudioSystem.getAudioInputStream(new File("content/sfx/throwingObject.wav"));
-            sfxList.add(getClip(soundStream));
+            sfxList.add(new ArrayList<Clip>());
+            for(int i = 0; i < 5; i++)
+            {
+                sfxList.get(0).add(getClip(soundStream));
+            }
             soundStream = AudioSystem.getAudioInputStream(new File("content/bgm/mainTheme.wav"));
-            sfxList.add(getClip(soundStream));
+            sfxList.add(new ArrayList<Clip>());
+            for(int i = 0; i < 5; i++)
+            {
+                sfxList.get(0).add(getClip(soundStream));
+            }
         }
         catch (Exception e)
         {
@@ -49,21 +65,19 @@ public final class SoundPlayer
         /*Loading new audiostream for each call allows for multiple instances of the same sound to occur
         ie: Two players shoot a rocket at the same time
         */
-        final Clip clip = sfxList.get(refNumber);
-        clip.setFramePosition(0);
-        
-        clip.addLineListener(new LineListener() {
-            @Override
-            public void update(LineEvent event) {
-                LineEvent.Type type = event.getType();
-                if (type == LineEvent.Type.STOP) {
-                    clip.close();
-                }
+        ArrayList<Clip> allClips = sfxList.get(refNumber);
+        for(Clip c : allClips)
+        {
+            if(!c.isRunning())
+            {
+                System.out.println(c);
+                c.setFramePosition(0);
+                if(autostart) 
+                    c.start();
+                break;
             }
-        });
+        }
         
-        //incrementGainIfPossible(refNumber, gain);
-        if(autostart) clip.start();
     }
     
     public static void playMusic(int refNumber, boolean loop, float gain) throws Exception 
