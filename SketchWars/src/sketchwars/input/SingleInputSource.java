@@ -12,6 +12,7 @@ public class SingleInputSource implements InputSource {
     public Map<Integer, Input> getCurrentInputs() {
         Input.update();
         Input.handleGameInput();
+        Input.handleLocalInput();
         Map<Integer, Input> ret = new HashMap<>();
         ret.put(0, Input.currentInput);
         return ret;

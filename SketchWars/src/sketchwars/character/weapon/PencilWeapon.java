@@ -79,8 +79,8 @@ public class PencilWeapon extends AbstractWeapon {
     public void render() {
         if (texture != null) {
             texture.draw(null, targetX + eWidth, targetY + eHeight, width, height);
-            /*if (timer.getRemainingMillis() != 0)
-                timeLabel.render();*/
+            if (timer.getRemainingMillis() != 0)
+                timeLabel.render();
         }
     }
 
@@ -98,7 +98,7 @@ public class PencilWeapon extends AbstractWeapon {
     @Override 
     public AbstractProjectile tryToFire(SketchCharacter owner, float power) {
         if(isFiringPossible()) {
-            if(!areCharactersInTarget())
+            if(isEraser || !areCharactersInTarget())
             {
                 handleErasing();
             }

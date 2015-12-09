@@ -75,10 +75,6 @@ public class SketchWars {
         sceneManager = new SceneManager<>();
         
         Camera menuCamera = new Camera(-1, 1, 2, 2);
-        Camera gameCamera = new Camera(SketchWars.OPENGL_LEFT, SketchWars.OPENGL_TOP, 
-                                       SketchWars.OPENGL_WIDTH, SketchWars.OPENGL_HEIGHT);
-
-        Scene gameScene = new Scene(gameCamera);
         
         LobbyMenu lobbyMenuScene = new LobbyMenu(sceneManager, this, menuCamera);
         FindHostMenu findHostMeueScene = new FindHostMenu(sceneManager,lobbyMenuScene, menuCamera);
@@ -88,7 +84,6 @@ public class SketchWars {
         GameSettingMenu gameSettingMenuScene = new GameSettingMenu(sceneManager, lobbyMenuScene, menuCamera);
         
         try {
-            sceneManager.addScene(Scenes.GAME, gameScene);
             sceneManager.addScene(Scenes.MAIN_MENU, mainMenuScene);
             sceneManager.addScene(Scenes.SUB_MENU, optionMenuScene);
             sceneManager.addScene(Scenes.LOBBY_MENU, lobbyMenuScene);
@@ -102,8 +97,16 @@ public class SketchWars {
         }
     }
     
-    public void startTutorial() {
+    private void createGameScene() throws SceneManagerException
+    {
+        Camera gameCamera = new Camera(SketchWars.OPENGL_LEFT, SketchWars.OPENGL_TOP, 
+                                       SketchWars.OPENGL_WIDTH, SketchWars.OPENGL_HEIGHT);
+        Scene gameScene = new Scene(gameCamera);
+        sceneManager.setScene(Scenes.GAME, gameScene);
         inputter = new SingleInputSource();
+    }
+    public void startTutorial() {
+
         BoundingBox physicsBB = new BoundingBox(PHYSICS_TOP, PHYSICS_LEFT, 
                 PHYSICS_TOP + PHYSICS_HEIGHT, PHYSICS_LEFT + PHYSICS_WIDTH);
         physics = new Physics(physicsBB);
@@ -112,16 +115,15 @@ public class SketchWars {
                                                    (int)(physicsBB.getLeft() * EXTENDED_BB_RANGE), 
                                                    (int)(physicsBB.getBottom() * EXTENDED_BB_RANGE) ,
                                                    (int)(physicsBB.getRight()* EXTENDED_BB_RANGE));
+        
         GameSetting tutorialSettings = GameSetting.createTutorialSettings();
         world = new SketchWarsWorld(tutorialSettings.getTimePerTurn(), extendedWorldBoundingBox);
-        new SketchWarsWorldFactory(world, physics, sceneManager, new Random()).startGame(tutorialSettings);
-        
-        if (sceneManager != null) {
-            try {
-                sceneManager.setCurrentScene(Scenes.GAME);
-            } catch (SceneManagerException ex) {
-                Logger.getLogger(SketchWars.class.getName()).log(Level.SEVERE, null, ex);
-            }
+        try {
+            createGameScene();
+            new SketchWarsWorldFactory(world, physics, sceneManager, new Random()).startGame(tutorialSettings);
+            sceneManager.setCurrentScene(Scenes.GAME);
+        } catch (SceneManagerException ex) {
+            Logger.getLogger(SketchWars.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
@@ -135,14 +137,13 @@ public class SketchWars {
                                                    (int)(physicsBB.getBottom() * EXTENDED_BB_RANGE) ,
                                                    (int)(physicsBB.getRight() * EXTENDED_BB_RANGE));
         world = new MultiplayerWorld(network.getLocalId(), setting.getTimePerTurn(), extendedWorldBoundingBox);
-        new SketchWarsWorldFactory(world, physics, sceneManager, rng).startGame(setting);
         
-        if (sceneManager != null) {
-            try {
-                sceneManager.setCurrentScene(Scenes.GAME);
-            } catch (SceneManagerException ex) {
-                Logger.getLogger(SketchWars.class.getName()).log(Level.SEVERE, null, ex);
-            }
+        try {
+            createGameScene();
+            new SketchWarsWorldFactory(world, physics, sceneManager, rng).startGame(setting);
+            sceneManager.setCurrentScene(Scenes.GAME);
+        } catch (SceneManagerException ex) {
+            Logger.getLogger(SketchWars.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
@@ -163,6 +164,13 @@ public class SketchWars {
                         world.handleInput(inputs, delta);
                         world.update(delta);
                         physics.update(delta);
+                        if(world.isGameOver()) {
+                            try {
+                                sceneManager.setCurrentScene(Scenes.MAIN_MENU);
+                            } catch (SceneManagerException ex) {
+                                Logger.getLogger(SketchWars.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                        }
                     }
                 }
                 
