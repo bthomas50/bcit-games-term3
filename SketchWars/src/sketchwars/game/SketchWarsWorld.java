@@ -11,6 +11,8 @@ import java.util.Map;
 import org.joml.Vector2d;
 import sketchwars.HUD.HealthBar;
 import sketchwars.character.projectiles.AbstractProjectile;
+import sketchwars.character.projectiles.MineProjectile;
+import sketchwars.physics.BoundingBox;
 import sketchwars.physics.Collider;
 import sketchwars.physics.Vectors;
 import sketchwars.scenes.Camera;
@@ -23,7 +25,7 @@ import sketchwars.util.Converter;
  * @author David Ly <ly_nekros@hotmail.com>
  */
 public class SketchWarsWorld extends World implements KeyCharListener {   
-    private static final float MAX_CAMERA_DISTANCE = 0.35f;
+    private static final float MAX_CAMERA_DISTANCE = 0.15f;
     
     protected AbstractMap map;
     protected ArrayList<SketchCharacter> characters;
@@ -33,7 +35,9 @@ public class SketchWarsWorld extends World implements KeyCharListener {
     Label timerLabel;
     int turnTimeSeconds;
     
-    public SketchWarsWorld(int turnTimeSeconds) {
+    private BoundingBox extendedWorldBoundingBox;
+    
+    public SketchWarsWorld(int turnTimeSeconds, BoundingBox extendedWorldBoundingBox) {
         characters = new ArrayList<>();
         teams = new ArrayList<>();
         currentTurn = new Turn(turnTimeSeconds);
@@ -44,6 +48,7 @@ public class SketchWarsWorld extends World implements KeyCharListener {
                                 new Vector2d(0.65,0.65),
                                 null);
         KeyboardHandler.addCharListener((SketchWarsWorld)this);
+        this.extendedWorldBoundingBox = extendedWorldBoundingBox;
     }
 
     public void setCamera(Camera camera) {
@@ -74,6 +79,7 @@ public class SketchWarsWorld extends World implements KeyCharListener {
         updateTurn(deltaMillis);
         handlePanningCamera();
         updateTimeLabel();
+        checkOutOfWorldBoundsObjects();
         removeExpiredObjects();
     }
     
@@ -181,18 +187,24 @@ public class SketchWarsWorld extends World implements KeyCharListener {
     private void handlePanningCamera() {
         if (camera != null) {
             Team firstTeam = teams.get(getLocalTeamIdx());
-            SketchCharacter character = firstTeam.getActiveCharacter();
-            AbstractProjectile projectile = character.getFiredProjectile();
             
             if (camera.isDragResetOn()) {
+                SketchCharacter character = firstTeam.getActiveCharacter();
+                AbstractProjectile projectile = character.getFiredProjectile();
                 float posX = character.getPosX();
                 float posY = character.getPosY();
-                if (projectile != null && !projectile.hasExpired()) {
-                    Collider coll = projectile.getCollider();
-                    long center = coll.getBounds().getCenterVector();
-                    posX = Converter.PhysicsToGraphicsX(Vectors.xComp(center));
-                    posY = Converter.PhysicsToGraphicsY(Vectors.yComp(center));
-                    camera.setCameraPosition(posX, posY);
+                
+                if (projectile != null) {
+                    if (!projectile.hasExpired()) {
+                        Collider coll = projectile.getCollider();
+                        long center = coll.getBounds().getCenterVector();
+                        posX = Converter.PhysicsToGraphicsX(Vectors.xComp(center));
+                        posY = Converter.PhysicsToGraphicsY(Vectors.yComp(center));
+                    }
+                    
+                    if (projectile instanceof MineProjectile && projectile.hasStoppedMoving()) {
+                        character.clearFiredProjectile();
+                    }      
                 }
 
                 float distanceX = camera.getCenterX() - posX;
@@ -222,6 +234,28 @@ public class SketchWarsWorld extends World implements KeyCharListener {
     public void charTyped(int keycode) {
         if ((char)keycode == 'c') {
             camera.toggleDragReset();
+        }
+    }
+
+    private void checkOutOfWorldBoundsObjects() {
+        for(GameObject obj : allObjects) {
+            if (obj instanceof AbstractProjectile) {
+                AbstractProjectile projectile = (AbstractProjectile)obj;
+                Collider coll = projectile.getCollider();
+                long pos = coll.getPosition();
+                if (!extendedWorldBoundingBox.contains(
+                        (int)Vectors.xComp(pos), (int)Vectors.yComp(pos))) {
+                    projectile.setExpired();
+                }
+            } else if (obj instanceof SketchCharacter) {
+                SketchCharacter character = (SketchCharacter)obj;
+                Collider coll = character.getCollider();
+                long pos = coll.getPosition();
+                if (!extendedWorldBoundingBox.contains(
+                        (int)Vectors.xComp(pos), (int)Vectors.yComp(pos))) {
+                    character.takeDamage(character.getMaxHealth());
+                }
+            }
         }
     }
 }

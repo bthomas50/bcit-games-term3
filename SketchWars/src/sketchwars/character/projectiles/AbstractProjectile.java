@@ -1,7 +1,6 @@
 package sketchwars.character.projectiles;
 
 import org.joml.Matrix3d;
-import sketchwars.SketchWars;
 import sketchwars.graphics.GraphicsObject;
 import sketchwars.graphics.Texture;
 import sketchwars.physics.*;
@@ -13,7 +12,9 @@ import sketchwars.util.Converter;
  *
  * @author Najash Najimudeen <najash.najm@gmail.com>
  */
-public abstract class AbstractProjectile implements GraphicsObject, GameObject{
+public abstract class AbstractProjectile implements GraphicsObject, GameObject {
+    private static final int IDLE_VELOCITY = 100;
+    
     protected Collider coll;
     protected Texture texture;
     
@@ -35,6 +36,10 @@ public abstract class AbstractProjectile implements GraphicsObject, GameObject{
     @Override
     public boolean hasExpired() {
         return expired;
+    }
+    
+    public void setExpired() {
+        expired = true;
     }
 
     public Collider getCollider() {
@@ -87,6 +92,11 @@ public abstract class AbstractProjectile implements GraphicsObject, GameObject{
     protected abstract void handleCollisionWithCharacter(SketchCharacter ch);
 
     protected abstract void handleCollision(Collider other);
+
+    public boolean hasStoppedMoving() {
+        double velocity = Vectors.length(coll.getVelocity());
+        return velocity < IDLE_VELOCITY;
+    }
 
     private class ProjectileCollisionHandler implements CollisionListener {
         @Override

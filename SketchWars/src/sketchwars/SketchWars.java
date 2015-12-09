@@ -24,6 +24,7 @@ import static sketchwars.util.Config.appendToLibraryPath;
  * @author Brian Thomas <bthomas50@my.bcit.ca>
  */
 public class SketchWars {
+    public static final float EXTENDED_BB_RANGE = 1.5f;
     public static final int WORLD_SCALE = 2;
     
     public static final int PHYSICS_TOP = -1024 * WORLD_SCALE;
@@ -44,7 +45,7 @@ public class SketchWars {
     private InputSource inputter;
     private SceneManager<Scenes> sceneManager;
     private double lastTime;
-
+   
     public static void main(String[] args) {
         boolean fullscreen = false;
         
@@ -103,10 +104,16 @@ public class SketchWars {
     
     public void startTutorial() {
         inputter = new SingleInputSource();
-        physics = new Physics(new BoundingBox(PHYSICS_TOP, PHYSICS_LEFT, 
-                PHYSICS_TOP + PHYSICS_HEIGHT, PHYSICS_LEFT + PHYSICS_WIDTH));
+        BoundingBox physicsBB = new BoundingBox(PHYSICS_TOP, PHYSICS_LEFT, 
+                PHYSICS_TOP + PHYSICS_HEIGHT, PHYSICS_LEFT + PHYSICS_WIDTH);
+        physics = new Physics(physicsBB);
+        
+        BoundingBox extendedWorldBoundingBox = new BoundingBox((int)(physicsBB.getTop() * EXTENDED_BB_RANGE), 
+                                                   (int)(physicsBB.getLeft() * EXTENDED_BB_RANGE), 
+                                                   (int)(physicsBB.getBottom() * EXTENDED_BB_RANGE) ,
+                                                   (int)(physicsBB.getRight()* EXTENDED_BB_RANGE));
         GameSetting tutorialSettings = GameSetting.createTutorialSettings();
-        world = new SketchWarsWorld(tutorialSettings.getTimePerTurn());
+        world = new SketchWarsWorld(tutorialSettings.getTimePerTurn(), extendedWorldBoundingBox);
         new SketchWarsWorldFactory(world, physics, sceneManager, new Random()).startGame(tutorialSettings);
         
         if (sceneManager != null) {
@@ -120,9 +127,14 @@ public class SketchWars {
     
     public void startMultiplayer(Peer network, Random rng, GameSetting setting) {
         inputter = new MultiInputSource(network);
-        physics = new Physics(new BoundingBox(PHYSICS_TOP, PHYSICS_LEFT, 
-                PHYSICS_TOP + PHYSICS_HEIGHT, PHYSICS_LEFT + PHYSICS_WIDTH));
-        world = new MultiplayerWorld(network.getLocalId(), setting.getTimePerTurn());
+        BoundingBox physicsBB = new BoundingBox(PHYSICS_TOP, PHYSICS_LEFT, 
+                PHYSICS_TOP + PHYSICS_HEIGHT, PHYSICS_LEFT + PHYSICS_WIDTH);
+        physics = new Physics(physicsBB);
+        BoundingBox extendedWorldBoundingBox = new BoundingBox((int)(physicsBB.getTop() * EXTENDED_BB_RANGE), 
+                                                   (int)(physicsBB.getLeft() * EXTENDED_BB_RANGE), 
+                                                   (int)(physicsBB.getBottom() * EXTENDED_BB_RANGE) ,
+                                                   (int)(physicsBB.getRight() * EXTENDED_BB_RANGE));
+        world = new MultiplayerWorld(network.getLocalId(), setting.getTimePerTurn(), extendedWorldBoundingBox);
         new SketchWarsWorldFactory(world, physics, sceneManager, rng).startGame(setting);
         
         if (sceneManager != null) {

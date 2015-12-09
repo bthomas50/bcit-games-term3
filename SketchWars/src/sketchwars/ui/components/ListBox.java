@@ -43,15 +43,16 @@ public class ListBox extends UIComponent implements UIActionListener {
         
         if (background == null) {
             setBackground(Texture.loadTexture("content/uicomponents/textbox.png", false));
+            
         }
         
         items = new ArrayList<>();
         
         selectionBG = Texture.loadTexture("content/uicomponents/selection.png", false);
         
-        Texture btnTex = Texture.loadTexture("content/uicomponents/scrollbtn_normal.png", false);
-        Texture btnOverTex = Texture.loadTexture("content/uicomponents/scrollbtn_over.png", false);
-        Texture btnPressTex = Texture.loadTexture("content/uicomponents/scrollbtn_press.png", false);
+        Texture btnTex = null;
+        Texture btnOverTex = null;
+        Texture btnPressTex = null;
         
         scrollDown = new Button(new Vector2d(), new Vector2d(), btnTex, btnPressTex, btnOverTex);
         scrollUp = new Button(new Vector2d(), new Vector2d(), btnTex, btnPressTex, btnOverTex);
