@@ -1,5 +1,6 @@
 package sketchwars.game;
 
+import java.awt.Color;
 import sketchwars.character.SketchCharacter;
 import sketchwars.map.AbstractMap;
 import sketchwars.character.Team;
@@ -7,11 +8,12 @@ import sketchwars.input.*;
 
 import java.util.ArrayList;
 import java.util.Map;
-import org.lwjgl.glfw.GLFW;
+import org.joml.Vector2d;
 import sketchwars.character.projectiles.AbstractProjectile;
 import sketchwars.physics.Collider;
 import sketchwars.physics.Vectors;
 import sketchwars.scenes.Camera;
+import sketchwars.ui.components.Label;
 import sketchwars.util.Converter;
 
 /**
@@ -25,12 +27,19 @@ public class SketchWarsWorld extends World implements KeyCharListener {
     protected ArrayList<Team> teams;
     protected Turn currentTurn;
     protected Camera camera;
+    Label timerLabel;
+    int turnTimeSeconds;
     
-    public SketchWarsWorld() {
+    public SketchWarsWorld(int turnTimeSeconds) {
         characters = new ArrayList<>();
         teams = new ArrayList<>();
-        currentTurn = Turn.createDefaultTurn();
-        
+        currentTurn = new Turn(turnTimeSeconds);
+        this.turnTimeSeconds = turnTimeSeconds;
+        timerLabel = new Label(String.valueOf(currentTurn.getRemainingMillis()/1000),
+                                null,
+                                new Vector2d(0,0),
+                                new Vector2d(0.65,0.65),
+                                null);
         KeyboardHandler.addCharListener((SketchWarsWorld)this);
     }
 
@@ -61,6 +70,7 @@ public class SketchWarsWorld extends World implements KeyCharListener {
         updateTeamBars();
         updateTurn(deltaMillis);
         handlePanningCamera();
+        updateTimeLabel();
         removeExpiredObjects();
     }
     
@@ -84,6 +94,27 @@ public class SketchWarsWorld extends World implements KeyCharListener {
             t.getHealthBar().setPosition(camera.getLeft(), camera.getTop() - 1.6f - counter);
             counter += 0.1f;
         }
+    }
+    
+    private void updateTimeLabel()
+    {
+
+        if (!timerLabel.getText().equals(String.valueOf((int)currentTurn.getRemainingMillis()/1000)))
+        {
+            timerLabel.setText(String.valueOf((int)currentTurn.getRemainingMillis()/1000));
+            if(currentTurn.getRemainingMillis()/1000 < 6)
+            {
+                timerLabel.setFontColor(Color.RED);
+                timerLabel.setSize(new Vector2d(0.9,0.9));
+            }
+            else
+            {
+                timerLabel.setFontColor(new Color(0,153,51));
+                timerLabel.setSize(new Vector2d(0.55,0.65));
+            }
+        }
+        timerLabel.setPosition(new Vector2d(camera.getLeft() + camera.getWidth()/2, camera.getTop() - 0.1f));
+        timerLabel.render();
     }
 
     @Override
@@ -122,7 +153,7 @@ public class SketchWarsWorld extends World implements KeyCharListener {
     }
 
     private void beginNextTurn() {
-        currentTurn = Turn.createDefaultTurn();
+        currentTurn = new Turn(turnTimeSeconds * 1000);//Turn.createDefaultTurn();
         for(Team t : teams) {
             t.cycleActiveCharacter();
             currentTurn.addCharacter(t.getActiveCharacter());

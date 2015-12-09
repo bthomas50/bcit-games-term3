@@ -16,10 +16,8 @@ import javax.imageio.ImageIO;
 import org.joml.Matrix3d;
 import org.joml.Vector2d;
 import org.joml.Vector3d;
-import org.lwjgl.opengl.ARBShaderObjects;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
-import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import sketchwars.OpenGL;
 
@@ -34,6 +32,7 @@ public class Texture {
     private int textureID;
     private float tWidth;
     private float tHeight;
+    private boolean referenced;
     
     public Texture() {
         tWidth = 0;
@@ -56,6 +55,7 @@ public class Texture {
         textureID = texture.getTextureID();
         tWidth = texture.getTextureWidth();
         tHeight = texture.getTextureHeight();
+        referenced = false;
     }
     
     
@@ -97,6 +97,7 @@ public class Texture {
         } else {            
             incrementReference(texture.getTextureID());
         }
+        texture.referenced = true;
         
         return texture;
     }
@@ -407,7 +408,10 @@ public class Texture {
     }
     
     public void dispose() {
-        if (textureID != -1 && getTotalReferences() > 0) {
+        if (textureID != -1 && !referenced) {
+            glDeleteTextures(textureID);
+            textureID = -1;
+        } else if (textureID != -1 && getTotalReferences() > 0) {
             decrementReference(textureID);
             
             if (getTotalReferences() == 0) {

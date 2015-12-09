@@ -46,22 +46,28 @@ public class SketchWars {
     private double lastTime;
         
     public static void main(String[] args) {
+        boolean fullscreen = false;
+        
+        if (args.length == 1) {
+            fullscreen = (args[0].equals("-f"));
+        }        
+        
         appendToLibraryPath("lib/native/");
         SketchWars sketchWars = new SketchWars();
-        sketchWars.init();
+        sketchWars.init(fullscreen);
         sketchWars.loop();
     }
     
-    private void init() {
+    private void init(boolean fullscreen) {
         inputter = new SingleInputSource();
-        initOpenGL();
+        initOpenGL(fullscreen);
         initScenes();
         SoundPlayer.loadSound();
     }
 
-    private void initOpenGL() {
+    private void initOpenGL(boolean fullscreen) {
         openGL = new OpenGL();
-        openGL.init(false);
+        openGL.init(fullscreen);
     }
     
     private void initScenes() {
@@ -99,8 +105,9 @@ public class SketchWars {
         inputter = new SingleInputSource();
         physics = new Physics(new BoundingBox(PHYSICS_TOP, PHYSICS_LEFT, 
                 PHYSICS_TOP + PHYSICS_HEIGHT, PHYSICS_LEFT + PHYSICS_WIDTH));
-        world = new SketchWarsWorld();
-        new SketchWarsWorldFactory(world, physics, sceneManager, new Random()).startGame(GameSetting.createTutorialSettings());
+        GameSetting tutorialSettings = GameSetting.createTutorialSettings();
+        world = new SketchWarsWorld(tutorialSettings.getTimePerTurn());
+        new SketchWarsWorldFactory(world, physics, sceneManager, new Random()).startGame(tutorialSettings);
         
         if (sceneManager != null) {
             try {
@@ -115,7 +122,7 @@ public class SketchWars {
         inputter = new MultiInputSource(network);
         physics = new Physics(new BoundingBox(PHYSICS_TOP, PHYSICS_LEFT, 
                 PHYSICS_TOP + PHYSICS_HEIGHT, PHYSICS_LEFT + PHYSICS_WIDTH));
-        world = new MultiplayerWorld(network.getLocalId());
+        world = new MultiplayerWorld(network.getLocalId(), setting.getTimePerTurn());
         new SketchWarsWorldFactory(world, physics, sceneManager, rng).startGame(setting);
         
         if (sceneManager != null) {

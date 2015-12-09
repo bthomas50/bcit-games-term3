@@ -114,17 +114,16 @@ public class SketchWarsWorldFactory
     
     private void createMap()
     {
-        Texture mapBGTexture = Texture.loadTexture("content/map/clouds.png", false);
+        Texture mapBGTexture = Texture.loadTexture(gameSetting.getMapSelected().foregroundPath, false);
         Texture mapFGTexture = Texture.loadTexture(gameSetting.getMapSelected().path, true);
-        Texture waterTexture = Texture.loadTexture("content/shader/2d_water/water.png", true);
+        Texture waterTexture = Texture.loadTexture(gameSetting.getMapSelected().waterPath, true);
                
         try 
         {
             Camera camera = gameScene.getCamera();
             
             BufferedImage mapImage = Texture.loadImageFile(gameSetting.getMapSelected().path);
-            BufferedImage waterImage = Texture.loadImageFile("content/shader/2d_water/water.png");
-            
+
             BitMask mapImageMask = BitMaskFactory.createFromImageAlpha(mapImage, physics.getBounds());
             
             MapCollider mapCollider = new MapCollider(mapImageMask);
@@ -150,8 +149,7 @@ public class SketchWarsWorldFactory
             int waterTop = Converter.GraphicsToPhysicsY(camera.getWorldBottom()) - (int)(waterHeight* 0.9f);
             BoundingBox waterBB = new BoundingBox(waterTop, waterLeft, waterTop + waterHeight, waterLeft + waterWidith);
             
-            Collider waterCollider = new PixelCollider(BitMaskFactory.createFromImageAlpha(waterImage, waterBB), 
-                                                       CollisionBehaviour.NOTIFY);
+            Collider waterCollider = new PixelCollider(BitMaskFactory.createRectangle(waterBB), CollisionBehaviour.NOTIFY);
             waterCollider.setPosition(Vectors.create(waterLeft, waterTop));
             
             Shader waterShader = new Shader("content/shader/2d_water/vertShader.vert", "content/shader/2d_water/fragShader.frag");
@@ -185,7 +183,7 @@ public class SketchWarsWorldFactory
         
         try
         {
-            weapons = WeaponFactory.createWeaponSet(new ProjectileFactory(world, physics, gameScene, rng), world, gameSetting.getWeaponSetSelected());
+            weapons = WeaponFactory.createWeaponSet(new ProjectileFactory(world, physics, gameScene, rng), world, physics, gameSetting.getWeaponSetSelected());
         }
         catch(SceneException ex)
         {

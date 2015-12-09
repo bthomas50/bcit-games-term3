@@ -62,7 +62,7 @@ public class Physics
         applyEffects(elapsedMillis);
         updateKinematics(elapsedMillis);
         updateBounds();
-	    handleCollisions();
+	handleCollisions();
         removeExpiredObjects();
     }
 	
@@ -94,36 +94,50 @@ public class Physics
 	
 	private void applySpeedLimit(PhysicsObject obj)
 	{
-		long vVelocity = obj.getVelocity();
-		double speed = Vectors.length(vVelocity);
-		if(speed > MAX_SPEED)
-		{
-			obj.setVelocity(Vectors.scaleToLength(vVelocity, MAX_SPEED));
-		}
+            long vVelocity = obj.getVelocity();
+            double speed = Vectors.length(vVelocity);
+            if(speed > MAX_SPEED)
+            {
+                obj.setVelocity(Vectors.scaleToLength(vVelocity, MAX_SPEED));
+            }
 	}
 	
-	private void handleCollisions()
-	{
-		HashSet<ColliderPair> donePairs = new HashSet<>();
-		for(Collider coll1 : allColliders)
+    private void handleCollisions()
+    {
+        HashSet<ColliderPair> donePairs = new HashSet<>();
+        for(Collider coll1 : allColliders)
         {
             List<Collider> possibleCollisions = collidersTree.retrieve(coll1.getBounds());
             for(Collider coll2 : possibleCollisions)
             {
-				if(coll1 == coll2)
-				{
-					continue;
-				}
-				ColliderPair thisPair = new ColliderPair(coll1, coll2);
-				if(!donePairs.contains(thisPair))
-				{
-					Collisions.handle(coll1, coll2);
-					donePairs.add(thisPair);
-				}
+                if(coll1 == coll2)
+                {
+                    continue;
+                }
+                ColliderPair thisPair = new ColliderPair(coll1, coll2);
+                if(!donePairs.contains(thisPair))
+                {
+                    Collisions.handle(coll1, coll2);
+                    donePairs.add(thisPair);
+                }
             }
         }
-	}
+    }
 
+    public List<Collider> getCollisions(Collider c)
+    {
+        List<Collider> possibleCollisions = collidersTree.retrieve(c.getBounds());
+        List<Collider> collisions = new ArrayList<>();
+        for(Collider c2 : possibleCollisions)
+        {
+            if(Collisions.hasCollided(c2, c))
+            {
+                collisions.add(c2);
+            }
+        }
+        return collisions;
+    }
+    
     private void updateBounds()
     {
         for(Collider coll : allColliders)
