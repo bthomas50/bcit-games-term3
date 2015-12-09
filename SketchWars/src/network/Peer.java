@@ -19,7 +19,7 @@ public class Peer {
 
     private int windowStart, windowEnd;
     //for protecting the HashMaps.
-    private final Object cursorMutex;
+    private final Object windowMutex;
     private final Object responseMutex;
     
     private final HashMap<Integer, Integer> windowCursors;
@@ -31,7 +31,7 @@ public class Peer {
     private final int localId;
 
     public Peer(int port, int localId) throws IOException {
-        cursorMutex = new Object();
+        windowMutex = new Object();
         responseMutex = new Object();
         peers = new HashMap<>();
         socket = new DatagramSocket(port);
@@ -83,9 +83,10 @@ public class Peer {
 
     //blocks until we get inputs from each peer.
     public Map<Integer, Input> getInputs(int frameNum) {
+        System.out.println("trying to get inputs for frame: " + frameNum);
         byte seq = (byte) frameNum;
         while(true) {
-            synchronized(cursorMutex) {
+            synchronized(windowMutex) {
                 if(hasAllInputs(frameNum)) {
                     HashMap<Integer, Input> ret = new HashMap<>();
                     for(Integer i : inputs.keySet())
@@ -182,7 +183,7 @@ public class Peer {
         private void receiveInput(InputPacket packet) throws IOException {
             int senderId = packet.id;
             byte seq = packet.frameId;
-            synchronized(cursorMutex) {
+            synchronized(windowMutex) {
                 int diff = seq - (byte) windowStart;
                 int frameNum = windowStart;
                 if(diff < -128)
