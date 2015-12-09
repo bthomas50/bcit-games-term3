@@ -1,6 +1,5 @@
 package network;
 
-import entities.*;
 import packets.*;
 import sketchwars.input.Input;
 
@@ -14,15 +13,15 @@ import java.io.ByteArrayOutputStream;
 import java.io.ObjectOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ObjectInputStream;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class Peer {
     private final HashMap<Integer, PeerInfo> peers;
 
     private int windowStart, windowEnd;
     //for protecting the HashMaps.
-    private final Object syncObject;
+    private final Object consumerMutex;
+    private final Object producerMutex;
+    private final Object responseMutex;
     
     private final HashMap<Integer, Integer> windowCursors;
     
@@ -33,7 +32,9 @@ public class Peer {
     private final int localId;
 
     public Peer(int port, int localId) throws IOException {
-        syncObject = new Object();
+        consumerMutex = new Object();
+        producerMutex = new Object();
+        responseMutex = new Object();
         peers = new HashMap<>();
         socket = new DatagramSocket(port);
         inputs = new HashMap<>();
@@ -58,7 +59,7 @@ public class Peer {
 
     public void sendReliably(InputPacket data, PeerInfo dest) {
         ReliableMessage msg = new ReliableMessage(data, dest);
-        synchronized(syncObject) {
+        synchronized(responseMutex) {
             outgoingMessages.add(msg);
             msg.send(socket);
         }
@@ -66,7 +67,7 @@ public class Peer {
 
     public void stopAllMessagesBefore(byte seq) {
         ArrayList<ReliableMessage> ackedMessages = new ArrayList<>();
-        synchronized(syncObject) 
+        synchronized(responseMutex) 
         {
             boolean hasSomethingToDelete;
             do
@@ -102,9 +103,7 @@ public class Peer {
         PeerInfo sendTo = peers.get(id);
         DatagramPacket packet = new DatagramPacket(data, data.length, sendTo.ipAddress, sendTo.portNum);
         try {
-            synchronized(syncObject) {
-                socket.send(packet);
-            }
+            socket.send(packet);
         } catch(IOException ioe) {
             System.err.println(ioe);
         }
@@ -114,7 +113,7 @@ public class Peer {
     public Map<Integer, Input> getInputs(int frameNum) {
         byte seq = (byte) frameNum;
         while(true) {
-            synchronized(syncObject) {
+            synchronized(consumerMutex) {
                 if(hasAllInputs(frameNum)) {
                     HashMap<Integer, Input> ret = new HashMap<>();
                     for(Integer i : inputs.keySet())
@@ -122,9 +121,9 @@ public class Peer {
                         ret.put(i, inputs.get(i).get(seq));
                     }
                     System.out.println("got inputs for frame: " + frameNum);
-                    windowStart = frameNum;
-                    windowEnd = frameNum + 4;
-                    stopAllMessagesBefore((byte) (seq - 1));
+                    windowStart = frameNum + 1;
+                    windowEnd = frameNum + 5;
+                    //stopAllMessagesBefore((byte) (seq - 1));
                     return ret;
                 }
             }
@@ -194,7 +193,7 @@ public class Peer {
             int senderId = packet.id;
             byte seq = packet.frameId;
             ReliableMessage matchingMsg = null;
-            synchronized(syncObject) {
+            synchronized(producerMutex) {
                 for (ReliableMessage msg : outgoingMessages) {
                     if(msg.getDestinationId() == senderId && 
                        msg.getSequence() == seq) {
@@ -215,7 +214,7 @@ public class Peer {
         private void receiveInput(InputPacket packet) throws IOException {
             int senderId = packet.id;
             byte seq = packet.frameId;
-            synchronized(syncObject) {
+            synchronized(producerMutex) {
                 int diff = seq - (byte) windowStart;
                 int frameNum = windowStart;
                 if(diff < -128)
