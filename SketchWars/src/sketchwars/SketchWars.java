@@ -103,9 +103,9 @@ public class SketchWars {
                                        SketchWars.OPENGL_WIDTH, SketchWars.OPENGL_HEIGHT);
         Scene gameScene = new Scene(gameCamera);
         sceneManager.setScene(Scenes.GAME, gameScene);
-        inputter = new SingleInputSource();
     }
     public void startTutorial() {
+        inputter = new SingleInputSource();
 
         BoundingBox physicsBB = new BoundingBox(PHYSICS_TOP, PHYSICS_LEFT, 
                 PHYSICS_TOP + PHYSICS_HEIGHT, PHYSICS_LEFT + PHYSICS_WIDTH);
@@ -136,8 +136,8 @@ public class SketchWars {
                                                    (int)(physicsBB.getLeft() * EXTENDED_BB_RANGE), 
                                                    (int)(physicsBB.getBottom() * EXTENDED_BB_RANGE) ,
                                                    (int)(physicsBB.getRight() * EXTENDED_BB_RANGE));
-        world = new MultiplayerWorld(network.getLocalId(), setting.getTimePerTurn(), extendedWorldBoundingBox);
         
+        world = new MultiplayerWorld(network.getLocalId(), setting.getTimePerTurn(), extendedWorldBoundingBox);
         try {
             createGameScene();
             new SketchWarsWorldFactory(world, physics, sceneManager, rng).startGame(setting);
