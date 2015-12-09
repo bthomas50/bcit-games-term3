@@ -143,13 +143,14 @@ public class FindHostMenu extends Scene implements UIActionListener {
         if(discoveryClient != null)
             gameIdCheck();
         //Clear existing box from old host id
+        int selected = gamesListListBox.getSelection();
         gamesListListBox.clearAll();
         //for each game in the active game List, so client can select
         for(String game: activeGameList)
         {
             gamesListListBox.addItem(game);
         }
-       
+        gamesListListBox.setSelection(selected);
     }
 
     //Check string agains game mode
