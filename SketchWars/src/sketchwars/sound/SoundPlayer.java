@@ -70,7 +70,6 @@ public final class SoundPlayer
         {
             if(!c.isRunning())
             {
-                System.out.println(c);
                 c.setFramePosition(0);
                 if(autostart) 
                     c.start();
