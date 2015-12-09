@@ -59,7 +59,7 @@ public class Peer {
 
     public void sendReliably(InputPacket data, PeerInfo dest) {
         ReliableMessage msg = new ReliableMessage(data, dest);
-        synchronized(responseMutex) {
+        synchronized(producerMutex) {
             outgoingMessages.add(msg);
             msg.send(socket);
         }
@@ -67,7 +67,7 @@ public class Peer {
 
     public void stopAllMessagesBefore(byte seq) {
         ArrayList<ReliableMessage> ackedMessages = new ArrayList<>();
-        synchronized(responseMutex) 
+        synchronized(producerMutex) 
         {
             boolean hasSomethingToDelete;
             do
