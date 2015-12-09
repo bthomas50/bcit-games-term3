@@ -78,7 +78,7 @@ public class ProjectileFactory
         Collider coll = new GamePixelCollider(proj, bm, CollisionBehaviour.NOTIFY);
         proj.setCollider(coll);
 
-        setColliderProperties(coll, vPosition, vVelocity, 100.0f, 0.01f);
+        setColliderProperties(coll, vPosition, vVelocity, 1.0f, 0.01f);
 
         addProjectile(proj);
         return proj;

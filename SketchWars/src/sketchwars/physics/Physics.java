@@ -6,7 +6,7 @@ import java.util.HashSet;
 
 public class Physics
 {
-	public static final double MAX_SPEED = 1000.0f;
+	public static final double MAX_SPEED = 5000.0f;
 	private List<PhysicsObject> allPhysicsObjects;
     private List<Collider> allColliders;
     private List<PhysicsEffect> globalEffects;

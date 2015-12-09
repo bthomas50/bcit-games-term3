@@ -5,14 +5,10 @@
  */
 package sketchwars.ui.menu;
 
-import entities.ClientEntityForClients;
 import java.awt.Color;
 import java.awt.Font;
-import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import network.DiscoveryClient;
@@ -26,15 +22,12 @@ import sketchwars.scenes.Camera;
 import sketchwars.scenes.Layer;
 import sketchwars.scenes.Scene;
 import sketchwars.scenes.SceneManager;
-import sketchwars.sound.SoundPlayer;
 import sketchwars.ui.components.Label;
 import sketchwars.ui.components.ListBox;
 import sketchwars.ui.components.TextButton;
-import sketchwars.ui.components.TextInputbox;
 import sketchwars.ui.components.UIActionListener;
 import sketchwars.ui.components.UIComponent;
 import sketchwars.ui.components.UIGroup;
-import sun.security.x509.IPAddressName;
 
 
 /**

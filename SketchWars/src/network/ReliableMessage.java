@@ -7,15 +7,14 @@ import java.net.DatagramPacket;
 import java.io.IOException;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectOutputStream;
-import java.lang.InterruptedException;
 
 class ReliableMessage
 {
     private static final int RESEND_DELAY_MILLIS = 5;
 
     private boolean wasAcknowledged;
-    private InputPacket packet;
-    private PeerInfo destination;
+    private final InputPacket packet;
+    private final PeerInfo destination;
 
     ReliableMessage(InputPacket packet, PeerInfo dest)
     {
@@ -51,7 +50,7 @@ class ReliableMessage
 
     private class Sender implements Runnable
     {
-        private DatagramSocket sock;
+        private final DatagramSocket sock;
 
         private Sender(DatagramSocket s)
         {

@@ -1,10 +1,6 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package sketchwars.input;
 
+import java.util.HashMap;
 import java.util.Map;
 import network.Peer;
 
@@ -13,6 +9,7 @@ import network.Peer;
  * @author a00861166
  */
 public class MultiInputSource implements InputSource {
+    private static final int WINDOW_SIZE = 3;
     private final Peer networkInterface;
     private int frameNum = 0;
     
@@ -24,7 +21,12 @@ public class MultiInputSource implements InputSource {
         Input.update();
         Input.handleGameInput();
         networkInterface.broadcastInput(frameNum);
-        Map<Integer, Input> allInputs = networkInterface.getInputs(frameNum);
+        Map<Integer, Input> allInputs = new HashMap<>();
+        if(frameNum > WINDOW_SIZE)
+        {
+            allInputs = networkInterface.getInputs(frameNum - WINDOW_SIZE);
+        }
+        
         frameNum++;
         return allInputs;
     }
