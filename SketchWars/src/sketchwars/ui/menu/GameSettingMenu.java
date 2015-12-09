@@ -330,7 +330,7 @@ public class GameSettingMenu extends Scene implements UIActionListener{
                 lobbyMenu.setSettings(gameSetting);
                 lobbyMenu.startServer();
                 //Set screen to lobby screen
-                sceneManager.setCurrentScene(Scenes.CREATE_MENU);
+                sceneManager.setCurrentScene(Scenes.LOBBY_MENU);
             } 
             catch (SceneManagerException ex) 
             {

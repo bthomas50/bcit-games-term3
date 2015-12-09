@@ -12,6 +12,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import sketchwars.OpenGL;
 import sketchwars.game.SketchWarsWorld;
+import sketchwars.physics.Physics;
 
 public class WeaponFactory
 {
@@ -24,48 +25,48 @@ public class WeaponFactory
     public static final float CLUSTER_BOMB_SCALE = 0.04f;
     public static final float BAZOOKA_SCALE = 0.12f;
     
-    public static HashMap<WeaponTypes, AbstractWeapon> createWeaponSet(ProjectileFactory projectileFactory, SketchWarsWorld world, WeaponSetTypes weaponSetSelected) 
+    public static HashMap<WeaponTypes, AbstractWeapon> createWeaponSet(ProjectileFactory projectileFactory, SketchWarsWorld world, Physics phys, WeaponSetTypes weaponSetSelected) 
     {
         switch(weaponSetSelected)
         {
         case MIX:
-            return createDefaultWeaponSet(projectileFactory, world);
+            return createDefaultWeaponSet(projectileFactory, world, phys);
         case MELEE:
-            return createMeleeWeaponSet(projectileFactory, world);
+            return createMeleeWeaponSet(projectileFactory, world, phys);
         case RANGE:
-            return createRangedWeaponSet(projectileFactory, world);
+            return createRangedWeaponSet(projectileFactory, world, phys);
         case EXPLOSIVE:
-            return createExplosiveWeaponSet(projectileFactory, world);
+            return createExplosiveWeaponSet(projectileFactory, world, phys);
         default:
             return new HashMap<>();
         }
     }
        
-    private static HashMap<WeaponTypes, AbstractWeapon> createDefaultWeaponSet(ProjectileFactory fact, SketchWarsWorld world) 
+    private static HashMap<WeaponTypes, AbstractWeapon> createDefaultWeaponSet(ProjectileFactory fact, SketchWarsWorld world, Physics phys) 
     {
         HashMap<WeaponTypes, AbstractWeapon> ret = new HashMap<>();
         ret.put(WeaponTypes.BASIC_GRENADE, createGrenade(fact));
         ret.put(WeaponTypes.MELEE_WEAPON, createBoxingGlove(fact));
         ret.put(WeaponTypes.RANGED_WEAPON, createRifle(fact));
-        ret.put(WeaponTypes.ERASER, createEraser(fact, world));
-        ret.put(WeaponTypes.PENCIL, createPencil(fact, world));
+        ret.put(WeaponTypes.ERASER, createEraser(fact, world, phys));
+        ret.put(WeaponTypes.PENCIL, createPencil(fact, world, phys));
         ret.put(WeaponTypes.MINE, createMine(fact));
         ret.put(WeaponTypes.CLUSTER_BOMB, createClusterBomb(fact));
         ret.put(WeaponTypes.BAZOOKA, createBazooka(fact));
         return ret;
     }
     
-    private static HashMap<WeaponTypes, AbstractWeapon> createMeleeWeaponSet(ProjectileFactory fact, SketchWarsWorld world) 
+    private static HashMap<WeaponTypes, AbstractWeapon> createMeleeWeaponSet(ProjectileFactory fact, SketchWarsWorld world, Physics phys) 
     {
         HashMap<WeaponTypes, AbstractWeapon> ret = new HashMap<>();
         ret.put(WeaponTypes.MELEE_WEAPON, createBoxingGlove(fact));
-        ret.put(WeaponTypes.ERASER, createEraser(fact, world));
-        ret.put(WeaponTypes.PENCIL, createPencil(fact, world));
+        ret.put(WeaponTypes.ERASER, createEraser(fact, world, phys));
+        ret.put(WeaponTypes.PENCIL, createPencil(fact, world, phys));
         ret.put(WeaponTypes.MINE, createMine(fact));
         return ret;
     }
     
-    private static HashMap<WeaponTypes, AbstractWeapon> createRangedWeaponSet(ProjectileFactory fact, SketchWarsWorld world) 
+    private static HashMap<WeaponTypes, AbstractWeapon> createRangedWeaponSet(ProjectileFactory fact, SketchWarsWorld world, Physics phys) 
     {
         HashMap<WeaponTypes, AbstractWeapon> ret = new HashMap<>();
         ret.put(WeaponTypes.RANGED_WEAPON, createRifle(fact));
@@ -73,7 +74,7 @@ public class WeaponFactory
         return ret;
     }
     
-    private static HashMap<WeaponTypes, AbstractWeapon> createExplosiveWeaponSet(ProjectileFactory fact, SketchWarsWorld world) 
+    private static HashMap<WeaponTypes, AbstractWeapon> createExplosiveWeaponSet(ProjectileFactory fact, SketchWarsWorld world, Physics phys) 
     {
         HashMap<WeaponTypes, AbstractWeapon> ret = new HashMap<>();
         ret.put(WeaponTypes.BAZOOKA, createBazooka(fact));
@@ -122,7 +123,7 @@ public class WeaponFactory
         return weapon;
     }
 
-    private static AbstractWeapon createEraser(ProjectileFactory fact, SketchWarsWorld world) {
+    private static AbstractWeapon createEraser(ProjectileFactory fact, SketchWarsWorld world, Physics phys) {
         Texture texture = Texture.loadTexture("content/char/weapons/pencileraser.png", false);
         Texture eraserImgTex = Texture.loadTexture("content/char/weapons/pencileraserArea.png", false);
         BufferedImage eraserImage = null;
@@ -136,14 +137,14 @@ public class WeaponFactory
         float width = ERASER_SCALE;
         float height = width * ratio;
         
-        PencilWeapon eraser = new PencilWeapon(texture, eraserImgTex, eraserImage, width, height, fact, true);
+        PencilWeapon eraser = new PencilWeapon(texture, eraserImgTex, eraserImage, width, height, fact, phys, true);
         eraser.setAmmo(AbstractWeapon.INFINITE_AMMO);
         eraser.setMap(world.getMap());
         
         return eraser;
     }
 
-    private static AbstractWeapon createPencil(ProjectileFactory fact, SketchWarsWorld world) {
+    private static AbstractWeapon createPencil(ProjectileFactory fact, SketchWarsWorld world, Physics phys) {
         Texture texture = Texture.loadTexture("content/char/weapons/pencil.png", false);
         Texture pencilImgTex = Texture.loadTexture("content/char/weapons/pencilpointArea.png", false);
         BufferedImage pencilpointImage = null;
@@ -157,7 +158,7 @@ public class WeaponFactory
         float width = PENCIL_SCALE;
         float height = width * ratio;
         
-        PencilWeapon pencil = new PencilWeapon(texture, pencilImgTex, pencilpointImage, width, height, fact, false);
+        PencilWeapon pencil = new PencilWeapon(texture, pencilImgTex, pencilpointImage, width, height, fact, phys, false);
         pencil.setAmmo(AbstractWeapon.INFINITE_AMMO);
         pencil.setMap(world.getMap());
         return pencil;

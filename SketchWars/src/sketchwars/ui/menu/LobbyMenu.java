@@ -113,7 +113,7 @@ public class LobbyMenu extends Scene implements UIActionListener{
             userListBox.addItem(name.getUsername());
         }
         //if the client has stopped, start the game!
-        if(localClient.isReady()) {
+        if(localClient.isReady) {
             game.startMultiplayer(localClient.networkResult, localClient.rngResult, localClient.settingResult);
         }
 
@@ -155,27 +155,19 @@ public class LobbyMenu extends Scene implements UIActionListener{
         }
     }
     
-    public void startClient()
+    public void startClient(InetAddress ip, int port)
     {
-        discoveryClient = new DiscoveryClient();
-        discoveryClient.start();
-        while(!discoveryClient.hasAvailableGames())
-        {}
-        discoveryClient.signalStopListening();
-        Map<InetAddress, Integer> gameList = discoveryClient.getAvailableGames();
-        for(Map.Entry<InetAddress, Integer> ent : gameList.entrySet())
+
+        try
         {
-            try
-            {
-                localClient = new Client(ent.getKey(), ent.getValue(), "test");
-                localClient.run();
-                break;
-            }
-            catch(IOException ioe)
-            {
-                System.out.println("Unable to connect to game at " + ent.getKey() + ":" + ent.getValue());
-            }
+            localClient = new Client(ip, port, "test");
+            localClient.run();
         }
+        catch(IOException ioe)
+        {
+            System.out.println("Unable to connect to game at " + ip + ":" + port);
+        }
+        
     }
     //user hit cancel button
     @Override

@@ -80,15 +80,18 @@ public class SketchWars {
         Scene gameScene = new Scene(gameCamera);
         
         LobbyMenu lobbyMenuScene = new LobbyMenu(sceneManager, this, menuCamera);
-        MainMenu mainMenuScene = new MainMenu(sceneManager, this, lobbyMenuScene, menuCamera);
+        FindHostMenu findHostMeueScene = new FindHostMenu(sceneManager,lobbyMenuScene, menuCamera);
+        MainMenu mainMenuScene = new MainMenu(sceneManager, this, lobbyMenuScene, findHostMeueScene, menuCamera);
         OptionMenu optionMenuScene = new OptionMenu(sceneManager, menuCamera);
+
         GameSettingMenu gameSettingMenuScene = new GameSettingMenu(sceneManager, lobbyMenuScene, menuCamera);
         
         try {
             sceneManager.addScene(Scenes.GAME, gameScene);
             sceneManager.addScene(Scenes.MAIN_MENU, mainMenuScene);
             sceneManager.addScene(Scenes.SUB_MENU, optionMenuScene);
-            sceneManager.addScene(Scenes.CREATE_MENU, lobbyMenuScene);
+            sceneManager.addScene(Scenes.LOBBY_MENU, lobbyMenuScene);
+            sceneManager.addScene(Scenes.FINDHOST_MENU, findHostMeueScene);
             sceneManager.addScene(Scenes.GAME_SETTING_MENU, gameSettingMenuScene);
             
             sceneManager.setCurrentScene(Scenes.MAIN_MENU);

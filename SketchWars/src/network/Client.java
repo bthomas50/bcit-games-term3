@@ -13,13 +13,13 @@ import java.util.Collection;
 public class Client {
 	
     private int id;
-    private InetAddress hostIP;
-    private int port;
+    public InetAddress hostIP;
+    public int port;
     private String username;
-    private boolean isRunning = false;
-    private boolean isReady = false;
-    private final Socket socket;
-    private final HashMap<Integer, ClientEntityForClients> clients;
+    public boolean isRunning = false;
+    public boolean isReady = false;
+    public Socket socket = null;
+    public HashMap<Integer, ClientEntityForClients> clients = null;
     
     public Peer networkResult;
     public Random rngResult;
@@ -92,25 +92,23 @@ public class Client {
         return socket;
     }
 	
-    public synchronized void addClient(ClientEntityForClients client) {
-        clients.put(client.id, client);
+    public void addClient(ClientEntityForClients client) {
+        if(client.id != id) {
+            clients.put(client.id, client);
+        }
     }
 
-    public synchronized void removeClient(int id) {
+    public void removeClient(int id) {
         clients.remove(id);
     }
     
-    public synchronized Collection<ClientEntityForClients> getConnectedClients() {
+    public Collection<ClientEntityForClients> getConnectedClients() {
         ArrayList<ClientEntityForClients> ret = new ArrayList<>();
         ret.addAll(clients.values());
         return ret;
     }
 
-    public synchronized boolean isReady() {
-        return isReady;
-    }
-    
-    synchronized void startGame(Peer me, Random random, GameSetting setting) {
+    void startGame(Peer me, Random random, GameSetting setting) {
         this.networkResult = me;
         this.rngResult = random;
         this.settingResult = setting;
