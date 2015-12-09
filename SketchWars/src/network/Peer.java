@@ -19,8 +19,7 @@ public class Peer {
 
     private int windowStart, windowEnd;
     //for protecting the HashMaps.
-    private final Object consumerMutex;
-    private final Object producerMutex;
+    private final Object cursorMutex;
     private final Object responseMutex;
     
     private final HashMap<Integer, Integer> windowCursors;
@@ -32,8 +31,7 @@ public class Peer {
     private final int localId;
 
     public Peer(int port, int localId) throws IOException {
-        consumerMutex = new Object();
-        producerMutex = new Object();
+        cursorMutex = new Object();
         responseMutex = new Object();
         peers = new HashMap<>();
         socket = new DatagramSocket(port);
@@ -87,7 +85,7 @@ public class Peer {
     public Map<Integer, Input> getInputs(int frameNum) {
         byte seq = (byte) frameNum;
         while(true) {
-            synchronized(consumerMutex) {
+            synchronized(cursorMutex) {
                 if(hasAllInputs(frameNum)) {
                     HashMap<Integer, Input> ret = new HashMap<>();
                     for(Integer i : inputs.keySet())
@@ -184,7 +182,7 @@ public class Peer {
         private void receiveInput(InputPacket packet) throws IOException {
             int senderId = packet.id;
             byte seq = packet.frameId;
-            synchronized(producerMutex) {
+            synchronized(cursorMutex) {
                 int diff = seq - (byte) windowStart;
                 int frameNum = windowStart;
                 if(diff < -128)
@@ -196,11 +194,9 @@ public class Peer {
                     frameNum += diff;
                 }
                 System.out.println("id = " + senderId + " says " + frameNum + ", wanted (" + windowStart + ", " + windowEnd + ")");
-                //if(frameNum >= windowStart && frameNum < windowEnd) {
-                    windowCursors.put(senderId, frameNum);
-                    inputs.get(senderId).put(seq, new Input(packet.commands));
-                    sendAck(senderId, seq);
-                //}
+                windowCursors.put(senderId, frameNum);
+                inputs.get(senderId).put(seq, new Input(packet.commands));
+                sendAck(senderId, seq);
             }
         }
     }
